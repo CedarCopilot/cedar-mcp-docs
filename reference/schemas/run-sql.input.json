@@ -1,0 +1,37 @@
+{
+  "type": "object",
+  "properties": {
+    "query": {
+      "type": "string",
+      "description": "The SQL SELECT query to execute against the CRM tables."
+    },
+    "out": {
+      "type": "boolean",
+      "description": "Deliver the FULL result as a downloadable file instead of inline rows, and return a short-lived URL. There is no row limit on this path — curl it to disk and analyse it locally with jq/python. Use it for anything you would otherwise LIMIT just to fit."
+    },
+    "format": {
+      "type": "string",
+      "enum": [
+        "jsonl",
+        "csv",
+        "json"
+      ],
+      "description": "File format when `out` is true. Default jsonl (one record per line) — prefer it, because CRM text contains newlines and line-based tools miscount CSV rows. csv for spreadsheets."
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "query",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

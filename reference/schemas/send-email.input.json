@@ -1,0 +1,44 @@
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "prepare",
+        "send",
+        "status"
+      ],
+      "description": "Omit action for legacy send; explicit send requires approvalHash. prepare only reads a review snapshot/hash; status only reads the existing draft-send journal."
+    },
+    "draftId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Real saved provider draft ID. Also the durable status/idempotency lookup key; reuse it on retries."
+    },
+    "approvalHash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "On send, compare live draft/sender/thread with this explicitly reviewed prepare hash before sending. Required for the DeepLine conditional-send workflow."
+    },
+    "targetUserId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Only an org admin/owner may target another user in their organization. The user must explicitly authorize the sender, recipient and message. Applies to prepare/status too."
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "draftId",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

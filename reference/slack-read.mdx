@@ -1,0 +1,395 @@
+---
+title: "slack-read"
+description: "Parameters, scopes, and response schema for slack-read."
+---
+
+Generated from Cedar's external registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+
+<Note>read-thread may persist messages into an already-linked deal. Read scope is not a guarantee of zero side effects.</Note>
+
+## Capability
+
+Read the connected user's LIVE Slack (not Cedar's synced store). ACTIONS: (1) search-live — search Slack messages by text (search.messages); returns matches (channelId + ts/threadTs + permalink + snippet) to inspect or pass to slack-write's sync-thread. (2) read-thread — read a specific thread (conversations.replies) or a channel's recent messages; if that channel is ALREADY linked to one of your deals the messages are also stored on that deal's timeline automatically (idempotent, returned as syncedTo + ingested), so no follow-up sync-thread call is needed; each message lists its uploaded files (id, name, type). (3) read-file: external MCP clients only: look at the image(s) on one message (channelId + messageTs &#91;+ threadTs&#93; from read-thread, optionally one fileId); images come back as image content. Inside Cedar's own chat it returns the file list only. search-live and read-file never persist, and an UNLINKED channel is never attributed on its own: use slack-write's sync-thread to pick a deal for one. Requires the Slack "search:read" grant; a user who connected Slack before it existed gets a reconnect-required error. Each action takes its params in a same-named object (action: "search-live" pairs with searchLive: &#123;...&#125;) — omit every params object except the one matching your chosen action.
+
+## Operations and scopes
+
+| Action | Baseline scope |
+| --- | --- |
+| `search-live` | `slack:read` |
+| `read-thread` | `slack:read` |
+| `read-file` | `slack:read` |
+
+Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Parameters
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `action` | "search-live" · "read-thread" · "read-file" | Yes | Which Slack read operation to perform — pass its matching params object below (e.g. action: "search-live" pairs with searchLive: &#123;...&#125;).  |
+| `searchLive` | object | No | Search the connected user's LIVE Slack for messages by text (search.messages). Returns matches (channelId + ts/threadTs + permalink + snippet) to inspect or to pass to slack-write's sync-thread. Requires the Slack "search:read" grant; if the user connected Slack before that scope existed, this returns a reconnect-required error.  |
+| `readThread` | object | No | Read a specific Slack thread (conversations.replies) or the channel's recent messages LIVE. If the channel is ALREADY linked to one of your deals, the messages read are also stored on that deal's timeline automatically (idempotent) and the response returns `syncedTo` + `ingested`. Otherwise nothing is persisted — use slack-write's sync-thread to choose a deal.  |
+| `readFile` | object | No | Look at the image(s) on one Slack message, LIVE. Images come back as image content (PNG, JPEG, GIF, WebP up to 3.5MB, at most 3 per call and 5MB in total). External MCP clients only: Cedar's own chat gets the file list, not pixels.  |
+| `user_request_summary` | string | Yes | One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does.  |
+| `is_new_request` | boolean | Yes | true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread.  |
+
+### searchLive
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `query` | string | Yes | Slack search text — supports Slack search operators (e.g. "in:#deals from:@jane roadmap", "has:link renewal"). Searches messages the connected user can see. minLength: 1; maxLength: 500 |
+| `count` | number | No | Max matches to return. Default 20, max 50. minimum: 1; maximum: 50 |
+
+### readThread
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `channelId` | string | Yes | Slack channel id (e.g. "C0123ABC") — from a search-live match. minLength: 1 |
+| `threadTs` | string | No | Thread root ts (e.g. "1700000000.123456"). Omit to read the channel's most recent messages instead of a single thread.  |
+| `limit` | number | No | Max messages to return. Default 100. minimum: 1; maximum: 100 |
+
+### readFile
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `channelId` | string | Yes | Slack channel id, from read-thread or a search-live match. minLength: 1 |
+| `messageTs` | string | Yes | The ts of the message that carries the file (`messages&#91;&#93;.ts`). minLength: 1 |
+| `threadTs` | string | No | Thread root ts when the message is a reply in a thread; omit for a top-level message.  |
+| `fileId` | string | No | One file id from `messages&#91;&#93;.files&#91;&#93;.id`. Omit to read every image on the message.  |
+
+## Full input schema
+
+[Download the input schema](/reference/schemas/slack-read.input.json). Nested objects, variants, and constraints are preserved in full. Runtime refinements and ownership checks still apply.
+
+<Accordion title="Input JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "search-live",
+        "read-thread",
+        "read-file"
+      ],
+      "description": "Which Slack read operation to perform — pass its matching params object below (e.g. action: \"search-live\" pairs with searchLive: {...})."
+    },
+    "searchLive": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "description": "Slack search text — supports Slack search operators (e.g. \"in:#deals from:@jane roadmap\", \"has:link renewal\"). Searches messages the connected user can see."
+        },
+        "count": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 50,
+          "description": "Max matches to return. Default 20, max 50."
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "additionalProperties": false,
+      "description": "Search the connected user's LIVE Slack for messages by text (search.messages). Returns matches (channelId + ts/threadTs + permalink + snippet) to inspect or to pass to slack-write's sync-thread. Requires the Slack \"search:read\" grant; if the user connected Slack before that scope existed, this returns a reconnect-required error."
+    },
+    "readThread": {
+      "type": "object",
+      "properties": {
+        "channelId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Slack channel id (e.g. \"C0123ABC\") — from a search-live match."
+        },
+        "threadTs": {
+          "type": "string",
+          "description": "Thread root ts (e.g. \"1700000000.123456\"). Omit to read the channel's most recent messages instead of a single thread."
+        },
+        "limit": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Max messages to return. Default 100."
+        }
+      },
+      "required": [
+        "channelId"
+      ],
+      "additionalProperties": false,
+      "description": "Read a specific Slack thread (conversations.replies) or the channel's recent messages LIVE. If the channel is ALREADY linked to one of your deals, the messages read are also stored on that deal's timeline automatically (idempotent) and the response returns `syncedTo` + `ingested`. Otherwise nothing is persisted — use slack-write's sync-thread to choose a deal."
+    },
+    "readFile": {
+      "type": "object",
+      "properties": {
+        "channelId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Slack channel id, from read-thread or a search-live match."
+        },
+        "messageTs": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The ts of the message that carries the file (`messages[].ts`)."
+        },
+        "threadTs": {
+          "type": "string",
+          "description": "Thread root ts when the message is a reply in a thread; omit for a top-level message."
+        },
+        "fileId": {
+          "type": "string",
+          "description": "One file id from `messages[].files[].id`. Omit to read every image on the message."
+        }
+      },
+      "required": [
+        "channelId",
+        "messageTs"
+      ],
+      "additionalProperties": false,
+      "description": "Look at the image(s) on one Slack message, LIVE. Images come back as image content (PNG, JPEG, GIF, WebP up to 3.5MB, at most 3 per call and 5MB in total). External MCP clients only: Cedar's own chat gets the file list, not pixels."
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+## Response
+
+Inspect `isError` on the MCP result and `success` / `errorMessage` in the action result. Optional response branches are populated only for the relevant action. Some results include additional provider or operation-specific data.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `success` | boolean | Yes |   |
+| `errorMessage` | string | No |   |
+| `searchLive` | object | No |   |
+| `readThread` | object | No |   |
+| `readFile` | object | No |   |
+| `mcpImages` | object&#91;&#93; | No | Image pixels for MCP clients, delivered as image content parts and removed from this JSON.  |
+
+<Accordion title="Output JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "searchLive": {
+      "type": "object",
+      "properties": {
+        "matches": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "channelId": {
+                "type": "string"
+              },
+              "channelName": {
+                "type": "string"
+              },
+              "ts": {
+                "type": "string"
+              },
+              "threadTs": {
+                "type": "string"
+              },
+              "username": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              },
+              "permalink": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "channelId",
+              "ts"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "readThread": {
+      "type": "object",
+      "properties": {
+        "channelId": {
+          "type": "string"
+        },
+        "threadTs": {
+          "type": "string"
+        },
+        "messages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "ts": {
+                "type": "string"
+              },
+              "threadTs": {
+                "type": "string"
+              },
+              "slackUserId": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              },
+              "files": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "mimetype": {
+                      "type": "string"
+                    },
+                    "size": {
+                      "type": "number"
+                    },
+                    "isImage": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "isImage"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "ts"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "syncedTo": {
+          "type": "string"
+        },
+        "ingested": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "readFile": {
+      "type": "object",
+      "properties": {
+        "channelId": {
+          "type": "string"
+        },
+        "messageTs": {
+          "type": "string"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "$ref": "#/properties/readThread/properties/messages/items/properties/files/items/properties/id"
+              },
+              "name": {
+                "$ref": "#/properties/readThread/properties/messages/items/properties/files/items/properties/name"
+              },
+              "mimetype": {
+                "$ref": "#/properties/readThread/properties/messages/items/properties/files/items/properties/mimetype"
+              },
+              "size": {
+                "$ref": "#/properties/readThread/properties/messages/items/properties/files/items/properties/size"
+              },
+              "isImage": {
+                "$ref": "#/properties/readThread/properties/messages/items/properties/files/items/properties/isImage"
+              },
+              "returned": {
+                "type": "boolean"
+              },
+              "note": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "isImage",
+              "returned"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "channelId",
+        "messageTs",
+        "files"
+      ],
+      "additionalProperties": false
+    },
+    "mcpImages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "string"
+          },
+          "mimeType": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "mimeType"
+        ],
+        "additionalProperties": false
+      },
+      "description": "Image pixels for MCP clients, delivered as image content parts and removed from this JSON."
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+[Download the output schema](/reference/schemas/slack-read.output.json).

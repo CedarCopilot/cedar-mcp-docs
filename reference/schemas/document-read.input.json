@@ -1,0 +1,109 @@
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "read",
+        "list",
+        "search"
+      ]
+    },
+    "read": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Exact virtual path of the document to read. Supports both path shortcuts and content shortcuts — see this tool's description for the full reference."
+        },
+        "targetUserId": {
+          "type": "string",
+          "description": "Org owner/admin only: the org member whose documents to operate on instead of your own (e.g. to read or edit their playbook). Omit to operate on your own documents."
+        },
+        "ownerUserId": {
+          "type": "string",
+          "description": "Read the copy of this PATH owned by this person (list-documents rows carry ownerUserId). Path reads only, not document ids. Only among documents you can already read."
+        },
+        "includeHistory": {
+          "type": "boolean",
+          "description": "Also return the last few edit sessions (when, who, origin, word change; no content). Use to see whether and by whom a doc such as an agent spec was recently changed."
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "additionalProperties": false
+    },
+    "list": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Path prefix to list under. Supports path shortcuts — see this tool's description for the full reference."
+        },
+        "targetUserId": {
+          "type": "string",
+          "description": "Org owner/admin only: the org member whose documents to operate on instead of your own (e.g. to read or edit their playbook). Omit to operate on your own documents."
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "additionalProperties": false
+    },
+    "search": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query. Supports Postgres case-insensitive regex (~*). Examples: \"pricing\", \"CRO initiative\", \"kyle.*figma\", \"objection|blocker\"."
+        },
+        "path": {
+          "type": "string",
+          "description": "Optional path prefix or shortcut to scope the search. Omit to search across all docs."
+        },
+        "count_only": {
+          "type": "boolean",
+          "default": false,
+          "description": "When true, return only the total count without result excerpts."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20,
+          "default": 10,
+          "description": "Maximum number of matching documents to return (max 20). Default: 10."
+        },
+        "context_lines": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 5,
+          "description": "Number of surrounding lines to include in each excerpt. Default: 5."
+        },
+        "targetUserId": {
+          "type": "string",
+          "description": "Org owner/admin only: the org member whose documents to operate on instead of your own (e.g. to read or edit their playbook). Omit to operate on your own documents."
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "additionalProperties": false
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

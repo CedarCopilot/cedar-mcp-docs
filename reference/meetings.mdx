@@ -1,0 +1,479 @@
+---
+title: "meetings"
+description: "Parameters, scopes, and response schema for meetings."
+---
+
+Generated from Cedar's external registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+
+## Capability
+
+Meeting operations. ACTIONS: (1) find — locate meetings Cedar has already synced, by title, attendee (email / domain / name), organizer, date range, or a pasted meeting/recording LINK. Works identically for every provider because it reads Cedar's store, not the provider's API — none of which support title search. Use this FIRST whenever the user references a call ("the pricing discussion", "the call with Jane last week") or pastes a Fathom/Circleback link. (2) sync — pull a meeting that never reached Cedar from the connected recorder (Fathom, Circleback, Granola, Gong, …) and attach it to a deal. Providers only accept a days-back window, so narrow with titleContains / participant / url; 0 or 2+ matches syncs nothing and returns candidates to disambiguate with the user. (3) capabilities — what this user's recorder can actually do and how to search it well. Call before an expensive or possibly-impossible hunt (searching what was SAID, a wide date range, or after sync came back empty); not needed for ordinary lookups, since find and sync take the same parameters and return the same answers whichever recorder is connected. Each action takes its params in a same-named object — omit every params object except the one matching your chosen action.
+
+## Operations and scopes
+
+| Action | Baseline scope |
+| --- | --- |
+| `find` | `crm:read` |
+| `sync` | `crm:read` |
+| `capabilities` | `crm:read` |
+
+Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Parameters
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `action` | "find" · "sync" · "capabilities" | Yes | Which operation to perform — pass its matching params object below (action: "find" pairs with find: &#123;...&#125;).  |
+| `find` | object | No |   |
+| `sync` | object | No |   |
+| `capabilities` | object | No |   |
+| `user_request_summary` | string | Yes | One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does.  |
+| `is_new_request` | boolean | Yes | true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread.  |
+
+### find
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `titleContains` | string | No | Match meetings whose title contains this string (case-insensitive).  |
+| `participant` | string | No | Match meetings with this person among the attendees — an email, an email domain ("acme.com"), or a name. Matches the organizer too.  |
+| `url` | string | No | Match by a meeting or recording link the user pasted — e.g. a Fathom call URL or a Circleback recording URL. Substring match against both meeting_url and recording_url, so the bare id from a pasted link works as well as the whole URL.  |
+| `conversationId` | string | No | Only meetings already attached to this deal. format: "uuid" |
+| `dateFrom` | string | No | ISO 8601 — meetings at or after this time.  |
+| `dateTo` | string | No | ISO 8601 — meetings at or before this time.  |
+| `hasTranscript` | boolean | No | When true, only meetings whose transcript actually made it into Cedar.  |
+| `limit` | number | No | Maximum results. default: 20; minimum: 1; maximum: 50 |
+
+### sync
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `conversationId` | string | No | The EXISTING Cedar deal to attach the meeting to. Defaults to the conversation currently in context — pass it explicitly when the user means a different deal. format: "uuid" |
+| `externalId` | string | No | The provider's own meeting id, if you already have it from a previous call.  |
+| `titleContains` | string | No | Narrow the provider window to meetings whose title contains this.  |
+| `participant` | string | No | Narrow to meetings with this attendee — email, email domain, or name.  |
+| `url` | string | No | Narrow by a pasted meeting/recording link (substring match).  |
+| `organizer` | string | No | Narrow to meetings this person organized/hosted (email or name).  |
+| `recordedBy` | string&#91;&#93; | No | Narrow to meetings recorded by these people. NOTE: who hit record, which is not the same as who attended — use `participant` for attendance.  |
+| `teams` | string&#91;&#93; | No | The provider's own team grouping, where it has one. NOT APPLIED by any recorder today — passing it makes this tool return candidates to confirm instead of attaching.  |
+| `meetingType` | string | No | The provider's own meeting-type taxonomy, where it has one. NOT APPLIED by any recorder today — passing it makes this tool return candidates to confirm instead of attaching. Prefer `titleContains` if the type is in the title.  |
+| `daysBack` | integer | No | How far back to ask the provider for. This is the ONLY window most providers accept, so keep it as tight as the user's description allows. default: 30; minimum: 1; maximum: 365 |
+| `providerId` | string | No | Force a specific provider. Omit to use the user's connected one.  |
+
+### capabilities
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `providerId` | string | No | Ask about a specific recorder. Omit to describe the user's own connected one.  |
+
+## Full input schema
+
+[Download the input schema](/reference/schemas/meetings.input.json). Nested objects, variants, and constraints are preserved in full. Runtime refinements and ownership checks still apply.
+
+<Accordion title="Input JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "find",
+        "sync",
+        "capabilities"
+      ],
+      "description": "Which operation to perform — pass its matching params object below (action: \"find\" pairs with find: {...})."
+    },
+    "find": {
+      "type": "object",
+      "properties": {
+        "titleContains": {
+          "type": "string",
+          "description": "Match meetings whose title contains this string (case-insensitive)."
+        },
+        "participant": {
+          "type": "string",
+          "description": "Match meetings with this person among the attendees — an email, an email domain (\"acme.com\"), or a name. Matches the organizer too."
+        },
+        "url": {
+          "type": "string",
+          "description": "Match by a meeting or recording link the user pasted — e.g. a Fathom call URL or a Circleback recording URL. Substring match against both meeting_url and recording_url, so the bare id from a pasted link works as well as the whole URL."
+        },
+        "conversationId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Only meetings already attached to this deal."
+        },
+        "dateFrom": {
+          "type": "string",
+          "description": "ISO 8601 — meetings at or after this time."
+        },
+        "dateTo": {
+          "type": "string",
+          "description": "ISO 8601 — meetings at or before this time."
+        },
+        "hasTranscript": {
+          "type": "boolean",
+          "description": "When true, only meetings whose transcript actually made it into Cedar."
+        },
+        "limit": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 50,
+          "default": 20,
+          "description": "Maximum results."
+        }
+      },
+      "additionalProperties": false
+    },
+    "sync": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "The EXISTING Cedar deal to attach the meeting to. Defaults to the conversation currently in context — pass it explicitly when the user means a different deal."
+        },
+        "externalId": {
+          "type": "string",
+          "description": "The provider's own meeting id, if you already have it from a previous call."
+        },
+        "titleContains": {
+          "type": "string",
+          "description": "Narrow the provider window to meetings whose title contains this."
+        },
+        "participant": {
+          "type": "string",
+          "description": "Narrow to meetings with this attendee — email, email domain, or name."
+        },
+        "url": {
+          "type": "string",
+          "description": "Narrow by a pasted meeting/recording link (substring match)."
+        },
+        "organizer": {
+          "type": "string",
+          "description": "Narrow to meetings this person organized/hosted (email or name)."
+        },
+        "recordedBy": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Narrow to meetings recorded by these people. NOTE: who hit record, which is not the same as who attended — use `participant` for attendance."
+        },
+        "teams": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The provider's own team grouping, where it has one. NOT APPLIED by any recorder today — passing it makes this tool return candidates to confirm instead of attaching."
+        },
+        "meetingType": {
+          "type": "string",
+          "description": "The provider's own meeting-type taxonomy, where it has one. NOT APPLIED by any recorder today — passing it makes this tool return candidates to confirm instead of attaching. Prefer `titleContains` if the type is in the title."
+        },
+        "daysBack": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 365,
+          "default": 30,
+          "description": "How far back to ask the provider for. This is the ONLY window most providers accept, so keep it as tight as the user's description allows."
+        },
+        "providerId": {
+          "type": "string",
+          "description": "Force a specific provider. Omit to use the user's connected one."
+        }
+      },
+      "additionalProperties": false
+    },
+    "capabilities": {
+      "type": "object",
+      "properties": {
+        "providerId": {
+          "type": "string",
+          "description": "Ask about a specific recorder. Omit to describe the user's own connected one."
+        }
+      },
+      "additionalProperties": false
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+## Response
+
+Inspect `isError` on the MCP result and `success` / `errorMessage` in the action result. Optional response branches are populated only for the relevant action. Some results include additional provider or operation-specific data.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `success` | boolean | Yes |   |
+| `errorMessage` | string | No |   |
+| `find` | object | No |   |
+| `sync` | object | No |   |
+| `capabilities` | object | No |   |
+
+<Accordion title="Output JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "find": {
+      "type": "object",
+      "properties": {
+        "meetings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "eventId": {
+                "type": "string"
+              },
+              "conversationId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "title": {
+                "type": "string"
+              },
+              "meetingTime": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "durationMinutes": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "organizerEmail": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "participants": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "meetingUrl": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "recordingUrl": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "meetingProvider": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "hasTranscription": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "eventId",
+              "conversationId",
+              "title",
+              "meetingTime",
+              "durationMinutes",
+              "organizerEmail",
+              "participants",
+              "meetingUrl",
+              "recordingUrl",
+              "meetingProvider",
+              "hasTranscription"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "total": {
+          "type": "number"
+        },
+        "provider": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "canList": {
+              "type": "boolean"
+            },
+            "guidance": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "canList",
+            "guidance"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "sync": {
+      "type": "object",
+      "properties": {
+        "synced": {
+          "type": "boolean"
+        },
+        "fetched": {
+          "type": "number"
+        },
+        "pushedDown": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "eventId": {
+          "type": "string"
+        },
+        "conversationId": {
+          "type": "string"
+        },
+        "providerId": {
+          "type": "string"
+        },
+        "alreadyInCedar": {
+          "type": "boolean"
+        },
+        "providerBasis": {
+          "type": "string",
+          "enum": [
+            "explicit",
+            "recent-meetings",
+            "connection",
+            "none"
+          ]
+        },
+        "guidance": {
+          "type": "string"
+        },
+        "canList": {
+          "type": "boolean"
+        },
+        "transcriptStored": {
+          "type": "boolean"
+        },
+        "candidates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "externalId": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "meetingTime": {
+                "type": "string"
+              },
+              "organizerEmail": {
+                "type": "string"
+              },
+              "participants": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "meetingUrl": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "externalId"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "capabilities": {
+      "type": "object",
+      "properties": {
+        "providerId": {
+          "type": "string"
+        },
+        "connected": {
+          "type": "boolean"
+        },
+        "canList": {
+          "type": "boolean"
+        },
+        "serverSide": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "guidance": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+[Download the output schema](/reference/schemas/meetings.output.json).

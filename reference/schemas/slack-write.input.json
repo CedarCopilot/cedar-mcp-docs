@@ -1,0 +1,52 @@
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "sync-thread"
+      ],
+      "description": "Which Slack write operation to perform — currently only \"sync-thread\" (pairs with syncThread: {...})."
+    },
+    "syncThread": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "The EXISTING Cedar deal to attach the Slack thread to."
+        },
+        "channelId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Slack channel id (e.g. \"C0123ABC\") — from a search-live match."
+        },
+        "threadTs": {
+          "type": "string",
+          "description": "Thread root ts to pull (e.g. \"1700000000.123456\"). Omit to pull the channel's recent messages."
+        }
+      },
+      "required": [
+        "conversationId",
+        "channelId"
+      ],
+      "additionalProperties": false,
+      "description": "Pull a specific Slack thread from the connected user's LIVE Slack into an existing deal, where it's stored and attached to the conversation timeline. Get channelId/threadTs from slack-read's search-live first. This INGESTS + ATTACHES only — it does not search."
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

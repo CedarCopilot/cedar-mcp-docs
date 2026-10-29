@@ -1,0 +1,36 @@
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "list",
+        "get"
+      ],
+      "description": "list = the org's whole taxonomy catalog (one compact line of shape per field); get = one field in full, including its extraction prompt, scoring rubrics and payload keys."
+    },
+    "fieldId": {
+      "type": "string",
+      "description": "Required for action \"get\" — the field id from `list`, e.g. \"objection.raised\"."
+    },
+    "aopId": {
+      "type": "string",
+      "description": "Optional: restrict to one org playbook (AOP) when the org runs more than one taxonomy set. Omit for all of them — most orgs have exactly one."
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

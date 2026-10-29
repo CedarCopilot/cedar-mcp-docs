@@ -1,0 +1,160 @@
+{
+  "type": "object",
+  "properties": {
+    "channel": {
+      "type": "string",
+      "enum": [
+        "email",
+        "linkedin",
+        "slack"
+      ]
+    },
+    "sendAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Future ISO timestamp with timezone offset."
+    },
+    "body": {
+      "type": "string",
+      "minLength": 1,
+      "description": "HTML for email; plain text for LinkedIn or Slack."
+    },
+    "email": {
+      "type": "object",
+      "properties": {
+        "connectionId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Your connected Gmail/Outlook account ID."
+        },
+        "draftId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Saved provider draft ID. Save the matching body and recipients with draft-comms first; never use a proposed or temporary draft ID."
+        },
+        "to": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "email"
+          },
+          "minItems": 1
+        },
+        "cc": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "email"
+          }
+        },
+        "bcc": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "email"
+          }
+        },
+        "subject": {
+          "type": "string"
+        },
+        "threadId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "connectionId",
+        "draftId",
+        "to",
+        "subject"
+      ],
+      "additionalProperties": false
+    },
+    "linkedin": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "unipileAccountId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "chatId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "attendeeProviderId": {
+              "not": {}
+            }
+          },
+          "required": [
+            "unipileAccountId",
+            "chatId"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "unipileAccountId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "attendeeProviderId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "chatId": {
+              "not": {}
+            }
+          },
+          "required": [
+            "unipileAccountId",
+            "attendeeProviderId"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "slack": {
+      "type": "object",
+      "properties": {
+        "workspaceId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "channelId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "threadTs": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspaceId",
+        "channelId"
+      ],
+      "additionalProperties": false
+    },
+    "recipientName": {
+      "type": "string"
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "channel",
+    "sendAt",
+    "body",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

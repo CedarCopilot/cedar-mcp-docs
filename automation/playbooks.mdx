@@ -1,0 +1,48 @@
+---
+title: "Playbooks and triggers"
+description: "Configure persistent Cedar automation through the documented configuration and document tools."
+---
+
+A playbook (AOP, or Agent Operating Procedure) describes which work Cedar performs, which agents it uses, and when that work runs. MCP is the control interface; Cedar's workers execute persisted triggers after the MCP chat ends.
+
+## Setup sequence
+
+1. Load `cedar-configuration` and the relevant authoring instructions returned by `load-skill`.
+2. Read the existing playbook, agent documents, resources, and connection settings.
+3. Prepare the agent instructions and target trigger in the established document format.
+4. Write the required documents through `document-write`; use `aop-write` for supported AOP creation/routing changes.
+5. Register an external source with `connection-write` when a webhook/channel trigger needs one.
+6. Read back the saved configuration and inspect a deliberate test run.
+
+Document paths and templates come from the loaded skill/account context. Do not guess a playbook path or overwrite a whole playbook to add one rule.
+
+## Trigger vocabulary
+
+| Trigger | Fires on |
+| --- | --- |
+| `any` | Supported deal events; signals require explicit opt-in |
+| `email` | Inbound or outbound email |
+| `meeting` | A meeting after its transcript lands |
+| `slack` | A message in a linked Slack channel |
+| `linkedin` | Counterpart LinkedIn messages; the user's own sends alone do not fire it |
+| `linkedin_connection` | Someone accepting a connection request the user sent |
+| `external_crm` | A change pulled from the connected CRM |
+| `signal` | Actionable watcher or qualified native signal evidence |
+| `field-change` | A Cedar field taking the configured value |
+| `cron` | A schedule with an explicit timezone |
+| `before-meeting` | A configured lead time before a known calendar event |
+| `webhook` | A registered HTTP POST or Slack-channel source |
+
+The exact name for CRM sync is `external_crm`, not `crm-sync`. A trigger unknown to the runtime can look valid as text but never fire.
+
+## HTTP webhooks
+
+`manage_playbook_webhook` supports create/list/enable/disable/test/delete. An HTTP registration returns a tokenized POST URL. A matching webhook trigger references the registration ID. The payload becomes event context; it is not inherently an instruction to the agent.
+
+The HTTP path enqueues work and returns an accepted response. Completion requires inspecting the execution. The backend supports optional HMAC signature verification with a five-minute timestamp window when a signing secret is configured; do not assume every tokenized URL requires a signature by default.
+
+## Background work versus sending
+
+Use triggers for research, qualification, CRM updates, drafts, review tasks, and user notifications appropriate to the configured workflow. Background agents must not initiate customer outbound sends or schedules. Human-directed chat or an external MCP client handles explicitly authorized sends.
+
+`debug test-run` suppresses sends by default, but can still write to Cedar and connected systems. It is not a database/CRM dry run. [Diagnostics](/modules/diagnostics).

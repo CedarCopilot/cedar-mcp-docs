@@ -1,0 +1,100 @@
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "result": {
+      "type": "string"
+    },
+    "proposed": {
+      "type": "boolean"
+    },
+    "reconciliation": {
+      "type": "object",
+      "properties": {
+        "renamed": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "string"
+              },
+              "oldLabel": {
+                "type": "string"
+              },
+              "newLabel": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "value"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "removed": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "affectedConversationCount": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "value",
+              "affectedConversationCount"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "added": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "value"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "renamed",
+        "removed",
+        "added"
+      ],
+      "additionalProperties": false
+    },
+    "allowedValues": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

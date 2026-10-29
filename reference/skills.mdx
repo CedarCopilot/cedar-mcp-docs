@@ -1,0 +1,35 @@
+---
+title: "Skill-loading tools"
+description: "Load per-account operating instructions and gated deal-intelligence guidance."
+---
+
+## load-skill
+
+Registered for authenticated sessions. Call with no arguments to obtain the available skill catalog; call with `name` for the full instructions. `resource` selects an optional sub-resource.
+
+```json
+{ "name": "cedar-configuration" }
+```
+
+| Parameter | Type | Required | Meaning |
+| --- | --- | --- | --- |
+| `name` | string | No | Skill from the returned catalog; omitted means list catalog |
+| `resource` | string | No | A named resource within that skill |
+
+Instructions are assembled in the authenticated account context. Read them fully before executing their workflow. If the client saves a long response to a file, reading only its summary does not load the full instructions.
+
+Useful domains include configuration, conversations, tasks, documents, tables, drafting, calendar, research, notifications, and SQL. Use the returned catalog rather than assuming every skill exists for every account.
+
+Some skill text still uses older granular tool names. Map the intent to the canonical family/action returned by `tools/list`; do not invent an unavailable tool. For example, document operations use `document-read` / `document-write`, and CRM operations use `conversation-read` / `conversation-write`. External clients use their own subagent and web capabilities where Cedar exposes no equivalent.
+
+The server does not publish MCP resources or prompts. Skill loading is its intentional reference mechanism.
+
+## load-brain-skills
+
+Registered only with `brain:read` and the Cedar Brain feature gate. It uses the same optional `name` and `resource` argument shape and serves the gated `deal-intelligence-analysis` and `analysis-decomposition` skills.
+
+Use it for supported deep pipeline analysis, cross-deal patterns, coaching from evidence, and objection/competitor analysis. Access to an ordinary conversation does not imply access to the gated Brain skill catalog.
+
+## Staff support tool
+
+Cedar staff can additionally receive `cedar-staff-debug`, which manages an authorized support acting session. It is not part of the customer tool surface and is not needed for a customer MCP integration.

@@ -1,0 +1,48 @@
+---
+title: "Email, drafting, and tracking"
+description: "Read mail, prepare drafts, and send through the reviewed draft lifecycle."
+---
+
+## Mail reads
+
+`mail` provides `find`, `list-sent`, `search-live`, `read-thread`, and `fetch-attachments`. Distinguish Cedar's stored context from the connected mailbox's live results. Search providers and query syntax can differ; use the loaded skills and returned capability/error information.
+
+`conversation-write sync-gmail-thread` brings a missing Gmail thread into an existing authorized deal. Ingesting a thread does not send a response. `email-tracking list/get` reads classified engagement evidence; it does not turn on tracking or send mail.
+
+## Draft communications
+
+`draft-comms` prepares email, Slack, or LinkedIn content and can show a saved email draft. Draft creation can return a proposal depending on the surface. Use a real saved provider draft ID when moving into a send operation; a temporary/proposed identifier is not sendable.
+
+## Immediate email send
+
+`send-email` exposes a three-step lifecycle:
+
+1. Read the saved draft and verify sender, recipients, content, and the user's explicit send request.
+2. Call `prepare` with the real `draftId` to obtain the review snapshot and `approvalHash`.
+3. Call `send` with that draft and hash. If copy, sender, recipients, or live-thread state changed, delivery is held for fresh review.
+
+```json
+{ "action": "prepare", "draftId": "saved_provider_draft_id" }
+```
+
+```json
+{
+  "action": "send",
+  "draftId": "saved_provider_draft_id",
+  "approvalHash": "0000000000000000000000000000000000000000000000000000000000000000"
+}
+```
+
+The zero-filled hash above is a placeholder; use the actual hash returned by `prepare`.
+
+`status` reads the send journal for the same draft. Unknown or in-progress outcomes need reconciliation, not a newly created draft or blind resend. Cedar applies mailbox ownership checks and its duplicate-send lock. The tool requires `email:send` even for this family's review/status operations.
+
+## Schedule email
+
+`schedule-send` with `channel: "email"` requires a future timestamp, the saved provider draft, connection ID, subject, recipients, and matching body. The service checks that the saved draft agrees with the requested message. A scheduled send is real delivery authorization, not another kind of draft.
+
+## Interpret engagement carefully
+
+Likely-human opens/clicks and raw events are separate counts. Proxies, automated image loads, privacy services, forwarding, and sender views limit attribution. A tracked recipient address is intended-recipient information, not proof that this person read the email. Use engagement as one input to a review rather than proof of buying intent.
+
+[Mail reference](/reference/mail) · [Draft reference](/reference/draft-comms) · [Email send reference](/reference/send-email) · [Tracking reference](/reference/email-tracking)

@@ -1,0 +1,187 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "Cedar MCP",
+  "description": "Build GTM workflows with Cedar: LinkedIn, signals, Slack, email, CRM, and automation.",
+  "colors": {
+    "primary": "#34785A",
+    "light": "#4C9873",
+    "dark": "#276246"
+  },
+  "favicon": "/assets/favicon.ico",
+  "logo": {
+    "light": "/assets/logo-light.png",
+    "dark": "/assets/logo-dark.png"
+  },
+  "navbar": {
+    "primary": {
+      "type": "button",
+      "label": "Open Cedar",
+      "href": "https://app.cedarcopilot.com"
+    }
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Guides",
+        "groups": [
+          {
+            "group": "Get started",
+            "pages": [
+              "index",
+              "getting-started/quickstart",
+              "getting-started/calling-tools",
+              "getting-started/permissions",
+              "getting-started/capability-boundaries"
+            ]
+          },
+          {
+            "group": "LinkedIn",
+            "pages": [
+              "linkedin/overview",
+              "linkedin/prospecting",
+              "linkedin/messaging",
+              "linkedin/limits"
+            ]
+          },
+          {
+            "group": "Signals",
+            "pages": [
+              "signals/overview",
+              "signals/watchers",
+              "signals/website",
+              "signals/internal"
+            ]
+          },
+          {
+            "group": "Slack",
+            "pages": [
+              "slack/overview",
+              "slack/watch-channels",
+              "slack/notifications"
+            ]
+          },
+          {
+            "group": "Automation",
+            "pages": [
+              "automation/queueing",
+              "automation/playbooks"
+            ]
+          },
+          {
+            "group": "Workspace modules",
+            "pages": [
+              "modules/crm",
+              "modules/email",
+              "modules/tasks-calendar",
+              "modules/documents-tables",
+              "modules/research",
+              "modules/configuration",
+              "modules/billing",
+              "modules/diagnostics"
+            ]
+          },
+          {
+            "group": "GTM recipes",
+            "pages": [
+              "recipes/gtm-engineer",
+              "recipes/website-to-outreach"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Tool reference",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "reference/index",
+              "reference/skills"
+            ]
+          },
+          {
+            "group": "LinkedIn",
+            "pages": [
+              "reference/linkedin-read",
+              "reference/linkedin-write"
+            ]
+          },
+          {
+            "group": "Signals",
+            "pages": [
+              "reference/signals-read",
+              "reference/signals-write"
+            ]
+          },
+          {
+            "group": "Slack and notifications",
+            "pages": [
+              "reference/slack-read",
+              "reference/slack-write",
+              "reference/notify"
+            ]
+          },
+          {
+            "group": "Email and scheduling",
+            "pages": [
+              "reference/mail",
+              "reference/email-tracking",
+              "reference/draft-comms",
+              "reference/send-email",
+              "reference/schedule-send"
+            ]
+          },
+          {
+            "group": "CRM, meetings and tasks",
+            "pages": [
+              "reference/conversation-read",
+              "reference/conversation-write",
+              "reference/conversation-analytics",
+              "reference/run-sql",
+              "reference/taxonomy-fields",
+              "reference/meetings",
+              "reference/calendar",
+              "reference/task"
+            ]
+          },
+          {
+            "group": "Documents and research",
+            "pages": [
+              "reference/document-read",
+              "reference/document-write",
+              "reference/table",
+              "reference/research",
+              "reference/ui-config"
+            ]
+          },
+          {
+            "group": "Configuration",
+            "pages": [
+              "reference/config-read",
+              "reference/config-write",
+              "reference/connection-write",
+              "reference/aop-write",
+              "reference/workspace-write",
+              "reference/systems-write",
+              "reference/data-settings",
+              "reference/config-propagate"
+            ]
+          },
+          {
+            "group": "Billing and diagnostics",
+            "pages": [
+              "reference/billing-read",
+              "reference/billing-write",
+              "reference/usage-observations-read",
+              "reference/usage-observations-retry",
+              "reference/billing-admin",
+              "reference/debug",
+              "reference/send-user-feedback"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

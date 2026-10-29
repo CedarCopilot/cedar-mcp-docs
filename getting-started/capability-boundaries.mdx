@@ -1,0 +1,28 @@
+---
+title: "Capability boundaries"
+description: "Know what the external MCP actually exposes."
+---
+
+| Capability | Availability in this source snapshot |
+| --- | --- |
+| LinkedIn search, profile reads, network/engagement reads, DM/invite/InMail sends | External MCP; connected seat, scope and provider restrictions apply |
+| LinkedIn scheduled DMs | External MCP via `schedule-send`; Cedar queue and DM governor apply |
+| Automatic queuing of every immediate LinkedIn send | Not implemented by the immediate-send tools |
+| HeyReach campaign creation, sender rotation, or campaign control | Not registered on external MCP; older design docs describe an adapter plan |
+| Person/company watchers and discovery searches | External MCP via signals tools; provider, identity, billing and feature gates apply |
+| Website visitor ingestion | Separate Cedar HTTP input and playbook webhook surfaces; requires an external visitor provider or event producer |
+| Arbitrary website page-diff monitor | No dedicated external MCP action; use an external fetch/diff scheduler and Cedar actions |
+| Live Slack reads and filtered channel triggers | External MCP reads plus connection/playbook configuration |
+| Slack notifications | `notify`; real delivery with channel preferences and availability checks |
+| Boards and graph authoring | Not externally exposed by this registry |
+| Creating and managing outbound flow blocks | Cedar app / separate API; no external MCP family |
+| General-purpose code executor or server-side subagent spawn | Not exposed; use your MCP client's own execution/delegation facilities |
+| Web search and fetch | Research schema includes the actions, but their scope is `in-app`; external callers use their own web tools |
+| Table fill | External mode returns row briefs for the calling client to execute with its own permissions |
+| Read raw integration credentials | Excluded from external MCP |
+
+## Discover before using
+
+Use `tools/list` for current registration, `load-skill` for workflow instructions, `signals-read capabilities` for watcher availability, `research capabilities` for enrichment schemas, `meetings capabilities` for recorder support, and `conversation-analytics describe-metrics` for metric definitions.
+
+The public reference includes mixed families containing restricted operations so that an advertised action is never mistaken for permission to use it. There is no claim that one customer will see all 40 families.

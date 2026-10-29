@@ -1,0 +1,2050 @@
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "internal": {},
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": {}
+    },
+    "counts": {
+      "type": "object",
+      "properties": {
+        "foundCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "newCount": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "foundCount",
+        "newCount"
+      ],
+      "additionalProperties": false
+    },
+    "inventory": {
+      "type": "object",
+      "properties": {
+        "totals": {
+          "type": "object",
+          "properties": {
+            "watchCount": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "desiredActiveWatchCount": {
+              "$ref": "#/properties/inventory/properties/totals/properties/watchCount"
+            },
+            "desiredActivePersonCount": {
+              "$ref": "#/properties/inventory/properties/totals/properties/watchCount"
+            },
+            "desiredActivePersonDiscoveryWatchCount": {
+              "$ref": "#/properties/inventory/properties/totals/properties/watchCount"
+            }
+          },
+          "required": [
+            "watchCount",
+            "desiredActiveWatchCount",
+            "desiredActivePersonCount",
+            "desiredActivePersonDiscoveryWatchCount"
+          ],
+          "additionalProperties": false
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "watchId": {
+                "type": "string"
+              },
+              "conversationId": {
+                "type": "string"
+              },
+              "ownerUserId": {
+                "type": "string"
+              },
+              "organizationId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "accountId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "generation": {
+                "$ref": "#/properties/inventory/properties/totals/properties/watchCount"
+              },
+              "desiredState": {
+                "type": "string",
+                "enum": [
+                  "active",
+                  "paused",
+                  "cancelled"
+                ]
+              },
+              "observedState": {
+                "type": "string",
+                "enum": [
+                  "provisioning",
+                  "active",
+                  "partial",
+                  "error",
+                  "paused",
+                  "cancelled"
+                ]
+              },
+              "reasonCode": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "targetCount": {
+                "$ref": "#/properties/inventory/properties/totals/properties/watchCount"
+              },
+              "personCount": {
+                "$ref": "#/properties/inventory/properties/totals/properties/watchCount"
+              },
+              "activePersonCount": {
+                "$ref": "#/properties/inventory/properties/totals/properties/watchCount"
+              },
+              "personDiscoveryWatchCount": {
+                "$ref": "#/properties/inventory/properties/totals/properties/watchCount"
+              },
+              "providerBindings": {
+                "type": "object",
+                "properties": {
+                  "count": {
+                    "$ref": "#/properties/inventory/properties/totals/properties/watchCount"
+                  },
+                  "currentCount": {
+                    "$ref": "#/properties/inventory/properties/totals/properties/watchCount"
+                  },
+                  "states": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "$ref": "#/properties/inventory/properties/totals/properties/watchCount"
+                    }
+                  },
+                  "currentStates": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "$ref": "#/properties/inventory/properties/totals/properties/watchCount"
+                    }
+                  }
+                },
+                "required": [
+                  "count",
+                  "currentCount",
+                  "states",
+                  "currentStates"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "watchId",
+              "conversationId",
+              "ownerUserId",
+              "organizationId",
+              "accountId",
+              "generation",
+              "desiredState",
+              "observedState",
+              "reasonCode",
+              "targetCount",
+              "personCount",
+              "activePersonCount",
+              "personDiscoveryWatchCount",
+              "providerBindings"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "nextCursor": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "totals",
+        "items",
+        "nextCursor"
+      ],
+      "additionalProperties": false
+    },
+    "continuation": {
+      "type": "object",
+      "properties": {
+        "required": {
+          "type": "boolean",
+          "const": true
+        },
+        "instruction": {
+          "type": "string"
+        },
+        "targets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "recordId": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "recordId",
+              "name"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "required",
+        "instruction",
+        "targets"
+      ],
+      "additionalProperties": false
+    },
+    "actionExecution": {
+      "type": "object",
+      "properties": {
+        "actionId": {
+          "type": "string"
+        },
+        "executionId": {
+          "type": "string"
+        },
+        "conversationId": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "actionId",
+        "executionId",
+        "conversationId",
+        "state"
+      ],
+      "additionalProperties": false
+    },
+    "signals": {
+      "type": "object",
+      "properties": {
+        "canManage": {
+          "type": "boolean"
+        },
+        "conversationId": {
+          "type": "string"
+        },
+        "watchId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "version": {
+          "type": "integer"
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "off",
+            "setting_up",
+            "active",
+            "partial",
+            "needs_attention",
+            "paused",
+            "cancelled"
+          ]
+        },
+        "provider": {
+          "type": "string",
+          "const": "crustdata"
+        },
+        "providers": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "crustdata",
+              "fiber"
+            ]
+          }
+        },
+        "fiberAvailable": {
+          "type": "boolean"
+        },
+        "fiberCoverage": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "state": {
+                "type": "string",
+                "enum": [
+                  "active",
+                  "pending",
+                  "failed",
+                  "paused",
+                  "cancelled"
+                ]
+              },
+              "reason": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "nextRefreshAt": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "state",
+              "reason",
+              "nextRefreshAt"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "settings": {
+          "type": "object",
+          "properties": {
+            "everyHours": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 168
+            },
+            "personRefreshFrequencyDays": {
+              "type": "number",
+              "enum": [
+                1,
+                3,
+                7,
+                14,
+                30
+              ]
+            },
+            "maxResultsPerRun": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            },
+            "additionalWatches": {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100,
+                        "pattern": "^[a-zA-Z0-9_-]+$"
+                      },
+                      "label": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 160
+                      },
+                      "enabled": {
+                        "type": "boolean",
+                        "default": true
+                      },
+                      "fields": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 200
+                        },
+                        "minItems": 1,
+                        "maxItems": 30
+                      },
+                      "kind": {
+                        "type": "string",
+                        "const": "discovery"
+                      },
+                      "dataset": {
+                        "type": "string",
+                        "enum": [
+                          "person",
+                          "company",
+                          "job",
+                          "social_post"
+                        ]
+                      },
+                      "filters": {
+                        "anyOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "field": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 200,
+                                "pattern": "^[a-zA-Z_][a-zA-Z0-9_.]*$"
+                              },
+                              "type": {
+                                "type": "string",
+                                "enum": [
+                                  "=",
+                                  "!=",
+                                  ">",
+                                  "<",
+                                  "=>",
+                                  "=<",
+                                  "in",
+                                  "not_in",
+                                  "(.)",
+                                  "(!)",
+                                  "[.]",
+                                  "not_contains"
+                                ]
+                              },
+                              "value": {
+                                "anyOf": [
+                                  {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 2000
+                                      },
+                                      {
+                                        "type": "number"
+                                      },
+                                      {
+                                        "type": "boolean"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "type": "array",
+                                    "items": {
+                                      "$ref": "#/properties/signals/properties/settings/properties/additionalWatches/items/anyOf/0/properties/filters/anyOf/0/properties/value/anyOf/0"
+                                    },
+                                    "maxItems": 100
+                                  }
+                                ]
+                              }
+                            },
+                            "required": [
+                              "field",
+                              "type",
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "op": {
+                                "type": "string",
+                                "enum": [
+                                  "and",
+                                  "or"
+                                ]
+                              },
+                              "conditions": {
+                                "type": "array",
+                                "items": {
+                                  "anyOf": [
+                                    {
+                                      "$ref": "#/properties/signals/properties/settings/properties/additionalWatches/items/anyOf/0/properties/filters/anyOf/0"
+                                    },
+                                    {
+                                      "type": "object",
+                                      "properties": {
+                                        "op": {
+                                          "type": "string",
+                                          "enum": [
+                                            "and",
+                                            "or"
+                                          ]
+                                        },
+                                        "conditions": {
+                                          "type": "array",
+                                          "items": {
+                                            "anyOf": [
+                                              {
+                                                "$ref": "#/properties/signals/properties/settings/properties/additionalWatches/items/anyOf/0/properties/filters/anyOf/0"
+                                              },
+                                              {
+                                                "type": "object",
+                                                "properties": {
+                                                  "op": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                      "and",
+                                                      "or"
+                                                    ]
+                                                  },
+                                                  "conditions": {
+                                                    "type": "array",
+                                                    "items": {
+                                                      "anyOf": [
+                                                        {
+                                                          "$ref": "#/properties/signals/properties/settings/properties/additionalWatches/items/anyOf/0/properties/filters/anyOf/0"
+                                                        },
+                                                        {
+                                                          "type": "object",
+                                                          "properties": {
+                                                            "op": {
+                                                              "type": "string",
+                                                              "enum": [
+                                                                "and",
+                                                                "or"
+                                                              ]
+                                                            },
+                                                            "conditions": {
+                                                              "type": "array",
+                                                              "items": {
+                                                                "$ref": "#/properties/signals/properties/settings/properties/additionalWatches/items/anyOf/0/properties/filters/anyOf/0"
+                                                              },
+                                                              "minItems": 1,
+                                                              "maxItems": 25
+                                                            }
+                                                          },
+                                                          "required": [
+                                                            "op",
+                                                            "conditions"
+                                                          ],
+                                                          "additionalProperties": false
+                                                        }
+                                                      ]
+                                                    },
+                                                    "minItems": 1,
+                                                    "maxItems": 25
+                                                  }
+                                                },
+                                                "required": [
+                                                  "op",
+                                                  "conditions"
+                                                ],
+                                                "additionalProperties": false
+                                              }
+                                            ]
+                                          },
+                                          "minItems": 1,
+                                          "maxItems": 25
+                                        }
+                                      },
+                                      "required": [
+                                        "op",
+                                        "conditions"
+                                      ],
+                                      "additionalProperties": false
+                                    }
+                                  ]
+                                },
+                                "minItems": 1,
+                                "maxItems": 25
+                              }
+                            },
+                            "required": [
+                              "op",
+                              "conditions"
+                            ],
+                            "additionalProperties": false
+                          }
+                        ]
+                      },
+                      "subject": {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "person",
+                              "company"
+                            ]
+                          },
+                          "recordId": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 320
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "recordId"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "label",
+                      "kind",
+                      "dataset",
+                      "filters"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "$ref": "#/properties/signals/properties/settings/properties/additionalWatches/items/anyOf/0/properties/id"
+                      },
+                      "label": {
+                        "$ref": "#/properties/signals/properties/settings/properties/additionalWatches/items/anyOf/0/properties/label"
+                      },
+                      "enabled": {
+                        "$ref": "#/properties/signals/properties/settings/properties/additionalWatches/items/anyOf/0/properties/enabled"
+                      },
+                      "fields": {
+                        "$ref": "#/properties/signals/properties/settings/properties/additionalWatches/items/anyOf/0/properties/fields"
+                      },
+                      "kind": {
+                        "type": "string",
+                        "const": "entity"
+                      },
+                      "dataset": {
+                        "type": "string",
+                        "enum": [
+                          "person",
+                          "company"
+                        ]
+                      },
+                      "targetIds": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 320
+                        },
+                        "minItems": 1,
+                        "maxItems": 1000
+                      },
+                      "track": {
+                        "anyOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "field": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 200
+                              },
+                              "type": {
+                                "type": "string",
+                                "enum": [
+                                  "changed",
+                                  "added"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "field",
+                              "type"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "op": {
+                                "type": "string",
+                                "enum": [
+                                  "and",
+                                  "or"
+                                ]
+                              },
+                              "conditions": {
+                                "type": "array",
+                                "items": {
+                                  "anyOf": [
+                                    {
+                                      "$ref": "#/properties/signals/properties/settings/properties/additionalWatches/items/anyOf/1/properties/track/anyOf/0"
+                                    },
+                                    {
+                                      "type": "object",
+                                      "properties": {
+                                        "op": {
+                                          "type": "string",
+                                          "enum": [
+                                            "and",
+                                            "or"
+                                          ]
+                                        },
+                                        "conditions": {
+                                          "type": "array",
+                                          "items": {
+                                            "anyOf": [
+                                              {
+                                                "$ref": "#/properties/signals/properties/settings/properties/additionalWatches/items/anyOf/1/properties/track/anyOf/0"
+                                              },
+                                              {
+                                                "type": "object",
+                                                "properties": {
+                                                  "op": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                      "and",
+                                                      "or"
+                                                    ]
+                                                  },
+                                                  "conditions": {
+                                                    "type": "array",
+                                                    "items": {
+                                                      "$ref": "#/properties/signals/properties/settings/properties/additionalWatches/items/anyOf/1/properties/track/anyOf/0"
+                                                    },
+                                                    "minItems": 1,
+                                                    "maxItems": 15
+                                                  }
+                                                },
+                                                "required": [
+                                                  "op",
+                                                  "conditions"
+                                                ],
+                                                "additionalProperties": false
+                                              }
+                                            ]
+                                          },
+                                          "minItems": 1,
+                                          "maxItems": 15
+                                        }
+                                      },
+                                      "required": [
+                                        "op",
+                                        "conditions"
+                                      ],
+                                      "additionalProperties": false
+                                    }
+                                  ]
+                                },
+                                "minItems": 1,
+                                "maxItems": 15
+                              }
+                            },
+                            "required": [
+                              "op",
+                              "conditions"
+                            ],
+                            "additionalProperties": false
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "label",
+                      "kind",
+                      "dataset",
+                      "targetIds",
+                      "track"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "maxItems": 20
+            },
+            "fiberTrackers": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100,
+                    "pattern": "^[a-zA-Z0-9_-]+$"
+                  },
+                  "subject": {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "person",
+                          "company"
+                        ]
+                      },
+                      "recordId": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 320
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "recordId"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "enabled": {
+                    "type": "boolean",
+                    "default": true
+                  },
+                  "refreshIntervalDays": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 180,
+                    "default": 30
+                  },
+                  "rules": {
+                    "type": "array",
+                    "items": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "lookbackDays": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 90
+                            },
+                            "entityType": {
+                              "type": "string",
+                              "const": "person"
+                            },
+                            "type": {
+                              "type": "string",
+                              "const": "person_got_promoted"
+                            },
+                            "seniorityKeywords": {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 200
+                              },
+                              "minItems": 1,
+                              "maxItems": 50
+                            }
+                          },
+                          "required": [
+                            "entityType",
+                            "type"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "lookbackDays": {
+                              "$ref": "#/properties/signals/properties/settings/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/lookbackDays"
+                            },
+                            "entityType": {
+                              "$ref": "#/properties/signals/properties/settings/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/entityType"
+                            },
+                            "type": {
+                              "type": "string",
+                              "const": "person_got_demoted"
+                            },
+                            "seniorityKeywords": {
+                              "$ref": "#/properties/signals/properties/settings/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/seniorityKeywords"
+                            }
+                          },
+                          "required": [
+                            "entityType",
+                            "type"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "lookbackDays": {
+                              "$ref": "#/properties/signals/properties/settings/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/lookbackDays"
+                            },
+                            "entityType": {
+                              "$ref": "#/properties/signals/properties/settings/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/entityType"
+                            },
+                            "type": {
+                              "type": "string",
+                              "const": "person_posted"
+                            },
+                            "minReactions": {
+                              "type": "integer",
+                              "minimum": 0
+                            }
+                          },
+                          "required": [
+                            "entityType",
+                            "type"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "lookbackDays": {
+                              "$ref": "#/properties/signals/properties/settings/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/lookbackDays"
+                            },
+                            "entityType": {
+                              "type": "string",
+                              "const": "company"
+                            },
+                            "type": {
+                              "type": "string",
+                              "const": "company_posted"
+                            },
+                            "minReactions": {
+                              "type": "integer",
+                              "minimum": 0
+                            }
+                          },
+                          "required": [
+                            "entityType",
+                            "type"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "lookbackDays": {
+                              "$ref": "#/properties/signals/properties/settings/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/lookbackDays"
+                            },
+                            "entityType": {
+                              "$ref": "#/properties/signals/properties/settings/properties/fiberTrackers/items/properties/rules/items/anyOf/3/properties/entityType"
+                            },
+                            "type": {
+                              "type": "string",
+                              "const": "technology_added"
+                            },
+                            "technologies": {
+                              "$ref": "#/properties/signals/properties/settings/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/seniorityKeywords"
+                            }
+                          },
+                          "required": [
+                            "entityType",
+                            "type"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "lookbackDays": {
+                              "$ref": "#/properties/signals/properties/settings/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/lookbackDays"
+                            },
+                            "entityType": {
+                              "$ref": "#/properties/signals/properties/settings/properties/fiberTrackers/items/properties/rules/items/anyOf/3/properties/entityType"
+                            },
+                            "type": {
+                              "type": "string",
+                              "const": "new_office_location"
+                            },
+                            "countries": {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "pattern": "^[A-Z]{3}$"
+                              },
+                              "minItems": 1,
+                              "maxItems": 100
+                            },
+                            "cities": {
+                              "$ref": "#/properties/signals/properties/settings/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/seniorityKeywords"
+                            },
+                            "regions": {
+                              "$ref": "#/properties/signals/properties/settings/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/seniorityKeywords"
+                            },
+                            "states": {
+                              "$ref": "#/properties/signals/properties/settings/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/seniorityKeywords"
+                            }
+                          },
+                          "required": [
+                            "entityType",
+                            "type"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "lookbackDays": {
+                              "$ref": "#/properties/signals/properties/settings/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/lookbackDays"
+                            },
+                            "entityType": {
+                              "$ref": "#/properties/signals/properties/settings/properties/fiberTrackers/items/properties/rules/items/anyOf/3/properties/entityType"
+                            },
+                            "type": {
+                              "type": "string",
+                              "const": "recent_layoffs"
+                            },
+                            "minPeopleAffected": {
+                              "type": "integer",
+                              "exclusiveMinimum": 0
+                            },
+                            "minPercentAffected": {
+                              "type": "number",
+                              "exclusiveMinimum": 0,
+                              "maximum": 100
+                            }
+                          },
+                          "required": [
+                            "entityType",
+                            "type"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "lookbackDays": {
+                              "$ref": "#/properties/signals/properties/settings/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/lookbackDays"
+                            },
+                            "entityType": {
+                              "$ref": "#/properties/signals/properties/settings/properties/fiberTrackers/items/properties/rules/items/anyOf/3/properties/entityType"
+                            },
+                            "type": {
+                              "type": "string",
+                              "const": "department_size_threshold"
+                            },
+                            "department": {
+                              "type": "string",
+                              "description": "Use a value from signals-read capabilities.fiber.jobFunctions."
+                            },
+                            "threshold": {
+                              "type": "integer",
+                              "exclusiveMinimum": 0
+                            },
+                            "direction": {
+                              "type": "string",
+                              "enum": [
+                                "above",
+                                "below"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "entityType",
+                            "type",
+                            "department",
+                            "threshold",
+                            "direction"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "lookbackDays": {
+                              "$ref": "#/properties/signals/properties/settings/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/lookbackDays"
+                            },
+                            "entityType": {
+                              "$ref": "#/properties/signals/properties/settings/properties/fiberTrackers/items/properties/rules/items/anyOf/3/properties/entityType"
+                            },
+                            "type": {
+                              "type": "string",
+                              "const": "recently_hired_with_title"
+                            },
+                            "titleKeywords": {
+                              "$ref": "#/properties/signals/properties/settings/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/seniorityKeywords"
+                            },
+                            "minNewHires": {
+                              "type": "integer",
+                              "exclusiveMinimum": 0
+                            }
+                          },
+                          "required": [
+                            "entityType",
+                            "type",
+                            "titleKeywords"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "lookbackDays": {
+                              "$ref": "#/properties/signals/properties/settings/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/lookbackDays"
+                            },
+                            "entityType": {
+                              "$ref": "#/properties/signals/properties/settings/properties/fiberTrackers/items/properties/rules/items/anyOf/3/properties/entityType"
+                            },
+                            "type": {
+                              "type": "string",
+                              "const": "job_posting_in_function"
+                            },
+                            "jobFunctions": {
+                              "type": "array",
+                              "items": {
+                                "$ref": "#/properties/signals/properties/settings/properties/fiberTrackers/items/properties/rules/items/anyOf/7/properties/department"
+                              },
+                              "minItems": 1,
+                              "maxItems": 40
+                            },
+                            "minPostings": {
+                              "type": "integer",
+                              "exclusiveMinimum": 0
+                            }
+                          },
+                          "required": [
+                            "entityType",
+                            "type",
+                            "jobFunctions"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "lookbackDays": {
+                              "$ref": "#/properties/signals/properties/settings/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/lookbackDays"
+                            },
+                            "entityType": {
+                              "$ref": "#/properties/signals/properties/settings/properties/fiberTrackers/items/properties/rules/items/anyOf/3/properties/entityType"
+                            },
+                            "type": {
+                              "type": "string",
+                              "const": "job_posting_with_keyword"
+                            },
+                            "keywords": {
+                              "$ref": "#/properties/signals/properties/settings/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/seniorityKeywords"
+                            },
+                            "searchFields": {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "enum": [
+                                  "title",
+                                  "description"
+                                ]
+                              },
+                              "minItems": 1,
+                              "maxItems": 2
+                            },
+                            "seniorityLevels": {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "enum": [
+                                  "Internship",
+                                  "Entry level",
+                                  "Associate",
+                                  "Mid-Senior level",
+                                  "Director",
+                                  "Executive"
+                                ]
+                              },
+                              "minItems": 1,
+                              "maxItems": 6
+                            },
+                            "modalities": {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "enum": [
+                                  "On-site",
+                                  "Remote",
+                                  "Hybrid"
+                                ]
+                              },
+                              "minItems": 1,
+                              "maxItems": 3
+                            },
+                            "minPostings": {
+                              "type": "integer",
+                              "exclusiveMinimum": 0
+                            }
+                          },
+                          "required": [
+                            "entityType",
+                            "type",
+                            "keywords"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "lookbackDays": {
+                              "$ref": "#/properties/signals/properties/settings/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/lookbackDays"
+                            },
+                            "entityType": {
+                              "$ref": "#/properties/signals/properties/settings/properties/fiberTrackers/items/properties/rules/items/anyOf/3/properties/entityType"
+                            },
+                            "type": {
+                              "type": "string",
+                              "const": "headcount_growth_percent"
+                            },
+                            "minPercentChange": {
+                              "type": "number",
+                              "exclusiveMinimum": 0,
+                              "maximum": 1000
+                            },
+                            "direction": {
+                              "type": "string",
+                              "enum": [
+                                "grew",
+                                "shrank",
+                                "either"
+                              ]
+                            },
+                            "minStartingHeadcount": {
+                              "type": "integer",
+                              "exclusiveMinimum": 0
+                            }
+                          },
+                          "required": [
+                            "entityType",
+                            "type",
+                            "minPercentChange",
+                            "direction"
+                          ],
+                          "additionalProperties": false
+                        }
+                      ]
+                    },
+                    "minItems": 1,
+                    "maxItems": 25
+                  }
+                },
+                "required": [
+                  "id",
+                  "subject",
+                  "rules"
+                ],
+                "additionalProperties": false
+              },
+              "maxItems": 1001
+            }
+          },
+          "required": [
+            "everyHours",
+            "personRefreshFrequencyDays",
+            "maxResultsPerRun"
+          ],
+          "additionalProperties": false
+        },
+        "availableTargets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "person",
+                  "company"
+                ]
+              },
+              "recordId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 320
+              },
+              "signalTypes": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "email_open",
+                    "title_change",
+                    "job_change",
+                    "headline_change",
+                    "person_location_change",
+                    "education_added",
+                    "skill_added",
+                    "headcount_change",
+                    "funding_change",
+                    "news_added",
+                    "funding_round_change",
+                    "investor_added",
+                    "acquisition_added",
+                    "hiring_change",
+                    "company_name_change",
+                    "certification_added",
+                    "honor_added",
+                    "connection_count_change",
+                    "funding_milestone_added",
+                    "follower_count_change",
+                    "industry_change",
+                    "company_location_change",
+                    "person_updated",
+                    "company_updated",
+                    "person_discovered",
+                    "company_discovered",
+                    "job_post_added",
+                    "social_post_added",
+                    "fiber_signal"
+                  ]
+                },
+                "minItems": 1,
+                "maxItems": 21
+              },
+              "socialProfileUrl": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "imageUrl": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "jobTitle": {
+                "type": "string"
+              },
+              "roles": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "evidenceEventIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "selectionRationale": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "providerIdentifier": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "reason": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "kind",
+              "recordId",
+              "signalTypes",
+              "label",
+              "providerIdentifier"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "selectionContext": {
+          "type": "object",
+          "properties": {
+            "policy": {
+              "type": "string"
+            },
+            "peopleInstructions": {
+              "type": "string"
+            },
+            "source": {
+              "type": "string",
+              "enum": [
+                "deal_people",
+                "customer_participants"
+              ]
+            },
+            "dealName": {
+              "type": "string"
+            },
+            "dealSummary": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "nextSteps": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "companyName": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "companyDescription": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "icpFields": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "value"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "people": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "name": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "title": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "email": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "email"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "contactId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "engagement": {
+                    "type": "string",
+                    "enum": [
+                      "mentioned",
+                      "introduced",
+                      "engaged",
+                      "should_engage"
+                    ]
+                  },
+                  "roles": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "support": {
+                    "type": "string",
+                    "enum": [
+                      "strong_support",
+                      "support",
+                      "neutral",
+                      "opposed",
+                      "unknown"
+                    ]
+                  },
+                  "summary": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "evidence": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "eventId": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "quote": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "required": [
+                        "eventId",
+                        "quote"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "id",
+                  "name",
+                  "engagement",
+                  "roles",
+                  "support",
+                  "summary",
+                  "evidence"
+                ],
+                "additionalProperties": false
+              },
+              "maxItems": 40
+            }
+          },
+          "required": [
+            "policy",
+            "peopleInstructions",
+            "source",
+            "dealName",
+            "dealSummary",
+            "nextSteps",
+            "companyName",
+            "companyDescription",
+            "icpFields",
+            "people"
+          ],
+          "additionalProperties": false
+        },
+        "targets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "$ref": "#/properties/signals/properties/availableTargets/items/properties/kind"
+              },
+              "recordId": {
+                "$ref": "#/properties/signals/properties/availableTargets/items/properties/recordId"
+              },
+              "signalTypes": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/properties/signals/properties/availableTargets/items/properties/signalTypes/items"
+                },
+                "minItems": 1,
+                "maxItems": 21
+              },
+              "socialProfileUrl": {
+                "$ref": "#/properties/signals/properties/availableTargets/items/properties/socialProfileUrl"
+              },
+              "imageUrl": {
+                "$ref": "#/properties/signals/properties/availableTargets/items/properties/imageUrl"
+              },
+              "jobTitle": {
+                "$ref": "#/properties/signals/properties/availableTargets/items/properties/jobTitle"
+              },
+              "roles": {
+                "$ref": "#/properties/signals/properties/availableTargets/items/properties/roles"
+              },
+              "evidenceEventIds": {
+                "$ref": "#/properties/signals/properties/availableTargets/items/properties/evidenceEventIds"
+              },
+              "selectionRationale": {
+                "$ref": "#/properties/signals/properties/availableTargets/items/properties/selectionRationale"
+              },
+              "id": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "providerIdentifier": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "state": {
+                "type": "string",
+                "enum": [
+                  "active",
+                  "pending",
+                  "failed",
+                  "paused",
+                  "cancelled"
+                ]
+              },
+              "reason": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "kind",
+              "recordId",
+              "signalTypes",
+              "id",
+              "label",
+              "providerIdentifier",
+              "state",
+              "reason"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "additionalCoverage": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "state": {
+                "type": "string",
+                "enum": [
+                  "active",
+                  "pending",
+                  "failed",
+                  "paused",
+                  "cancelled"
+                ]
+              },
+              "reason": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "state",
+              "reason"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "isNew": {
+                "type": "boolean"
+              },
+              "type": {
+                "$ref": "#/properties/signals/properties/availableTargets/items/properties/signalTypes/items"
+              },
+              "subjectLabel": {
+                "type": "string"
+              },
+              "providerRule": {
+                "type": "string"
+              },
+              "observedAt": {
+                "type": "string"
+              },
+              "changes": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "field": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "changed",
+                        "added"
+                      ]
+                    },
+                    "before": {
+                      "anyOf": [
+                        {},
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "after": {}
+                  },
+                  "required": [
+                    "field",
+                    "kind"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "analysisState": {
+                "type": "string"
+              },
+              "notificationState": {
+                "type": "string"
+              },
+              "crmEventId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "analysisId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "summary": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "suggestedAction": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "taskId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "action": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "label": {
+                        "type": "string"
+                      },
+                      "state": {
+                        "type": "string"
+                      },
+                      "executionId": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "draftId": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "canExecute": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "label",
+                      "state",
+                      "executionId",
+                      "draftId",
+                      "canExecute"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "subjectLabel",
+              "observedAt",
+              "changes",
+              "analysisState",
+              "notificationState",
+              "crmEventId"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "emailOpens": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "email_open"
+            },
+            "provider": {
+              "type": "string",
+              "const": "cedar"
+            },
+            "events": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "trackingId": {
+                    "type": "string"
+                  },
+                  "subject": {
+                    "type": "string"
+                  },
+                  "toEmails": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "recipientEmail": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "attributionNote": {
+                    "type": "string"
+                  },
+                  "openCount": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "firstOpenedAt": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "lastOpenedAt": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "trackingId",
+                  "subject",
+                  "toEmails",
+                  "recipientEmail",
+                  "attributionNote",
+                  "openCount",
+                  "firstOpenedAt",
+                  "lastOpenedAt"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "nextCursor": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "type",
+            "provider",
+            "events",
+            "nextCursor"
+          ],
+          "additionalProperties": false
+        },
+        "foundCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "newCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "nextCursor": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reasonCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "windowMaximumMicrocredits": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "canManage",
+        "conversationId",
+        "watchId",
+        "version",
+        "state",
+        "provider",
+        "settings",
+        "availableTargets",
+        "targets",
+        "events",
+        "nextCursor",
+        "reasonCode",
+        "windowMaximumMicrocredits"
+      ],
+      "additionalProperties": false
+    },
+    "activation": {
+      "type": "object",
+      "properties": {
+        "canManage": {
+          "$ref": "#/properties/signals/properties/canManage"
+        },
+        "conversationId": {
+          "$ref": "#/properties/signals/properties/conversationId"
+        },
+        "watchId": {
+          "$ref": "#/properties/signals/properties/watchId"
+        },
+        "version": {
+          "$ref": "#/properties/signals/properties/version"
+        },
+        "state": {
+          "$ref": "#/properties/signals/properties/state"
+        },
+        "provider": {
+          "$ref": "#/properties/signals/properties/provider"
+        },
+        "providers": {
+          "$ref": "#/properties/signals/properties/providers"
+        },
+        "fiberAvailable": {
+          "$ref": "#/properties/signals/properties/fiberAvailable"
+        },
+        "fiberCoverage": {
+          "$ref": "#/properties/signals/properties/fiberCoverage"
+        },
+        "settings": {
+          "$ref": "#/properties/signals/properties/settings"
+        },
+        "availableTargets": {
+          "$ref": "#/properties/signals/properties/availableTargets"
+        },
+        "selectionContext": {
+          "$ref": "#/properties/signals/properties/selectionContext"
+        },
+        "targets": {
+          "$ref": "#/properties/signals/properties/targets"
+        },
+        "additionalCoverage": {
+          "$ref": "#/properties/signals/properties/additionalCoverage"
+        },
+        "events": {
+          "$ref": "#/properties/signals/properties/events"
+        },
+        "emailOpens": {
+          "$ref": "#/properties/signals/properties/emailOpens"
+        },
+        "foundCount": {
+          "$ref": "#/properties/signals/properties/foundCount"
+        },
+        "newCount": {
+          "$ref": "#/properties/signals/properties/newCount"
+        },
+        "nextCursor": {
+          "$ref": "#/properties/signals/properties/nextCursor"
+        },
+        "reasonCode": {
+          "$ref": "#/properties/signals/properties/reasonCode"
+        },
+        "windowMaximumMicrocredits": {
+          "$ref": "#/properties/signals/properties/windowMaximumMicrocredits"
+        },
+        "activationId": {
+          "type": "string"
+        },
+        "uiIntent": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "open_signals"
+            },
+            "conversationId": {
+              "type": "string"
+            },
+            "activationId": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "conversationId",
+            "activationId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "canManage",
+        "conversationId",
+        "watchId",
+        "version",
+        "state",
+        "provider",
+        "settings",
+        "availableTargets",
+        "targets",
+        "events",
+        "nextCursor",
+        "reasonCode",
+        "windowMaximumMicrocredits",
+        "activationId",
+        "uiIntent"
+      ],
+      "additionalProperties": false
+    },
+    "errorCode": {
+      "type": "string"
+    },
+    "errorMessage": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

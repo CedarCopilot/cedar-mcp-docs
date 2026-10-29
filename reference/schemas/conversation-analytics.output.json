@@ -1,0 +1,238 @@
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "computeMetric": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string",
+          "enum": [
+            "crm_live",
+            "cedar"
+          ]
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "group": {
+                "type": "string"
+              },
+              "value": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "n": {
+                "type": "number"
+              },
+              "sampleIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "source": {
+                "type": "string",
+                "const": "crm_live"
+              },
+              "currency": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "missingAmountCount": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "knownAmountSubtotal": {
+                "type": "number"
+              },
+              "verifiedAt": {
+                "type": "string"
+              },
+              "crmProvider": {
+                "type": "string"
+              },
+              "amountField": {
+                "type": "string"
+              },
+              "crmOwnerId": {
+                "type": "string"
+              },
+              "visibility": {
+                "type": "string",
+                "const": "connected_crm_permissions"
+              },
+              "reportingWindow": {
+                "type": "object",
+                "properties": {
+                  "from": {
+                    "type": "string"
+                  },
+                  "to": {
+                    "type": "string"
+                  },
+                  "timezone": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "from",
+                  "to",
+                  "timezone"
+                ],
+                "additionalProperties": false
+              },
+              "crmDeals": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "crmUrl": {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    "cedarConversationId": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "stage": {
+                      "type": "string"
+                    },
+                    "closeDate": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "amount": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "currency": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "isClosed": {
+                      "type": "boolean"
+                    },
+                    "isWon": {
+                      "type": "boolean"
+                    },
+                    "updatedAt": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "stage",
+                    "closeDate",
+                    "amount",
+                    "currency",
+                    "isClosed",
+                    "isWon",
+                    "updatedAt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "group",
+              "value",
+              "n",
+              "sampleIds"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "computeMetricBatch": {
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "success": {
+                "type": "boolean"
+              },
+              "errorMessage": {
+                "type": "string"
+              },
+              "source": {
+                "$ref": "#/properties/computeMetric/properties/source"
+              },
+              "window": {
+                "type": "object",
+                "properties": {
+                  "from": {
+                    "type": "string"
+                  },
+                  "to": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "from",
+                  "to"
+                ],
+                "additionalProperties": false
+              },
+              "rows": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/properties/computeMetric/properties/rows/items"
+                }
+              }
+            },
+            "required": [
+              "id",
+              "success"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "describeMetrics": {
+      "type": "object",
+      "additionalProperties": {}
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

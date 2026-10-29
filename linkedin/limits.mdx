@@ -1,0 +1,63 @@
+---
+title: "Limits and HeyReach recommendations"
+description: "Cedar-enforced caps and separate, sourced outreach pacing guidance."
+---
+
+## Cedar's enforced defaults
+
+These are per connected LinkedIn seat, from the current governor implementation. They are application ceilings, not recommended targets or guarantees about LinkedIn restrictions.
+
+| Action | Cedar cap |
+| --- | --- |
+| Native search | 25 per day |
+| Profile views | 64 per day |
+| Connection invitations | 80 per week |
+| Direct messages | 30 per hour **and** 100 per day |
+| InMail | 20 per month |
+| Reactions through the underlying service | 40 per day; no standalone reaction action in this MCP family |
+| Recipient resolution for invites | Separate 80 per week lookup budget |
+| Recipient resolution for DMs | Separate 30/hour and 100/day lookup budgets |
+| Recipient resolution for InMail | Separate 20/month lookup budget |
+
+Cached recipient IDs avoid a live lookup. A new recipient can require both a lookup and send allowance. Each applicable window must permit the action. Provider throttles and account health can block an action even below these numbers.
+
+Buckets use the service runtime's local calendar boundaries; weeks start Monday. Do not promise a recipient-local or Pacific reset time. There is no MCP action here for raising these limits, and no unified 200-actions-per-day Cedar governor across action categories.
+
+## HeyReach's recommended levels
+
+The following is **HeyReach guidance**, reviewed October 29, 2026. Cedar's current LinkedIn provider path is Unipile, and these recommendations are not automatically configured in Cedar.
+
+### New or lightly connected accounts
+
+| Stage | HeyReach's guidance |
+| --- | --- |
+| Before automation | Build at least 100 connections manually |
+| Week 1 after connecting | 5 invitations per day |
+| Week 2 | 10 invitations per day |
+| Following weeks | Gradually move toward 15–20 invitations per day |
+| Below 1,000 connections | Keep invitations at 20–25/day or lower after warm-up |
+
+HeyReach also advises avoiding concurrent automation tools on the same account. These values come from its [free-account preparation guide](https://help.heyreach.io/en/articles/10415479-can-i-use-a-free-linkedin-account-with-heyreach), which is the more conservative starting point for a fresh account.
+
+### Broader campaign guidance
+
+HeyReach's [company-expansion guide](https://www.heyreach.io/blog/linkedin-company-expansion-strategy) suggests these ranges for a broader campaign setup:
+
+| Account stage or action | Suggested level |
+| --- | --- |
+| New/idle profiles, first 1–2 weeks | 10–15 invitations/day |
+| Warming profiles, weeks 3–4 | 15–25 invitations/day |
+| Established, healthy profiles | Up to 30–40 invitations/day |
+| Initial message volume | 20–30 messages/day |
+| Initial profile views | 30–50 views/day |
+| Follow-up spacing | At least 5–7 days between touches |
+
+The two articles address different starting conditions. Use the lower new-account schedule when account history is weak, and remain within Cedar's **80 invitations/week** even when a daily recommendation would imply a larger total.
+
+HeyReach's [safety article](https://help.heyreach.io/en/articles/9877960-is-heyreach-safe-to-use) describes its own guardrails as approximately **100 invitations/week** and **200 total actions/day**. These are HeyReach's published operational claims; they are not Cedar's implemented counters or a universal LinkedIn allowance.
+
+## Practical Cedar pacing
+
+For a conservative initial DM program, 20 messages across an eight-hour working day is roughly one every 24 minutes. That is an example scheduling policy, not an enforced Cedar interval. Maintain one shared per-seat plan across workflows, leave room for normal user activity, and stop when account health or provider feedback requires it.
+
+Choose future times deliberately, then use `schedule-send` for each user-authorized message. Cedar defers scheduled DMs when its own hour/day send cap is reached. It does not automatically apply warm-up tiers, working hours, jitter, cross-tool budgets, or HeyReach sender rotation. [Queue behavior](/automation/queueing).

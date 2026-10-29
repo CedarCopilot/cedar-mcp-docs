@@ -1,0 +1,41 @@
+---
+title: "Scopes and permissions"
+description: "OAuth scope is one layer of authorization, not a promise of unrestricted access."
+---
+
+Cedar checks OAuth grants and the requested action at execution time. It also enforces organization role, resource ownership, feature gates, and service-specific authorization. Viewer accounts are restricted separately from OAuth scope names.
+
+| Scope | Primary capabilities |
+| --- | --- |
+| `email:read` | Email lookup, live thread reads, tracking evidence, Gmail thread ingestion |
+| `email:draft` | Email drafts; claiming a stored signal email-draft action |
+| `email:send` | Sending or scheduling real email |
+| `linkedin:read` | Connected-seat reads, LinkedIn drafts, chat ingestion |
+| `linkedin:write` | LinkedIn invitations, DMs, InMail, scheduled LinkedIn messages |
+| `slack:read` | Live Slack search, thread/file reads, and thread ingestion |
+| `crm:read` | Conversations, tasks, calendar, notifications, metrics, guarded SQL; also several CRM writes |
+| `docs:read` | Document/table reads and ordinary document/table writes, subject to role checks |
+| `playbook:write` | Configuration, integration behavior, playbook/agenda writes, field definitions |
+| `enrichment:write` | Paid enrichment dispatch |
+| `signals:read` | Watcher capabilities, configurations, signal history |
+| `signals:write` | Watcher settings/state, internal signal curation, read acknowledgements |
+| `billing:read` / `billing:write` | Billing inspection / authorized billing changes |
+| `brain:read` | Feature-gated taxonomy and reasoning skills |
+
+<Note>The names `crm:read` and `docs:read` do not make a token read-only. Some mutations use those scopes. Use a viewer role and inspect action behavior when configuring a read-only integration.</Note>
+
+## Additional checks
+
+`linkedin-read` with `includeCrm: true` additionally requires `crm:read`. LinkedIn seat IDs must belong to the caller. Organization defaults, propagation, spending grants, and several billing changes require administrative authority. Cross-user selectors request delegated access; they do not change the authenticated identity.
+
+Configuration changes, document operations, and calendar changes may apply immediately on external MCP even when the Cedar app would show a proposal card. The external client is responsible for obtaining the user's intended approval before invoking a mutation. Check `proposed` or other returned status instead of assuming every success means applied.
+
+## Restricted surfaces
+
+`in-app` is never externally grantable. `internal` is Cedar-staff-only. `billing-admin` and `signals-read admin-inventory` have additional staff checks. `debug create-monitor` uses the internal scope. `brain:read` requires the Cedar Brain feature flag as well as the grant.
+
+Credential retrieval and secret-bearing credential storage are excluded from the external surface. Adding a connected MCP server with a static Authorization header must happen through the supported Cedar app flow.
+
+## Outbound authorization
+
+Drafting, reviewing, creating a task, or seeing a signal is not authorization to send. A real send or scheduled send requires the user's explicit intent for the recipients, message, and timing. Background agents prepare work; they must not initiate outbound sends or schedules. See [messaging](/linkedin/messaging) and [queueing](/automation/queueing).

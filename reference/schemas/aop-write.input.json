@@ -1,0 +1,127 @@
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "create-aop",
+        "update-selection-procedure",
+        "update-custom-assignment-instruction"
+      ],
+      "description": "Which write operation to perform — pass its matching params object below."
+    },
+    "createAop": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Name for the new AOP/playbook, e.g. \"Deals - Brazil\"."
+        },
+        "cloneFromAopId": {
+          "type": "string",
+          "description": "REQUIRED — the source user AOP id (your own, from read-playbook mode \"list\") to clone conversation/custom field definitions, display config, scope, icon, color, isNoOp, and the entire PLAYBOOK.md/resources/subagents document tree from. There is no from-scratch path. For a new PURE CLASSIFICATION bucket (a \"Personal\" category, another Spam-like filter, ...) with no automation at all, clone from an EXISTING no-op AOP (hasPlaybook: false, isNoOp: true in read-playbook mode \"list\" — e.g. Spam, Recruiting) rather than a live playbook AOP: the new AOP inherits isNoOp: true and, since the no-op source has no document tree, needs none either — do not try to clone a live AOP and strip it down."
+        },
+        "selectionProcedure": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The new AOP's routing text — what an LLM classifier reads to decide a new conversation belongs here rather than the source AOP or any other."
+        },
+        "scope": {
+          "type": "string",
+          "enum": [
+            "user",
+            "org"
+          ],
+          "description": "Conversation ownership scope: \"user\" (one conversation per user+company) or \"org\" (one shared conversation per org+company). Defaults to the source AOP's own scope."
+        },
+        "targetUserId": {
+          "type": "string",
+          "description": "Org owner/admin only: target a same-org member. Omit for self; non-admins and cross-org targets are rejected."
+        }
+      },
+      "required": [
+        "name",
+        "cloneFromAopId",
+        "selectionProcedure"
+      ],
+      "additionalProperties": false
+    },
+    "updateSelectionProcedure": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string",
+          "enum": [
+            "user",
+            "org"
+          ],
+          "description": "Field owner: user AOP or linked org AOP. list-fields returns both; CRM mappings stay user-scoped."
+        },
+        "aopId": {
+          "type": "string",
+          "description": "The user AOP id (scope=\"user\") or org AOP id (scope=\"org\") whose routing text to replace."
+        },
+        "selectionProcedure": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The full replacement routing text. REPLACES the existing text entirely, not a patch."
+        },
+        "targetUserId": {
+          "type": "string",
+          "description": "Org owner/admin only: target a same-org member user AOP (scope=user). Omit for self; non-admins and cross-org targets are rejected."
+        }
+      },
+      "required": [
+        "scope",
+        "aopId",
+        "selectionProcedure"
+      ],
+      "additionalProperties": false
+    },
+    "updateCustomAssignmentInstruction": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "$ref": "#/properties/updateSelectionProcedure/properties/scope"
+        },
+        "aopId": {
+          "type": "string",
+          "description": "The user AOP id (scope=\"user\") or org AOP id (scope=\"org\") whose assignment instruction to replace."
+        },
+        "customAssignmentInstruction": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Free-text org-specific guidance appended into this AOP's domain/company-identification prompt, overriding the model's own judgment (e.g. \"never treat a known vendor/TPA/recordkeeper as the deal's customer; the real customer's name typically appears in the deal title\"). REPLACES the existing text entirely, not a patch. Pass null to clear it back to no override. A scope: \"org\" write takes effect for any user AOP under it that has no instruction of its own set, and seeds any AOP cloned afterward — it does NOT retroactively overwrite a user AOP that already has its own instruction set directly."
+        },
+        "targetUserId": {
+          "type": "string",
+          "description": "Org owner/admin only: target a same-org member user AOP (scope=user). Omit for self; non-admins and cross-org targets are rejected."
+        }
+      },
+      "required": [
+        "scope",
+        "aopId",
+        "customAssignmentInstruction"
+      ],
+      "additionalProperties": false
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

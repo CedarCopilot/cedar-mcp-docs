@@ -1,0 +1,542 @@
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string"
+    },
+    "documentId": {
+      "type": "string"
+    },
+    "path": {
+      "type": "string"
+    },
+    "revision": {
+      "type": "number"
+    },
+    "schema": {
+      "type": "object",
+      "properties": {
+        "subrowColumns": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "minLength": 1
+              },
+              "label": {
+                "type": "string"
+              },
+              "width": {
+                "type": "number",
+                "minimum": 80,
+                "maximum": 1200
+              }
+            },
+            "required": [
+              "key"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 64
+        },
+        "viewFilter": {
+          "type": "object",
+          "properties": {
+            "columnKey": {
+              "type": "string",
+              "minLength": 1
+            },
+            "operator": {
+              "type": "string",
+              "enum": [
+                "equals",
+                "not_equals",
+                "contains",
+                "not_contains",
+                "is_empty",
+                "not_empty"
+              ]
+            },
+            "value": {
+              "type": "string"
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "matchDescendants": {
+              "type": "boolean"
+            },
+            "conditions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "columnKey": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "operator": {
+                    "type": "string",
+                    "enum": [
+                      "equals",
+                      "not_equals",
+                      "contains",
+                      "not_contains",
+                      "is_empty",
+                      "not_empty"
+                    ]
+                  },
+                  "value": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "columnKey",
+                  "operator",
+                  "value"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "columnKey",
+            "operator",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        "titleColumn": {
+          "type": "string"
+        },
+        "purpose": {
+          "type": "string"
+        },
+        "sort": {
+          "type": "object",
+          "properties": {
+            "columnKey": {
+              "type": "string",
+              "minLength": 1
+            },
+            "direction": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          "required": [
+            "columnKey",
+            "direction"
+          ],
+          "additionalProperties": false
+        },
+        "columns": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "width": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 80,
+                    "maximum": 1200
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "wrap": {
+                "type": "string",
+                "enum": [
+                  "wrap",
+                  "max-lines",
+                  "overflow"
+                ]
+              },
+              "hidden": {
+                "type": "boolean",
+                "description": "Hide from parent rows; still available in subrowColumns."
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Required, non-empty, unique. The rendered header, e.g. \"Next step date\"."
+              },
+              "key": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string",
+                "description": "One-line human description, shown on header hover."
+              },
+              "fillInstruction": {
+                "type": "string",
+                "description": "How to derive this cell. This is the column's real payload for a fan-out — each row-scoped subagent is handed the fillInstruction of every column it owns."
+              },
+              "required": {
+                "type": "boolean",
+                "description": "Cells must be non-empty before a row counts as done."
+              },
+              "binding": {
+                "type": "string",
+                "description": "Derive this cell instead of writing it. `<refColumnKey>.<field>` reads through THAT column's reference cell (`deal.stage`, `their_company.domain`, `deal.fields.<fieldKey>`) and errors per row if the cell holds another kind of reference; `<entity>.<field>` is shorthand for the row's first ref of that entity, which is only unambiguous while there is one. Recomputed rather than edited, and READ-ONLY — never `set` a bound column or hand one to `fill`. Call `bindings` for every path this table can use."
+              },
+              "options": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "select / multi_select only. ORDER MATTERS: the declared order is the order the picker lists them in AND the order the column sorts by, so declare them along whatever progression the column measures (earliest → latest, worst → best, coldest → warmest), not in the order they occurred to you."
+              },
+              "currency": {
+                "type": "string",
+                "description": "currency only. ISO 4217, e.g. \"USD\"."
+              },
+              "outputKind": {
+                "type": "string",
+                "enum": [
+                  "slack",
+                  "email",
+                  "file",
+                  "linkedin",
+                  "whatsapp",
+                  "calendar"
+                ],
+                "description": "output only. Which artifact this column produces — a column that declares none cannot be filled."
+              },
+              "format": {
+                "type": "string",
+                "description": "date only. date-fns format; defaults to yyyy-MM-dd."
+              }
+            },
+            "required": [
+              "label",
+              "key",
+              "type"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "titleColumn",
+        "columns"
+      ],
+      "additionalProperties": false
+    },
+    "export": {
+      "type": "object",
+      "properties": {
+        "filename": {
+          "type": "string"
+        },
+        "mimeType": {
+          "type": "string"
+        },
+        "base64": {
+          "type": "string"
+        },
+        "rowCount": {
+          "type": "number"
+        },
+        "columnCount": {
+          "type": "number"
+        },
+        "refCount": {
+          "type": "number"
+        },
+        "resolvedRefCount": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "filename",
+        "mimeType",
+        "base64",
+        "rowCount",
+        "columnCount",
+        "refCount",
+        "resolvedRefCount"
+      ],
+      "additionalProperties": false
+    },
+    "rows": {
+      "type": "string"
+    },
+    "totalRows": {
+      "type": "number"
+    },
+    "degradations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "rowCount": {
+      "type": "number"
+    },
+    "rowsAdded": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "rowsRemoved": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "cellsWritten": {
+      "type": "number"
+    },
+    "updateByteLength": {
+      "type": "number"
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "lineErrors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "line": {
+            "type": "number"
+          },
+          "text": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "line",
+          "text",
+          "error"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "bindings": {
+      "type": "object",
+      "properties": {
+        "entities": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "key": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "agentWritten": {
+                "type": "boolean"
+              },
+              "aopName": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "path",
+              "key",
+              "label",
+              "type",
+              "agentWritten",
+              "aopName"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "note": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "entities",
+        "fields",
+        "note"
+      ],
+      "additionalProperties": false
+    },
+    "fill": {
+      "type": "object",
+      "properties": {
+        "spawned": {
+          "type": "number"
+        },
+        "done": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "rowId": {
+                "type": "string"
+              },
+              "error": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "rowId",
+              "error"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "coalescedWrites": {
+          "type": "number"
+        },
+        "needsConfirmation": {
+          "type": "object",
+          "properties": {
+            "rowCount": {
+              "type": "number"
+            },
+            "threshold": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "rowCount",
+            "threshold"
+          ],
+          "additionalProperties": false
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "spawned",
+            "delegate"
+          ]
+        },
+        "briefs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "rowId": {
+                "type": "string"
+              },
+              "cells": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "instruction": {
+                "type": "string"
+              },
+              "writableColumns": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "task": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "rowId",
+              "cells",
+              "instruction",
+              "writableColumns",
+              "task"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "howToRun": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "spawned",
+        "done",
+        "failed",
+        "coalescedWrites"
+      ],
+      "additionalProperties": false
+    },
+    "conflict": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "const": "REVISION_CONFLICT"
+        },
+        "expected": {
+          "type": "number"
+        },
+        "current": {
+          "type": "number"
+        },
+        "rowIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "code",
+        "expected",
+        "current",
+        "rowIds"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

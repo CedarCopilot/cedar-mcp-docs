@@ -1,0 +1,70 @@
+---
+title: "Configure person and company watches"
+description: "Versioned watcher configuration, provider selection, identity, and billing."
+---
+
+## Read, select, update, verify
+
+1. Load `cedar-configuration`, read `signals-read capabilities`, and read the deal's signals.
+2. Select evidenced buyer People and the correct company. Preserve existing targets/settings unless the user asked to change them.
+3. Choose applicable rules from the capability response; do not invent provider fields or identifiers.
+4. Submit the current `expectedVersion`, stable idempotency key, and complete intended target selection.
+5. Read back the returned per-target states. Resolve any required identity continuation before claiming setup is complete.
+
+`activate` takes a conversation ID and starts activation using the deal's evidenced context. It can provision paid provider watches. Do not activate just to inspect availability. `update` exposes explicit target/rule selection, timing, additional watches, and Fiber trackers. See the [full schema](/reference/signals-write).
+
+## Entity tracking catalog
+
+The current entity catalog includes:
+
+| Person | Company |
+| --- | --- |
+| Job, title, headline, and location changes | Headcount, hiring, funding total/round, investors, acquisitions, and funding milestones |
+| Education, skills, certifications, and honors | News, company name, industry, country/location, and follower counts |
+| Connection-count changes | — |
+
+Education, skills, certifications, honors, and connection counts are low-priority opt-ins. Generic “activate signals” instructions should not enable them. Certifications and honors can require field entitlements.
+
+Group compatible rules on an existing target's `signalTypes`; do not create duplicate watches for the same signal. Exact keys and provider field mapping come from capabilities.
+
+## Discovery searches
+
+Additional saved-search watches support `person`, `company`, `job`, and `social_post`. They repeatedly run saved filters and report newly matching records. Company discovery describes search membership, not all future changes to every matched company.
+
+The published capability limit is 20 additional watches and 25 discovery results per run; realtime discovery is false. The general update schema allows broader per-run values for other paths. Use capability constraints for the selected provider/family.
+
+Filter to the correct company or evidenced people using verified IDs/domains and appropriate actor types. An ambiguous company name or broad people query can create irrelevant results and spend.
+
+## Fiber trackers
+
+Fiber tracker availability is feature-gated; check `capabilities.fiber.available`. A tracker has an `id`, a subject `{kind, recordId}`, `enabled`, `refreshIntervalDays`, and `rules`. The default interval is 30 days, with a supported range of 1–180 days. Each tracker supports up to 25 rules.
+
+Supported rules include promotions/demotions, person/company posts, added technology, new office locations, layoffs, department size thresholds, hires by title, job postings by function or keyword, and headcount percentage change. Rule entity types must match the subject. Thresholds and keyword filters must reflect the requested monitoring criteria. Fiber does not expose follower/connection-count tracker rules here.
+
+Fiber refreshes are metered per completed profile refresh, including runs finding zero signals. Avoid overlapping post coverage across providers. Manual identity enrichment in this guide explicitly uses Fiber.
+
+## Identity continuation
+
+If `continuation.required` is true, the watch is not fully set up. Use saved deal/contact evidence, corroborate identity with the client's research tools, verify with the authorized enrichment provider, and submit `resolve-identity` with the returned enrichment `operationId`, record ID, conversation ID, and current version. Never attach an ambiguous namesake.
+
+## Pause and resume
+
+`set-state` accepts `active`, `paused`, or `cancelled` and requires the current version. Use `paused` for a reversible stop; reserve `cancelled` for explicitly requested permanent removal.
+
+```json
+{
+  "action": "set-state",
+  "setState": {
+    "conversationId": "00000000-0000-4000-8000-000000000001",
+    "expectedVersion": 3,
+    "state": "paused",
+    "idempotencyKey": "pause-account-watch-2026-10-29"
+  }
+}
+```
+
+## Spending and selection
+
+Watch activation is separate from reading. Provider dispatch requires an approved rate and spending permission; Cedar credits are distinct from native provider credits and dollar cost. Never raise caps or purchase credits automatically. The API contains a `confirmedPeopleCount` mechanism for tasks exceeding 50 people; count the complete job rather than hiding size in smaller batches.
+
+The current entity/discovery implementation includes Crustdata and Fiber paths. Do not interpret a generic activation request as a provider choice when the user's policy specifies one. The manual-enrichment examples explicitly use Fiber. Reading these docs does not execute or enable any provider.

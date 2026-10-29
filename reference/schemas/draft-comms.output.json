@@ -1,0 +1,208 @@
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean",
+      "description": "Whether the draft was saved successfully"
+    },
+    "errorMessage": {
+      "type": "string",
+      "description": "Error message if draft creation failed"
+    },
+    "draftEmail": {
+      "type": "object",
+      "properties": {
+        "draftId": {
+          "type": "string",
+          "description": "Draft ID (ephemeral or from email provider)"
+        },
+        "threadId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Thread ID (null if new thread, populated if replying)"
+        },
+        "scenario": {
+          "type": "string",
+          "enum": [
+            "new",
+            "rewrite"
+          ],
+          "description": "Whether this was a new draft or rewrite"
+        },
+        "createdInExternalClient": {
+          "type": "boolean",
+          "description": "Whether draft was pushed to Gmail/Outlook"
+        },
+        "finalTo": {
+          "type": "string",
+          "description": "Final recipient(s) after reply-all processing"
+        },
+        "finalCc": {
+          "type": "string",
+          "description": "Final CC after reply-all processing"
+        },
+        "finalBcc": {
+          "type": "string",
+          "description": "Final BCC after reply-all processing"
+        },
+        "proposed": {
+          "type": "boolean",
+          "description": "True if this is a proposed draft awaiting user approval"
+        },
+        "userMessage": {
+          "type": "string",
+          "description": "UI instructions for the user on how to interact with the draft"
+        }
+      },
+      "additionalProperties": false
+    },
+    "draftSlackMessage": {
+      "type": "object",
+      "properties": {
+        "draftId": {
+          "type": "string",
+          "description": "Ephemeral draft ID"
+        },
+        "channelId": {
+          "type": "string",
+          "description": "Slack channel ID"
+        },
+        "channelName": {
+          "type": "string",
+          "description": "Slack channel name"
+        },
+        "message": {
+          "type": "string",
+          "description": "Slack message content"
+        },
+        "wordCount": {
+          "type": "number",
+          "description": "Word count of the message"
+        },
+        "taskId": {
+          "type": "string",
+          "description": "User task ID created for this draft"
+        },
+        "userMessage": {
+          "type": "string",
+          "description": "UI instructions for the user on how to interact with the draft"
+        }
+      },
+      "additionalProperties": false
+    },
+    "draftLinkedinMessage": {
+      "type": "object",
+      "properties": {
+        "chatId": {
+          "type": "string"
+        },
+        "unipileAccountId": {
+          "type": "string"
+        },
+        "counterpartName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "message": {
+          "type": "string"
+        },
+        "draftUpdatedAt": {
+          "type": "string"
+        },
+        "currentDraft": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "string"
+            },
+            "source": {
+              "type": "string",
+              "enum": [
+                "user",
+                "agent"
+              ]
+            },
+            "updatedAt": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "body",
+            "source",
+            "updatedAt"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "showDraft": {
+      "type": "object",
+      "properties": {
+        "drafts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "draftId": {
+                "type": "string",
+                "description": "The provider draft id; empty when a requested thread held no draft."
+              },
+              "threadId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "shown",
+                  "returned",
+                  "not_found",
+                  "error"
+                ],
+                "description": "shown: a draft card was displayed to the user. returned: no live user, the body is in this result. not_found: the draft no longer exists. error: it could not be read."
+              },
+              "to": {
+                "type": "string"
+              },
+              "subject": {
+                "type": "string"
+              },
+              "bodyPreview": {
+                "type": "string",
+                "description": "First characters of the body, as plain text."
+              },
+              "body": {
+                "type": "string",
+                "description": "Full HTML body. Present only when no card was streamed."
+              },
+              "errorMessage": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "draftId",
+              "status"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "drafts"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

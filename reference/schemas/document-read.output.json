@@ -1,0 +1,314 @@
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "read": {
+      "type": "object",
+      "properties": {
+        "found": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "documentType": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "lastEditedBy": {
+          "type": "string"
+        },
+        "version": {
+          "type": "number"
+        },
+        "wordCount": {
+          "type": "number"
+        },
+        "updatedAt": {
+          "type": "string"
+        },
+        "fileUrl": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "fileReadingRequired": {
+          "type": "boolean"
+        },
+        "sourceUrl": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "lastScrapedAt": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ingestionTier": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "llms_full",
+                "llms_txt",
+                "direct"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "note": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "recentEdits": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "editedAt": {
+                "type": "string"
+              },
+              "origin": {
+                "type": "string"
+              },
+              "by": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "editCount": {
+                "type": "number"
+              },
+              "wordsBefore": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "wordsAfter": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "editedAt",
+              "origin",
+              "by",
+              "editCount",
+              "wordsBefore",
+              "wordsAfter"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "list": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "number"
+        },
+        "documents": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "documentType": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string"
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "lastEditedBy": {
+                "type": "string"
+              },
+              "version": {
+                "type": "number"
+              },
+              "wordCount": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "updatedAt": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "text",
+                  "upload",
+                  "google_drive"
+                ]
+              },
+              "extractionStatus": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "searchable": {
+                "type": "boolean"
+              },
+              "readMode": {
+                "type": "string",
+                "enum": [
+                  "text",
+                  "whole_file"
+                ]
+              },
+              "ownerUserId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "ownerName": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "documentType",
+              "path",
+              "description",
+              "lastEditedBy",
+              "version",
+              "wordCount",
+              "updatedAt",
+              "type",
+              "extractionStatus",
+              "searchable",
+              "readMode",
+              "ownerUserId",
+              "ownerName"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "search": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string"
+        },
+        "totalMatches": {
+          "type": "number"
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "documentType": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string"
+              },
+              "lastEditedBy": {
+                "type": "string"
+              },
+              "updatedAt": {
+                "type": "string"
+              },
+              "excerpt": {
+                "type": "string"
+              },
+              "matchLine": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "id",
+              "documentType",
+              "path",
+              "lastEditedBy",
+              "updatedAt",
+              "excerpt",
+              "matchLine"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "scroll": {
+      "type": "object",
+      "properties": {
+        "documentId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "ID of the document already open in the app."
+        },
+        "marker": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Exact HTML id, data-report-section or data-node-id; no CSS selector."
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Visible text to locate; used if the marker is absent or not found."
+        },
+        "dispatched": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "documentId",
+        "dispatched"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

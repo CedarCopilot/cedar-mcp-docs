@@ -1,0 +1,43 @@
+---
+title: "Signals module"
+description: "Watch people and companies, inspect internal evidence, and read tracked email engagement."
+---
+
+A signal is evidence to investigate, not an automatic instruction to contact a prospect. Cedar exposes several distinct signal sources:
+
+| Source | Read surface | Meaning |
+| --- | --- | --- |
+| Person/company entity changes | `signals-read get` | Changes to selected, identified deal subjects |
+| Saved discovery searches | `signals-read get` | Newly matching person/company/job/social-post records |
+| Fiber trackers | `signals-read capabilities` and deal settings | Configured profile refreshes and interpreted changes; feature-gated |
+| Internal deal findings | `get-internal`, `list-internal` | Persisted candidates extracted from existing evidence |
+| Native email engagement | `signals-read get` / `email-tracking` | Classified likely email opens and clicks, with attribution limitations |
+| Connected LinkedIn activity | `linkedin-read` | New connections, post engagement, visible profile viewers |
+| Website visitors | Separate HTTP ingestion / playbook source | Events produced by an external visitor service or your own website |
+
+## Discover the current catalog
+
+```json
+{ "action": "capabilities" }
+```
+
+Call this on `signals-read`. It returns entity tracking keys, watcher families, saved-search datasets, Fiber availability and rules, intervals, billing meters, and limits without dispatching a paid provider watch.
+
+## Read a deal's coverage
+
+```json
+{
+  "action": "get",
+  "get": { "conversationId": "00000000-0000-4000-8000-000000000001" }
+}
+```
+
+`availableTargets` are eligible recommendations. `targets` are the persisted configuration. Only targets returned with active state represent live coverage. Preserve `version` for later writes. Missing identity can leave a person pending even when that person is valid deal evidence.
+
+Reads return paginated history, `foundCount`, the authenticated user's `newCount`, and per-event `isNew`. Reading does not acknowledge events; `signals-write mark-read` does, for only the signal IDs actually shown to the user.
+
+## Decide what deserves action
+
+Review the original evidence, identity, event date, current deal state, and whether the event is already handled. Native email-open signals remain available when paid watches are off. An intended email recipient is not a verified reader; proxies, forwarding, and sender views can affect attribution.
+
+[Configure watches](/signals/watchers) · [Internal findings](/signals/internal) · [Website monitoring](/signals/website)

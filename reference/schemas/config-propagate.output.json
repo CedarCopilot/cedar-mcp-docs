@@ -1,0 +1,110 @@
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "propagateField": {
+      "type": "object",
+      "properties": {
+        "patched": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "userId": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "userId",
+              "name"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "proposed": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "userId": {
+                "$ref": "#/properties/propagateField/properties/patched/items/properties/userId"
+              },
+              "name": {
+                "$ref": "#/properties/propagateField/properties/patched/items/properties/name"
+              },
+              "diff": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "org": {},
+                    "user": {}
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "cardId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "userId",
+              "name",
+              "diff",
+              "cardId"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "refused": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "userId": {
+                "$ref": "#/properties/propagateField/properties/patched/items/properties/userId"
+              },
+              "name": {
+                "$ref": "#/properties/propagateField/properties/patched/items/properties/name"
+              },
+              "reason": {
+                "type": "string"
+              },
+              "diff": {
+                "$ref": "#/properties/propagateField/properties/proposed/items/properties/diff"
+              }
+            },
+            "required": [
+              "userId",
+              "name",
+              "reason"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "patched",
+        "proposed",
+        "refused"
+      ],
+      "additionalProperties": false
+    },
+    "propagateMapping": {
+      "$ref": "#/properties/propagateField"
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

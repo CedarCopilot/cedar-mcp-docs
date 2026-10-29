@@ -1,0 +1,188 @@
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "capabilities",
+        "choose-enrichment",
+        "enrich-company",
+        "enrich-person",
+        "web-search",
+        "web-fetch"
+      ],
+      "description": "Which operation to perform — pass its matching params object below (e.g. action: \"enrich-company\" pairs with enrichCompany: {...})."
+    },
+    "enrichCompany": {
+      "type": "object",
+      "properties": {
+        "provider": {
+          "type": "string",
+          "enum": [
+            "fiber",
+            "crustdata",
+            "apollo",
+            "moltsets"
+          ]
+        },
+        "idempotencyKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "maximumMicrocredits": {
+          "type": "string",
+          "pattern": "^\\d+$"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Company's website domain (e.g., \"stripe.com\") — preferred identifier"
+        },
+        "companyName": {
+          "type": "string",
+          "description": "Company name — used to resolve the domain when no domain is available (e.g., \"Stripe\")"
+        }
+      },
+      "additionalProperties": false
+    },
+    "chooseEnrichment": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "question": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "knownFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 50,
+          "default": []
+        },
+        "provider": {
+          "$ref": "#/properties/enrichCompany/properties/provider"
+        }
+      },
+      "required": [
+        "description",
+        "question"
+      ],
+      "additionalProperties": false
+    },
+    "enrichPerson": {
+      "type": "object",
+      "properties": {
+        "provider": {
+          "$ref": "#/properties/enrichCompany/properties/provider"
+        },
+        "idempotencyKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "maximumMicrocredits": {
+          "type": "string",
+          "pattern": "^\\d+$"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Person's business email address (preferred — enables cache lookup)"
+        },
+        "linkedinUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "Person's LinkedIn profile URL (used when email is not available)"
+        },
+        "write_to_file": {
+          "type": "boolean",
+          "description": "When true, writes the full enrichment result to a TASK_BUFFER doc and returns a summary envelope instead. Use for complex tasks to keep context clean."
+        }
+      },
+      "additionalProperties": false
+    },
+    "webSearch": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "The search query (be specific for best results)"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "news",
+              "web"
+            ]
+          },
+          "description": "Sources to query. Use \"news\" for recent articles, \"web\" for general results."
+        },
+        "site": {
+          "type": "string",
+          "description": "Restrict results to a specific domain (e.g. \"techcrunch.com\")."
+        },
+        "geolocation": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 country code for localized results (e.g. \"US\")."
+        },
+        "numPages": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5,
+          "description": "Result pages to fetch (each page = up to 10 results). Default 1. >1 requires exactly ONE source."
+        },
+        "write_to_file": {
+          "type": "boolean",
+          "description": "Write full results to a buffer doc and return a summary envelope instead."
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "additionalProperties": false
+    },
+    "webFetch": {
+      "type": "object",
+      "properties": {
+        "urls": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          },
+          "minItems": 1,
+          "maxItems": 10,
+          "description": "URLs to fetch content for (1-10)."
+        }
+      },
+      "required": [
+        "urls"
+      ],
+      "additionalProperties": false
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

@@ -1,0 +1,185 @@
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "write": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "version": {
+          "type": "number"
+        },
+        "wordCount": {
+          "type": "number"
+        },
+        "message": {
+          "type": "string"
+        },
+        "isRecoverable": {
+          "type": "boolean"
+        },
+        "triggerSummary": {
+          "type": "object",
+          "properties": {
+            "eventTypes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "fieldWatchers": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "cronSchedules": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "beforeMeeting": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "webhooks": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "refIds": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "eventTypes",
+            "fieldWatchers",
+            "cronSchedules",
+            "beforeMeeting",
+            "webhooks",
+            "refIds"
+          ],
+          "additionalProperties": false,
+          "description": "PLAYBOOK.md writes only: the triggers this write armed, read back from the recompiled manifest. This IS the verification — report it rather than claiming a trigger is live. An empty list means that trigger type is NOT armed."
+        }
+      },
+      "additionalProperties": false
+    },
+    "delete": {
+      "type": "object",
+      "properties": {
+        "documentId": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "proposed": {
+          "type": "boolean"
+        },
+        "errorCode": {
+          "type": "string",
+          "enum": [
+            "DELETE_TARGET_MISSING",
+            "DELETE_FORBIDDEN_NOT_OWNER",
+            "DELETE_NOT_SUPPORTED_FOR_PROTECTED_PATH"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "restore": {
+      "type": "object",
+      "properties": {
+        "documentId": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "errorCode": {
+          "type": "string",
+          "enum": [
+            "RESTORE_TARGET_MISSING",
+            "RESTORE_FORBIDDEN_NOT_OWNER",
+            "RESTORE_PATH_TAKEN"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "move": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "fromPath": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "share": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "token": {
+          "type": "string"
+        },
+        "revoked": {
+          "type": "boolean"
+        },
+        "proposed": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "requestFile": {
+      "type": "object",
+      "properties": {
+        "cardShown": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

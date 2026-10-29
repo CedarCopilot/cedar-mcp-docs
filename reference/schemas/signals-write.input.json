@@ -1,0 +1,1270 @@
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "apply-extraction",
+        "mutate-internal",
+        "activate",
+        "update",
+        "set-state",
+        "resolve-identity",
+        "execute-action",
+        "mark-read"
+      ]
+    },
+    "internalExtraction": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "idempotencyKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "assessmentSourceEventId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "assessmentTransitionId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "completeReconciliationSourceEventId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "proposals": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 12000
+              },
+              "sourceEventId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "revisitAt": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "active": {
+                "type": "boolean",
+                "default": true
+              }
+            },
+            "required": [
+              "type",
+              "reason",
+              "sourceEventId",
+              "revisitAt"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 100
+        }
+      },
+      "required": [
+        "conversationId",
+        "idempotencyKey",
+        "expectedRevision",
+        "proposals"
+      ],
+      "additionalProperties": false
+    },
+    "internalMutation": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "idempotencyKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "operation": {
+          "type": "string",
+          "enum": [
+            "snooze",
+            "dismiss",
+            "resolve",
+            "reopen",
+            "append-note",
+            "deactivate",
+            "hold-reconciliation",
+            "clear-reconciliation"
+          ]
+        },
+        "signalId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "expectedSignalRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "note": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 12000
+        },
+        "snoozeUntil": {
+          "$ref": "#/properties/internalExtraction/properties/proposals/items/properties/revisitAt/anyOf/0"
+        },
+        "sourceEventId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "assessmentTransitionId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "calendarSourceVersion": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "conversationId",
+        "idempotencyKey",
+        "operation",
+        "signalId"
+      ],
+      "additionalProperties": false
+    },
+    "markRead": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "signalIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "minItems": 1,
+          "maxItems": 100
+        }
+      },
+      "required": [
+        "conversationId",
+        "signalIds"
+      ],
+      "additionalProperties": false
+    },
+    "resolveIdentity": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "recordId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 320
+        },
+        "operationId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "expectedVersion": {
+          "type": "integer",
+          "exclusiveMinimum": 0
+        },
+        "idempotencyKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        }
+      },
+      "required": [
+        "conversationId",
+        "recordId",
+        "operationId",
+        "expectedVersion"
+      ],
+      "additionalProperties": false
+    },
+    "executeAction": {
+      "type": "object",
+      "properties": {
+        "actionId": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "required": [
+        "actionId"
+      ],
+      "additionalProperties": false
+    },
+    "activate": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "idempotencyKey": {
+          "$ref": "#/properties/resolveIdentity/properties/idempotencyKey"
+        },
+        "confirmedPeopleCount": {
+          "type": "integer",
+          "minimum": 51,
+          "maximum": 1000
+        }
+      },
+      "required": [
+        "conversationId"
+      ],
+      "additionalProperties": false
+    },
+    "update": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "$ref": "#/properties/activate/properties/conversationId"
+        },
+        "idempotencyKey": {
+          "$ref": "#/properties/resolveIdentity/properties/idempotencyKey"
+        },
+        "confirmedPeopleCount": {
+          "$ref": "#/properties/activate/properties/confirmedPeopleCount"
+        },
+        "expectedVersion": {
+          "type": "integer",
+          "exclusiveMinimum": 0
+        },
+        "targets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "person",
+                  "company"
+                ]
+              },
+              "recordId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 320
+              },
+              "signalTypes": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "description": "Use a key from signals-read capabilities.entityTracking."
+                },
+                "minItems": 1,
+                "maxItems": 21
+              }
+            },
+            "required": [
+              "kind",
+              "recordId",
+              "signalTypes"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 1001
+        },
+        "everyHours": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 168
+        },
+        "personRefreshFrequencyDays": {
+          "type": "number",
+          "enum": [
+            1,
+            3,
+            7,
+            14,
+            30
+          ]
+        },
+        "maxResultsPerRun": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "additionalWatches": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100,
+                    "pattern": "^[a-zA-Z0-9_-]+$"
+                  },
+                  "label": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 160
+                  },
+                  "enabled": {
+                    "type": "boolean",
+                    "default": true
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 200
+                    },
+                    "minItems": 1,
+                    "maxItems": 30
+                  },
+                  "kind": {
+                    "type": "string",
+                    "const": "discovery"
+                  },
+                  "dataset": {
+                    "type": "string",
+                    "enum": [
+                      "person",
+                      "company",
+                      "job",
+                      "social_post"
+                    ]
+                  },
+                  "filters": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "field": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 200,
+                            "pattern": "^[a-zA-Z_][a-zA-Z0-9_.]*$"
+                          },
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "=",
+                              "!=",
+                              ">",
+                              "<",
+                              "=>",
+                              "=<",
+                              "in",
+                              "not_in",
+                              "(.)",
+                              "(!)",
+                              "[.]",
+                              "not_contains"
+                            ]
+                          },
+                          "value": {
+                            "anyOf": [
+                              {
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "maxLength": 2000
+                                  },
+                                  {
+                                    "type": "number"
+                                  },
+                                  {
+                                    "type": "boolean"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "array",
+                                "items": {
+                                  "$ref": "#/properties/update/properties/additionalWatches/items/anyOf/0/properties/filters/anyOf/0/properties/value/anyOf/0"
+                                },
+                                "maxItems": 100
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "field",
+                          "type",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "op": {
+                            "type": "string",
+                            "enum": [
+                              "and",
+                              "or"
+                            ]
+                          },
+                          "conditions": {
+                            "type": "array",
+                            "items": {
+                              "anyOf": [
+                                {
+                                  "$ref": "#/properties/update/properties/additionalWatches/items/anyOf/0/properties/filters/anyOf/0"
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "op": {
+                                      "type": "string",
+                                      "enum": [
+                                        "and",
+                                        "or"
+                                      ]
+                                    },
+                                    "conditions": {
+                                      "type": "array",
+                                      "items": {
+                                        "anyOf": [
+                                          {
+                                            "$ref": "#/properties/update/properties/additionalWatches/items/anyOf/0/properties/filters/anyOf/0"
+                                          },
+                                          {
+                                            "type": "object",
+                                            "properties": {
+                                              "op": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "and",
+                                                  "or"
+                                                ]
+                                              },
+                                              "conditions": {
+                                                "type": "array",
+                                                "items": {
+                                                  "anyOf": [
+                                                    {
+                                                      "$ref": "#/properties/update/properties/additionalWatches/items/anyOf/0/properties/filters/anyOf/0"
+                                                    },
+                                                    {
+                                                      "type": "object",
+                                                      "properties": {
+                                                        "op": {
+                                                          "type": "string",
+                                                          "enum": [
+                                                            "and",
+                                                            "or"
+                                                          ]
+                                                        },
+                                                        "conditions": {
+                                                          "type": "array",
+                                                          "items": {
+                                                            "$ref": "#/properties/update/properties/additionalWatches/items/anyOf/0/properties/filters/anyOf/0"
+                                                          },
+                                                          "minItems": 1,
+                                                          "maxItems": 25
+                                                        }
+                                                      },
+                                                      "required": [
+                                                        "op",
+                                                        "conditions"
+                                                      ],
+                                                      "additionalProperties": false
+                                                    }
+                                                  ]
+                                                },
+                                                "minItems": 1,
+                                                "maxItems": 25
+                                              }
+                                            },
+                                            "required": [
+                                              "op",
+                                              "conditions"
+                                            ],
+                                            "additionalProperties": false
+                                          }
+                                        ]
+                                      },
+                                      "minItems": 1,
+                                      "maxItems": 25
+                                    }
+                                  },
+                                  "required": [
+                                    "op",
+                                    "conditions"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              ]
+                            },
+                            "minItems": 1,
+                            "maxItems": 25
+                          }
+                        },
+                        "required": [
+                          "op",
+                          "conditions"
+                        ],
+                        "additionalProperties": false
+                      }
+                    ]
+                  },
+                  "subject": {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "person",
+                          "company"
+                        ]
+                      },
+                      "recordId": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 320
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "recordId"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "id",
+                  "label",
+                  "kind",
+                  "dataset",
+                  "filters"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "$ref": "#/properties/update/properties/additionalWatches/items/anyOf/0/properties/id"
+                  },
+                  "label": {
+                    "$ref": "#/properties/update/properties/additionalWatches/items/anyOf/0/properties/label"
+                  },
+                  "enabled": {
+                    "$ref": "#/properties/update/properties/additionalWatches/items/anyOf/0/properties/enabled"
+                  },
+                  "fields": {
+                    "$ref": "#/properties/update/properties/additionalWatches/items/anyOf/0/properties/fields"
+                  },
+                  "kind": {
+                    "type": "string",
+                    "const": "entity"
+                  },
+                  "dataset": {
+                    "type": "string",
+                    "enum": [
+                      "person",
+                      "company"
+                    ]
+                  },
+                  "targetIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 320
+                    },
+                    "minItems": 1,
+                    "maxItems": 1000
+                  },
+                  "track": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "field": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 200
+                          },
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "changed",
+                              "added"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "field",
+                          "type"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "op": {
+                            "type": "string",
+                            "enum": [
+                              "and",
+                              "or"
+                            ]
+                          },
+                          "conditions": {
+                            "type": "array",
+                            "items": {
+                              "anyOf": [
+                                {
+                                  "$ref": "#/properties/update/properties/additionalWatches/items/anyOf/1/properties/track/anyOf/0"
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "op": {
+                                      "type": "string",
+                                      "enum": [
+                                        "and",
+                                        "or"
+                                      ]
+                                    },
+                                    "conditions": {
+                                      "type": "array",
+                                      "items": {
+                                        "anyOf": [
+                                          {
+                                            "$ref": "#/properties/update/properties/additionalWatches/items/anyOf/1/properties/track/anyOf/0"
+                                          },
+                                          {
+                                            "type": "object",
+                                            "properties": {
+                                              "op": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "and",
+                                                  "or"
+                                                ]
+                                              },
+                                              "conditions": {
+                                                "type": "array",
+                                                "items": {
+                                                  "$ref": "#/properties/update/properties/additionalWatches/items/anyOf/1/properties/track/anyOf/0"
+                                                },
+                                                "minItems": 1,
+                                                "maxItems": 15
+                                              }
+                                            },
+                                            "required": [
+                                              "op",
+                                              "conditions"
+                                            ],
+                                            "additionalProperties": false
+                                          }
+                                        ]
+                                      },
+                                      "minItems": 1,
+                                      "maxItems": 15
+                                    }
+                                  },
+                                  "required": [
+                                    "op",
+                                    "conditions"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              ]
+                            },
+                            "minItems": 1,
+                            "maxItems": 15
+                          }
+                        },
+                        "required": [
+                          "op",
+                          "conditions"
+                        ],
+                        "additionalProperties": false
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "label",
+                  "kind",
+                  "dataset",
+                  "targetIds",
+                  "track"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          },
+          "maxItems": 20
+        },
+        "fiberTrackers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-zA-Z0-9_-]+$"
+              },
+              "subject": {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "person",
+                      "company"
+                    ]
+                  },
+                  "recordId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 320
+                  }
+                },
+                "required": [
+                  "kind",
+                  "recordId"
+                ],
+                "additionalProperties": false
+              },
+              "enabled": {
+                "type": "boolean",
+                "default": true
+              },
+              "refreshIntervalDays": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 180,
+                "default": 30
+              },
+              "rules": {
+                "type": "array",
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "lookbackDays": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 90
+                        },
+                        "entityType": {
+                          "type": "string",
+                          "const": "person"
+                        },
+                        "type": {
+                          "type": "string",
+                          "const": "person_got_promoted"
+                        },
+                        "seniorityKeywords": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 200
+                          },
+                          "minItems": 1,
+                          "maxItems": 50
+                        }
+                      },
+                      "required": [
+                        "entityType",
+                        "type"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "lookbackDays": {
+                          "$ref": "#/properties/update/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/lookbackDays"
+                        },
+                        "entityType": {
+                          "$ref": "#/properties/update/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/entityType"
+                        },
+                        "type": {
+                          "type": "string",
+                          "const": "person_got_demoted"
+                        },
+                        "seniorityKeywords": {
+                          "$ref": "#/properties/update/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/seniorityKeywords"
+                        }
+                      },
+                      "required": [
+                        "entityType",
+                        "type"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "lookbackDays": {
+                          "$ref": "#/properties/update/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/lookbackDays"
+                        },
+                        "entityType": {
+                          "$ref": "#/properties/update/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/entityType"
+                        },
+                        "type": {
+                          "type": "string",
+                          "const": "person_posted"
+                        },
+                        "minReactions": {
+                          "type": "integer",
+                          "minimum": 0
+                        }
+                      },
+                      "required": [
+                        "entityType",
+                        "type"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "lookbackDays": {
+                          "$ref": "#/properties/update/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/lookbackDays"
+                        },
+                        "entityType": {
+                          "type": "string",
+                          "const": "company"
+                        },
+                        "type": {
+                          "type": "string",
+                          "const": "company_posted"
+                        },
+                        "minReactions": {
+                          "type": "integer",
+                          "minimum": 0
+                        }
+                      },
+                      "required": [
+                        "entityType",
+                        "type"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "lookbackDays": {
+                          "$ref": "#/properties/update/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/lookbackDays"
+                        },
+                        "entityType": {
+                          "$ref": "#/properties/update/properties/fiberTrackers/items/properties/rules/items/anyOf/3/properties/entityType"
+                        },
+                        "type": {
+                          "type": "string",
+                          "const": "technology_added"
+                        },
+                        "technologies": {
+                          "$ref": "#/properties/update/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/seniorityKeywords"
+                        }
+                      },
+                      "required": [
+                        "entityType",
+                        "type"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "lookbackDays": {
+                          "$ref": "#/properties/update/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/lookbackDays"
+                        },
+                        "entityType": {
+                          "$ref": "#/properties/update/properties/fiberTrackers/items/properties/rules/items/anyOf/3/properties/entityType"
+                        },
+                        "type": {
+                          "type": "string",
+                          "const": "new_office_location"
+                        },
+                        "countries": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "pattern": "^[A-Z]{3}$"
+                          },
+                          "minItems": 1,
+                          "maxItems": 100
+                        },
+                        "cities": {
+                          "$ref": "#/properties/update/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/seniorityKeywords"
+                        },
+                        "regions": {
+                          "$ref": "#/properties/update/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/seniorityKeywords"
+                        },
+                        "states": {
+                          "$ref": "#/properties/update/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/seniorityKeywords"
+                        }
+                      },
+                      "required": [
+                        "entityType",
+                        "type"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "lookbackDays": {
+                          "$ref": "#/properties/update/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/lookbackDays"
+                        },
+                        "entityType": {
+                          "$ref": "#/properties/update/properties/fiberTrackers/items/properties/rules/items/anyOf/3/properties/entityType"
+                        },
+                        "type": {
+                          "type": "string",
+                          "const": "recent_layoffs"
+                        },
+                        "minPeopleAffected": {
+                          "type": "integer",
+                          "exclusiveMinimum": 0
+                        },
+                        "minPercentAffected": {
+                          "type": "number",
+                          "exclusiveMinimum": 0,
+                          "maximum": 100
+                        }
+                      },
+                      "required": [
+                        "entityType",
+                        "type"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "lookbackDays": {
+                          "$ref": "#/properties/update/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/lookbackDays"
+                        },
+                        "entityType": {
+                          "$ref": "#/properties/update/properties/fiberTrackers/items/properties/rules/items/anyOf/3/properties/entityType"
+                        },
+                        "type": {
+                          "type": "string",
+                          "const": "department_size_threshold"
+                        },
+                        "department": {
+                          "type": "string",
+                          "description": "Use a value from signals-read capabilities.fiber.jobFunctions."
+                        },
+                        "threshold": {
+                          "type": "integer",
+                          "exclusiveMinimum": 0
+                        },
+                        "direction": {
+                          "type": "string",
+                          "enum": [
+                            "above",
+                            "below"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "entityType",
+                        "type",
+                        "department",
+                        "threshold",
+                        "direction"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "lookbackDays": {
+                          "$ref": "#/properties/update/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/lookbackDays"
+                        },
+                        "entityType": {
+                          "$ref": "#/properties/update/properties/fiberTrackers/items/properties/rules/items/anyOf/3/properties/entityType"
+                        },
+                        "type": {
+                          "type": "string",
+                          "const": "recently_hired_with_title"
+                        },
+                        "titleKeywords": {
+                          "$ref": "#/properties/update/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/seniorityKeywords"
+                        },
+                        "minNewHires": {
+                          "type": "integer",
+                          "exclusiveMinimum": 0
+                        }
+                      },
+                      "required": [
+                        "entityType",
+                        "type",
+                        "titleKeywords"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "lookbackDays": {
+                          "$ref": "#/properties/update/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/lookbackDays"
+                        },
+                        "entityType": {
+                          "$ref": "#/properties/update/properties/fiberTrackers/items/properties/rules/items/anyOf/3/properties/entityType"
+                        },
+                        "type": {
+                          "type": "string",
+                          "const": "job_posting_in_function"
+                        },
+                        "jobFunctions": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/properties/update/properties/fiberTrackers/items/properties/rules/items/anyOf/7/properties/department"
+                          },
+                          "minItems": 1,
+                          "maxItems": 40
+                        },
+                        "minPostings": {
+                          "type": "integer",
+                          "exclusiveMinimum": 0
+                        }
+                      },
+                      "required": [
+                        "entityType",
+                        "type",
+                        "jobFunctions"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "lookbackDays": {
+                          "$ref": "#/properties/update/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/lookbackDays"
+                        },
+                        "entityType": {
+                          "$ref": "#/properties/update/properties/fiberTrackers/items/properties/rules/items/anyOf/3/properties/entityType"
+                        },
+                        "type": {
+                          "type": "string",
+                          "const": "job_posting_with_keyword"
+                        },
+                        "keywords": {
+                          "$ref": "#/properties/update/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/seniorityKeywords"
+                        },
+                        "searchFields": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "title",
+                              "description"
+                            ]
+                          },
+                          "minItems": 1,
+                          "maxItems": 2
+                        },
+                        "seniorityLevels": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "Internship",
+                              "Entry level",
+                              "Associate",
+                              "Mid-Senior level",
+                              "Director",
+                              "Executive"
+                            ]
+                          },
+                          "minItems": 1,
+                          "maxItems": 6
+                        },
+                        "modalities": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "On-site",
+                              "Remote",
+                              "Hybrid"
+                            ]
+                          },
+                          "minItems": 1,
+                          "maxItems": 3
+                        },
+                        "minPostings": {
+                          "type": "integer",
+                          "exclusiveMinimum": 0
+                        }
+                      },
+                      "required": [
+                        "entityType",
+                        "type",
+                        "keywords"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "lookbackDays": {
+                          "$ref": "#/properties/update/properties/fiberTrackers/items/properties/rules/items/anyOf/0/properties/lookbackDays"
+                        },
+                        "entityType": {
+                          "$ref": "#/properties/update/properties/fiberTrackers/items/properties/rules/items/anyOf/3/properties/entityType"
+                        },
+                        "type": {
+                          "type": "string",
+                          "const": "headcount_growth_percent"
+                        },
+                        "minPercentChange": {
+                          "type": "number",
+                          "exclusiveMinimum": 0,
+                          "maximum": 1000
+                        },
+                        "direction": {
+                          "type": "string",
+                          "enum": [
+                            "grew",
+                            "shrank",
+                            "either"
+                          ]
+                        },
+                        "minStartingHeadcount": {
+                          "type": "integer",
+                          "exclusiveMinimum": 0
+                        }
+                      },
+                      "required": [
+                        "entityType",
+                        "type",
+                        "minPercentChange",
+                        "direction"
+                      ],
+                      "additionalProperties": false
+                    }
+                  ]
+                },
+                "minItems": 1,
+                "maxItems": 25
+              }
+            },
+            "required": [
+              "id",
+              "subject",
+              "rules"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 1001
+        }
+      },
+      "required": [
+        "conversationId",
+        "expectedVersion",
+        "targets",
+        "everyHours",
+        "personRefreshFrequencyDays",
+        "maxResultsPerRun"
+      ],
+      "additionalProperties": false
+    },
+    "setState": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "expectedVersion": {
+          "type": "integer",
+          "exclusiveMinimum": 0
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "active",
+            "paused",
+            "cancelled"
+          ]
+        },
+        "idempotencyKey": {
+          "$ref": "#/properties/resolveIdentity/properties/idempotencyKey"
+        }
+      },
+      "required": [
+        "conversationId",
+        "expectedVersion",
+        "state"
+      ],
+      "additionalProperties": false
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

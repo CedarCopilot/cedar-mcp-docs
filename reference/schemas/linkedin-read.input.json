@@ -1,0 +1,491 @@
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "list-seats",
+        "view-profile",
+        "list-connections",
+        "list-connections-page",
+        "list-own-posts",
+        "list-post-reactions",
+        "profile-viewers",
+        "post-engagement",
+        "new-connections",
+        "list-chats",
+        "read-chat",
+        "find-chat",
+        "search",
+        "search-parameters",
+        "connections-page",
+        "post-page",
+        "profiles",
+        "companies",
+        "screen-prospects",
+        "outreach-status"
+      ],
+      "description": "Which read operation to perform — pass its matching params object (e.g. action: \"view-profile\" pairs with viewProfile: {...})."
+    },
+    "listSeats": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": true,
+      "description": "No parameters — lists your connected LinkedIn seats."
+    },
+    "viewProfile": {
+      "type": "object",
+      "properties": {
+        "identifier": {
+          "type": "string",
+          "description": "LinkedIn public identifier (the /in/<slug>) or member URN to view."
+        },
+        "url": {
+          "type": "string",
+          "description": "Full LinkedIn profile URL of the target (e.g. https://www.linkedin.com/in/jane)."
+        },
+        "personId": {
+          "type": "string",
+          "description": "Cedar crm_person id of the target (resolved to a LinkedIn identifier server-side)."
+        },
+        "self": {
+          "type": "boolean",
+          "description": "View the connected seat owner's own profile (smoke test) instead of a target."
+        },
+        "unipileAccountId": {
+          "type": "string",
+          "description": "Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one."
+        }
+      },
+      "additionalProperties": false
+    },
+    "listConnections": {
+      "type": "object",
+      "properties": {
+        "maxPages": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 400,
+          "description": "Max relation pages (50 rows each) to walk. Default 200 — enough for a 10k network. Lower it only to sample."
+        },
+        "unipileAccountId": {
+          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+        }
+      },
+      "additionalProperties": false
+    },
+    "listConnectionsPage": {
+      "type": "object",
+      "properties": {
+        "cursor": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Opaque nextCursor from the previous page of this same action and seat. Omit for the first page."
+        },
+        "unipileAccountId": {
+          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+        }
+      },
+      "additionalProperties": false
+    },
+    "listOwnPosts": {
+      "$ref": "#/properties/listConnectionsPage"
+    },
+    "listPostReactions": {
+      "type": "object",
+      "properties": {
+        "cursor": {
+          "$ref": "#/properties/listConnectionsPage/properties/cursor"
+        },
+        "unipileAccountId": {
+          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+        },
+        "postId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Use a reactionId from list-own-posts (the reshare activity id for a repost). Keep this postId unchanged while paging."
+        }
+      },
+      "required": [
+        "postId"
+      ],
+      "additionalProperties": false
+    },
+    "profileViewers": {
+      "type": "object",
+      "properties": {
+        "unipileAccountId": {
+          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+        }
+      },
+      "additionalProperties": false
+    },
+    "postEngagement": {
+      "type": "object",
+      "properties": {
+        "sinceDays": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 365,
+          "description": "Only posts newer than this many days (default: all posts in the walked feed)."
+        },
+        "postMaxPages": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20,
+          "description": "How many pages of your own feed to walk (default 10)."
+        },
+        "maxReactors": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5000,
+          "description": "Cap on reactors collected across all posts (default 500)."
+        },
+        "unipileAccountId": {
+          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+        }
+      },
+      "additionalProperties": false
+    },
+    "newConnections": {
+      "type": "object",
+      "properties": {
+        "sinceDays": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 365,
+          "description": "Look back this many days (default 30). This is an ad-hoc read and never advances the background poll's high-water mark."
+        },
+        "unipileAccountId": {
+          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+        }
+      },
+      "additionalProperties": false
+    },
+    "listChats": {
+      "type": "object",
+      "properties": {
+        "draftsOnly": {
+          "type": "boolean",
+          "description": "Return only your chats with a saved draft, before applying the limit."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200,
+          "description": "Max chats to return (default 100)."
+        },
+        "includeInmail": {
+          "type": "boolean",
+          "description": "Include quarantined InMail chats (excluded by default)."
+        },
+        "unipileAccountId": {
+          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+        }
+      },
+      "additionalProperties": false
+    },
+    "readChat": {
+      "type": "object",
+      "properties": {
+        "chatId": {
+          "type": "string",
+          "description": "The LinkedIn chat id (from list-chats) to read messages from."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200,
+          "description": "Max messages to return (default 200)."
+        }
+      },
+      "required": [
+        "chatId"
+      ],
+      "additionalProperties": false
+    },
+    "findChat": {
+      "type": "object",
+      "properties": {
+        "refresh": {
+          "type": "boolean",
+          "description": "Refresh the indexed thread from LinkedIn before returning it."
+        },
+        "name": {
+          "type": "string",
+          "description": "The person's name as the user said it (\"Isabelle\", \"Isabelle Ilyia\"). Several matches come back as candidates to ask the user about — never pick one yourself."
+        },
+        "providerId": {
+          "type": "string",
+          "description": "Unipile provider id / member URN of the target (most direct)."
+        },
+        "url": {
+          "$ref": "#/properties/viewProfile/properties/url"
+        },
+        "personId": {
+          "$ref": "#/properties/viewProfile/properties/personId"
+        },
+        "unipileAccountId": {
+          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+        }
+      },
+      "additionalProperties": false
+    },
+    "search": {
+      "type": "object",
+      "properties": {
+        "cursor": {
+          "type": "string",
+          "minLength": 1
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "unipileAccountId": {
+          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Existing filtered LinkedIn search URL; alternative to structured parameters."
+        },
+        "api": {
+          "type": "string",
+          "enum": [
+            "classic",
+            "sales_navigator",
+            "recruiter"
+          ]
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "people",
+            "companies"
+          ]
+        },
+        "keywords": {
+          "type": "string"
+        },
+        "networkDistance": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 3
+          },
+          "minItems": 1,
+          "maxItems": 3
+        },
+        "filters": {
+          "type": "object",
+          "additionalProperties": {},
+          "description": "Read-only Unipile v1 search filters for the selected product. Use search-parameters to discover reference IDs. Subscription-dependent; never save a search."
+        }
+      },
+      "additionalProperties": false
+    },
+    "searchParameters": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "keywords": {
+          "type": "string"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "unipileAccountId": {
+          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    "connectionsPage": {
+      "type": "object",
+      "properties": {
+        "cursor": {
+          "$ref": "#/properties/search/properties/cursor"
+        },
+        "limit": {
+          "$ref": "#/properties/search/properties/limit"
+        },
+        "unipileAccountId": {
+          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+        }
+      },
+      "additionalProperties": false
+    },
+    "postPage": {
+      "type": "object",
+      "properties": {
+        "cursor": {
+          "$ref": "#/properties/search/properties/cursor"
+        },
+        "limit": {
+          "$ref": "#/properties/search/properties/limit"
+        },
+        "unipileAccountId": {
+          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "posts",
+            "comments",
+            "reactions"
+          ]
+        },
+        "identifier": {
+          "type": "string",
+          "minLength": 1,
+          "description": "For posts: user provider ID. For comments/reactions: post social_id, not an assumed URL activity ID."
+        },
+        "commentId": {
+          "type": "string",
+          "description": "List replies to this comment."
+        }
+      },
+      "required": [
+        "kind",
+        "identifier"
+      ],
+      "additionalProperties": false
+    },
+    "profiles": {
+      "type": "object",
+      "properties": {
+        "people": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "rowId": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "providerId": {
+                "$ref": "#/properties/findChat/properties/providerId"
+              }
+            },
+            "required": [
+              "url"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1,
+          "maxItems": 50
+        },
+        "cacheOnly": {
+          "type": "boolean"
+        },
+        "maxAgeDays": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 365
+        },
+        "unipileAccountId": {
+          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+        }
+      },
+      "required": [
+        "people"
+      ],
+      "additionalProperties": false
+    },
+    "companies": {
+      "type": "object",
+      "properties": {
+        "identifiers": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "maxItems": 20
+        },
+        "unipileAccountId": {
+          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+        }
+      },
+      "required": [
+        "identifiers"
+      ],
+      "additionalProperties": false
+    },
+    "screenProspects": {
+      "type": "object",
+      "properties": {
+        "people": {
+          "type": "array",
+          "items": {
+            "$ref": "#/properties/profiles/properties/people/items"
+          },
+          "minItems": 1,
+          "maxItems": 50
+        },
+        "includeCrm": {
+          "type": "boolean",
+          "description": "Also check org person-keyed contacts and caller-owned legacy contacts. Requires crm:read."
+        },
+        "excludedUrls": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          },
+          "maxItems": 2500,
+          "description": "URLs already in prior outreach tables, read through the authorized table tool."
+        },
+        "checkConnections": {
+          "type": "boolean",
+          "description": "Match first-degree relations and obtain provider IDs without profile views (default true)."
+        },
+        "connectionsMaxPages": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 400
+        },
+        "unipileAccountId": {
+          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+        }
+      },
+      "required": [
+        "people"
+      ],
+      "additionalProperties": false
+    },
+    "outreachStatus": {
+      "$ref": "#/properties/screenProspects"
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

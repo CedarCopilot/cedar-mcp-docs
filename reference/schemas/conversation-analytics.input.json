@@ -1,0 +1,365 @@
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "compute-metric",
+        "compute-metric-batch",
+        "describe-metrics"
+      ],
+      "description": "compute-metric = aggregate a metric; compute-metric-batch = up to 50 compute-metric calls in one request; describe-metrics = list the metric × groupBy catalog."
+    },
+    "computeMetric": {
+      "type": "object",
+      "properties": {
+        "metric": {
+          "type": "string",
+          "enum": [
+            "crm_won_amount",
+            "crm_open_due_amount",
+            "response_time",
+            "followup_time",
+            "post_meeting_time",
+            "reply_rate",
+            "event_count",
+            "time_between_stages",
+            "stage_funnel",
+            "win_rate",
+            "aop_conversion",
+            "deals_dropped",
+            "quiet_gap",
+            "gave_up_count",
+            "hygiene",
+            "contacts_reached",
+            "open_deal_age",
+            "stalled_deal_revenue",
+            "total_pipeline",
+            "won_pipeline",
+            "avg_acv",
+            "judged_strength"
+          ],
+          "description": "The analytics metric to compute server-side (never tally rows yourself)."
+        },
+        "target": {
+          "type": "string",
+          "description": "Metric-specific: a fieldId, eventType, a payload key (distribution), \"stageA->stageB\" (time_between_stages), a day-threshold override for deals_dropped/quiet_gap/gave_up_count (default 10, the org quiet-gap threshold), a comma-separated subset of company,contact,deal_value,next_step for hygiene (default: all four), or — for judged_strength, REQUIRED — a taxonomy field-id family glob (e.g. \"coaching.discovery.*\", \"coaching.followup.rs*\")."
+        },
+        "groupBy": {
+          "type": "string",
+          "description": "Group by: rep|stage|field|deal|event_type|email_classification|outcome|month|payload:<key>. Omit → one \"all\" row."
+        },
+        "filter": {
+          "type": "object",
+          "properties": {
+            "conversationIds": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1
+            },
+            "fieldIds": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "kinds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "event",
+                  "instance",
+                  "judgment"
+                ]
+              }
+            },
+            "eventIds": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "eventTypes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "emailClassifications": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "stages": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "from": {
+              "type": "string"
+            },
+            "to": {
+              "type": "string"
+            },
+            "reps": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "values": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "valueContains": {
+              "type": "string"
+            },
+            "strength": {
+              "type": "object",
+              "properties": {
+                "min": {
+                  "type": "number"
+                },
+                "max": {
+                  "type": "number"
+                }
+              },
+              "additionalProperties": false
+            },
+            "completeness": {
+              "$ref": "#/properties/computeMetric/properties/filter/properties/strength"
+            },
+            "hasStrength": {
+              "type": "boolean"
+            },
+            "hasCompleteness": {
+              "type": "boolean"
+            },
+            "payload": {
+              "type": "object",
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "exists": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "exists"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            },
+            "hasResponseSpan": {
+              "type": "boolean"
+            },
+            "hasReason": {
+              "type": "boolean"
+            },
+            "current": {
+              "type": "boolean"
+            },
+            "crmLinkedOnly": {
+              "type": "boolean",
+              "description": "Scope to deals with a real linked CRM record, not just a matched account. Use for any metric presented as a real number — CRM-unlinked deals skew the result."
+            }
+          },
+          "additionalProperties": false,
+          "description": "The shared filter cube scoping which atoms/events/deals are aggregated. Omit conversationIds → org-wide."
+        },
+        "outcome": {
+          "type": "object",
+          "properties": {
+            "won": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "lost": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "won",
+            "lost"
+          ],
+          "additionalProperties": false,
+          "description": "Agent-supplied won/lost status values — REQUIRED for win_rate, total_pipeline, and any metric scoped to the open pipeline (deals_dropped, quiet_gap, hygiene, contacts_reached, open_deal_age, stalled_deal_revenue, followup_time), and for groupBy:\"outcome\" (Cedar infers no terminal status). Get the vocab from describe-field on the status field."
+        },
+        "crmStages": {
+          "type": "object",
+          "properties": {
+            "won": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "lost": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "open": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false,
+          "description": "Optional CRM stage values per bucket. With it, an org-wide ungrouped win_rate/won_pipeline/avg_acv/total_pipeline is read live from the CRM (row source:\"crm_live\"); else from Cedar."
+        },
+        "crmReporting": {
+          "type": "object",
+          "properties": {
+            "timezone": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "timezone"
+          ],
+          "additionalProperties": false,
+          "description": "Required for live crm_won_amount/crm_open_due_amount: close-date window timezone, e.g. America/Los_Angeles. One filter.reps user and explicit from/to date bounds required."
+        },
+        "perDeal": {
+          "type": "string",
+          "enum": [
+            "latest",
+            "max"
+          ],
+          "description": "Deprecated and ignored. It only ever applied to the atom metrics, which moved to run-sql (per-deal normalization is a GROUP BY there, in whatever shape the question needs). Accepted so an existing caller does not fail validation."
+        }
+      },
+      "required": [
+        "metric",
+        "filter"
+      ],
+      "additionalProperties": false,
+      "description": "Compute an analytics metric over the taxonomy atoms/events, grouped + filtered. Returns rows with value + n + sampleIds — zero client-side math."
+    },
+    "computeMetricBatch": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "metric": {
+                "$ref": "#/properties/computeMetric/properties/metric"
+              },
+              "target": {
+                "$ref": "#/properties/computeMetric/properties/target"
+              },
+              "groupBy": {
+                "$ref": "#/properties/computeMetric/properties/groupBy"
+              },
+              "filter": {
+                "$ref": "#/properties/computeMetric/properties/filter"
+              },
+              "outcome": {
+                "$ref": "#/properties/computeMetric/properties/outcome"
+              },
+              "crmStages": {
+                "$ref": "#/properties/computeMetric/properties/crmStages"
+              },
+              "crmReporting": {
+                "$ref": "#/properties/computeMetric/properties/crmReporting"
+              },
+              "perDeal": {
+                "$ref": "#/properties/computeMetric/properties/perDeal"
+              },
+              "id": {
+                "type": "string",
+                "description": "Caller-supplied id so this item's result maps back to its own tab/window unambiguously — never by array position."
+              },
+              "trend": {
+                "type": "object",
+                "properties": {
+                  "size": {
+                    "type": "string",
+                    "enum": [
+                      "week",
+                      "month"
+                    ]
+                  },
+                  "count": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 50
+                  }
+                },
+                "required": [
+                  "size",
+                  "count"
+                ],
+                "additionalProperties": false,
+                "description": "Expand this item into `count` consecutive week/month windows ending now, oldest first (ids \"<id>#1\"..\"<id>#N\", each result carries its window). Omit filter.from/to with it."
+              }
+            },
+            "required": [
+              "metric",
+              "filter",
+              "id"
+            ],
+            "additionalProperties": false,
+            "description": "Compute an analytics metric over the taxonomy atoms/events, grouped + filtered. Returns rows with value + n + sampleIds — zero client-side math."
+          },
+          "minItems": 1,
+          "maxItems": 50,
+          "description": "Up to 50 compute-metric calls in one batch — each item is exactly compute-metric's own params, plus its own `id` (must be unique within the batch)."
+        }
+      },
+      "required": [
+        "items"
+      ],
+      "additionalProperties": false,
+      "description": "Run many compute-metric calls in one request, each isolated: one item failing never fails the rest."
+    },
+    "describeMetrics": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "description": "List the computable metrics × groupBy dimensions (the analytics catalog)."
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

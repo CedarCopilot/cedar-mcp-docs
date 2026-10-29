@@ -1,0 +1,181 @@
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "update"
+      ]
+    },
+    "update": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string",
+          "enum": [
+            "self",
+            "organization"
+          ]
+        },
+        "expectedVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "patch": {
+          "type": "object",
+          "properties": {
+            "personProvider": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "fiber",
+                    "crustdata",
+                    "apollo",
+                    "moltsets"
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "companyProvider": {
+              "anyOf": [
+                {
+                  "$ref": "#/properties/update/properties/patch/properties/personProvider/anyOf/0"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "allowedProviders": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/properties/update/properties/patch/properties/personProvider/anyOf/0"
+                  },
+                  "maxItems": 4
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "cacheMaxAgeDays": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 365
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "watchDefaults": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "provider": {
+                      "type": "string",
+                      "const": "crustdata"
+                    },
+                    "everyHours": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 168
+                    },
+                    "refreshFrequencyDays": {
+                      "type": "number",
+                      "enum": [
+                        1,
+                        3,
+                        7,
+                        14,
+                        30
+                      ]
+                    },
+                    "maxResultsPerRun": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 100
+                    },
+                    "signalTypes": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "title_change",
+                          "job_change",
+                          "headline_change",
+                          "person_location_change",
+                          "education_added",
+                          "skill_added",
+                          "headcount_change",
+                          "funding_change",
+                          "news_added",
+                          "funding_round_change",
+                          "investor_added",
+                          "acquisition_added",
+                          "hiring_change",
+                          "company_name_change",
+                          "certification_added",
+                          "honor_added",
+                          "connection_count_change",
+                          "funding_milestone_added",
+                          "follower_count_change",
+                          "industry_change",
+                          "company_location_change"
+                        ]
+                      },
+                      "minItems": 1,
+                      "maxItems": 21
+                    }
+                  },
+                  "required": [
+                    "provider",
+                    "everyHours",
+                    "refreshFrequencyDays",
+                    "maxResultsPerRun",
+                    "signalTypes"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "scope",
+        "expectedVersion",
+        "patch"
+      ],
+      "additionalProperties": false
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

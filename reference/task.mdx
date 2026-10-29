@@ -1,0 +1,1215 @@
+---
+title: "task"
+description: "Parameters, scopes, and response schema for task."
+---
+
+Generated from Cedar's external registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+
+## Capability
+
+Task management; each action takes same-named params. dealList: shared deal tasks, recommendations, owner, assigner and note. creationOptions: eligible assignees; conversationId optional. createAssigned: manual task or personal reminder with explicit dueDate, optional conversationId, assignee and assignmentNote. Omit conversationId when no deal is selected; preserve a source Slack permalink in notes. Personal reminders never schedule automatic agent execution. complete: mark done. delete: dismiss/delete; draft deletion needs authorization. updateDueDate: edit date. start: prepare caller-owned work in the current Cedar chat; follow seedPrompt. Does not execute or send. Recommendations stay recommended; no accept action. Never impersonate teammates. applyApproval: apply an exact saved CRM approval on user request; await CRM confirmation, no agent fallback. Apply all: list scope="#crm-approvals", apply sequentially, report failures. list: own active tasks by conversation or scope="#today"/"#overdue"; groups/outputKinds filters, includeRecommended=true for proposals. create: requires a real deal for automatic drafting via agentExecutionEnabled. dueDate="NOW" allowed for non-agent tasks without a future blocker. update: edit/reschedule/toggle execution/mark done; cleanupDraft=true removes stale draft on completion. cancel: obsolete tasks by IDs/age/conversation. Current-run tasks protected from update/cancel. assignmentOptions: owners, authority, assignmentVersion, draft-reset needs, pendingTransfer. reassign: get options; needs owner/deal-owner/admin authority. Reuse draft-deletion approval and UUID idempotencyKey; recover pendingTransfer. Finishing is pending. Completion attempts assignee Slack DM with task link unless self-assigned/disabled. Never call notify-user (targets actor). Confirm transfer only; say Slack delivery is unconfirmed unless verified.
+
+## Operations and scopes
+
+| Action | Baseline scope |
+| --- | --- |
+| `list` | `crm:read` |
+| `applyApproval` | `crm:read` |
+| `create` | `crm:read` |
+| `update` | `crm:read` |
+| `cancel` | `crm:read` |
+| `assignmentOptions` | `crm:read` |
+| `reassign` | `crm:read` |
+| `dealList` | `crm:read` |
+| `creationOptions` | `crm:read` |
+| `createAssigned` | `crm:read` |
+| `complete` | `crm:read` |
+| `delete` | `crm:read` |
+| `start` | `crm:read` |
+| `updateDueDate` | `crm:read` |
+
+Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Parameters
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `action` | "list" · "applyApproval" · "create" · "update" · "cancel" · "assignmentOptions" · "reassign" · "dealList" · "creationOptions" · "createAssigned" · "complete" · "delete" · "start" · "updateDueDate" | Yes | Which operation to perform — pass its matching params object below (e.g. action: "create" pairs with create: &#123;...&#125;).  |
+| `list` | object | No |   |
+| `applyApproval` | object | No |   |
+| `create` | object | No |   |
+| `update` | object | No |   |
+| `cancel` | object | No |   |
+| `assignmentOptions` | object | No |   |
+| `reassign` | object | No |   |
+| `dealList` | object | No |   |
+| `creationOptions` | object | No |   |
+| `createAssigned` | object | No |   |
+| `complete` | object | No |   |
+| `delete` | object | No |   |
+| `start` | object | No |   |
+| `updateDueDate` | object | No |   |
+| `user_request_summary` | string | Yes | One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does.  |
+| `is_new_request` | boolean | Yes | true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread.  |
+
+### list
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `scope` | "#today" · "#overdue" · "#crm-approvals" · "#all" | No | Scope: #all lists all open work user-wide, ignoring ambient conversation/date filters; recommendations default on. Follow nextCursor. For a deal inventory omit scope and set conversationId. #crm-approvals lists open CRM approvals user-wide. #today covers the previous 7 days through today; #overdue is before today without a lower bound. Date scopes use conversationId if supplied, otherwise user-wide.  |
+| `cursor` | string | No | Opaque nextCursor from the previous page; keep all other filters unchanged.  |
+| `pageSize` | integer | No |  minimum: 1; maximum: 100 |
+| `targetUserId` | string | No | Org owner/admin only: list another same-org member's tasks by passing their userId (e.g. an org-level triage agent surfacing a rep's overdue work). Omit to list your own. Rejected for non-admins and for a target outside your org.  |
+| `activeAopNames` | string&#91;&#93; | No | User-wide scope only (#all, or #today/#overdue without conversationId). Restrict to tasks from conversations belonging to these AOP names — pass the selectedAopNames from the pipeline canvas. Skips tasks from no-op AOPs (Spam, Vendor notification, etc.).  |
+| `excludeStatuses` | string&#91;&#93; | No | User-wide scope only. Exclude tasks from conversations with these status values. Pass the closed/terminal status values you learned from the AOP config — do not hardcode them here.  |
+| `groups` | string&#91;&#93; | No | Filter to the task GROUPS (lanes) the user files work into, by name — case-insensitive. e.g. &#91;"Follow-ups", "Responses needed"&#93; for comms-only. Group names are per-user and editable; call the user's task-group list rather than assuming these defaults.  |
+| `outputKinds` | "email" · "slack" · "calendar" · "linkedin" · "whatsapp" · "crm-field" · "crm-opportunity" · "file" · "recommendation" · "none"&#91;&#93; | No | Filter by what finishing the task PRODUCES. Use this for artifact questions, not lane questions: &#91;"crm-field", "crm-opportunity"&#93; for CRM approvals awaiting the user, &#91;"email", "slack"&#93; for drafts to review, &#91;"none"&#93; for pure reminders. Combined with `groups` as AND (a task must be in one of the groups AND produce one of the kinds).  |
+| `includeRecommended` | boolean | No | Include standing recommended proposals as well as accepted open tasks. Enable when reconciling existing work; recommendations remain explicitly categorized.  |
+| `conversationId` | string | No | Conversation ID to scope the query to. Required when scope is omitted (to prevent unbounded fetches); optional when scope is provided (omit for a user-wide date-filtered query).  |
+
+### applyApproval
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `taskId` | string | Yes |  format: "uuid" |
+
+### create
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `conversationId` | string | Yes | ID of the conversation this task belongs to. This is provided in the &lt;conversation_id&gt; section of your prompt. Required for all tasks.  |
+| `description` | string | Yes | The task, in TWO parts separated by an em dash: a short bolded-in-the-UI headline, then the detail. `&lt;headline&gt; — &lt;detail&gt;`. Plain text only — no markdown, no asterisks, no bullets, no line breaks; the UI paints the two halves itself and shows the raw characters if you add any. The headline is 3-8 words and names the commitment ("Send Simon the pricing recap"); the detail is ONE sentence saying why it is owed or what it needs, in the second person ("you told him you would send it before the 4:30, and the deck is still unattached"). Never name the deal in either half — the UI renders the deal as a badge next to the headline, so writing it makes the row say it twice. Examples: "Amie is waiting on eDocs naming — she answered your question about starting with two doc-heavy carriers; the reply is yours", "Book the Bukaty pricing call — Natalie confirmed Friday 2:00 but you still owe the policy counts for both offices". Omit the dash and the detail only when the headline is the whole truth ("Renew the SOC2 questionnaire"). minLength: 1 |
+| `notes` | string or null | No | Additional context for agent/human execution. E.g., "Mention Q4 timeline discussion from last meeting". Only execution related instructions should be here, dont include reasons for scheduling/etc.  |
+| `taskChannel` | "email" · "slack" · "linkedin" · "whatsapp" | Yes | How this task will be carried out: email, slack, linkedin or whatsapp. Only set it when the channel is genuinely part of the commitment — "reply to this thread" is an email by definition. For open-ended work like "follow up with Sarah", LEAVE IT UNSET: you do not know today whether that follow-up should be an email or a Slack message, and by the time it comes due a channel may exist that does not exist now. An unset channel is decided at execution, with better information; a guessed one is recorded as fact and biases whoever picks the task up.  |
+| `taskType` | "response" · "follow-up" · "post-meeting" · "pre-meeting" · "reactivation" · "manual" · "calendar" · "crm-opportunity" · "field-approval" | No | Task type. Options: - response: reply to an inbound email - follow-up: outbound follow-up email - post-meeting: post-meeting recap - pre-meeting: pre-meeting prep - reactivation: re-engage a stalled deal - manual: general user-visible task - calendar: calendar invite or placeholder to send - crm-opportunity: create a new deal/opportunity in the external CRM. REQUIRED notes format: include provider (e.g. "hubspot"), accountId if known, instanceUrl if Salesforce, and the full conversation skill's opportunity-creation resource instructions so the chat agent has everything when the user invokes it. - field-approval: proposed field value change pending user approval. REQUIRED notes format: JSON string &#123;"fieldName":"&lt;field&gt;","value":"&lt;value&gt;","fieldLabel":"&lt;label&gt;","conversationId":"&lt;id&gt;"&#125; — this is parsed by applyFieldChange when the user approves.  |
+| `tags` | "promised" · "awaiting-them"&#91;&#93; | No | At most one: promised (user owes) or awaiting-them (other side owes). Omit when unknown.  |
+| `dueDate` | string | Yes | ISO 8601 timestamp or "NOW". For agentExecutionEnabled=false tasks: use "NOW" unless the action is blocked until a specific future date (waiting for a response, waiting on a dependency, or a calendar reminder). Deadlines are NOT blockers — use "NOW" and put the deadline in notes. For agentExecutionEnabled=true tasks: always a future ISO timestamp (09:00 UTC for morning-scheduled drafts).  |
+| `agentExecutionEnabled` | boolean | No | Mark as true if the agent is able to execute this task. The agent has the ability to draft messages (emails or slack). The agent drafts output but task remains todo until user completes the action. default: true |
+| `threadId` | string | No | Thread ID for email response tasks. When provided with taskChannel="email", this links the task to the specific email thread. Required for response tasks.  |
+
+### update
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `taskId` | string | Yes | ID of the task to update format: "uuid" |
+| `description` | string | No | The task, in TWO parts separated by an em dash: a short bolded-in-the-UI headline, then the detail. `&lt;headline&gt; — &lt;detail&gt;`. Plain text only — no markdown, no asterisks, no bullets, no line breaks; the UI paints the two halves itself and shows the raw characters if you add any. The headline is 3-8 words and names the commitment ("Send Simon the pricing recap"); the detail is ONE sentence saying why it is owed or what it needs, in the second person ("you told him you would send it before the 4:30, and the deck is still unattached"). Never name the deal in either half — the UI renders the deal as a badge next to the headline, so writing it makes the row say it twice. Examples: "Amie is waiting on eDocs naming — she answered your question about starting with two doc-heavy carriers; the reply is yours", "Book the Bukaty pricing call — Natalie confirmed Friday 2:00 but you still owe the policy counts for both offices". Omit the dash and the detail only when the headline is the whole truth ("Renew the SOC2 questionnaire"). minLength: 1 |
+| `notes` | any or string or null | No | Additional context for agent/human execution. E.g., "Mention Q4 timeline discussion from last meeting". Only execution related instructions should be here, dont include reasons for scheduling/etc. Set to null to clear.  |
+| `taskType` | any or "response" · "follow-up" · "post-meeting" · "pre-meeting" · "reactivation" · "manual" · "calendar" · "crm-opportunity" · "field-approval" or null | No | Task type. Options: - response: reply to an inbound email - follow-up: outbound follow-up email - post-meeting: post-meeting recap - pre-meeting: pre-meeting prep - reactivation: re-engage a stalled deal - manual: general user-visible task - calendar: calendar invite or placeholder to send - crm-opportunity: create a new deal/opportunity in the external CRM. REQUIRED notes format: include provider (e.g. "hubspot"), accountId if known, instanceUrl if Salesforce, and the full conversation skill's opportunity-creation resource instructions so the chat agent has everything when the user invokes it. - field-approval: proposed field value change pending user approval. REQUIRED notes format: JSON string &#123;"fieldName":"&lt;field&gt;","value":"&lt;value&gt;","fieldLabel":"&lt;label&gt;","conversationId":"&lt;id&gt;"&#125; — this is parsed by applyFieldChange when the user approves. Set to null to clear.  |
+| `tags` | "promised" · "awaiting-them"&#91;&#93; | No | At most one: promised (user owes) or awaiting-them (other side owes). Omit when unknown.  |
+| `dueDate` | string | No | For scheduling tasks with status "todo": ISO 8601 timestamp (e.g., "2024-01-15T14:30:00Z")  |
+| `agentExecutionEnabled` | boolean | No | Mark as true if the agent is able to execute this task. The agent has the ability to draft messages (emails or slack). The agent drafts output but task remains todo until user completes the action.  |
+| `status` | "todo" · "done" | No | Task status: 'todo' if this is the next task to be completed in this conversation. Use status='done' when the intended task action has already happened. Do not use cancel-task for completed work.  |
+| `cleanupDraft` | boolean | No | Only valid with status="done". Set true when marking a draft-backed task done because an equivalent email was already sent, so the stale Gmail draft and agent draft label should be cleaned up.  |
+| `taskGroupId` | string or null | No | Reassign the task to a different task group (lane) by its UUID. Read the "task_groups" section of config read-settings FIRST to get valid group ids. Pass null to file the task to Misc (ungrouped). Omit to leave the group unchanged.  |
+
+### cancel
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `taskIds` | string&#91;&#93; | No | List of specific task IDs to delete. Required when cancelOlderThan is not provided.  |
+| `cancelOlderThan` | string | No | ISO 8601 date — bulk-cancel overdue tasks with dueDate strictly before this date. Use for stale task cleanup (e.g. pass "today - 10 days" as ISO string). When provided, taskIds is ignored.  |
+| `taskCreatedBy` | "agent" · "user" | No | When using cancelOlderThan: filter to only tasks created by this actor. Defaults to "agent" so user-created tasks are never accidentally bulk-deleted.  |
+| `bulkConversationId` | string | No | When using cancelOlderThan: scope the bulk cancel to a single conversation. Omit for user-wide bulk cancel. format: "uuid" |
+| `conversationStatuses` | string&#91;&#93; | No | Cancel tasks from conversations with any of these status values. E.g. &#91;"lost", "ae_dq"&#93; to purge all tasks on dead-stage deals. Can be combined with cancelOlderThan for extra specificity, or used standalone.  |
+| `conversationAopNames` | string&#91;&#93; | No | Cancel tasks from conversations belonging to these AOP names. E.g. &#91;"Spam", "Vendor notification"&#93; to purge tasks on no-op conversations. Can be combined with cancelOlderThan or conversationStatuses.  |
+
+### assignmentOptions
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `taskId` | string | Yes |  format: "uuid" |
+
+### reassign
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `taskId` | string | Yes |  format: "uuid" |
+| `assignmentNote` | string | No | Optional instructions from the assigning person; retained with assignment history. maxLength: 4000 |
+| `assigneeUserId` | string | Yes | Use a userId returned by assignmentOptions; never guess. minLength: 1 |
+| `expectedVersion` | integer | Yes | Use assignmentVersion from assignmentOptions; for recovery use pendingTransfer.expectedVersion. minimum: 0 |
+| `idempotencyKey` | string | Yes | A new UUID per transfer. Preserve it for retries; for pending recovery reuse pendingTransfer.idempotencyKey. format: "uuid" |
+| `acknowledgeDraftDeletion` | boolean | Yes | True when the user or approved operating instructions authorize discarding the existing draft during reassignment. Reuse authorization from earlier turns; do not ask again. Otherwise false and ask only if requiresDraftDeletion.  |
+
+### dealList
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `conversationId` | string | No |  format: "uuid" |
+| `filter` | "all" · "assignedToMe" · "dealTasks" · "recommendations" | No |   |
+
+### creationOptions
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `conversationId` | string | No |  format: "uuid" |
+
+### createAssigned
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `conversationId` | string | No |  format: "uuid" |
+| `description` | string | No |  minLength: 1; maxLength: 10000 |
+| `notes` | string | No |  maxLength: 10000 |
+| `assigneeUserId` | string | No | Choose from creationOptions; never guess or impersonate this person. minLength: 1 |
+| `assignmentNote` | string | No |  maxLength: 4000 |
+| `dueDate` | string | No |  format: "date-time" |
+
+### complete
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `taskId` | string | No |  format: "uuid" |
+
+### delete
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `taskId` | string | No |  format: "uuid" |
+| `confirmDraftDeletion` | boolean | No | True only with user or approved standing authorization to discard the existing draft; otherwise omit and report the confirmation requirement.  |
+
+### start
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `taskId` | string | No |  format: "uuid" |
+
+### updateDueDate
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `taskId` | string | No |  format: "uuid" |
+| `dueDate` | string | No |  format: "date-time" |
+
+## Full input schema
+
+[Download the input schema](/reference/schemas/task.input.json). Nested objects, variants, and constraints are preserved in full. Runtime refinements and ownership checks still apply.
+
+<Accordion title="Input JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "list",
+        "applyApproval",
+        "create",
+        "update",
+        "cancel",
+        "assignmentOptions",
+        "reassign",
+        "dealList",
+        "creationOptions",
+        "createAssigned",
+        "complete",
+        "delete",
+        "start",
+        "updateDueDate"
+      ],
+      "description": "Which operation to perform — pass its matching params object below (e.g. action: \"create\" pairs with create: {...})."
+    },
+    "list": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string",
+          "enum": [
+            "#today",
+            "#overdue",
+            "#crm-approvals",
+            "#all"
+          ],
+          "description": "Scope: #all lists all open work user-wide, ignoring ambient conversation/date filters; recommendations default on. Follow nextCursor. For a deal inventory omit scope and set conversationId. #crm-approvals lists open CRM approvals user-wide. #today covers the previous 7 days through today; #overdue is before today without a lower bound. Date scopes use conversationId if supplied, otherwise user-wide."
+        },
+        "cursor": {
+          "type": "string",
+          "description": "Opaque nextCursor from the previous page; keep all other filters unchanged."
+        },
+        "pageSize": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "targetUserId": {
+          "type": "string",
+          "description": "Org owner/admin only: list another same-org member's tasks by passing their userId (e.g. an org-level triage agent surfacing a rep's overdue work). Omit to list your own. Rejected for non-admins and for a target outside your org."
+        },
+        "activeAopNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "User-wide scope only (#all, or #today/#overdue without conversationId). Restrict to tasks from conversations belonging to these AOP names — pass the selectedAopNames from the pipeline canvas. Skips tasks from no-op AOPs (Spam, Vendor notification, etc.)."
+        },
+        "excludeStatuses": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "User-wide scope only. Exclude tasks from conversations with these status values. Pass the closed/terminal status values you learned from the AOP config — do not hardcode them here."
+        },
+        "groups": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Filter to the task GROUPS (lanes) the user files work into, by name — case-insensitive. e.g. [\"Follow-ups\", \"Responses needed\"] for comms-only. Group names are per-user and editable; call the user's task-group list rather than assuming these defaults."
+        },
+        "outputKinds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "email",
+              "slack",
+              "calendar",
+              "linkedin",
+              "whatsapp",
+              "crm-field",
+              "crm-opportunity",
+              "file",
+              "recommendation",
+              "none"
+            ]
+          },
+          "description": "Filter by what finishing the task PRODUCES. Use this for artifact questions, not lane questions: [\"crm-field\", \"crm-opportunity\"] for CRM approvals awaiting the user, [\"email\", \"slack\"] for drafts to review, [\"none\"] for pure reminders. Combined with `groups` as AND (a task must be in one of the groups AND produce one of the kinds)."
+        },
+        "includeRecommended": {
+          "type": "boolean",
+          "description": "Include standing recommended proposals as well as accepted open tasks. Enable when reconciling existing work; recommendations remain explicitly categorized."
+        },
+        "conversationId": {
+          "type": "string",
+          "description": "Conversation ID to scope the query to. Required when scope is omitted (to prevent unbounded fetches); optional when scope is provided (omit for a user-wide date-filtered query)."
+        }
+      },
+      "additionalProperties": false
+    },
+    "applyApproval": {
+      "type": "object",
+      "properties": {
+        "taskId": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "required": [
+        "taskId"
+      ],
+      "additionalProperties": false
+    },
+    "create": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "type": "string",
+          "description": "ID of the conversation this task belongs to. This is provided in the <conversation_id> section of your prompt. Required for all tasks."
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The task, in TWO parts separated by an em dash: a short bolded-in-the-UI headline, then the detail. `<headline> — <detail>`. Plain text only — no markdown, no asterisks, no bullets, no line breaks; the UI paints the two halves itself and shows the raw characters if you add any. The headline is 3-8 words and names the commitment (\"Send Simon the pricing recap\"); the detail is ONE sentence saying why it is owed or what it needs, in the second person (\"you told him you would send it before the 4:30, and the deck is still unattached\"). Never name the deal in either half — the UI renders the deal as a badge next to the headline, so writing it makes the row say it twice. Examples: \"Amie is waiting on eDocs naming — she answered your question about starting with two doc-heavy carriers; the reply is yours\", \"Book the Bukaty pricing call — Natalie confirmed Friday 2:00 but you still owe the policy counts for both offices\". Omit the dash and the detail only when the headline is the whole truth (\"Renew the SOC2 questionnaire\")."
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Additional context for agent/human execution. E.g., \"Mention Q4 timeline discussion from last meeting\". Only execution related instructions should be here, dont include reasons for scheduling/etc."
+        },
+        "taskChannel": {
+          "type": "string",
+          "enum": [
+            "email",
+            "slack",
+            "linkedin",
+            "whatsapp"
+          ],
+          "description": "How this task will be carried out: email, slack, linkedin or whatsapp. Only set it when the channel is genuinely part of the commitment — \"reply to this thread\" is an email by definition. For open-ended work like \"follow up with Sarah\", LEAVE IT UNSET: you do not know today whether that follow-up should be an email or a Slack message, and by the time it comes due a channel may exist that does not exist now. An unset channel is decided at execution, with better information; a guessed one is recorded as fact and biases whoever picks the task up."
+        },
+        "taskType": {
+          "type": "string",
+          "enum": [
+            "response",
+            "follow-up",
+            "post-meeting",
+            "pre-meeting",
+            "reactivation",
+            "manual",
+            "calendar",
+            "crm-opportunity",
+            "field-approval"
+          ],
+          "description": "Task type. Options:\n- response: reply to an inbound email\n- follow-up: outbound follow-up email\n- post-meeting: post-meeting recap\n- pre-meeting: pre-meeting prep\n- reactivation: re-engage a stalled deal\n- manual: general user-visible task\n- calendar: calendar invite or placeholder to send\n- crm-opportunity: create a new deal/opportunity in the external CRM. REQUIRED notes format: include provider (e.g. \"hubspot\"), accountId if known, instanceUrl if Salesforce, and the full conversation skill's opportunity-creation resource instructions so the chat agent has everything when the user invokes it.\n- field-approval: proposed field value change pending user approval. REQUIRED notes format: JSON string {\"fieldName\":\"<field>\",\"value\":\"<value>\",\"fieldLabel\":\"<label>\",\"conversationId\":\"<id>\"} — this is parsed by applyFieldChange when the user approves."
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "promised",
+              "awaiting-them"
+            ]
+          },
+          "description": "At most one: promised (user owes) or awaiting-them (other side owes). Omit when unknown."
+        },
+        "dueDate": {
+          "type": "string",
+          "description": "ISO 8601 timestamp or \"NOW\". For agentExecutionEnabled=false tasks: use \"NOW\" unless the action is blocked until a specific future date (waiting for a response, waiting on a dependency, or a calendar reminder). Deadlines are NOT blockers — use \"NOW\" and put the deadline in notes. For agentExecutionEnabled=true tasks: always a future ISO timestamp (09:00 UTC for morning-scheduled drafts)."
+        },
+        "agentExecutionEnabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Mark as true if the agent is able to execute this task. The agent has the ability to draft messages (emails or slack). The agent drafts output but task remains todo until user completes the action."
+        },
+        "threadId": {
+          "type": "string",
+          "description": "Thread ID for email response tasks. When provided with taskChannel=\"email\", this links the task to the specific email thread. Required for response tasks."
+        }
+      },
+      "required": [
+        "conversationId",
+        "description",
+        "taskChannel",
+        "dueDate"
+      ],
+      "additionalProperties": false
+    },
+    "update": {
+      "type": "object",
+      "properties": {
+        "taskId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "ID of the task to update"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The task, in TWO parts separated by an em dash: a short bolded-in-the-UI headline, then the detail. `<headline> — <detail>`. Plain text only — no markdown, no asterisks, no bullets, no line breaks; the UI paints the two halves itself and shows the raw characters if you add any. The headline is 3-8 words and names the commitment (\"Send Simon the pricing recap\"); the detail is ONE sentence saying why it is owed or what it needs, in the second person (\"you told him you would send it before the 4:30, and the deck is still unattached\"). Never name the deal in either half — the UI renders the deal as a badge next to the headline, so writing it makes the row say it twice. Examples: \"Amie is waiting on eDocs naming — she answered your question about starting with two doc-heavy carriers; the reply is yours\", \"Book the Bukaty pricing call — Natalie confirmed Friday 2:00 but you still owe the policy counts for both offices\". Omit the dash and the detail only when the headline is the whole truth (\"Renew the SOC2 questionnaire\")."
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "not": {}
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Additional context for agent/human execution. E.g., \"Mention Q4 timeline discussion from last meeting\". Only execution related instructions should be here, dont include reasons for scheduling/etc. Set to null to clear."
+        },
+        "taskType": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "not": {}
+                },
+                {
+                  "$ref": "#/properties/create/properties/taskType"
+                }
+              ],
+              "description": "Task type. Options:\n- response: reply to an inbound email\n- follow-up: outbound follow-up email\n- post-meeting: post-meeting recap\n- pre-meeting: pre-meeting prep\n- reactivation: re-engage a stalled deal\n- manual: general user-visible task\n- calendar: calendar invite or placeholder to send\n- crm-opportunity: create a new deal/opportunity in the external CRM. REQUIRED notes format: include provider (e.g. \"hubspot\"), accountId if known, instanceUrl if Salesforce, and the full conversation skill's opportunity-creation resource instructions so the chat agent has everything when the user invokes it.\n- field-approval: proposed field value change pending user approval. REQUIRED notes format: JSON string {\"fieldName\":\"<field>\",\"value\":\"<value>\",\"fieldLabel\":\"<label>\",\"conversationId\":\"<id>\"} — this is parsed by applyFieldChange when the user approves."
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Task type. Options:\n- response: reply to an inbound email\n- follow-up: outbound follow-up email\n- post-meeting: post-meeting recap\n- pre-meeting: pre-meeting prep\n- reactivation: re-engage a stalled deal\n- manual: general user-visible task\n- calendar: calendar invite or placeholder to send\n- crm-opportunity: create a new deal/opportunity in the external CRM. REQUIRED notes format: include provider (e.g. \"hubspot\"), accountId if known, instanceUrl if Salesforce, and the full conversation skill's opportunity-creation resource instructions so the chat agent has everything when the user invokes it.\n- field-approval: proposed field value change pending user approval. REQUIRED notes format: JSON string {\"fieldName\":\"<field>\",\"value\":\"<value>\",\"fieldLabel\":\"<label>\",\"conversationId\":\"<id>\"} — this is parsed by applyFieldChange when the user approves. Set to null to clear."
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "$ref": "#/properties/create/properties/tags/items"
+          },
+          "description": "At most one: promised (user owes) or awaiting-them (other side owes). Omit when unknown."
+        },
+        "dueDate": {
+          "type": "string",
+          "description": "For scheduling tasks with status \"todo\": ISO 8601 timestamp (e.g., \"2024-01-15T14:30:00Z\")"
+        },
+        "agentExecutionEnabled": {
+          "type": "boolean",
+          "description": "Mark as true if the agent is able to execute this task. The agent has the ability to draft messages (emails or slack). The agent drafts output but task remains todo until user completes the action."
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "todo",
+            "done"
+          ],
+          "description": "Task status: 'todo' if this is the next task to be completed in this conversation. Use status='done' when the intended task action has already happened. Do not use cancel-task for completed work."
+        },
+        "cleanupDraft": {
+          "type": "boolean",
+          "description": "Only valid with status=\"done\". Set true when marking a draft-backed task done because an equivalent email was already sent, so the stale Gmail draft and agent draft label should be cleaned up."
+        },
+        "taskGroupId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "uuid"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Reassign the task to a different task group (lane) by its UUID. Read the \"task_groups\" section of config read-settings FIRST to get valid group ids. Pass null to file the task to Misc (ungrouped). Omit to leave the group unchanged."
+        }
+      },
+      "required": [
+        "taskId"
+      ],
+      "additionalProperties": false
+    },
+    "cancel": {
+      "type": "object",
+      "properties": {
+        "taskIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "List of specific task IDs to delete. Required when cancelOlderThan is not provided."
+        },
+        "cancelOlderThan": {
+          "type": "string",
+          "description": "ISO 8601 date — bulk-cancel overdue tasks with dueDate strictly before this date. Use for stale task cleanup (e.g. pass \"today - 10 days\" as ISO string). When provided, taskIds is ignored."
+        },
+        "taskCreatedBy": {
+          "type": "string",
+          "enum": [
+            "agent",
+            "user"
+          ],
+          "description": "When using cancelOlderThan: filter to only tasks created by this actor. Defaults to \"agent\" so user-created tasks are never accidentally bulk-deleted."
+        },
+        "bulkConversationId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "When using cancelOlderThan: scope the bulk cancel to a single conversation. Omit for user-wide bulk cancel."
+        },
+        "conversationStatuses": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Cancel tasks from conversations with any of these status values. E.g. [\"lost\", \"ae_dq\"] to purge all tasks on dead-stage deals. Can be combined with cancelOlderThan for extra specificity, or used standalone."
+        },
+        "conversationAopNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Cancel tasks from conversations belonging to these AOP names. E.g. [\"Spam\", \"Vendor notification\"] to purge tasks on no-op conversations. Can be combined with cancelOlderThan or conversationStatuses."
+        }
+      },
+      "additionalProperties": false
+    },
+    "assignmentOptions": {
+      "type": "object",
+      "properties": {
+        "taskId": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "required": [
+        "taskId"
+      ],
+      "additionalProperties": false
+    },
+    "reassign": {
+      "type": "object",
+      "properties": {
+        "taskId": {
+          "$ref": "#/properties/assignmentOptions/properties/taskId"
+        },
+        "assignmentNote": {
+          "type": "string",
+          "maxLength": 4000,
+          "description": "Optional instructions from the assigning person; retained with assignment history."
+        },
+        "assigneeUserId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Use a userId returned by assignmentOptions; never guess."
+        },
+        "expectedVersion": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Use assignmentVersion from assignmentOptions; for recovery use pendingTransfer.expectedVersion."
+        },
+        "idempotencyKey": {
+          "type": "string",
+          "format": "uuid",
+          "description": "A new UUID per transfer. Preserve it for retries; for pending recovery reuse pendingTransfer.idempotencyKey."
+        },
+        "acknowledgeDraftDeletion": {
+          "type": "boolean",
+          "description": "True when the user or approved operating instructions authorize discarding the existing draft during reassignment. Reuse authorization from earlier turns; do not ask again. Otherwise false and ask only if requiresDraftDeletion."
+        }
+      },
+      "required": [
+        "taskId",
+        "assigneeUserId",
+        "expectedVersion",
+        "idempotencyKey",
+        "acknowledgeDraftDeletion"
+      ],
+      "additionalProperties": false
+    },
+    "dealList": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "filter": {
+          "type": "string",
+          "enum": [
+            "all",
+            "assignedToMe",
+            "dealTasks",
+            "recommendations"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "creationOptions": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "$ref": "#/properties/dealList/properties/conversationId"
+        }
+      },
+      "additionalProperties": false
+    },
+    "createAssigned": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "$ref": "#/properties/dealList/properties/conversationId"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 10000
+        },
+        "notes": {
+          "type": "string",
+          "maxLength": 10000
+        },
+        "assigneeUserId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Choose from creationOptions; never guess or impersonate this person."
+        },
+        "assignmentNote": {
+          "type": "string",
+          "maxLength": 4000
+        },
+        "dueDate": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "additionalProperties": false
+    },
+    "complete": {
+      "type": "object",
+      "properties": {
+        "taskId": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "additionalProperties": false
+    },
+    "delete": {
+      "type": "object",
+      "properties": {
+        "taskId": {
+          "$ref": "#/properties/complete/properties/taskId"
+        },
+        "confirmDraftDeletion": {
+          "type": "boolean",
+          "description": "True only with user or approved standing authorization to discard the existing draft; otherwise omit and report the confirmation requirement."
+        }
+      },
+      "additionalProperties": false
+    },
+    "start": {
+      "type": "object",
+      "properties": {
+        "taskId": {
+          "$ref": "#/properties/complete/properties/taskId"
+        }
+      },
+      "additionalProperties": false
+    },
+    "updateDueDate": {
+      "type": "object",
+      "properties": {
+        "taskId": {
+          "$ref": "#/properties/complete/properties/taskId"
+        },
+        "dueDate": {
+          "$ref": "#/properties/createAssigned/properties/dueDate"
+        }
+      },
+      "additionalProperties": false
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+## Response
+
+Inspect `isError` on the MCP result and `success` / `errorMessage` in the action result. Optional response branches are populated only for the relevant action. Some results include additional provider or operation-specific data.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `success` | boolean | Yes |   |
+| `errorMessage` | string | No |   |
+| `deal` | object | No |   |
+| `list` | object | No |   |
+| `applyApproval` | object | No |   |
+| `create` | object | No |   |
+| `update` | object | No |   |
+| `cancel` | object | No |   |
+| `assignmentOptions` | object | No |   |
+| `reassign` | object | No |   |
+
+<Accordion title="Output JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "deal": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string",
+          "description": "JSON task/people data, including owner, assignedBy and assignmentNote."
+        },
+        "taskId": {
+          "type": "string"
+        },
+        "chatThreadId": {
+          "type": "string"
+        },
+        "seedPrompt": {
+          "type": "string"
+        },
+        "prepared": {
+          "type": "boolean",
+          "description": "Prepared context only; no agent run or send has happened."
+        }
+      },
+      "additionalProperties": false
+    },
+    "list": {
+      "type": "object",
+      "properties": {
+        "inventory": {
+          "type": "object",
+          "properties": {
+            "ownerId": {
+              "type": "string"
+            },
+            "conversationId": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "revision": {
+              "type": "string"
+            },
+            "complete": {
+              "type": "boolean"
+            },
+            "scopeComplete": {
+              "type": "boolean"
+            },
+            "offset": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "returnedCount": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "totalCount": {
+              "type": "number"
+            },
+            "categories": {
+              "type": "object",
+              "properties": {
+                "todo": {
+                  "type": "number"
+                },
+                "recommended": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "todo",
+                "recommended"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "ownerId",
+            "conversationId",
+            "revision",
+            "complete",
+            "totalCount",
+            "categories"
+          ],
+          "additionalProperties": false
+        },
+        "nextCursor": {
+          "type": "string"
+        },
+        "tasks": {
+          "type": "string",
+          "description": "Formatted list of tasks for agent consumption"
+        },
+        "taskIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Array of task IDs that can be used in cancel-task"
+        },
+        "agentScheduledTaskIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Array of task IDs that have agent execution enabled"
+        }
+      },
+      "additionalProperties": false
+    },
+    "applyApproval": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "message"
+      ],
+      "additionalProperties": false
+    },
+    "create": {
+      "type": "object",
+      "properties": {
+        "taskId": {
+          "type": "string",
+          "description": "ID of the created task"
+        },
+        "conversationId": {
+          "type": "string",
+          "description": "ID of the conversation"
+        },
+        "scheduledFor": {
+          "type": "string",
+          "description": "Confirmed scheduler registration time; does not guarantee execution"
+        },
+        "outcome": {
+          "type": "object",
+          "properties": {
+            "persistence": {
+              "type": "string",
+              "enum": [
+                "created",
+                "existing",
+                "unconfirmed"
+              ]
+            },
+            "scheduling": {
+              "type": "string",
+              "enum": [
+                "not_requested",
+                "not_attempted",
+                "accepted",
+                "unconfirmed"
+              ]
+            },
+            "dueDate": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "partial": {
+              "type": "boolean"
+            },
+            "warnings": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "persistence",
+            "scheduling",
+            "dueDate",
+            "partial",
+            "warnings"
+          ],
+          "additionalProperties": false,
+          "description": "Persisted task and scheduling outcomes. Never recreate a confirmed task to retry a later effect."
+        },
+        "agentExecutionEnabled": {
+          "type": "boolean",
+          "description": "Whether agent execution is enabled"
+        },
+        "conflict": {
+          "type": "boolean",
+          "description": "True if a task already exists in the same time window"
+        },
+        "isRecoverable": {
+          "type": "boolean"
+        },
+        "existingTask": {
+          "type": "object",
+          "properties": {
+            "taskId": {
+              "type": "string",
+              "description": "ID of the conflicting existing task"
+            },
+            "description": {
+              "type": "string",
+              "description": "Description of the existing task"
+            },
+            "notes": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Notes of the existing task"
+            },
+            "dueDate": {
+              "type": "string",
+              "description": "Due date of the existing task"
+            }
+          },
+          "required": [
+            "taskId",
+            "description",
+            "notes",
+            "dueDate"
+          ],
+          "additionalProperties": false,
+          "description": "Details of the existing task to merge into via update-task"
+        },
+        "proposed": {
+          "type": "boolean",
+          "description": "True if this is a proposed task awaiting approval"
+        },
+        "proposedTask": {
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": "string"
+            },
+            "notes": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "taskChannel": {
+              "type": "string"
+            },
+            "taskType": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "dueDate": {
+              "type": "string"
+            },
+            "agentExecutionEnabled": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "description",
+            "taskChannel",
+            "dueDate",
+            "agentExecutionEnabled"
+          ],
+          "additionalProperties": false,
+          "description": "Proposed task details (chat mode only)"
+        },
+        "userMessage": {
+          "type": "string",
+          "description": "UI instructions for the user"
+        }
+      },
+      "additionalProperties": false
+    },
+    "update": {
+      "type": "object",
+      "properties": {
+        "taskId": {
+          "type": "string",
+          "description": "ID of the updated task"
+        },
+        "changed": {
+          "type": "boolean",
+          "description": "Whether a row actually moved. `success: true` with `changed: false` means nothing was written — the values already matched, or the task is protected from this run."
+        },
+        "scheduledFor": {
+          "type": "string",
+          "description": "New scheduled time if agent execution is enabled"
+        },
+        "agentExecutionEnabled": {
+          "type": "boolean",
+          "description": "Whether agent execution is enabled"
+        },
+        "userMessage": {
+          "type": "string",
+          "description": "UI instructions for the user"
+        }
+      },
+      "additionalProperties": false
+    },
+    "cancel": {
+      "type": "object",
+      "properties": {
+        "cancelledTasks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of task IDs that were successfully cancelled"
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of any errors encountered"
+        },
+        "proposed": {
+          "type": "boolean",
+          "description": "True if this is a proposed cancellation awaiting approval"
+        },
+        "proposedCancellations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "taskId": {
+                "type": "string"
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "conversationId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "taskId",
+              "description",
+              "conversationId"
+            ],
+            "additionalProperties": false
+          },
+          "description": "List of tasks proposed for cancellation (chat mode only)"
+        },
+        "userMessage": {
+          "type": "string",
+          "description": "UI instructions for the user"
+        }
+      },
+      "additionalProperties": false
+    },
+    "assignmentOptions": {
+      "type": "object",
+      "properties": {
+        "canReassign": {
+          "type": "boolean"
+        },
+        "disabledReason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "requiresDraftDeletion": {
+          "type": "boolean"
+        },
+        "currentAssigneeUserId": {
+          "type": "string"
+        },
+        "assignmentVersion": {
+          "type": "number"
+        },
+        "assignees": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "userId": {
+                "type": "string"
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "email": {
+                "type": "string"
+              },
+              "image": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "userId",
+              "name",
+              "email",
+              "image"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "pendingTransfer": {
+          "type": "object",
+          "properties": {
+            "idempotencyKey": {
+              "type": "string"
+            },
+            "canRetarget": {
+              "type": "boolean"
+            },
+            "assigneeUserId": {
+              "type": "string"
+            },
+            "expectedVersion": {
+              "type": "number"
+            },
+            "requiresDraftDeletion": {
+              "type": "boolean"
+            },
+            "assigneeName": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "idempotencyKey",
+            "canRetarget",
+            "assigneeUserId",
+            "expectedVersion",
+            "requiresDraftDeletion",
+            "assigneeName"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "reassign": {
+      "type": "object",
+      "properties": {
+        "taskId": {
+          "type": "string"
+        },
+        "assigneeUserId": {
+          "type": "string"
+        },
+        "assignmentVersion": {
+          "type": "number"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "finishing"
+          ]
+        },
+        "draftDeleted": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+[Download the output schema](/reference/schemas/task.output.json).

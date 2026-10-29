@@ -1,0 +1,594 @@
+{
+  "type": "object",
+  "properties": {
+    "description": {
+      "type": "string",
+      "description": "ONE plain-English sentence describing the change — the only thing the user will see. No IDs, no technical terms."
+    },
+    "change": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "update_crm_field_mappings"
+            },
+            "connectionId": {
+              "type": "string",
+              "description": "The connection row ID — get from read-connection-settings sections:[\"connections\"]"
+            },
+            "op": {
+              "type": "string",
+              "enum": [
+                "add",
+                "update",
+                "remove"
+              ],
+              "description": "add: create a new field mapping. update: change an existing mapping (matched by crmFieldName). remove: delete a mapping by crmFieldName."
+            },
+            "crmFieldName": {
+              "type": "string",
+              "description": "The CRM field name (e.g. \"stage\", \"value\", \"close_date\")"
+            },
+            "cedarFieldName": {
+              "type": "string",
+              "description": "The Cedar field name to map to: a core field name (\"status\", \"dealValue\", \"nextSteps\", \"priority\", \"name\") or a custom field's exact KEY in customFieldDefinitions (e.g. \"loss_reason\", \"deal_temperature\") — call read-document(\"#subagents/crm-updater.md\") and use the key after \"custom:\", NOT the field's own \"id\" property (e.g. \"cf_loss_reason\"), which is a different, unrelated identifier. Required for op=add and op=update."
+            },
+            "allowedValues": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Constrain which CRM values are considered valid (e.g. stage names). Omit to allow any value. For a select/list field never hand-type this: create the field with config-write create-field sourceFromCrm (or run link-mapping) so the field's options and this list both come from the live CRM picklist."
+            },
+            "template": {
+              "type": "string",
+              "description": "Makes this a COMPLEX (template) mapping instead of a 1:1 one. A template with {placeholder} tokens referencing Cedar fields (e.g. \"{nextSteps}\") plus the special {today}. When set, cedarFieldName is NOT required — the mapped field(s) come from the template placeholders."
+            },
+            "prefix": {
+              "type": "string",
+              "description": "Optional prefix prepended to the pushed value (idempotently — re-pushing does not stack it). Supports the same {placeholder} tokens as template, including {today}, e.g. \"{today}: \". Only valid alongside template."
+            },
+            "transformations": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "date",
+                      "number",
+                      "string",
+                      "json"
+                    ]
+                  },
+                  "format": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "additionalProperties": false
+              },
+              "description": "Per-placeholder value transforms for a template/prefix, keyed by placeholder name, e.g. { \"today\": { \"type\": \"date\", \"format\": \"M/d\" } } renders {today} as \"8/19\". Only valid alongside template."
+            },
+            "referenceType": {
+              "type": "string",
+              "enum": [
+                "contact",
+                "company",
+                "deal"
+              ],
+              "description": "This CRM field is a reference/lookup to another record type, not a plain value."
+            },
+            "isBooleanField": {
+              "type": "boolean",
+              "description": "This CRM field is a boolean/checkbox field."
+            },
+            "isMultiPicklist": {
+              "type": "boolean",
+              "description": "Multi-select picklist (Salesforce, Attio) — values are a single \";\"-delimited string, not an array. Required on a Salesforce multipicklist or Attio multi-select mapping; link-mapping cannot set it."
+            },
+            "aopId": {
+              "type": "string",
+              "description": "Scope this mapping to the CRM object bound to this AOP (a Lead, a Partner record, ...) instead of the default Deal/Opportunity mapping group. The object itself is resolved server-side from the AOP's boundObjectApiName — never pass a raw CRM object name here; name the AOP instead (call read-connection-settings or list AOPs to find its id). Omit for the standard Deal mapping, or when the AOP has no bound object."
+            }
+          },
+          "required": [
+            "type",
+            "connectionId",
+            "op",
+            "crmFieldName"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "manage_playbook_webhook"
+            },
+            "op": {
+              "type": "string",
+              "enum": [
+                "create",
+                "enable",
+                "disable",
+                "list",
+                "test",
+                "delete"
+              ]
+            },
+            "aopId": {
+              "type": "string",
+              "description": "Required for op=create."
+            },
+            "scope": {
+              "type": "string",
+              "enum": [
+                "user",
+                "org"
+              ],
+              "description": "Required for op=create. org fires ONCE org-wide (org admin only); user fires per registered user."
+            },
+            "sourceType": {
+              "type": "string",
+              "enum": [
+                "http",
+                "slack_channel"
+              ],
+              "description": "Default http (mints a POST URL). slack_channel fires on each message in sourceRef."
+            },
+            "sourceRef": {
+              "type": "string",
+              "description": "Slack channel ID for slack_channel; forbidden for http."
+            },
+            "sourceFilter": {
+              "type": "object",
+              "properties": {
+                "topLevelOnly": {
+                  "type": "boolean",
+                  "description": "Skip thread replies. Defaults true; leave it."
+                },
+                "fromAppId": {
+                  "type": "string"
+                },
+                "fromBotId": {
+                  "type": "string"
+                },
+                "textContains": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false,
+              "description": "Narrow which messages fire it. Every match is an agent run (60/hour cap)."
+            },
+            "label": {
+              "type": "string"
+            },
+            "webhookId": {
+              "type": "string",
+              "description": "Required for op=enable/disable/test/delete."
+            },
+            "testPayload": {
+              "description": "op=test only. Explicit payload to fire with. Omit to synthesise one appropriate to the source type."
+            },
+            "testText": {
+              "type": "string",
+              "description": "op=test only. Convenience for slack_channel sources: sample message text for the synthesised payload."
+            }
+          },
+          "required": [
+            "type",
+            "op"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "update_slack_sync_config"
+            },
+            "connectionId": {
+              "type": "string",
+              "description": "The Slack connection row ID — get from read-connection-settings sections:[\"connections\"]. Required unless scope=\"org\"."
+            },
+            "scope": {
+              "type": "string",
+              "enum": [
+                "user",
+                "org"
+              ],
+              "description": "Defaults \"user\" (configures only connectionId). \"org\" (org admin only) sets the ORG-WIDE DEFAULT instead — connectionId is ignored — used by any Slack connection in the org with no explicit config of its own; an explicit per-connection value always wins over this default."
+            },
+            "periodicSlackSyncEnabled": {
+              "type": "boolean",
+              "description": "Enable or disable periodic Slack sync for this connection."
+            },
+            "selectedChannelIds": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Explicit list of Slack channel IDs to sync. Replaces the existing list when provided."
+            },
+            "blockedChannelIds": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Slack channel IDs to never sync. Replaces the existing blocklist when provided."
+            },
+            "autoSelectPatterns": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "startsWith": {
+                    "type": "string",
+                    "description": "Auto-sync channels whose names start with this prefix (e.g. \"ext-\")"
+                  },
+                  "endsWith": {
+                    "type": "string",
+                    "description": "Auto-sync channels whose names end with this suffix"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "description": "Name-pattern rules for automatic channel discovery. Omit to leave unchanged."
+            },
+            "autoSyncNewChannels": {
+              "type": "boolean",
+              "description": "When true, newly discovered channels matching autoSelectPatterns are automatically synced."
+            },
+            "autoSyncExternalDms": {
+              "type": "boolean",
+              "description": "When true, DMs with people outside your organization are auto-synced like a regular channel."
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "update_crm_settings"
+            },
+            "connectionId": {
+              "type": "string",
+              "description": "The CRM connection row ID — get from read-connection-settings sections:[\"connections\"]"
+            },
+            "periodicDealSyncEnabled": {
+              "type": "boolean",
+              "description": "Enable or disable periodic CRM pull sync."
+            },
+            "externalCrmPushEnabled": {
+              "type": "boolean",
+              "description": "Enable or disable pushing Cedar field updates back to the CRM."
+            },
+            "requireLinkedDealForAgentOutputs": {
+              "type": "boolean",
+              "description": "When true, the agent generally only creates user-facing outputs for conversations linked to an external CRM deal."
+            },
+            "fetchUnownedDeals": {
+              "type": "boolean",
+              "description": "When true, the sync pulls deals owned by other people in the CRM, not just this user's own. Turning it on also resets the incremental sync watermark so previously-filtered deals get re-scanned."
+            },
+            "stageRequiredFields": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "description": "Bulk-replace the WHOLE per-stage-required-fields map (stage label -> required CRM field names). An empty object is a no-op unless clearAllStageRequiredFields is also true. For editing ONE stage, use stageRequiredFieldsOp instead."
+            },
+            "clearAllStageRequiredFields": {
+              "type": "boolean",
+              "description": "Pass true with an empty stageRequiredFields to explicitly clear the whole map."
+            },
+            "stageRequiredFieldsOp": {
+              "type": "object",
+              "properties": {
+                "op": {
+                  "type": "string",
+                  "enum": [
+                    "set",
+                    "remove"
+                  ]
+                },
+                "stage": {
+                  "type": "string",
+                  "description": "The CRM stage label this required-field list applies to."
+                },
+                "fields": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Required for op:\"set\" — ignored for op:\"remove\"."
+                }
+              },
+              "required": [
+                "op",
+                "stage"
+              ],
+              "additionalProperties": false,
+              "description": "Add/replace or remove ONE stage's required-field list without touching any other stage's entry. Prefer this over stageRequiredFields for a single edit."
+            },
+            "dealSyncFilter": {
+              "type": "object",
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                ]
+              },
+              "description": "CRM field/value pairs a deal must match to be pulled into periodic sync. Each value is EITHER a single string (equality — deal must match exactly) OR an array of strings (membership/IN — deal matches if its value is any one of them). Array support is HubSpot-only today — use it to scope sync to several stages within one pipeline while excluding the rest (e.g. {\"dealstage\": [\"131486051\", \"244260230\", \"closedwon\"]}), which a single equality value cannot express. An empty object is a no-op unless clearDealSyncFilter is also true — same guard stageRequiredFields uses."
+            },
+            "clearDealSyncFilter": {
+              "type": "boolean",
+              "description": "Pass true with an empty dealSyncFilter to explicitly clear it."
+            },
+            "dealWriteGuard": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string",
+                "minLength": 1
+              },
+              "propertyNames": {
+                "minLength": 1
+              },
+              "description": "HubSpot connections only. Block agent and UI pushes to any deal whose stored CRM state matches ALL of these field/value pairs (e.g. {\"hs_is_closed\": \"true\"}). Values are compared as strings against the deal's last synced properties. A field missing from the deal does not block. An empty object is a no-op unless clearDealWriteGuard is also true."
+            },
+            "clearDealWriteGuard": {
+              "type": "boolean",
+              "description": "Pass true with an empty dealWriteGuard to explicitly clear it."
+            },
+            "allowUnverifiedDealWriteGuardKeys": {
+              "type": "boolean",
+              "description": "Set true ONLY to save guard keys the cached CRM property list does not contain, for example a property created after the cache was last refreshed."
+            },
+            "customObjectConfig": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "object_name": {
+                      "type": "string"
+                    },
+                    "filter_field": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "limit": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "object_name",
+                    "filter_field"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Salesforce custom-object sync config. Pass null to clear."
+            }
+          },
+          "required": [
+            "type",
+            "connectionId"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "update_connection_instructions"
+            },
+            "connectionId": {
+              "type": "string",
+              "description": "The connection row ID — get from read-connection-settings sections:[\"connections\"]."
+            },
+            "instructions": {
+              "type": "string",
+              "description": "The standing \"how/when to use this system\" rules for this connection (e.g. an MCP/Linear connection: \"Always create issues in Todo status; assign bugs to Hugo\"). These are injected into the agent's context on EVERY turn and apply regardless of chat-vs-conversation scope — the durable home for cross-context tool rules. REPLACES the existing instructions in full (read them first via read-connection-settings and merge yourself). Pass an empty string to clear."
+            }
+          },
+          "required": [
+            "type",
+            "connectionId",
+            "instructions"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "disconnect_linkedin_seat"
+            },
+            "unipileAccountId": {
+              "type": "string",
+              "description": "The seat identifier — from linkedin-read's list-seats action."
+            }
+          },
+          "required": [
+            "type",
+            "unipileAccountId"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "disconnect_whatsapp_account"
+            },
+            "unipileAccountId": {
+              "type": "string",
+              "description": "The line identifier — from read-connection-settings sections:[\"connections\"] (the WhatsApp connection's externalId)."
+            }
+          },
+          "required": [
+            "type",
+            "unipileAccountId"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "update_whatsapp_sync_config"
+            },
+            "unipileAccountId": {
+              "type": "string",
+              "description": "The WhatsApp line to configure."
+            },
+            "syncAllChats": {
+              "type": "boolean",
+              "description": "\"Index every chat on this line\" override, off by default. When true, EVERY chat on this line gets consent to sync, not just chats explicitly tracked — use for a business/dedicated line, not a personal one."
+            },
+            "trackChat": {
+              "type": "object",
+              "properties": {
+                "chatId": {
+                  "type": "string"
+                },
+                "tracked": {
+                  "type": "boolean",
+                  "description": "true grants this one chat consent to sync; false revokes it."
+                },
+                "phoneE164": {
+                  "type": "string"
+                },
+                "chatType": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "chatId",
+                "tracked"
+              ],
+              "additionalProperties": false,
+              "description": "Per-chat consent override (the allow-list), independent of syncAllChats."
+            }
+          },
+          "required": [
+            "type",
+            "unipileAccountId"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "resolve_channel_link_proposal"
+            },
+            "op": {
+              "type": "string",
+              "enum": [
+                "resolve",
+                "sweep"
+              ],
+              "description": "resolve: link (or dismiss) ONE ambiguous Slack/LinkedIn/WhatsApp channel against a specific deal. sweep: re-run the org's automatic linking pass and commit its verdicts — no specific container needed."
+            },
+            "channel": {
+              "type": "string",
+              "enum": [
+                "slack",
+                "linkedin",
+                "whatsapp"
+              ],
+              "description": "Required for op=resolve."
+            },
+            "containerKey": {
+              "type": "string",
+              "description": "Required for op=resolve — the provider's container id (a Slack channel id, or a LinkedIn/WhatsApp chat id)."
+            },
+            "conversationId": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Required for op=resolve. The deal to link this container to, or explicit null to dismiss the proposal."
+            },
+            "limit": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 500,
+              "description": "op=sweep only. Defaults 200."
+            }
+          },
+          "required": [
+            "type",
+            "op"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "targetUserId": {
+      "type": "string",
+      "description": "Apply the change to ANOTHER user in your organization instead of yourself. Omit for your own config, which is almost always what you want."
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "description",
+    "change",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

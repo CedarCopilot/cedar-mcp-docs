@@ -1,0 +1,583 @@
+---
+title: "data-settings"
+description: "Parameters, scopes, and response schema for data-settings."
+---
+
+Generated from Cedar's external registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+
+## Capability
+
+Update your enrichment defaults or your organization’s data policy. Read config-read.read-settings with sections:&#91;"data_services"&#93; first for current versions. Crustdata is the rich-research default; automatic conversation company metadata and pictures stay on Fiber. Crustdata watchers are fixed. Organization writes require an administrator. Null resets an override to inheritance. This changes future defaults only; it does not activate watchers, grant spending, buy credits, or modify existing watches.
+
+## Operations and scopes
+
+| Action | Baseline scope |
+| --- | --- |
+| `update` | `playbook:write` |
+
+Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Parameters
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `action` | "update" | Yes |   |
+| `update` | object | No |   |
+| `user_request_summary` | string | Yes | One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does.  |
+| `is_new_request` | boolean | Yes | true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread.  |
+
+### update
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `scope` | "self" · "organization" | Yes |   |
+| `expectedVersion` | integer | Yes |  minimum: 0 |
+| `patch` | object | Yes |   |
+
+## Full input schema
+
+[Download the input schema](/reference/schemas/data-settings.input.json). Nested objects, variants, and constraints are preserved in full. Runtime refinements and ownership checks still apply.
+
+<Accordion title="Input JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "update"
+      ]
+    },
+    "update": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string",
+          "enum": [
+            "self",
+            "organization"
+          ]
+        },
+        "expectedVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "patch": {
+          "type": "object",
+          "properties": {
+            "personProvider": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "fiber",
+                    "crustdata",
+                    "apollo",
+                    "moltsets"
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "companyProvider": {
+              "anyOf": [
+                {
+                  "$ref": "#/properties/update/properties/patch/properties/personProvider/anyOf/0"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "allowedProviders": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/properties/update/properties/patch/properties/personProvider/anyOf/0"
+                  },
+                  "maxItems": 4
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "cacheMaxAgeDays": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 365
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "watchDefaults": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "provider": {
+                      "type": "string",
+                      "const": "crustdata"
+                    },
+                    "everyHours": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 168
+                    },
+                    "refreshFrequencyDays": {
+                      "type": "number",
+                      "enum": [
+                        1,
+                        3,
+                        7,
+                        14,
+                        30
+                      ]
+                    },
+                    "maxResultsPerRun": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 100
+                    },
+                    "signalTypes": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "title_change",
+                          "job_change",
+                          "headline_change",
+                          "person_location_change",
+                          "education_added",
+                          "skill_added",
+                          "headcount_change",
+                          "funding_change",
+                          "news_added",
+                          "funding_round_change",
+                          "investor_added",
+                          "acquisition_added",
+                          "hiring_change",
+                          "company_name_change",
+                          "certification_added",
+                          "honor_added",
+                          "connection_count_change",
+                          "funding_milestone_added",
+                          "follower_count_change",
+                          "industry_change",
+                          "company_location_change"
+                        ]
+                      },
+                      "minItems": 1,
+                      "maxItems": 21
+                    }
+                  },
+                  "required": [
+                    "provider",
+                    "everyHours",
+                    "refreshFrequencyDays",
+                    "maxResultsPerRun",
+                    "signalTypes"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "scope",
+        "expectedVersion",
+        "patch"
+      ],
+      "additionalProperties": false
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+## Response
+
+Inspect `isError` on the MCP result and `success` / `errorMessage` in the action result. Optional response branches are populated only for the relevant action. Some results include additional provider or operation-specific data.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `success` | boolean | Yes |   |
+| `dataServices` | object | No |   |
+| `errorMessage` | string | No |   |
+
+<Accordion title="Output JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "dataServices": {
+      "type": "object",
+      "properties": {
+        "self": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "scopeKind": {
+                  "type": "string",
+                  "enum": [
+                    "user",
+                    "organization"
+                  ]
+                },
+                "scopeId": {
+                  "type": "string"
+                },
+                "version": {
+                  "type": "integer",
+                  "exclusiveMinimum": 0
+                },
+                "personProvider": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "enum": [
+                        "fiber",
+                        "crustdata",
+                        "apollo",
+                        "moltsets"
+                      ]
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "companyProvider": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/properties/dataServices/properties/self/anyOf/0/properties/personProvider/anyOf/0"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "allowedProviders": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/properties/dataServices/properties/self/anyOf/0/properties/personProvider/anyOf/0"
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "cacheMaxAgeDays": {
+                  "anyOf": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "watchDefaults": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string",
+                          "const": "crustdata"
+                        },
+                        "everyHours": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 168
+                        },
+                        "refreshFrequencyDays": {
+                          "type": "number",
+                          "enum": [
+                            1,
+                            3,
+                            7,
+                            14,
+                            30
+                          ]
+                        },
+                        "maxResultsPerRun": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 100
+                        },
+                        "signalTypes": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "title_change",
+                              "job_change",
+                              "headline_change",
+                              "person_location_change",
+                              "education_added",
+                              "skill_added",
+                              "headcount_change",
+                              "funding_change",
+                              "news_added",
+                              "funding_round_change",
+                              "investor_added",
+                              "acquisition_added",
+                              "hiring_change",
+                              "company_name_change",
+                              "certification_added",
+                              "honor_added",
+                              "connection_count_change",
+                              "funding_milestone_added",
+                              "follower_count_change",
+                              "industry_change",
+                              "company_location_change"
+                            ]
+                          },
+                          "minItems": 1,
+                          "maxItems": 21
+                        }
+                      },
+                      "required": [
+                        "provider",
+                        "everyHours",
+                        "refreshFrequencyDays",
+                        "maxResultsPerRun",
+                        "signalTypes"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "updatedBy": {
+                  "type": "string"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              },
+              "required": [
+                "id",
+                "scopeKind",
+                "scopeId",
+                "version",
+                "personProvider",
+                "companyProvider",
+                "allowedProviders",
+                "cacheMaxAgeDays",
+                "watchDefaults",
+                "updatedBy",
+                "createdAt",
+                "updatedAt"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "organization": {
+          "anyOf": [
+            {
+              "$ref": "#/properties/dataServices/properties/self/anyOf/0"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "effective": {
+          "type": "object",
+          "properties": {
+            "personProvider": {
+              "$ref": "#/properties/dataServices/properties/self/anyOf/0/properties/personProvider/anyOf/0"
+            },
+            "companyProvider": {
+              "$ref": "#/properties/dataServices/properties/self/anyOf/0/properties/personProvider/anyOf/0"
+            },
+            "allowedProviders": {
+              "type": "array",
+              "items": {
+                "$ref": "#/properties/dataServices/properties/self/anyOf/0/properties/personProvider/anyOf/0"
+              }
+            },
+            "cacheMaxAgeDays": {
+              "type": "integer"
+            },
+            "watchDefaults": {
+              "$ref": "#/properties/dataServices/properties/self/anyOf/0/properties/watchDefaults/anyOf/0"
+            },
+            "origins": {
+              "type": "object",
+              "properties": {
+                "personProvider": {
+                  "type": "string",
+                  "enum": [
+                    "request",
+                    "user",
+                    "organization",
+                    "system"
+                  ]
+                },
+                "companyProvider": {
+                  "$ref": "#/properties/dataServices/properties/effective/properties/origins/properties/personProvider"
+                },
+                "cacheMaxAgeDays": {
+                  "$ref": "#/properties/dataServices/properties/effective/properties/origins/properties/personProvider"
+                },
+                "watchDefaults": {
+                  "$ref": "#/properties/dataServices/properties/effective/properties/origins/properties/personProvider"
+                }
+              },
+              "required": [
+                "personProvider",
+                "companyProvider",
+                "cacheMaxAgeDays",
+                "watchDefaults"
+              ],
+              "additionalProperties": false
+            },
+            "settingsVersions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "version": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "id",
+                  "version"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "blockedProviders": {
+              "type": "array",
+              "items": {
+                "$ref": "#/properties/dataServices/properties/self/anyOf/0/properties/personProvider/anyOf/0"
+              }
+            },
+            "credentials": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "provider": {
+                    "$ref": "#/properties/dataServices/properties/self/anyOf/0/properties/personProvider/anyOf/0"
+                  },
+                  "available": {
+                    "type": "boolean"
+                  },
+                  "configuredOnOrganization": {
+                    "type": "boolean"
+                  },
+                  "platformFallbackAvailable": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "provider",
+                  "available",
+                  "configuredOnOrganization",
+                  "platformFallbackAvailable"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "personProvider",
+            "companyProvider",
+            "allowedProviders",
+            "cacheMaxAgeDays",
+            "watchDefaults",
+            "origins",
+            "settingsVersions",
+            "blockedProviders",
+            "credentials"
+          ],
+          "additionalProperties": false
+        },
+        "canManageOrganization": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "self",
+        "organization",
+        "effective",
+        "canManageOrganization"
+      ],
+      "additionalProperties": false
+    },
+    "errorMessage": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+[Download the output schema](/reference/schemas/data-settings.output.json).

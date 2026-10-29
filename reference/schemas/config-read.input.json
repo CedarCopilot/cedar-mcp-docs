@@ -1,0 +1,153 @@
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "read-playbook",
+        "read-settings",
+        "list-fields",
+        "list-org-members",
+        "find-bot-slack-channels"
+      ]
+    },
+    "readPlaybook": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": [
+            "list",
+            "load_full",
+            "load_sections"
+          ],
+          "description": "\"list\" — discover the user's AOPs (name/id/hasPlaybook/isNoOp/selectionProcedure/customAssignmentInstruction/orgAssignmentInstruction/effectiveAssignmentInstruction), optionally filtered by aopName. \"load_full\" — read the full PLAYBOOK.md for one AOP, plus its org-level playbook (`orgPlaybook`) if one exists, plus an `editMap`: every referenced subagent/resource and each inline PLAYBOOK.md surface, tagged with `source` (user|org) + `writeTarget`. To edit playbook behavior, write to a target's `writeTarget` — do NOT choose user-vs-org scope by hand. \"load_sections\" — read only the named sections of one AOP's playbook (and the same sections of its org-level playbook if one exists), plus the same `editMap` (requires `sections`)."
+        },
+        "aopId": {
+          "type": "string",
+          "description": "Explicit AOP ID to target for load_full/load_sections. Omit to use the conversation currently in context, or resolve by aopName instead."
+        },
+        "aopName": {
+          "type": "string",
+          "description": "AOP name to target instead of aopId (e.g. \"Deals\"). For mode=\"list\", filters the returned list (case-insensitive; no match returns an empty list, not an error). For load_full/load_sections, resolves to an aopId via list-aops (case-insensitive exact match, then substring) — if nothing matches, the call fails explicitly rather than silently falling back to the conversation in context."
+        },
+        "sections": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "Required for mode=\"load_sections\". Section header names (without the \"## \" prefix) to extract, e.g. [\"Stages\", \"Objection Handling\"]. Each is matched independently and the results are concatenated."
+        },
+        "targetUserId": {
+          "type": "string",
+          "description": "Org owner/admin only: read another org member's playbook (theirs, not yours) — pass their userId. When set, mode=\"list\" returns THAT member's AOPs (use it to find their aopId), and load_full/load_sections read their playbook. Pass an explicit aopId/aopName alongside it; the conversation-in-context fallback is yours, not theirs. Omit to read your own. Rejected for non-admins or a target outside your org."
+        }
+      },
+      "required": [
+        "mode"
+      ],
+      "additionalProperties": false
+    },
+    "readSettings": {
+      "type": "object",
+      "properties": {
+        "targetUserId": {
+          "type": "string",
+          "description": "Org owner/admin only: target a same-org member. Omit for self; non-admins and cross-org targets are rejected."
+        },
+        "userId": {
+          "type": "string",
+          "description": "DEPRECATED alias for targetUserId. Same authorization gate; prefer targetUserId."
+        },
+        "sections": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "connections",
+              "user_settings",
+              "inboxes",
+              "task_groups",
+              "credentials",
+              "data_services"
+            ]
+          },
+          "description": "Which sections to load. \"data_services\" returns provider defaults, policy origins, versions, watcher defaults and credential availability (never secrets). \"connections\" returns the connectionId required by apply-change's CRM/Slack change types — call this before apply-change whenever you need one and don't already have it. \"user_settings\" includes agentExecutionEnabled/pushDraftsToExternalClient for visibility, but neither is settable from any tool: they are not fields on any apply-change change type, and agentExecutionEnabled is additionally writable only by Cedar staff. Report them; never try to change them. \"inboxes\" returns custom inbox tabs, layout, and shared inboxSortingInstructions (read before changing sorting preferences or managing inbox tabs). \"task_groups\" returns the task lanes (get group ids before a manage_task_group update/delete/reorder). \"credentials\" returns the stored credential entries this user can reach (own + org): name, scope, instructions and which FIELD NAMES are stored. Never values."
+        }
+      },
+      "additionalProperties": false
+    },
+    "listFields": {
+      "type": "object",
+      "properties": {
+        "aopId": {
+          "type": "string",
+          "description": "A user AOP id. Always returns both this AOP's own fields and its linked org AOP's fields, if any."
+        },
+        "targetUserId": {
+          "type": "string",
+          "description": "Org owner/admin only: target a same-org member user AOP (scope=user). Omit for self; non-admins and cross-org targets are rejected."
+        },
+        "targetUserIds": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "string",
+              "const": "org"
+            }
+          ],
+          "description": "View MANY reps at once instead of just yourself — orthogonal to `targetUserId` above (that names ONE teammate to act as; this names a SET to view). Omit for your own fields only (unchanged default). An explicit array of userIds, or the literal \"org\" for every rep on this SAME AOP type — every user AOP linked to the same org AOP as `aopId`, not everyone in the organization. Naming anyone other than yourself requires org-admin authorization (aop_field:org) and is refused otherwise."
+        },
+        "rollup": {
+          "type": "boolean",
+          "description": "true summarizes across every targeted rep — uniform/diverging/missing per field key, vs. the org default — instead of returning each rep's raw field list. Defaults to false when exactly one rep is targeted (returns the same flat field list as omitting `targetUserIds` entirely), true when more than one is. Pass explicitly to override either default."
+        }
+      },
+      "required": [
+        "aopId"
+      ],
+      "additionalProperties": false
+    },
+    "listOrgMembers": {
+      "type": "object",
+      "properties": {
+        "search": {
+          "type": "string",
+          "description": "Case-insensitive substring match on a member's name OR email. Omit to list everyone."
+        }
+      },
+      "additionalProperties": false
+    },
+    "findBotSlackChannels": {
+      "type": "object",
+      "properties": {
+        "nameFilter": {
+          "type": "string",
+          "description": "Case-insensitive substring match on the channel name. Omit to list everything."
+        }
+      },
+      "additionalProperties": false
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

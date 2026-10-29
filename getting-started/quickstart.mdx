@@ -1,0 +1,84 @@
+---
+title: "Connect to Cedar"
+description: "Authenticate an MCP client and verify access with read-only calls."
+---
+
+## Prerequisites
+
+You need a Cedar account, the integrations required for your workflow, and an MCP client supporting **Streamable HTTP and OAuth**. Connecting the MCP does not connect LinkedIn, Slack, email, or a meeting recorder on your behalf. Connect those accounts in Cedar's Settings → Connections.
+
+## Add the server
+
+Add this remote MCP server URL:
+
+```text
+https://api.mail.cedarcopilot.com/mcp
+```
+
+This endpoint's OAuth discovery and unauthenticated challenge were verified on October 29, 2026. For a workspace using a separate published proxy URL, use the exact URL supplied for that environment.
+
+A client that accepts a remote HTTP configuration can use this shape, as a starting point:
+
+```json
+{
+  "mcpServers": {
+    "cedar": {
+      "type": "http",
+      "url": "https://api.mail.cedarcopilot.com/mcp"
+    }
+  }
+}
+```
+
+For Claude Code, add the server and open `/mcp` to complete authentication:
+
+```bash
+claude mcp add --transport http cedar https://api.mail.cedarcopilot.com/mcp
+```
+
+This uses Claude Code's documented [remote HTTP setup](https://code.claude.com/docs/en/mcp#option-1-add-a-remote-http-server).
+
+Client configuration formats vary. Choose the client's remote HTTP connector option and complete Cedar's browser sign-in and consent flow. Do not paste an integration's LinkedIn, Slack, or Gmail credential into the MCP configuration.
+
+## Verify the connection
+
+1. Let the MCP client initialize and list the server's tools.
+2. Call `load-skill` with `{}` to discover the instruction catalog.
+3. Load the skill relevant to your task. For integrations, configuration, playbooks, or the data model:
+
+```json
+{ "name": "cedar-configuration" }
+```
+
+4. Discover the integrations you have connected with `config-read`:
+
+```json
+{
+  "action": "read-settings",
+  "readSettings": { "sections": ["connections"] }
+}
+```
+
+5. For LinkedIn, call `linkedin-read`:
+
+```json
+{ "action": "list-seats" }
+```
+
+For signals, call `signals-read`:
+
+```json
+{ "action": "capabilities" }
+```
+
+These calls establish available accounts and capabilities without sending outreach or activating paid watches. A successful MCP connection can still return no LinkedIn seats or an unavailable integration.
+
+## Authentication model
+
+The backend publishes OAuth authorization-server and protected-resource metadata. OAuth uses PKCE; identity and organization are resolved from the authenticated session on every request. You normally supply resource IDs—such as a conversation or channel—not your own user or organization ID.
+
+Tools and actions are gated by granted scopes, organization role, ownership, and sometimes feature flags. Reauthorize if the client did not request a newly needed scope. A tool being listed does not authorize every action in that family.
+
+## First GTM workflow
+
+[Find a LinkedIn prospect](/linkedin/prospecting), [inspect the conversation](/modules/crm), then [create a draft](/linkedin/messaging). For a channel-based inbound workflow, follow [watch specific Slack channels](/slack/watch-channels).

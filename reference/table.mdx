@@ -1,0 +1,1757 @@
+---
+title: "table"
+description: "Parameters, scopes, and response schema for table."
+---
+
+Generated from Cedar's external registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+
+<Note>Writes on playbook or agenda paths require playbook:write. External fill returns delegated row briefs; it does not launch Cedar row agents.</Note>
+
+## Capability
+
+Read/edit row-addressed Cedar tables. Load the tables skill first. Read before writing; never recreate a table to edit it.  ACTIONS (pass the matching params object): read: pipe rows, revision and full schema; project columns/rowIds/where/limit; orderBy sorts by column type. create: declare labeled columns; from materializes rows from a real query. add_columns: add labeled columns, optionally after a key. update_columns: &#91;&#123;key,patch&#125;&#93; in columns; stable keys, omitted settings preserved, null clears optional settings. remove_columns: keys to remove, including cells. reorder_columns: every key exactly once. update_view: patch viewFilter, sort, subrowColumns, titleColumn or purpose; null clears optional settings. add_rows: one pipe row per line. set: one rowId.columnKey = value per line; unknown rowId creates a row only with titleColumn assigned. clear: same addresses, no values; keeps rows. delete_rows: by rowId. move_row: rowId, beforeRowId (null appends), required ifRevision; no active sort/subrows. insert_section: heading above/below anchorRowId. export: csv/xlsx file bytes as base64, using the UI export pipeline. import: uploaded xlsx/csv; updateInPlace merges by _id. fill: one agent per row; &gt;25 needs user confirmation. mode=delegate means YOU run briefs in parallel; spawned means Cedar runs them. bindings: built-in and account field paths.  Bound columns are read-only: never set/fill one. Address rows by rowId; ordinals/A1 need ifRevision. Subrows: childId._parent = parentId. Section rows (_section) hold headings only; never fill them. Bulk strings use one record per line, not JSON arrays.
+
+## Operations and scopes
+
+| Action | Baseline scope |
+| --- | --- |
+| `read` | `docs:read` |
+| `create` | `docs:read` |
+| `add_columns` | `docs:read` |
+| `add_rows` | `docs:read` |
+| `set` | `docs:read` |
+| `clear` | `docs:read` |
+| `delete_rows` | `docs:read` |
+| `import` | `docs:read` |
+| `fill` | `docs:read` |
+| `bindings` | `docs:read` |
+| `update_columns` | `docs:read` |
+| `remove_columns` | `docs:read` |
+| `reorder_columns` | `docs:read` |
+| `update_view` | `docs:read` |
+| `move_row` | `docs:read` |
+| `insert_section` | `docs:read` |
+| `export` | `docs:read` |
+
+Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Parameters
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `action` | "read" · "create" · "add_columns" · "add_rows" · "set" · "clear" · "delete_rows" · "import" · "fill" · "bindings" · "update_columns" · "remove_columns" · "reorder_columns" · "update_view" · "move_row" · "insert_section" · "export" | Yes | Which verb to run — pass its matching params object below (e.g. action: "set" pairs with set: &#123;assignments&#125;).  |
+| `path` | string | Yes | Virtual path of the table document, e.g. "conversation/&#123;id&#125;/pipeline-review" or "#kb/q3-accounts". Supports the same path shortcuts as the document tool.  |
+| `read` | object | No |   |
+| `create` | object | No |   |
+| `add_columns` | object | No |   |
+| `update_columns` | object | No |   |
+| `remove_columns` | object | No |   |
+| `reorder_columns` | object | No |   |
+| `update_view` | object | No |   |
+| `move_row` | object | No |   |
+| `insert_section` | object | No |   |
+| `export` | object | No |   |
+| `add_rows` | object | No |   |
+| `set` | object | No |   |
+| `clear` | object | No |   |
+| `delete_rows` | object | No |   |
+| `import` | object | No |   |
+| `fill` | object | No |   |
+| `user_request_summary` | string | Yes | One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does.  |
+| `is_new_request` | boolean | Yes | true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread.  |
+
+### read
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `columns` | string&#91;&#93; | No | Column keys to project. Omit for all columns.  |
+| `rowIds` | string&#91;&#93; | No | Specific rows, returned in the order asked. Omit for all rows; mutually exclusive with `where`.  |
+| `where` | string | No | One `columnKey op value` per line, ANDed. Ops: =, !=, contains, empty, notempty.  |
+| `limit` | integer | No | Page size. Default 100. minimum: 1 |
+| `offset` | integer | No | 0-based row offset for the next page. minimum: 0 |
+| `orderBy` | object | No | Order the page by one column, the way its TYPE orders — currency numerically, a date by the instant, a select by its declared option order, `_status` by the fan-out lifecycle. Empty cells are always last. Applied after `where` and before paging, so `orderBy` + `limit` is a real top-N. Ordinal and A1 addressing still resolve against DOCUMENT order, so write back by _id.  |
+
+### create
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `schema` | object | Yes | The table schema. Columns are always declared and always headed — there are no anonymous columns.  |
+| `rows` | string | No | Optional initial rows, one pipe row per line — same grammar as add_rows.  |
+| `from` | object | No | Materialize rows from a real query instead of transcribing them. USE THIS whenever the row set comes from Cedar data — "every deal closing this quarter", "all my customers".  |
+| `description` | string | No | Short summary shown in document listings. maxLength: 200 |
+
+### add_columns
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `columns` | object&#91;&#93; | Yes |  minItems: 1 |
+| `after` | string | No | Insert after this column key. Omit to append.  |
+
+### update_columns
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `columns` | object&#91;&#93; | Yes |  minItems: 1 |
+| `ifRevision` | integer | No | Revision from read; rejects concurrent schema edits. minimum: 0 |
+
+### remove_columns
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `keys` | string&#91;&#93; | Yes |  minItems: 1 |
+| `ifRevision` | integer | No | Revision from read; rejects concurrent schema edits. minimum: 0 |
+
+### reorder_columns
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `keys` | string&#91;&#93; | Yes |  minItems: 1 |
+| `ifRevision` | integer | No | Revision from read; rejects concurrent schema edits. minimum: 0 |
+
+### update_view
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `titleColumn` | string | No |  minLength: 1 |
+| `purpose` | string or null | No |   |
+| `subrowColumns` | object&#91;&#93; or null | No |   |
+| `viewFilter` | object or null | No |   |
+| `sort` | object or null | No |   |
+| `ifRevision` | integer | No | Revision from read; rejects concurrent schema edits. minimum: 0 |
+
+### move_row
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `rowId` | string | Yes |  minLength: 1 |
+| `beforeRowId` | string or null | Yes |   |
+| `ifRevision` | integer | Yes |  minimum: 0 |
+
+### insert_section
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `anchorRowId` | string | Yes |  minLength: 1 |
+| `position` | "above" · "below" | Yes |   |
+| `heading` | string | Yes |  minLength: 1 |
+| `ifRevision` | integer | No | Revision from read; rejects concurrent schema edits. minimum: 0 |
+
+### export
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `format` | "csv" · "xlsx" | Yes |   |
+| `title` | string | No |   |
+
+### add_rows
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `rows` | string | Yes | One GFM pipe row per line. Leading cell is the rowId; `-` mints one. Cell count after the id must equal the column count exactly — write an empty cell as `&#124; &#124;`.   - &#124; Globex &#124; &#91;&#91;conversation: 44a1…&#93;&#93; &#124; &#124;   r_07 &#124; Initech &#124; &#124; &#91;&#91;draft: r-99&#93;&#93; &#124;  |
+
+### set
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `assignments` | string | Yes | One `&lt;rowRef&gt;.&lt;columnKey&gt; = &lt;value&gt;` per line:   r_07.outreach = &#91;&#91;draft: r-3821&#93;&#93;   ← stable rowId, always safe   acme.company  = Acme Corp           ← unknown rowId → the row is created   4.outreach    = Sent                ← 1-based data-row ordinal, needs ifRevision   D4            = Sent                ← A1-style, needs ifRevision Values are cell markdown; `\&#124;` is a literal pipe and a trailing `\` continues onto the next line.  |
+| `ifRevision` | integer | No | The `revision` a previous `read` returned. REQUIRED when any line addresses a row by ordinal or A1; the whole call is rejected if the document has moved since. Never needed for rowId-addressed lines.  |
+
+### clear
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `targets` | string | Yes | One cell address per line, same addressing as `set`, with no value: `r_07.outreach`. Empties the cell; the row stays.  |
+| `ifRevision` | integer | No | The `revision` a previous `read` returned. REQUIRED when any line addresses a row by ordinal or A1; the whole call is rejected if the document has moved since. Never needed for rowId-addressed lines.  |
+
+### delete_rows
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `rowIds` | string | Yes | Newline- or comma-separated rowIds. Ordinals are accepted but then ifRevision is required.  |
+| `ifRevision` | integer | No | The `revision` a previous `read` returned. REQUIRED when any line addresses a row by ordinal or A1; the whole call is rejected if the document has moved since. Never needed for rowId-addressed lines.  |
+
+### import
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `attachmentDocumentId` | string | Yes | documents.id of an ALREADY UPLOADED .xlsx or .csv (the row the upload flow created). Import converts a file the user has attached — it is not an upload path, so never invent an id.  |
+| `sheetName` | string | No | Sheet to read. Defaults to `Data`, else the first sheet in the workbook.  |
+| `updateInPlace` | boolean | No | Merge into the table already at `path` instead of creating one: rows are matched by their `_id`, so a Cedar export the user edited in Excel updates the rows it changed and leaves every other row untouched. Requires a table to already exist there.  |
+| `deleteMissingRows` | boolean | No | updateInPlace only. Default true when the workbook carries `_id`s: a row the workbook dropped is treated as deleted. Pass false to merge additively. A workbook with no `_id` column never deletes anything.  |
+
+### fill
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `columns` | string&#91;&#93; | Yes | Column keys each row agent may write. Any other column is rejected at write time. minItems: 1 |
+| `instruction` | string | Yes | The per-row brief. `&#123;&#123;rowId&#125;&#125;` and `&#123;&#123;&lt;columnKey&gt;&#125;&#125;` interpolate from that row's seed cells, so one instruction describes N different jobs: "Research &#123;&#123;company&#125;&#125; and fill its ICP fit". minLength: 1 |
+| `rowIds` | string&#91;&#93; | No | Specific rows to fill. Omit to target every row that is not already done (a re-run picks up only failures).  |
+| `where` | string | No | `columnKey op value` per line, ANDed — same grammar as read's `where`. Ignored when rowIds is given.  |
+| `modelTier` | "fast" · "standard" | No | Which model each row agent runs on, chosen by how hard ONE ROW is — the cost is paid per row, so a 500-row fill multiplies it. `fast` for a mechanical fill (write a cell from the fillInstruction, classify, extract, transcribe). `standard` (the default) when a row needs judgement, multi-step research, or drafting the user will send.  |
+| `concurrency` | integer | No | Row agents in flight. Default 8. minimum: 1; maximum: 32 |
+| `confirmAbove` | integer | No | Ask before spawning more than this many agents. Default 25. minimum: 1 |
+| `confirmed` | boolean | No | Set only after the USER has agreed to a fan-out the tool refused as too large. Never set it pre-emptively.  |
+
+## Full input schema
+
+[Download the input schema](/reference/schemas/table.input.json). Nested objects, variants, and constraints are preserved in full. Runtime refinements and ownership checks still apply.
+
+<Accordion title="Input JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "read",
+        "create",
+        "add_columns",
+        "add_rows",
+        "set",
+        "clear",
+        "delete_rows",
+        "import",
+        "fill",
+        "bindings",
+        "update_columns",
+        "remove_columns",
+        "reorder_columns",
+        "update_view",
+        "move_row",
+        "insert_section",
+        "export"
+      ],
+      "description": "Which verb to run — pass its matching params object below (e.g. action: \"set\" pairs with set: {assignments})."
+    },
+    "path": {
+      "type": "string",
+      "description": "Virtual path of the table document, e.g. \"conversation/{id}/pipeline-review\" or \"#kb/q3-accounts\". Supports the same path shortcuts as the document tool."
+    },
+    "read": {
+      "type": "object",
+      "properties": {
+        "columns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Column keys to project. Omit for all columns."
+        },
+        "rowIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Specific rows, returned in the order asked. Omit for all rows; mutually exclusive with `where`."
+        },
+        "where": {
+          "type": "string",
+          "description": "One `columnKey op value` per line, ANDed. Ops: =, !=, contains, empty, notempty."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Page size. Default 100."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "0-based row offset for the next page."
+        },
+        "orderBy": {
+          "type": "object",
+          "properties": {
+            "columnKey": {
+              "type": "string",
+              "description": "A declared column key, or `_status`."
+            },
+            "direction": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "description": "Default asc."
+            }
+          },
+          "required": [
+            "columnKey"
+          ],
+          "additionalProperties": false,
+          "description": "Order the page by one column, the way its TYPE orders — currency numerically, a date by the instant, a select by its declared option order, `_status` by the fan-out lifecycle. Empty cells are always last. Applied after `where` and before paging, so `orderBy` + `limit` is a real top-N. Ordinal and A1 addressing still resolve against DOCUMENT order, so write back by _id."
+        }
+      },
+      "additionalProperties": false
+    },
+    "create": {
+      "type": "object",
+      "properties": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "viewFilter": {
+              "type": "object",
+              "properties": {
+                "columnKey": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "operator": {
+                  "type": "string",
+                  "enum": [
+                    "equals",
+                    "not_equals",
+                    "contains",
+                    "not_contains",
+                    "is_empty",
+                    "not_empty"
+                  ]
+                },
+                "value": {
+                  "type": "string"
+                },
+                "enabled": {
+                  "type": "boolean"
+                },
+                "matchDescendants": {
+                  "type": "boolean"
+                },
+                "conditions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "columnKey": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "operator": {
+                        "type": "string",
+                        "enum": [
+                          "equals",
+                          "not_equals",
+                          "contains",
+                          "not_contains",
+                          "is_empty",
+                          "not_empty"
+                        ]
+                      },
+                      "value": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "columnKey",
+                      "operator",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "columnKey",
+                "operator",
+                "value"
+              ],
+              "additionalProperties": false,
+              "description": "Persistent view filter; descendants inherit visibility unless matchDescendants is true. Does not delete records."
+            },
+            "subrowColumns": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "width": {
+                    "type": "number",
+                    "minimum": 80,
+                    "maximum": 1200
+                  }
+                },
+                "required": [
+                  "key"
+                ],
+                "additionalProperties": false
+              },
+              "maxItems": 64,
+              "description": "Independent child-row layout. Declare these keys in columns, optionally hidden there; labels and widths can differ from parent rows."
+            },
+            "columns": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "width": {
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 80,
+                        "maximum": 1200
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "wrap": {
+                    "type": "string",
+                    "enum": [
+                      "wrap",
+                      "max-lines",
+                      "overflow"
+                    ]
+                  },
+                  "hidden": {
+                    "type": "boolean",
+                    "description": "Hide from parent rows; still available in subrowColumns."
+                  },
+                  "label": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Required, non-empty, unique. The rendered header, e.g. \"Next step date\"."
+                  },
+                  "key": {
+                    "type": "string",
+                    "description": "Stable lower-snake handle used in every `set` line (`r_07.next_step`). Minted from the label when omitted, and IMMUTABLE afterwards — renaming a column changes only its label."
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "text",
+                      "long_text",
+                      "number",
+                      "currency",
+                      "percent",
+                      "date",
+                      "checkbox",
+                      "select",
+                      "multi_select",
+                      "url",
+                      "email",
+                      "output",
+                      "conversation",
+                      "task",
+                      "draft",
+                      "doc",
+                      "person",
+                      "company"
+                    ],
+                    "description": "Cell type; defaults to text. conversation/task/draft/doc/person/company hold a `[[type: id]]` reference token and render as a live chip."
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "One-line human description, shown on header hover."
+                  },
+                  "fillInstruction": {
+                    "type": "string",
+                    "description": "How to derive this cell. This is the column's real payload for a fan-out — each row-scoped subagent is handed the fillInstruction of every column it owns."
+                  },
+                  "required": {
+                    "type": "boolean",
+                    "description": "Cells must be non-empty before a row counts as done."
+                  },
+                  "binding": {
+                    "type": "string",
+                    "description": "Derive this cell instead of writing it. `<refColumnKey>.<field>` reads through THAT column's reference cell (`deal.stage`, `their_company.domain`, `deal.fields.<fieldKey>`) and errors per row if the cell holds another kind of reference; `<entity>.<field>` is shorthand for the row's first ref of that entity, which is only unambiguous while there is one. Recomputed rather than edited, and READ-ONLY — never `set` a bound column or hand one to `fill`. Call `bindings` for every path this table can use."
+                  },
+                  "options": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "select / multi_select only. ORDER MATTERS: the declared order is the order the picker lists them in AND the order the column sorts by, so declare them along whatever progression the column measures (earliest → latest, worst → best, coldest → warmest), not in the order they occurred to you."
+                  },
+                  "currency": {
+                    "type": "string",
+                    "description": "currency only. ISO 4217, e.g. \"USD\"."
+                  },
+                  "outputKind": {
+                    "type": "string",
+                    "enum": [
+                      "slack",
+                      "email",
+                      "file",
+                      "linkedin",
+                      "whatsapp",
+                      "calendar"
+                    ],
+                    "description": "output only. Which artifact this column produces — a column that declares none cannot be filled."
+                  },
+                  "format": {
+                    "type": "string",
+                    "description": "date only. date-fns format; defaults to yyyy-MM-dd."
+                  }
+                },
+                "required": [
+                  "label"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 1,
+              "description": "Ordered column list. At least one."
+            },
+            "titleColumn": {
+              "type": "string",
+              "description": "Column key that labels a row. Defaults to the first column. `set` refuses to create a row unless this column is assigned in the same call."
+            },
+            "purpose": {
+              "type": "string",
+              "description": "Why the table exists. Shown as a subtitle and fed to filling agents."
+            }
+          },
+          "required": [
+            "columns"
+          ],
+          "additionalProperties": false,
+          "description": "The table schema. Columns are always declared and always headed — there are no anonymous columns."
+        },
+        "rows": {
+          "type": "string",
+          "description": "Optional initial rows, one pipe row per line — same grammar as add_rows."
+        },
+        "from": {
+          "type": "object",
+          "properties": {
+            "source": {
+              "type": "string",
+              "enum": [
+                "conversations",
+                "tasks",
+                "people",
+                "companies",
+                "documents"
+              ],
+              "description": "Where rows come from. `conversations` and `tasks` are supported."
+            },
+            "filter": {
+              "type": "object",
+              "properties": {
+                "filters": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "operator": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "value": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          },
+                          {
+                            "type": "boolean"
+                          },
+                          {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          {
+                            "type": "array",
+                            "items": {
+                              "type": "number"
+                            }
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "field",
+                      "operator"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "eventFilter": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "object",
+                      "properties": {
+                        "eventType": {
+                          "type": "string"
+                        },
+                        "operator": {
+                          "type": "string",
+                          "enum": [
+                            "gt",
+                            "gte",
+                            "lt",
+                            "lte",
+                            "eq"
+                          ]
+                        },
+                        "value": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "eventType",
+                        "operator",
+                        "value"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "types": {
+                      "type": "object",
+                      "properties": {
+                        "include": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "exclude": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "date": {
+                      "type": "string"
+                    },
+                    "dateOperator": {
+                      "type": "string",
+                      "enum": [
+                        "before",
+                        "after",
+                        "on"
+                      ]
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "orderBy": {
+                  "type": "object",
+                  "properties": {
+                    "field": {
+                      "type": "string"
+                    },
+                    "direction": {
+                      "type": "string",
+                      "enum": [
+                        "asc",
+                        "desc"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "field",
+                    "direction"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false,
+              "description": "Same filter surface as find-crm-conversations — not a second query language."
+            },
+            "limit": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 2500
+            },
+            "intoColumn": {
+              "type": "string",
+              "description": "Column that receives the [[<source>: id]] ref. Defaults to the first reference column."
+            }
+          },
+          "required": [
+            "source"
+          ],
+          "additionalProperties": false,
+          "description": "Materialize rows from a real query instead of transcribing them. USE THIS whenever the row set comes from Cedar data — \"every deal closing this quarter\", \"all my customers\"."
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Short summary shown in document listings."
+        }
+      },
+      "required": [
+        "schema"
+      ],
+      "additionalProperties": false
+    },
+    "add_columns": {
+      "type": "object",
+      "properties": {
+        "columns": {
+          "type": "array",
+          "items": {
+            "$ref": "#/properties/create/properties/schema/properties/columns/items"
+          },
+          "minItems": 1
+        },
+        "after": {
+          "type": "string",
+          "description": "Insert after this column key. Omit to append."
+        }
+      },
+      "required": [
+        "columns"
+      ],
+      "additionalProperties": false
+    },
+    "update_columns": {
+      "type": "object",
+      "properties": {
+        "columns": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "minLength": 1
+              },
+              "patch": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "$ref": "#/properties/create/properties/schema/properties/columns/items/properties/label",
+                    "description": "Required, non-empty, unique. The rendered header, e.g. \"Next step date\"."
+                  },
+                  "type": {
+                    "$ref": "#/properties/create/properties/schema/properties/columns/items/properties/type"
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "fillInstruction": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "required": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "binding": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "options": {
+                    "anyOf": [
+                      {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "currency": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "outputKind": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/properties/create/properties/schema/properties/columns/items/properties/outputKind"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "format": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "width": {
+                    "$ref": "#/properties/create/properties/schema/properties/columns/items/properties/width"
+                  },
+                  "wrap": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/properties/create/properties/schema/properties/columns/items/properties/wrap"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "hidden": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "key",
+              "patch"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "ifRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Revision from read; rejects concurrent schema edits."
+        }
+      },
+      "required": [
+        "columns"
+      ],
+      "additionalProperties": false
+    },
+    "remove_columns": {
+      "type": "object",
+      "properties": {
+        "keys": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "ifRevision": {
+          "$ref": "#/properties/update_columns/properties/ifRevision"
+        }
+      },
+      "required": [
+        "keys"
+      ],
+      "additionalProperties": false
+    },
+    "reorder_columns": {
+      "$ref": "#/properties/remove_columns"
+    },
+    "update_view": {
+      "type": "object",
+      "properties": {
+        "titleColumn": {
+          "type": "string",
+          "minLength": 1
+        },
+        "purpose": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "subrowColumns": {
+          "anyOf": [
+            {
+              "$ref": "#/properties/create/properties/schema/properties/subrowColumns"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "viewFilter": {
+          "anyOf": [
+            {
+              "$ref": "#/properties/create/properties/schema/properties/viewFilter"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "columnKey": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "direction": {
+                  "type": "string",
+                  "enum": [
+                    "asc",
+                    "desc"
+                  ]
+                }
+              },
+              "required": [
+                "columnKey",
+                "direction"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ifRevision": {
+          "$ref": "#/properties/update_columns/properties/ifRevision"
+        }
+      },
+      "additionalProperties": false
+    },
+    "move_row": {
+      "type": "object",
+      "properties": {
+        "rowId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "beforeRowId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ifRevision": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "rowId",
+        "beforeRowId",
+        "ifRevision"
+      ],
+      "additionalProperties": false
+    },
+    "insert_section": {
+      "type": "object",
+      "properties": {
+        "anchorRowId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "position": {
+          "type": "string",
+          "enum": [
+            "above",
+            "below"
+          ]
+        },
+        "heading": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ifRevision": {
+          "$ref": "#/properties/update_columns/properties/ifRevision"
+        }
+      },
+      "required": [
+        "anchorRowId",
+        "position",
+        "heading"
+      ],
+      "additionalProperties": false
+    },
+    "export": {
+      "type": "object",
+      "properties": {
+        "format": {
+          "type": "string",
+          "enum": [
+            "csv",
+            "xlsx"
+          ]
+        },
+        "title": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "format"
+      ],
+      "additionalProperties": false
+    },
+    "add_rows": {
+      "type": "object",
+      "properties": {
+        "rows": {
+          "type": "string",
+          "description": "One GFM pipe row per line. Leading cell is the rowId; `-` mints one. Cell count after the id must equal the column count exactly — write an empty cell as `| |`.\n  - | Globex | [[conversation: 44a1…]] | |\n  r_07 | Initech | | [[draft: r-99]] |"
+        }
+      },
+      "required": [
+        "rows"
+      ],
+      "additionalProperties": false
+    },
+    "set": {
+      "type": "object",
+      "properties": {
+        "assignments": {
+          "type": "string",
+          "description": "One `<rowRef>.<columnKey> = <value>` per line:\n  r_07.outreach = [[draft: r-3821]]   ← stable rowId, always safe\n  acme.company  = Acme Corp           ← unknown rowId → the row is created\n  4.outreach    = Sent                ← 1-based data-row ordinal, needs ifRevision\n  D4            = Sent                ← A1-style, needs ifRevision\nValues are cell markdown; `\\|` is a literal pipe and a trailing `\\` continues onto the next line."
+        },
+        "ifRevision": {
+          "type": "integer",
+          "description": "The `revision` a previous `read` returned. REQUIRED when any line addresses a row by ordinal or A1; the whole call is rejected if the document has moved since. Never needed for rowId-addressed lines."
+        }
+      },
+      "required": [
+        "assignments"
+      ],
+      "additionalProperties": false
+    },
+    "clear": {
+      "type": "object",
+      "properties": {
+        "targets": {
+          "type": "string",
+          "description": "One cell address per line, same addressing as `set`, with no value: `r_07.outreach`. Empties the cell; the row stays."
+        },
+        "ifRevision": {
+          "type": "integer",
+          "description": "The `revision` a previous `read` returned. REQUIRED when any line addresses a row by ordinal or A1; the whole call is rejected if the document has moved since. Never needed for rowId-addressed lines."
+        }
+      },
+      "required": [
+        "targets"
+      ],
+      "additionalProperties": false
+    },
+    "delete_rows": {
+      "type": "object",
+      "properties": {
+        "rowIds": {
+          "type": "string",
+          "description": "Newline- or comma-separated rowIds. Ordinals are accepted but then ifRevision is required."
+        },
+        "ifRevision": {
+          "type": "integer",
+          "description": "The `revision` a previous `read` returned. REQUIRED when any line addresses a row by ordinal or A1; the whole call is rejected if the document has moved since. Never needed for rowId-addressed lines."
+        }
+      },
+      "required": [
+        "rowIds"
+      ],
+      "additionalProperties": false
+    },
+    "import": {
+      "type": "object",
+      "properties": {
+        "attachmentDocumentId": {
+          "type": "string",
+          "description": "documents.id of an ALREADY UPLOADED .xlsx or .csv (the row the upload flow created). Import converts a file the user has attached — it is not an upload path, so never invent an id."
+        },
+        "sheetName": {
+          "type": "string",
+          "description": "Sheet to read. Defaults to `Data`, else the first sheet in the workbook."
+        },
+        "updateInPlace": {
+          "type": "boolean",
+          "description": "Merge into the table already at `path` instead of creating one: rows are matched by their `_id`, so a Cedar export the user edited in Excel updates the rows it changed and leaves every other row untouched. Requires a table to already exist there."
+        },
+        "deleteMissingRows": {
+          "type": "boolean",
+          "description": "updateInPlace only. Default true when the workbook carries `_id`s: a row the workbook dropped is treated as deleted. Pass false to merge additively. A workbook with no `_id` column never deletes anything."
+        }
+      },
+      "required": [
+        "attachmentDocumentId"
+      ],
+      "additionalProperties": false
+    },
+    "fill": {
+      "type": "object",
+      "properties": {
+        "columns": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "description": "Column keys each row agent may write. Any other column is rejected at write time."
+        },
+        "instruction": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The per-row brief. `{{rowId}}` and `{{<columnKey>}}` interpolate from that row's seed cells, so one instruction describes N different jobs: \"Research {{company}} and fill its ICP fit\"."
+        },
+        "rowIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Specific rows to fill. Omit to target every row that is not already done (a re-run picks up only failures)."
+        },
+        "where": {
+          "type": "string",
+          "description": "`columnKey op value` per line, ANDed — same grammar as read's `where`. Ignored when rowIds is given."
+        },
+        "modelTier": {
+          "type": "string",
+          "enum": [
+            "fast",
+            "standard"
+          ],
+          "description": "Which model each row agent runs on, chosen by how hard ONE ROW is — the cost is paid per row, so a 500-row fill multiplies it. `fast` for a mechanical fill (write a cell from the fillInstruction, classify, extract, transcribe). `standard` (the default) when a row needs judgement, multi-step research, or drafting the user will send."
+        },
+        "concurrency": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32,
+          "description": "Row agents in flight. Default 8."
+        },
+        "confirmAbove": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Ask before spawning more than this many agents. Default 25."
+        },
+        "confirmed": {
+          "type": "boolean",
+          "description": "Set only after the USER has agreed to a fan-out the tool refused as too large. Never set it pre-emptively."
+        }
+      },
+      "required": [
+        "columns",
+        "instruction"
+      ],
+      "additionalProperties": false
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "path",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+## Response
+
+Inspect `isError` on the MCP result and `success` / `errorMessage` in the action result. Optional response branches are populated only for the relevant action. Some results include additional provider or operation-specific data.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `success` | boolean | Yes |   |
+| `errorMessage` | string | No |   |
+| `message` | string | No |   |
+| `documentId` | string | No |   |
+| `path` | string | No |   |
+| `revision` | number | No |   |
+| `schema` | object | No |   |
+| `export` | object | No |   |
+| `rows` | string | No |   |
+| `totalRows` | number | No |   |
+| `degradations` | string&#91;&#93; | No |   |
+| `rowCount` | number | No |   |
+| `rowsAdded` | string&#91;&#93; | No |   |
+| `rowsRemoved` | string&#91;&#93; | No |   |
+| `cellsWritten` | number | No |   |
+| `updateByteLength` | number | No |   |
+| `warnings` | string&#91;&#93; | No |   |
+| `lineErrors` | object&#91;&#93; | No |   |
+| `bindings` | object | No |   |
+| `fill` | object | No |   |
+| `conflict` | object | No |   |
+
+<Accordion title="Output JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string"
+    },
+    "documentId": {
+      "type": "string"
+    },
+    "path": {
+      "type": "string"
+    },
+    "revision": {
+      "type": "number"
+    },
+    "schema": {
+      "type": "object",
+      "properties": {
+        "subrowColumns": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "minLength": 1
+              },
+              "label": {
+                "type": "string"
+              },
+              "width": {
+                "type": "number",
+                "minimum": 80,
+                "maximum": 1200
+              }
+            },
+            "required": [
+              "key"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 64
+        },
+        "viewFilter": {
+          "type": "object",
+          "properties": {
+            "columnKey": {
+              "type": "string",
+              "minLength": 1
+            },
+            "operator": {
+              "type": "string",
+              "enum": [
+                "equals",
+                "not_equals",
+                "contains",
+                "not_contains",
+                "is_empty",
+                "not_empty"
+              ]
+            },
+            "value": {
+              "type": "string"
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "matchDescendants": {
+              "type": "boolean"
+            },
+            "conditions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "columnKey": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "operator": {
+                    "type": "string",
+                    "enum": [
+                      "equals",
+                      "not_equals",
+                      "contains",
+                      "not_contains",
+                      "is_empty",
+                      "not_empty"
+                    ]
+                  },
+                  "value": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "columnKey",
+                  "operator",
+                  "value"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "columnKey",
+            "operator",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        "titleColumn": {
+          "type": "string"
+        },
+        "purpose": {
+          "type": "string"
+        },
+        "sort": {
+          "type": "object",
+          "properties": {
+            "columnKey": {
+              "type": "string",
+              "minLength": 1
+            },
+            "direction": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          "required": [
+            "columnKey",
+            "direction"
+          ],
+          "additionalProperties": false
+        },
+        "columns": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "width": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 80,
+                    "maximum": 1200
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "wrap": {
+                "type": "string",
+                "enum": [
+                  "wrap",
+                  "max-lines",
+                  "overflow"
+                ]
+              },
+              "hidden": {
+                "type": "boolean",
+                "description": "Hide from parent rows; still available in subrowColumns."
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Required, non-empty, unique. The rendered header, e.g. \"Next step date\"."
+              },
+              "key": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string",
+                "description": "One-line human description, shown on header hover."
+              },
+              "fillInstruction": {
+                "type": "string",
+                "description": "How to derive this cell. This is the column's real payload for a fan-out — each row-scoped subagent is handed the fillInstruction of every column it owns."
+              },
+              "required": {
+                "type": "boolean",
+                "description": "Cells must be non-empty before a row counts as done."
+              },
+              "binding": {
+                "type": "string",
+                "description": "Derive this cell instead of writing it. `<refColumnKey>.<field>` reads through THAT column's reference cell (`deal.stage`, `their_company.domain`, `deal.fields.<fieldKey>`) and errors per row if the cell holds another kind of reference; `<entity>.<field>` is shorthand for the row's first ref of that entity, which is only unambiguous while there is one. Recomputed rather than edited, and READ-ONLY — never `set` a bound column or hand one to `fill`. Call `bindings` for every path this table can use."
+              },
+              "options": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "select / multi_select only. ORDER MATTERS: the declared order is the order the picker lists them in AND the order the column sorts by, so declare them along whatever progression the column measures (earliest → latest, worst → best, coldest → warmest), not in the order they occurred to you."
+              },
+              "currency": {
+                "type": "string",
+                "description": "currency only. ISO 4217, e.g. \"USD\"."
+              },
+              "outputKind": {
+                "type": "string",
+                "enum": [
+                  "slack",
+                  "email",
+                  "file",
+                  "linkedin",
+                  "whatsapp",
+                  "calendar"
+                ],
+                "description": "output only. Which artifact this column produces — a column that declares none cannot be filled."
+              },
+              "format": {
+                "type": "string",
+                "description": "date only. date-fns format; defaults to yyyy-MM-dd."
+              }
+            },
+            "required": [
+              "label",
+              "key",
+              "type"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "titleColumn",
+        "columns"
+      ],
+      "additionalProperties": false
+    },
+    "export": {
+      "type": "object",
+      "properties": {
+        "filename": {
+          "type": "string"
+        },
+        "mimeType": {
+          "type": "string"
+        },
+        "base64": {
+          "type": "string"
+        },
+        "rowCount": {
+          "type": "number"
+        },
+        "columnCount": {
+          "type": "number"
+        },
+        "refCount": {
+          "type": "number"
+        },
+        "resolvedRefCount": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "filename",
+        "mimeType",
+        "base64",
+        "rowCount",
+        "columnCount",
+        "refCount",
+        "resolvedRefCount"
+      ],
+      "additionalProperties": false
+    },
+    "rows": {
+      "type": "string"
+    },
+    "totalRows": {
+      "type": "number"
+    },
+    "degradations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "rowCount": {
+      "type": "number"
+    },
+    "rowsAdded": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "rowsRemoved": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "cellsWritten": {
+      "type": "number"
+    },
+    "updateByteLength": {
+      "type": "number"
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "lineErrors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "line": {
+            "type": "number"
+          },
+          "text": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "line",
+          "text",
+          "error"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "bindings": {
+      "type": "object",
+      "properties": {
+        "entities": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "key": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "agentWritten": {
+                "type": "boolean"
+              },
+              "aopName": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "path",
+              "key",
+              "label",
+              "type",
+              "agentWritten",
+              "aopName"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "note": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "entities",
+        "fields",
+        "note"
+      ],
+      "additionalProperties": false
+    },
+    "fill": {
+      "type": "object",
+      "properties": {
+        "spawned": {
+          "type": "number"
+        },
+        "done": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "rowId": {
+                "type": "string"
+              },
+              "error": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "rowId",
+              "error"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "coalescedWrites": {
+          "type": "number"
+        },
+        "needsConfirmation": {
+          "type": "object",
+          "properties": {
+            "rowCount": {
+              "type": "number"
+            },
+            "threshold": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "rowCount",
+            "threshold"
+          ],
+          "additionalProperties": false
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "spawned",
+            "delegate"
+          ]
+        },
+        "briefs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "rowId": {
+                "type": "string"
+              },
+              "cells": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "instruction": {
+                "type": "string"
+              },
+              "writableColumns": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "task": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "rowId",
+              "cells",
+              "instruction",
+              "writableColumns",
+              "task"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "howToRun": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "spawned",
+        "done",
+        "failed",
+        "coalescedWrites"
+      ],
+      "additionalProperties": false
+    },
+    "conflict": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "const": "REVISION_CONFLICT"
+        },
+        "expected": {
+          "type": "number"
+        },
+        "current": {
+          "type": "number"
+        },
+        "rowIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "code",
+        "expected",
+        "current",
+        "rowIds"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+[Download the output schema](/reference/schemas/table.output.json).

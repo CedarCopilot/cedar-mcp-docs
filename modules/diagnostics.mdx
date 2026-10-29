@@ -1,0 +1,37 @@
+---
+title: "Diagnostics and troubleshooting"
+description: "Trace configuration, execution, and delivery separately."
+---
+
+## Follow the evidence chain
+
+1. Load `cedar-configuration` and verify the integration, playbook, and target scope.
+2. Use `debug diagnose-conversation` for missing AOP, incorrect company, contamination, or failed execution checks.
+3. Use `recent-executions` to locate the relevant run.
+4. Read `execution-detail` for its output and tool calls. Child runs require a separate detail call for their own tools.
+5. Use `tool-call-detail` for the full input/output of the failing call.
+
+`health-report` is a broader account snapshot. Organization-wide staff views can omit expensive checks present in an individual report; do not equate a summary with complete account health.
+
+## Common symptoms
+
+| Symptom | Check |
+| --- | --- |
+| Tool absent | OAuth scopes, viewer role, feature gate, deployed version, refreshed tool discovery |
+| Listed tool returns forbidden | Action-specific scope, account role, resource ownership, staff-only action |
+| LinkedIn has no seat | Connect/reconnect in Settings; choose an explicit owned seat if several exist |
+| LinkedIn capped | Immediate call failed versus scheduled item deferred; relevant lookup/send window |
+| Slack search asks for reconnection | Missing Slack `search:read` grant |
+| Slack trigger does nothing | Source channel/workspace, filter, enabled registration, matching trigger block, rate counter, execution logs |
+| Watch looks configured but has no events | Actual target state, identity continuation, provider availability, billing, polling interval |
+| Table edit rejected | Current revision, stable row/column key, bound-column restriction |
+| Calendar mutation refused | Organizer ownership and `canModifyForEveryone` |
+| Send timeout | Reconcile status/chat before retrying |
+
+## Test runs are real work
+
+`debug test-run` can execute an authored/edited agent. `deliverForReal: false` suppresses sends, but database and connected-system writes can still happen. It is not a general dry-run mode. Scope the test inputs accordingly. `create-monitor` is Cedar-staff-only, not a customer-facing universal monitor scheduler.
+
+## Report a problem
+
+`send-user-feedback` submits feedback with optional category, run ID, conversation ID, or agent ID. Include the smallest useful diagnostic context and the observed outcome. Reporting feedback is an external action; use it when the user asks to report the problem.

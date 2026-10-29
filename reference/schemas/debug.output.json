@@ -1,0 +1,1153 @@
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "diagnoseConversation": {
+      "type": "object",
+      "properties": {
+        "conversationName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "domainClean": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "assignedAop": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "totalEvents": {
+          "type": "number"
+        },
+        "fromDomains": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "domain": {
+                "type": "string"
+              },
+              "count": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "domain",
+              "count"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "recentExecutions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "runId": {
+                "type": "string"
+              },
+              "status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "createdAt": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "toolCallCount": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "runId",
+              "status",
+              "source",
+              "createdAt",
+              "toolCallCount"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "recentExecutions": {
+      "type": "object",
+      "properties": {
+        "executions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "runId": {
+                "type": "string"
+              },
+              "status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "eventType": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "summary": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "createdAt": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "completedAt": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "toolCallCount": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "runId",
+              "status",
+              "source",
+              "eventType",
+              "summary",
+              "createdAt",
+              "completedAt",
+              "toolCallCount"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "toolCalls": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "toolName": {
+                "type": "string"
+              },
+              "createdAt": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "resultSummary": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "toolName",
+              "createdAt",
+              "resultSummary"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "executionDetail": {
+      "type": "object",
+      "properties": {
+        "found": {
+          "type": "boolean"
+        },
+        "detail": {
+          "type": "object",
+          "properties": {
+            "runId": {
+              "type": "string"
+            },
+            "userId": {
+              "type": "string"
+            },
+            "userEmail": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "conversationId": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "conversationName": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "aopId": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "aopName": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "status": {
+              "type": "string"
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "eventType": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "parentRunId": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "agentId": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "agentName": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "models": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "model": {
+                    "type": "string"
+                  },
+                  "workload": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "calls": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "model",
+                  "workload",
+                  "calls"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "agentSpec": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    },
+                    "currentVersion": {
+                      "type": "number"
+                    },
+                    "currentLastEditedAt": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "inEffectAtRun": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "editedAt": {
+                              "type": "string"
+                            },
+                            "by": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "origin": {
+                              "type": "string"
+                            },
+                            "wordsBefore": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            },
+                            "wordsAfter": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "editedAt",
+                            "by",
+                            "origin",
+                            "wordsBefore",
+                            "wordsAfter"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "specVersionUncertain": {
+                      "type": "boolean"
+                    },
+                    "editSessionsSinceRun": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "currentVersion",
+                    "currentLastEditedAt",
+                    "inEffectAtRun",
+                    "specVersionUncertain",
+                    "editSessionsSinceRun"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "prompt": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "summary": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "output": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "createdAt": {
+              "type": "string"
+            },
+            "completedAt": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "toolCalls": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "toolName": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "arguments": {},
+                  "result": {},
+                  "createdAt": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "toolName",
+                  "createdAt"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "subAgents": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "runId": {
+                    "type": "string"
+                  },
+                  "agentId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "agentName": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "summary": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "output": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "toolCallCount": {
+                    "type": "number"
+                  },
+                  "createdAt": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "runId",
+                  "agentId",
+                  "agentName",
+                  "status",
+                  "source",
+                  "summary",
+                  "output",
+                  "toolCallCount",
+                  "createdAt"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "runId",
+            "userId",
+            "userEmail",
+            "conversationId",
+            "conversationName",
+            "aopId",
+            "aopName",
+            "status",
+            "source",
+            "eventType",
+            "parentRunId",
+            "agentId",
+            "agentName",
+            "models",
+            "agentSpec",
+            "prompt",
+            "summary",
+            "output",
+            "createdAt",
+            "completedAt",
+            "toolCalls",
+            "subAgents"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "found"
+      ],
+      "additionalProperties": false
+    },
+    "toolCallDetail": {
+      "type": "object",
+      "properties": {
+        "found": {
+          "type": "boolean"
+        },
+        "detail": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "runId": {
+              "type": "string"
+            },
+            "toolName": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "arguments": {},
+            "result": {},
+            "createdAt": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "runId",
+            "toolName",
+            "createdAt"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "found"
+      ],
+      "additionalProperties": false
+    },
+    "healthReport": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string",
+          "enum": [
+            "user",
+            "org"
+          ]
+        },
+        "userId": {
+          "type": "string",
+          "description": "Echoed back when scope=\"user\"."
+        },
+        "snapshot": {
+          "type": "object",
+          "properties": {
+            "meetings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "meetingTitle": {
+                    "type": "string"
+                  },
+                  "meetingTime": {
+                    "type": "string"
+                  },
+                  "hasTranscription": {
+                    "type": "boolean"
+                  },
+                  "meetingProvider": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "conversationName": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "conversationStatus": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ownerName": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "prepStatus": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "prepRunId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "prepSummary": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "postStatus": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "postRunId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "postSummary": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "hasDraft": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "meetingTitle",
+                  "meetingTime",
+                  "hasTranscription",
+                  "meetingProvider",
+                  "conversationName",
+                  "conversationStatus",
+                  "ownerName",
+                  "prepStatus",
+                  "prepRunId",
+                  "prepSummary",
+                  "postStatus",
+                  "postRunId",
+                  "postSummary",
+                  "hasDraft"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "tasks": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "taskType": {
+                    "type": "string"
+                  },
+                  "outputKind": {
+                    "type": "string"
+                  },
+                  "total": {
+                    "type": "number"
+                  },
+                  "agentEnabled": {
+                    "type": "number"
+                  },
+                  "executed": {
+                    "type": "number"
+                  },
+                  "hasDraft": {
+                    "type": "number"
+                  },
+                  "done": {
+                    "type": "number"
+                  },
+                  "overdue": {
+                    "type": "number"
+                  },
+                  "executedNoDraft": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "taskType",
+                  "outputKind",
+                  "total",
+                  "agentEnabled",
+                  "executed",
+                  "hasDraft",
+                  "done",
+                  "overdue",
+                  "executedNoDraft"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "agents": {
+              "type": "object",
+              "properties": {
+                "preMeetingPrep": {
+                  "type": "object",
+                  "properties": {
+                    "completed": {
+                      "type": "number"
+                    },
+                    "canceled": {
+                      "type": "number"
+                    },
+                    "pending": {
+                      "type": "number"
+                    },
+                    "stuckPending": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "completed",
+                    "canceled",
+                    "pending",
+                    "stuckPending"
+                  ],
+                  "additionalProperties": false
+                },
+                "postMeeting": {
+                  "type": "object",
+                  "properties": {
+                    "completed": {
+                      "type": "number"
+                    },
+                    "failed": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "completed",
+                    "failed"
+                  ],
+                  "additionalProperties": false
+                },
+                "automationAgent": {
+                  "type": "object",
+                  "properties": {
+                    "completed": {
+                      "type": "number"
+                    },
+                    "failed": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "completed",
+                    "failed"
+                  ],
+                  "additionalProperties": false
+                },
+                "emailEvent": {
+                  "type": "object",
+                  "properties": {
+                    "completed": {
+                      "type": "number"
+                    },
+                    "failed": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "completed",
+                    "failed"
+                  ],
+                  "additionalProperties": false
+                },
+                "slackEvent": {
+                  "type": "object",
+                  "properties": {
+                    "completed": {
+                      "type": "number"
+                    },
+                    "failed": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "completed",
+                    "failed"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "preMeetingPrep",
+                "postMeeting",
+                "automationAgent",
+                "emailEvent",
+                "slackEvent"
+              ],
+              "additionalProperties": false
+            },
+            "executionSummaries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "runId": {
+                    "type": "string"
+                  },
+                  "source": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "summary": {
+                    "type": "string"
+                  },
+                  "createdAt": {
+                    "type": "string"
+                  },
+                  "conversationName": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "conversationStatus": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "runId",
+                  "source",
+                  "status",
+                  "summary",
+                  "createdAt",
+                  "conversationName",
+                  "conversationStatus"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "events": {
+              "type": "object",
+              "properties": {
+                "emailTotal": {
+                  "type": "number"
+                },
+                "emailOutbound": {
+                  "type": "number"
+                },
+                "emailInbound": {
+                  "type": "number"
+                },
+                "slackTotal": {
+                  "type": "number"
+                },
+                "lastEmailAt": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "lastSlackAt": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "emailTotal",
+                "emailOutbound",
+                "emailInbound",
+                "slackTotal",
+                "lastEmailAt",
+                "lastSlackAt"
+              ],
+              "additionalProperties": false
+            },
+            "issues": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "severity": {
+                    "type": "string",
+                    "enum": [
+                      "red",
+                      "yellow"
+                    ]
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "runIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "details": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "label": {
+                          "type": "string"
+                        },
+                        "value": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "label",
+                        "value"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "severity",
+                  "type",
+                  "description",
+                  "runIds",
+                  "details"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "meetings",
+            "tasks",
+            "agents",
+            "executionSummaries",
+            "events",
+            "issues"
+          ],
+          "additionalProperties": false
+        },
+        "orgUsers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "userId": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "red",
+                  "yellow",
+                  "green"
+                ]
+              },
+              "issueCount": {
+                "type": "number"
+              },
+              "warningCount": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "userId",
+              "name",
+              "email",
+              "status",
+              "issueCount",
+              "warningCount"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "createMonitor": {
+      "type": "object",
+      "properties": {
+        "monitorId": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "testRun": {
+      "type": "object",
+      "properties": {
+        "deliveredForReal": {
+          "type": "boolean"
+        },
+        "note": {
+          "type": "string"
+        },
+        "runs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "runId": {
+                "type": "string"
+              },
+              "status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "agentId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "notify": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "text": {
+                      "type": "string"
+                    },
+                    "buttons": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": {}
+                      }
+                    },
+                    "threadReplies": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "text": {
+                            "type": "string"
+                          },
+                          "buttons": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "additionalProperties": {}
+                            }
+                          }
+                        },
+                        "required": [
+                          "text"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "text"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "toolCalls": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "toolName": {
+                      "type": "string"
+                    },
+                    "arguments": {},
+                    "result": {},
+                    "createdAt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "toolName",
+                    "createdAt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "runId",
+              "status",
+              "agentId",
+              "notify",
+              "toolCalls"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "deliveredForReal",
+        "runs"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

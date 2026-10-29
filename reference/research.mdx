@@ -1,0 +1,733 @@
+---
+title: "research"
+description: "Parameters, scopes, and response schema for research."
+---
+
+Generated from Cedar's external registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+
+<Note>web-search and web-fetch are in-app-only actions. External clients use their own web tools. For manual enrichment, explicitly select provider: "fiber"; the current code default may differ.</Note>
+
+## Capability
+
+Use choose-enrichment with chooseEnrichment:&#123;description,question,knownFields?,provider?&#125; to select implemented enrichment schemas; save its selection in authorized agent config files and revalidate before reuse. No supplier lookup runs during selection. capabilities lists the full catalog. Crustdata is the rich-research default; meeting prep uses Crustdata. Fiber is the automatic company metadata/pictures default. Never silently change providers. Watchers use signals-write. enrich-company accepts domain or a locally resolvable companyName; enrich-person accepts email or linkedinUrl. For Crustdata, find a verified LinkedIn URL from saved contacts or name/employer web research; include email when known. Never guess identities or ask the user to find the URL. Email-only alternate providers require explicit selection. Fields depend on actual records; read capabilities and the research skill for mappings and limitations. Task enrichment is metered, including background tasks. Only trusted automatic base-company setup is subscription-included. Use server grants, compatible caches and receipts; vendor credits are not Cedar retail prices. A workflow pauses before exceeding $50 or 100 attempted records across batches/retries/subagents. On workflow_confirmation_required, stop for user approval in Cedar; never split work or change scope to evade it. After approval retry the denied pre-dispatch operation with a fresh key in the same workflow. Crustdata tasks over 50 people require whole-task count confirmation. Pass only the matching action object (chooseEnrichment/enrichCompany/enrichPerson/webSearch/webFetch). enrichPerson.write_to_file buffers the profile. Enrichment never proves active watching.
+
+## Operations and scopes
+
+| Action | Baseline scope |
+| --- | --- |
+| `capabilities` | `crm:read` |
+| `choose-enrichment` | `enrichment:write` |
+| `enrich-company` | `enrichment:write` |
+| `enrich-person` | `enrichment:write` |
+| `web-search` | `in-app` — unavailable externally |
+| `web-fetch` | `in-app` — unavailable externally |
+
+Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Parameters
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `action` | "capabilities" · "choose-enrichment" · "enrich-company" · "enrich-person" · "web-search" · "web-fetch" | Yes | Which operation to perform — pass its matching params object below (e.g. action: "enrich-company" pairs with enrichCompany: &#123;...&#125;).  |
+| `enrichCompany` | object | No |   |
+| `chooseEnrichment` | object | No |   |
+| `enrichPerson` | object | No |   |
+| `webSearch` | object | No |   |
+| `webFetch` | object | No |   |
+| `user_request_summary` | string | Yes | One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does.  |
+| `is_new_request` | boolean | Yes | true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread.  |
+
+### enrichCompany
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `provider` | "fiber" · "crustdata" · "apollo" · "moltsets" | No |   |
+| `idempotencyKey` | string | No |  minLength: 1; maxLength: 200 |
+| `maximumMicrocredits` | string | No |  pattern: "^\\d+$" |
+| `domain` | string | No | Company's website domain (e.g., "stripe.com") — preferred identifier  |
+| `companyName` | string | No | Company name — used to resolve the domain when no domain is available (e.g., "Stripe")  |
+
+### chooseEnrichment
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `description` | string | Yes |  minLength: 1; maxLength: 2000 |
+| `question` | string | Yes |  minLength: 1; maxLength: 2000 |
+| `knownFields` | string&#91;&#93; | No |  default: &#91;&#93;; maxItems: 50 |
+| `provider` | "fiber" · "crustdata" · "apollo" · "moltsets" | No |   |
+
+### enrichPerson
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `provider` | "fiber" · "crustdata" · "apollo" · "moltsets" | No |   |
+| `idempotencyKey` | string | No |  minLength: 1; maxLength: 200 |
+| `maximumMicrocredits` | string | No |  pattern: "^\\d+$" |
+| `email` | string | No | Person's business email address (preferred — enables cache lookup) format: "email" |
+| `linkedinUrl` | string | No | Person's LinkedIn profile URL (used when email is not available) format: "uri" |
+| `write_to_file` | boolean | No | When true, writes the full enrichment result to a TASK_BUFFER doc and returns a summary envelope instead. Use for complex tasks to keep context clean.  |
+
+### webSearch
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `query` | string | Yes | The search query (be specific for best results)  |
+| `sources` | "news" · "web"&#91;&#93; | No | Sources to query. Use "news" for recent articles, "web" for general results.  |
+| `site` | string | No | Restrict results to a specific domain (e.g. "techcrunch.com").  |
+| `geolocation` | string | No | ISO 3166-1 alpha-2 country code for localized results (e.g. "US").  |
+| `numPages` | integer | No | Result pages to fetch (each page = up to 10 results). Default 1. &gt;1 requires exactly ONE source. minimum: 1; maximum: 5 |
+| `write_to_file` | boolean | No | Write full results to a buffer doc and return a summary envelope instead.  |
+
+### webFetch
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `urls` | string&#91;&#93; | Yes | URLs to fetch content for (1-10). minItems: 1; maxItems: 10 |
+
+## Full input schema
+
+[Download the input schema](/reference/schemas/research.input.json). Nested objects, variants, and constraints are preserved in full. Runtime refinements and ownership checks still apply.
+
+<Accordion title="Input JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "capabilities",
+        "choose-enrichment",
+        "enrich-company",
+        "enrich-person",
+        "web-search",
+        "web-fetch"
+      ],
+      "description": "Which operation to perform — pass its matching params object below (e.g. action: \"enrich-company\" pairs with enrichCompany: {...})."
+    },
+    "enrichCompany": {
+      "type": "object",
+      "properties": {
+        "provider": {
+          "type": "string",
+          "enum": [
+            "fiber",
+            "crustdata",
+            "apollo",
+            "moltsets"
+          ]
+        },
+        "idempotencyKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "maximumMicrocredits": {
+          "type": "string",
+          "pattern": "^\\d+$"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Company's website domain (e.g., \"stripe.com\") — preferred identifier"
+        },
+        "companyName": {
+          "type": "string",
+          "description": "Company name — used to resolve the domain when no domain is available (e.g., \"Stripe\")"
+        }
+      },
+      "additionalProperties": false
+    },
+    "chooseEnrichment": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "question": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "knownFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 50,
+          "default": []
+        },
+        "provider": {
+          "$ref": "#/properties/enrichCompany/properties/provider"
+        }
+      },
+      "required": [
+        "description",
+        "question"
+      ],
+      "additionalProperties": false
+    },
+    "enrichPerson": {
+      "type": "object",
+      "properties": {
+        "provider": {
+          "$ref": "#/properties/enrichCompany/properties/provider"
+        },
+        "idempotencyKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "maximumMicrocredits": {
+          "type": "string",
+          "pattern": "^\\d+$"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Person's business email address (preferred — enables cache lookup)"
+        },
+        "linkedinUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "Person's LinkedIn profile URL (used when email is not available)"
+        },
+        "write_to_file": {
+          "type": "boolean",
+          "description": "When true, writes the full enrichment result to a TASK_BUFFER doc and returns a summary envelope instead. Use for complex tasks to keep context clean."
+        }
+      },
+      "additionalProperties": false
+    },
+    "webSearch": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "The search query (be specific for best results)"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "news",
+              "web"
+            ]
+          },
+          "description": "Sources to query. Use \"news\" for recent articles, \"web\" for general results."
+        },
+        "site": {
+          "type": "string",
+          "description": "Restrict results to a specific domain (e.g. \"techcrunch.com\")."
+        },
+        "geolocation": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 country code for localized results (e.g. \"US\")."
+        },
+        "numPages": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5,
+          "description": "Result pages to fetch (each page = up to 10 results). Default 1. >1 requires exactly ONE source."
+        },
+        "write_to_file": {
+          "type": "boolean",
+          "description": "Write full results to a buffer doc and return a summary envelope instead."
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "additionalProperties": false
+    },
+    "webFetch": {
+      "type": "object",
+      "properties": {
+        "urls": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          },
+          "minItems": 1,
+          "maxItems": 10,
+          "description": "URLs to fetch content for (1-10)."
+        }
+      },
+      "required": [
+        "urls"
+      ],
+      "additionalProperties": false
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+## Response
+
+Inspect `isError` on the MCP result and `success` / `errorMessage` in the action result. Optional response branches are populated only for the relevant action. Some results include additional provider or operation-specific data.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `success` | boolean | Yes |   |
+| `errorMessage` | string | No |   |
+| `errorCode` | string | No |   |
+| `approvalId` | string | No |   |
+| `capabilities` | object | No |   |
+| `choice` | object | No |   |
+| `enrichCompany` | object | No |   |
+| `enrichPerson` | object | No |   |
+| `webSearch` | object | No |   |
+| `webFetch` | object | No |   |
+
+<Accordion title="Output JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "errorCode": {
+      "type": "string"
+    },
+    "approvalId": {
+      "type": "string"
+    },
+    "capabilities": {
+      "type": "object",
+      "properties": {
+        "documentationReviewedAt": {
+          "type": "string"
+        },
+        "defaultProvider": {
+          "type": "string",
+          "const": "crustdata"
+        },
+        "automaticCompanyProvider": {
+          "type": "string",
+          "const": "fiber"
+        },
+        "watchProvider": {
+          "type": "string",
+          "const": "crustdata"
+        },
+        "automaticFallback": {
+          "type": "boolean",
+          "const": false
+        },
+        "credentialsChecked": {
+          "type": "boolean",
+          "const": false
+        },
+        "billing": {
+          "type": "string"
+        },
+        "providers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "provider": {
+                "type": "string"
+              },
+              "guidance": {
+                "type": "string"
+              },
+              "documentedButNotExposedHere": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "sources": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                }
+              },
+              "operations": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "requiresAnyOf": {
+                      "type": "array",
+                      "items": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "fields": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "cacheTtlDays": {
+                      "type": "number"
+                    },
+                    "explicitProviderRequired": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "requiresAnyOf",
+                    "fields",
+                    "cacheTtlDays",
+                    "explicitProviderRequired"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "provider",
+              "guidance",
+              "documentedButNotExposedHere",
+              "sources",
+              "operations"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "watchers": {
+          "type": "object",
+          "properties": {
+            "provider": {
+              "type": "string",
+              "const": "crustdata"
+            },
+            "tool": {
+              "type": "string",
+              "const": "signals-write"
+            },
+            "action": {
+              "type": "string",
+              "const": "activate"
+            },
+            "signals": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "guidance": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "provider",
+            "tool",
+            "action",
+            "signals",
+            "guidance"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "documentationReviewedAt",
+        "defaultProvider",
+        "automaticCompanyProvider",
+        "watchProvider",
+        "automaticFallback",
+        "credentialsChecked",
+        "billing",
+        "providers",
+        "watchers"
+      ],
+      "additionalProperties": false
+    },
+    "choice": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "recommended",
+            "unsupported"
+          ]
+        },
+        "reason": {
+          "type": "string"
+        },
+        "unsupportedNeeds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "recommendations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "provider": {
+                "type": "string"
+              },
+              "credentialsAvailable": {
+                "type": "boolean"
+              },
+              "requiresAnyOf": {
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "fields": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "type",
+                    "description"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "inputsAvailable": {
+                "type": "boolean"
+              },
+              "missingInputAlternatives": {
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "estimatedProviderUsd": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "cacheTtlDays": {
+                "type": "number"
+              },
+              "guidance": {
+                "type": "string"
+              },
+              "limitations": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "id",
+              "provider",
+              "credentialsAvailable",
+              "requiresAnyOf",
+              "fields",
+              "inputsAvailable",
+              "missingInputAlternatives",
+              "estimatedProviderUsd",
+              "cacheTtlDays",
+              "guidance",
+              "limitations"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "catalogFingerprint": {
+          "type": "string"
+        },
+        "selection": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "number",
+              "const": 1
+            },
+            "description": {
+              "type": "string"
+            },
+            "question": {
+              "type": "string"
+            },
+            "knownFields": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "provider": {
+              "type": "string",
+              "enum": [
+                "fiber",
+                "crustdata",
+                "apollo",
+                "moltsets"
+              ]
+            },
+            "operationIds": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "catalogFingerprint": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "version",
+            "description",
+            "question",
+            "knownFields",
+            "operationIds",
+            "catalogFingerprint"
+          ],
+          "additionalProperties": false
+        },
+        "reuseInstructions": {
+          "type": "string"
+        },
+        "executionChecksRequired": {
+          "type": "boolean",
+          "const": true
+        },
+        "supplierRequestsMade": {
+          "type": "number",
+          "const": 0
+        }
+      },
+      "required": [
+        "status",
+        "reason",
+        "unsupportedNeeds",
+        "recommendations",
+        "catalogFingerprint",
+        "selection",
+        "reuseInstructions",
+        "executionChecksRequired",
+        "supplierRequestsMade"
+      ],
+      "additionalProperties": false
+    },
+    "enrichCompany": {
+      "type": "object",
+      "properties": {
+        "company": {
+          "type": "object",
+          "additionalProperties": {}
+        },
+        "operationId": {
+          "type": "string"
+        },
+        "receiptId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "enrichPerson": {
+      "type": "object",
+      "properties": {
+        "person": {
+          "type": "object",
+          "additionalProperties": {}
+        },
+        "operationId": {
+          "type": "string"
+        },
+        "receiptId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "buffered": {
+          "type": "boolean"
+        },
+        "path": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "word_count": {
+          "type": "number"
+        },
+        "access_instructions": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "webSearch": {
+      "type": "object",
+      "additionalProperties": {}
+    },
+    "webFetch": {
+      "type": "object",
+      "additionalProperties": {}
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+[Download the output schema](/reference/schemas/research.output.json).

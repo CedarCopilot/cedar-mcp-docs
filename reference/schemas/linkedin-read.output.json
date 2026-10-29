@@ -1,0 +1,685 @@
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "listSeats": {
+      "type": "object",
+      "properties": {
+        "seats": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "viewProfile": {
+      "type": "object",
+      "properties": {
+        "providerId": {
+          "type": "string"
+        },
+        "publicIdentifier": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "headline": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "listConnections": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/properties/listSeats/properties/seats/items"
+          }
+        },
+        "complete": {
+          "type": "boolean"
+        },
+        "total": {
+          "type": "number"
+        },
+        "stoppedBy": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "listConnectionsPage": {
+      "type": "object",
+      "properties": {
+        "nextCursor": {
+          "type": "string",
+          "description": "Continue with this cursor even if the page has no items. Absent when exhausted."
+        },
+        "complete": {
+          "type": "boolean",
+          "description": "True only when there is no next page. This page alone is not the complete network or audience."
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "providerId": {
+                "type": "string"
+              },
+              "publicIdentifier": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "headline": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "profileUrl": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "connectedAt": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "name"
+            ],
+            "additionalProperties": true
+          }
+        }
+      },
+      "required": [
+        "complete",
+        "items"
+      ],
+      "additionalProperties": false
+    },
+    "listOwnPosts": {
+      "type": "object",
+      "properties": {
+        "nextCursor": {
+          "$ref": "#/properties/listConnectionsPage/properties/nextCursor"
+        },
+        "complete": {
+          "$ref": "#/properties/listConnectionsPage/properties/complete"
+        },
+        "owner": {
+          "type": "object",
+          "properties": {
+            "providerId": {
+              "type": "string"
+            },
+            "publicIdentifier": {
+              "type": "string"
+            },
+            "premiumFeatures": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "premiumFeatures"
+          ],
+          "additionalProperties": false
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "reactionId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Pass this to list-post-reactions.postId. Null means the provider omitted the reshare activity id; do not query the original post as your repost."
+              },
+              "text": {
+                "type": "string"
+              },
+              "author": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "public_identifier": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": true
+              },
+              "reposted_by": {
+                "$ref": "#/properties/listOwnPosts/properties/items/items/properties/author"
+              },
+              "is_repost": {
+                "type": "boolean"
+              },
+              "share_url": {
+                "type": "string"
+              },
+              "reaction_counter": {
+                "type": "number"
+              },
+              "parsed_datetime": {
+                "type": "string"
+              },
+              "repost_parsed_datetime": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "reactionId"
+            ],
+            "additionalProperties": true
+          }
+        }
+      },
+      "required": [
+        "complete",
+        "owner",
+        "items"
+      ],
+      "additionalProperties": false
+    },
+    "listPostReactions": {
+      "type": "object",
+      "properties": {
+        "nextCursor": {
+          "$ref": "#/properties/listConnectionsPage/properties/nextCursor"
+        },
+        "complete": {
+          "$ref": "#/properties/listConnectionsPage/properties/complete"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "author": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "$ref": "#/properties/listOwnPosts/properties/items/items/properties/author/properties/id"
+                  },
+                  "name": {
+                    "$ref": "#/properties/listOwnPosts/properties/items/items/properties/author/properties/name"
+                  },
+                  "public_identifier": {
+                    "$ref": "#/properties/listOwnPosts/properties/items/items/properties/author/properties/public_identifier"
+                  },
+                  "profile_url": {
+                    "type": "string"
+                  },
+                  "headline": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": true
+              },
+              "value": {
+                "type": "string",
+                "description": "Reaction type, such as LIKE or PRAISE."
+              },
+              "reaction_type": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        }
+      },
+      "required": [
+        "complete",
+        "items"
+      ],
+      "additionalProperties": false
+    },
+    "profileViewers": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/properties/listSeats/properties/seats/items"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "postEngagement": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/properties/listSeats/properties/seats/items"
+          }
+        },
+        "total": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": true
+    },
+    "newConnections": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/properties/listSeats/properties/seats/items"
+          }
+        },
+        "total": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": true
+    },
+    "listChats": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "chatId": {
+                "type": "string",
+                "description": "Pass to read-chat or sync-chat."
+              },
+              "draft": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "body": {
+                        "type": "string",
+                        "description": "Saved unsent text. Use as send-message.text only when the user asks to send it."
+                      },
+                      "source": {
+                        "type": "string",
+                        "enum": [
+                          "user",
+                          "agent"
+                        ]
+                      },
+                      "updatedAt": {
+                        "type": "string",
+                        "description": "Saved draft version timestamp."
+                      }
+                    },
+                    "required": [
+                      "body",
+                      "source",
+                      "updatedAt"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "Saved draft, or null when none exists."
+              },
+              "counterpartName": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Who the chat is with."
+              },
+              "counterpartHeadline": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "counterpartPublicId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The counterpart's LinkedIn public identifier."
+              },
+              "chatType": {
+                "type": "string",
+                "description": "dm | group | inmail"
+              },
+              "lastMessageAt": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "Recency — rows are sorted by this, newest first."
+              },
+              "lastMessageSnippet": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "lastMessageFromSelf": {
+                "type": "boolean",
+                "description": "True when the user sent the last message."
+              },
+              "unreadCount": {
+                "type": "number"
+              },
+              "conversationId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Set when this chat is ALREADY attached to a Cedar deal."
+              }
+            },
+            "required": [
+              "chatId"
+            ],
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "readChat": {
+      "type": "object",
+      "properties": {
+        "draft": {
+          "anyOf": [
+            {
+              "$ref": "#/properties/listChats/properties/items/items/properties/draft/anyOf/0"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "chatId": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "messages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Message body."
+              },
+              "chatId": {
+                "type": "string"
+              },
+              "readReceipt": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "const": "opened"
+                      },
+                      "source": {
+                        "type": "string",
+                        "enum": [
+                          "unipile_webhook",
+                          "unipile_sync"
+                        ]
+                      },
+                      "observedAt": {
+                        "type": "string",
+                        "description": "When Cedar first observed the receipt; not the time it was opened."
+                      }
+                    },
+                    "required": [
+                      "status",
+                      "source",
+                      "observedAt"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "Provider-confirmed read of our outbound message. Absent/null means unknown, not unopened. No recipient identity is inferred."
+              }
+            },
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "findChat": {
+      "type": "object",
+      "properties": {
+        "found": {
+          "type": "boolean"
+        },
+        "chatId": {
+          "type": "string",
+          "description": "Pass to read-chat, sync-chat, or send-message."
+        },
+        "counterpart": {
+          "type": "object",
+          "properties": {
+            "providerId": {
+              "type": "string",
+              "description": "Pass back as providerId to pick this person."
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "headline": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "providerId"
+          ],
+          "additionalProperties": true
+        },
+        "source": {
+          "type": "string",
+          "enum": [
+            "index",
+            "live"
+          ],
+          "description": "\"index\" = already in Cedar; \"live\" = found on LinkedIn and synced into Cedar just now."
+        },
+        "messagesSynced": {
+          "type": "number"
+        },
+        "reason": {
+          "type": "string",
+          "enum": [
+            "ambiguous_name",
+            "person_not_found",
+            "no_chat",
+            "incomplete_search"
+          ],
+          "description": "Why nothing was found. ambiguous_name → ask the user which candidate they mean."
+        },
+        "candidates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/properties/findChat/properties/counterpart"
+          }
+        }
+      },
+      "required": [
+        "found"
+      ],
+      "additionalProperties": true
+    },
+    "search": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/properties/listSeats/properties/seats/items"
+          }
+        },
+        "nextCursor": {
+          "type": "string"
+        },
+        "complete": {
+          "type": "boolean"
+        },
+        "paging": {
+          "$ref": "#/properties/listSeats/properties/seats/items"
+        }
+      },
+      "required": [
+        "items",
+        "complete"
+      ],
+      "additionalProperties": true
+    },
+    "searchParameters": {
+      "$ref": "#/properties/search"
+    },
+    "connectionsPage": {
+      "$ref": "#/properties/search"
+    },
+    "postPage": {
+      "$ref": "#/properties/search"
+    },
+    "profiles": {
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string"
+              },
+              "rowId": {
+                "type": "string"
+              },
+              "identifier": {
+                "type": "string"
+              },
+              "success": {
+                "type": "boolean"
+              },
+              "error": {
+                "type": "string"
+              },
+              "value": {
+                "$ref": "#/properties/listSeats/properties/seats/items"
+              },
+              "eligibility": {
+                "type": "string",
+                "enum": [
+                  "exclude",
+                  "unknown",
+                  "eligible_for_research"
+                ]
+              },
+              "crmStatus": {
+                "type": "string",
+                "enum": [
+                  "existing_contact",
+                  "no_match",
+                  "not_checked"
+                ]
+              },
+              "priorListMatch": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "success"
+            ],
+            "additionalProperties": true
+          }
+        },
+        "complete": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "results",
+        "complete"
+      ],
+      "additionalProperties": true
+    },
+    "companies": {
+      "$ref": "#/properties/profiles"
+    },
+    "screenProspects": {
+      "$ref": "#/properties/profiles"
+    },
+    "outreachStatus": {
+      "$ref": "#/properties/profiles"
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

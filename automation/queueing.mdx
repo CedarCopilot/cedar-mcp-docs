@@ -1,0 +1,49 @@
+---
+title: "Automatic queueing and overload control"
+description: "What Cedar queues, what it defers, and what your workflow must pace."
+---
+
+## Three different mechanisms
+
+| Mechanism | What happens | What it does not promise |
+| --- | --- | --- |
+| Immediate LinkedIn send | Checks seat health and rate windows, then sends or refuses | No automatic queued acceptance when capped |
+| Scheduled LinkedIn/Slack message | Persists a future send, queues near delivery, claims it before sending | No automatic warm-up plan or universal send retry |
+| Agent and Slack-trigger work | Queues background processing; applies source filters and dedupe | No exactly-once notification guarantee or guaranteed backlog for capped Slack events |
+
+## Scheduled messages
+
+`schedule-send` accepts real email, LinkedIn, or Slack messages. The user must authorize the recipient, final content, and future time. For LinkedIn, supply one connected seat and either an existing chat or a resolved recipient. The user can inspect and cancel pending items in Cedar's Scheduled folder.
+
+For Slack and LinkedIn, durable rows near their send time enter the delayed queue. The queue delay window is 15 minutes; a promotion sweep handles later items and recovers a missed queue handoff. Delivery atomically claims `pending → firing`, so duplicate queue messages do not normally duplicate sends.
+
+### Automatic LinkedIn cap deferral
+
+If a scheduled LinkedIn DM hits Cedar's **pre-send DM governor**, the worker returns it to pending:
+
+| Blocking cap | Deferral |
+| --- | --- |
+| 30 DMs/hour | About one hour from the failed attempt |
+| 100 DMs/day | About 24 hours from the failed attempt |
+
+Deferring from each attempted send time helps retain relative spacing instead of moving the whole backlog to a single reset boundary. Every attempt rechecks current conditions. This applies specifically to recognized Cedar DM cap errors; it does not cover invitations, InMail, provider throttles, unhealthy accounts, or every recipient-lookup error.
+
+### Delivery uncertainty
+
+Provider throttles and ambiguous delivery failures are not blindly retried by this branch: the message might already exist. The item is marked failed and the sender is notified. Inspect the conversation/provider state before retrying. The queue's claim prevents routine duplicate consumption, but does not provide provider-level exactly-once delivery across every crash boundary.
+
+Email scheduling uses the mail scheduling path and a saved provider draft matching the requested recipients/body. Do not assume the LinkedIn deferral policy applies to email.
+
+## Prevent a burst before it reaches the queue
+
+The MCP does not choose your outreach cadence. A responsible client should maintain a shared per-seat plan, schedule approved messages at distinct times, account for other workflows and manual activity, and use lower warm-up volumes when appropriate. Cedar's hard caps are ceilings; sending everything as fast as the cap allows is not the recommended operating level.
+
+For example, 20 DMs over eight working hours gives approximately 24 minutes between scheduled messages. Persist the recipient, approved body, scheduled time, schedule ID, and status in a table. Stop preparing follow-ups when a reply or relevant change makes them unnecessary. Revalidate before scheduling.
+
+See [Cedar caps and HeyReach recommendations](/linkedin/limits) for the actual numbers and source dates.
+
+## Slack event overload
+
+Channel-trigger filters run before queued playbook execution. Source deduplication reduces replayed messages, and the per-registration counter targets 60 runs/hour. **Messages above that counter are skipped, not automatically delayed.** The caches can fail open and the counter is non-atomic.
+
+For high-volume channels, narrow the source, use relevance checks, retain processed message IDs, and send a digest at a chosen cadence. These are workflow policies to configure; the presence of a queue does not automatically implement them.

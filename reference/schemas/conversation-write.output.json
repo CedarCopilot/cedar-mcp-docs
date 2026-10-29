@@ -1,0 +1,663 @@
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "create": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "type": "string"
+        },
+        "proposed": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "updateFields": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "updatedFields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          "description": "List of fields that were updated"
+        },
+        "blockedFields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "blockedBy": {
+                "type": "string",
+                "enum": [
+                  "owner",
+                  "locked",
+                  "system",
+                  "background",
+                  "unknown_field",
+                  "approval_required",
+                  "out_of_scope",
+                  "gated_option"
+                ]
+              },
+              "ownerAgentName": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string",
+                "description": "The true reason and the way out. Tell the user this plainly."
+              }
+            },
+            "required": [
+              "name",
+              "blockedBy",
+              "message"
+            ],
+            "additionalProperties": false
+          },
+          "description": "Requested fields that were NOT written, each with the reason. Present whenever anything you asked for was dropped, even when other fields were written. Tell the user which field and why; never guess a cause."
+        },
+        "proposed": {
+          "type": "boolean",
+          "description": "True if this is a proposed update awaiting approval"
+        },
+        "proposedFields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              },
+              "affectsExternalCrm": {
+                "type": "boolean",
+                "description": "Whether this field syncs to external CRM"
+              },
+              "entryOperation": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "const": "people"
+                      },
+                      "mode": {
+                        "type": "string",
+                        "const": "upsert"
+                      },
+                      "value": {
+                        "type": "object",
+                        "properties": {
+                          "people": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "name": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "title": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "email": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "format": "email"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "contactId": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "engagement": {
+                                  "type": "string",
+                                  "enum": [
+                                    "mentioned",
+                                    "introduced",
+                                    "engaged",
+                                    "should_engage"
+                                  ]
+                                },
+                                "roles": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                },
+                                "support": {
+                                  "type": "string",
+                                  "enum": [
+                                    "strong_support",
+                                    "support",
+                                    "neutral",
+                                    "opposed",
+                                    "unknown"
+                                  ]
+                                },
+                                "summary": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "evidence": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "eventId": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "quote": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      }
+                                    },
+                                    "required": [
+                                      "eventId",
+                                      "quote"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                }
+                              },
+                              "required": [
+                                "id"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "minItems": 1,
+                            "maxItems": 40
+                          }
+                        },
+                        "required": [
+                          "people"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "mode",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "const": "summarized_history"
+                      },
+                      "mode": {
+                        "type": "string",
+                        "const": "append"
+                      },
+                      "value": {
+                        "type": "object",
+                        "properties": {
+                          "entries": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "title": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "maxLength": 120
+                                },
+                                "occurredAt": {
+                                  "type": "string",
+                                  "format": "date-time"
+                                },
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "meeting",
+                                    "correspondence",
+                                    "email",
+                                    "milestone"
+                                  ]
+                                },
+                                "summary": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "maxLength": 600
+                                },
+                                "sourceEventIds": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "minItems": 1
+                                }
+                              },
+                              "required": [
+                                "id"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "minItems": 1
+                          }
+                        },
+                        "required": [
+                          "entries"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "mode",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "const": "summarized_history"
+                      },
+                      "mode": {
+                        "type": "string",
+                        "const": "update"
+                      },
+                      "value": {
+                        "$ref": "#/properties/updateFields/properties/proposedFields/items/properties/entryOperation/anyOf/1/properties/value"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "mode",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "entryBaseline": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "value",
+              "affectsExternalCrm"
+            ],
+            "additionalProperties": false
+          },
+          "description": "List of proposed field updates (chat mode only)"
+        },
+        "hasCrmIntegration": {
+          "type": "boolean",
+          "description": "Whether conversation has external CRM integration"
+        },
+        "userMessage": {
+          "type": "string",
+          "description": "UI instructions for the user"
+        },
+        "validationErrors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "field": {
+                "type": "string"
+              },
+              "path": {
+                "type": "array",
+                "items": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                }
+              },
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "entryId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "field",
+              "path",
+              "code",
+              "message"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "fieldOutcomes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "cedar": {
+                "type": "string",
+                "enum": [
+                  "saved",
+                  "not_saved"
+                ]
+              },
+              "crm": {
+                "type": "string",
+                "enum": [
+                  "pushed",
+                  "failed",
+                  "skipped",
+                  "not_attempted"
+                ]
+              },
+              "retryable": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "name",
+              "cedar",
+              "crm",
+              "retryable"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "pushedButNotSavedFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "remainingFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "errorCode": {
+          "type": "string"
+        },
+        "retryable": {
+          "type": "boolean"
+        },
+        "skippedCrmFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Fields whose CRM push was skipped on an atomic write. They were NOT saved in Cedar; do not retry them, tell the user."
+        },
+        "savedButNotPushedFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Fields that WERE saved in Cedar but whose CRM push was skipped, so the CRM was NOT updated; do not retry them, tell the user the CRM was not updated."
+        },
+        "isRecoverable": {
+          "type": "boolean"
+        },
+        "isExpected": {
+          "type": "boolean",
+          "description": "True when the failure is an intentional, normal outcome (does not alert)."
+        },
+        "fieldDescriptions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "description"
+            ],
+            "additionalProperties": false
+          },
+          "description": "The agent-facing description of each field in this call, including its unit, value rules, and — for enum fields such as status — its valid values. Returned because a caller can reach this tool without ever fetching the field definitions (e.g. chat does find → update-fields). Read these and correct the write if a value does not match the described unit, shape, or option set."
+        },
+        "notificationPosted": {
+          "type": "boolean",
+          "description": "True when Cedar told the user about this change in Slack. Do not notify them again."
+        },
+        "crmPushStatus": {
+          "type": "string",
+          "enum": [
+            "pushed",
+            "failed",
+            "partial",
+            "pending",
+            "skipped",
+            "not_applicable"
+          ],
+          "description": "Terminal external-CRM push status for this apply. On the chat/approval path the push is awaited, so a \"failed\"/\"partial\" here means the value was saved in Cedar but rejected by the CRM — the agent can reattempt or tell the user."
+        },
+        "linkedDeal": {
+          "type": "object",
+          "properties": {
+            "success": {
+              "type": "boolean"
+            },
+            "message": {
+              "type": "string"
+            },
+            "existingDeal": {
+              "type": "object",
+              "properties": {
+                "provider": {
+                  "type": "string"
+                },
+                "dealId": {
+                  "type": "string"
+                },
+                "dealName": {
+                  "type": "string"
+                },
+                "dealStage": {
+                  "type": "string"
+                },
+                "instanceUrl": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "provider",
+                "dealId"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "success",
+            "message"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "createEvent": {
+      "type": "object",
+      "properties": {
+        "eventId": {
+          "type": "string"
+        },
+        "conversationId": {
+          "type": "string"
+        },
+        "proposed": {
+          "type": "boolean"
+        },
+        "indexed": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "mutate": {
+      "type": "object",
+      "properties": {
+        "proposed": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {}
+        }
+      },
+      "additionalProperties": false
+    },
+    "reassignOwnership": {
+      "type": "object",
+      "properties": {
+        "proposed": {
+          "type": "boolean"
+        },
+        "aopReset": {
+          "type": "boolean"
+        },
+        "addedAsMember": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "linkExternalCrmDeal": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "type": "string"
+        },
+        "providerId": {
+          "type": "string"
+        },
+        "dealId": {
+          "type": "string"
+        },
+        "dealName": {
+          "type": "string"
+        },
+        "dealStage": {
+          "type": "string"
+        },
+        "existingDeal": {
+          "$ref": "#/properties/updateFields/properties/linkedDeal/properties/existingDeal"
+        }
+      },
+      "additionalProperties": false
+    },
+    "syncGmailThread": {
+      "type": "object",
+      "properties": {
+        "synced": {
+          "type": "boolean"
+        },
+        "threadId": {
+          "type": "string"
+        },
+        "conversationId": {
+          "type": "string"
+        },
+        "candidates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "threadId": {
+                "type": "string"
+              },
+              "subject": {
+                "type": "string"
+              },
+              "from": {
+                "type": "string"
+              },
+              "snippet": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "threadId"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

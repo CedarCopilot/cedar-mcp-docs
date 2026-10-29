@@ -1,0 +1,371 @@
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "list-canvases",
+        "configure-overview",
+        "create-canvas",
+        "update-canvas",
+        "delete-canvas"
+      ],
+      "description": "Which operation to perform — pass its matching params object below (action: \"list-canvases\" pairs with listCanvases: {}; action: \"configure-overview\" pairs with configureOverview: {...}; action: \"create-canvas\"/\"update-canvas\"/\"delete-canvas\" pair with createCanvas/updateCanvas/deleteCanvas: {...})."
+    },
+    "listCanvases": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    },
+    "configureOverview": {
+      "type": "object",
+      "properties": {
+        "aopId": {
+          "type": "string"
+        },
+        "ops": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "op": {
+                    "type": "string",
+                    "const": "add"
+                  },
+                  "item": {
+                    "type": "object",
+                    "properties": {
+                      "key": {
+                        "type": "string"
+                      },
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "field",
+                          "doc",
+                          "contacts"
+                        ]
+                      },
+                      "fieldId": {
+                        "type": "string"
+                      },
+                      "fieldType": {
+                        "type": "string",
+                        "enum": [
+                          "cedar",
+                          "custom"
+                        ]
+                      },
+                      "docPath": {
+                        "type": "string"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "section": {
+                        "type": "string"
+                      },
+                      "render": {
+                        "type": "string",
+                        "enum": [
+                          "scalar",
+                          "markdown"
+                        ]
+                      },
+                      "displayOrder": {
+                        "type": "number"
+                      },
+                      "ownerAgentId": {
+                        "type": "string"
+                      },
+                      "visibleWhen": {}
+                    },
+                    "required": [
+                      "key",
+                      "kind",
+                      "displayOrder"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "op",
+                  "item"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "op": {
+                    "type": "string",
+                    "const": "remove"
+                  },
+                  "key": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "op",
+                  "key"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "op": {
+                    "type": "string",
+                    "const": "setVisibleWhen"
+                  },
+                  "key": {
+                    "type": "string"
+                  },
+                  "visibleWhen": {
+                    "anyOf": [
+                      {},
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "op",
+                  "key"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "op": {
+                    "type": "string",
+                    "const": "setRender"
+                  },
+                  "key": {
+                    "type": "string"
+                  },
+                  "render": {
+                    "type": "string",
+                    "enum": [
+                      "scalar",
+                      "markdown"
+                    ]
+                  }
+                },
+                "required": [
+                  "op",
+                  "key",
+                  "render"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "op": {
+                    "type": "string",
+                    "const": "setOwner"
+                  },
+                  "key": {
+                    "type": "string"
+                  },
+                  "ownerAgentId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "op",
+                  "key",
+                  "ownerAgentId"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "op": {
+                    "type": "string",
+                    "const": "reorder"
+                  },
+                  "key": {
+                    "type": "string"
+                  },
+                  "displayOrder": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "op",
+                  "key",
+                  "displayOrder"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "ops"
+      ],
+      "additionalProperties": false
+    },
+    "createCanvas": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "conversationCanvas",
+            "kanbanConversation",
+            "cardList",
+            "table",
+            "report",
+            "statistics",
+            "tasks",
+            "agenda",
+            "calendar"
+          ]
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "actionText": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "viewConfig": {
+          "type": "object",
+          "additionalProperties": {}
+        },
+        "data": {
+          "type": "object",
+          "additionalProperties": {}
+        },
+        "homeViewOrder": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Pin to HomeView at this position; omit/null for an ephemeral (unpinned) canvas."
+        },
+        "colour": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    "updateCanvas": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "title": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "conversationCanvas",
+            "kanbanConversation",
+            "cardList",
+            "table",
+            "report",
+            "statistics",
+            "tasks",
+            "agenda",
+            "calendar"
+          ]
+        },
+        "data": {
+          "type": "object",
+          "additionalProperties": {},
+          "description": "Merged into the existing data object, not replaced."
+        },
+        "viewConfig": {
+          "type": "object",
+          "additionalProperties": {},
+          "description": "Replaces viewConfig in full."
+        },
+        "homeViewOrder": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "colour": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "additionalProperties": false
+    },
+    "deleteCanvas": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "additionalProperties": false
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

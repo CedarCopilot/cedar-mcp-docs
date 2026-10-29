@@ -1,0 +1,57 @@
+---
+title: "Research and enrichment"
+description: "Discover supported data before dispatching a paid lookup."
+---
+
+`research` exposes a schema catalog, question-driven enrichment selection, and company/person enrichment. Manual examples here explicitly select **Fiber**. The code's default provider and an account's configured policy may differ, so do not omit the provider and assume the same behavior.
+
+## Discover before spending
+
+`capabilities` returns the implemented enrichment catalog. `choose-enrichment` selects a supported schema for a question without running the supplier lookup:
+
+```json
+{
+  "action": "choose-enrichment",
+  "chooseEnrichment": {
+    "description": "Choose company data for an account review.",
+    "question": "What company profile data is available for example.com?",
+    "provider": "fiber"
+  }
+}
+```
+
+Review the returned field/schema selection before saving it into an authorized configuration. Revalidate a saved selection before reuse when capabilities change.
+
+## Manual enrichment with Fiber
+
+```json
+{
+  "action": "enrich-company",
+  "enrichCompany": {
+    "provider": "fiber",
+    "domain": "example.com",
+    "idempotencyKey": "example-company-review-v1"
+  }
+}
+```
+
+```json
+{
+  "action": "enrich-person",
+  "enrichPerson": {
+    "provider": "fiber",
+    "linkedinUrl": "https://www.linkedin.com/in/example-person",
+    "idempotencyKey": "example-person-review-v1"
+  }
+}
+```
+
+Person lookup accepts a verified email or LinkedIn URL. Company lookup prefers a domain; a company name must be locally resolvable. Identity quality matters: do not enrich an ambiguous namesake. `write_to_file` can store a large person result in a task buffer and return a summary envelope.
+
+These are potentially paid operations. Use stable idempotency keys for retries and an authorized `maximumMicrocredits` ceiling where needed. Never switch to another provider silently if Fiber is unavailable. Report the limitation and retain the unresolved record.
+
+## Web research and ongoing monitoring
+
+The external MCP does not authorize `web-search` or `web-fetch`, even though they are in the shared research schema. Use the calling client's own web tools. Ongoing watchers use `signals-write`; enrichment is a point-in-time lookup, not a subscription.
+
+Provider catalogs may include Crustdata, Apollo, or Moltsets. Their presence is not permission to use them under a Fiber-only manual-enrichment policy. Capability selection and provider dispatch are separate steps.

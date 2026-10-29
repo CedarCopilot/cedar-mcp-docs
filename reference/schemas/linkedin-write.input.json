@@ -1,0 +1,144 @@
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "send-message",
+        "send-invitation",
+        "send-inmail",
+        "sync-chat"
+      ],
+      "description": "Which write operation to perform — pass its matching params object (e.g. action: \"send-message\" pairs with sendMessage: {...}). send-* act on the user's LinkedIn account (linkedin:write); sync-chat only INGESTS a chat into a deal and needs linkedin:read."
+    },
+    "sendMessage": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The message body to send."
+        },
+        "chatId": {
+          "type": "string",
+          "description": "Reply into this existing chat. Omit to start a NEW 1:1 with the target (provide providerId/url/personId)."
+        },
+        "providerId": {
+          "type": "string",
+          "description": "Unipile provider id / member URN of the target (most direct)."
+        },
+        "url": {
+          "type": "string",
+          "description": "Full LinkedIn profile URL of the target (e.g. https://www.linkedin.com/in/jane)."
+        },
+        "personId": {
+          "type": "string",
+          "description": "Cedar crm_person id of the target (resolved to a LinkedIn identifier server-side)."
+        },
+        "unipileAccountId": {
+          "type": "string",
+          "description": "Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one."
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "additionalProperties": false
+    },
+    "sendInvitation": {
+      "type": "object",
+      "properties": {
+        "providerId": {
+          "$ref": "#/properties/sendMessage/properties/providerId"
+        },
+        "url": {
+          "$ref": "#/properties/sendMessage/properties/url"
+        },
+        "personId": {
+          "$ref": "#/properties/sendMessage/properties/personId"
+        },
+        "note": {
+          "type": "string",
+          "maxLength": 300,
+          "description": "LEAVE THIS UNSET. Connection requests are sent with no note by default — never add one on your own judgement, however good the note would be. Set it ONLY when the user has explicitly asked for a note on this request, and then set `noteRequestedByUser: true` alongside it or the send is refused."
+        },
+        "noteRequestedByUser": {
+          "type": "boolean",
+          "const": true,
+          "description": "The user explicitly asked for a note on this connection request. Required whenever `note` is set; never set it to justify a note the user did not ask for."
+        },
+        "unipileAccountId": {
+          "$ref": "#/properties/sendMessage/properties/unipileAccountId"
+        }
+      },
+      "additionalProperties": false
+    },
+    "sendInmail": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The InMail body."
+        },
+        "subject": {
+          "type": "string",
+          "description": "Optional InMail subject line."
+        },
+        "chatId": {
+          "type": "string",
+          "description": "Send into this existing chat instead of addressing a new recipient."
+        },
+        "providerId": {
+          "$ref": "#/properties/sendMessage/properties/providerId"
+        },
+        "url": {
+          "$ref": "#/properties/sendMessage/properties/url"
+        },
+        "personId": {
+          "$ref": "#/properties/sendMessage/properties/personId"
+        },
+        "unipileAccountId": {
+          "$ref": "#/properties/sendMessage/properties/unipileAccountId"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "additionalProperties": false
+    },
+    "syncChat": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "type": "string",
+          "description": "The EXISTING Cedar deal (crm_conversations id) to attach the LinkedIn chat to."
+        },
+        "chatId": {
+          "type": "string",
+          "description": "The LinkedIn chat id (from list-chats) to pull live and attach."
+        }
+      },
+      "required": [
+        "conversationId",
+        "chatId"
+      ],
+      "additionalProperties": false
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

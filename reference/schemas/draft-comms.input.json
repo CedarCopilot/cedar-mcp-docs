@@ -1,0 +1,275 @@
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "draft-email",
+        "draft-slack-message",
+        "draft-linkedin-message",
+        "show-draft"
+      ],
+      "description": "Which operation to perform — pass its matching params object below (e.g. action: \"draft-email\" pairs with draftEmail: {...})."
+    },
+    "draftEmail": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "REQUIRED UNLESS we are outside of the context of an existing conversation - The conversation ID to draft for. When provided along with taskDescription, a task card will be shown to the user. Omit when drafting outside of a CRM conversation context."
+        },
+        "to": {
+          "type": "string",
+          "minLength": 1,
+          "description": "REQUIRED - Recipient email addresses (comma-separated). Extract from user request or conversation context (look for \"From:\" lines in emails for replies)."
+        },
+        "cc": {
+          "type": "string",
+          "description": "OPTIONAL - CC recipients (comma-separated). Preserve the thread's existing to/cc structure: if prior replies in the chain put certain people in CC, pass them here explicitly. The agent's explicit CC assignment takes priority over reply-all expansion."
+        },
+        "bcc": {
+          "type": "string",
+          "description": "OPTIONAL - BCC recipients (comma-separated). Extract from conversation context or user request if mentioned."
+        },
+        "subject": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Email subject line. Extract from conversation context (for replies) or generate based on user instructions."
+        },
+        "body": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Email body content in HTML format (already composed and ready to save)"
+        },
+        "threadId": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "not": {}
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Thread ID if there is an existing thread in your given context. IMPORTANT: Look for \"Thread ID: <id>\" lines in the conversation context - these indicate existing email threads. If you see thread IDs in the context, you MUST extract and use the most appropriate one (typically the most recent thread ID that matches the recipient/subject). Only omit this field if there are NO \"Thread ID: <id>\" entries anywhere in the conversation context. Do NOT create a new thread if thread IDs are present in the context. Do NOT insert random IDs."
+        },
+        "draftId": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "not": {}
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "OPTIONAL - Only provide this when REWRITING an existing draft. For NEW drafts, omit this parameter entirely or pass null/undefined. If omitted, a new draft will be created."
+        },
+        "rewriteDraftOnThreadId": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "not": {}
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "OPTIONAL - Set this ONLY when the user asked you to EDIT / REWRITE / REPLACE an existing draft. Pass the Thread ID of the draft to replace (the same \"Thread ID: <id>\" from the context). Cedar will update that thread's existing draft in place instead of creating a second one. Omit for brand-new drafts."
+        },
+        "taskDescription": {
+          "type": "string",
+          "minLength": 1,
+          "description": "OPTIONAL - A concise, actionable task description for the user (e.g., \"Follow up to discuss Q2 pricing\", \"Send meeting reschedule request\"). Required when conversationId is provided, as it will be shown on the task card. Do NOT describe what you are doing (like \"Draft email\") - describe what the user is accomplishing by sending this draft."
+        },
+        "taskId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "OPTIONAL - The id of an EXISTING user task this draft fulfils. Pass it whenever you are drafting in response to a task you looked up (e.g. the user said \"do my Acme follow-up\" and you found that task): it saves the draft for real and attaches it to that task, so the task shows \"Open draft\" instead of still looking untouched. Omit when the draft does not fulfil an existing task — do NOT guess an id."
+        },
+        "attachments": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "OPTIONAL - Document IDs of uploaded files in the Brain to attach to this email draft. Call document-read({action: \"list\", path: \"#kb\"}) first to find available uploads, then pass the relevant type=\"upload\" IDs here."
+        },
+        "propose": {
+          "type": "boolean",
+          "description": "When true, streams a draft card for user review without saving to Gmail. When false, saves immediately. In chat mode always pass true — the user clicks Create Draft to persist. Headless surfaces always save immediately regardless of this flag."
+        },
+        "additionalLabelNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "OPTIONAL - Gmail label names to apply to the draft thread (created if they do not exist). ONLY use this when the user explicitly requests a label be applied to drafted emails, or the playbook explicitly instructs it. Never add labels speculatively."
+        },
+        "draftCategory": {
+          "type": "string",
+          "enum": [
+            "emailResponses",
+            "scheduledFollowups",
+            "postMeetingFollowups",
+            "preMeetingPrep",
+            "conversationRefresh",
+            "executeTaskNow"
+          ],
+          "description": "OPTIONAL - The semantic category of this draft. Pass when you know the purpose: emailResponses = replying to an inbound email, scheduledFollowups = a scheduled or proactive follow-up, postMeetingFollowups = follow-up after a meeting, preMeetingPrep = pre-meeting agenda or prep email."
+        }
+      },
+      "required": [
+        "to",
+        "subject",
+        "body"
+      ],
+      "additionalProperties": false
+    },
+    "draftSlackMessage": {
+      "type": "object",
+      "properties": {
+        "channelId": {
+          "type": "string",
+          "description": "Slack channel ID where the message should be sent"
+        },
+        "channelName": {
+          "type": "string",
+          "description": "Slack channel name — extract \"Channel Name:\" from <linked_slack_channel> in conversation context (omit the # prefix)"
+        },
+        "workspaceId": {
+          "type": "string",
+          "description": "Slack workspace ID (team ID). Required so the user can send the message from the task card without re-selecting a workspace."
+        },
+        "message": {
+          "type": "string",
+          "description": "Slack message content (already composed and ready to send)"
+        },
+        "threadTs": {
+          "type": "string",
+          "description": "Slack thread timestamp (ts) if replying to a thread, otherwise leave empty"
+        },
+        "conversationId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "REQUIRED UNLESS outside of an existing conversation — The conversation ID to attach the task to. When provided along with taskDescription, a task card will be shown to the user."
+        },
+        "taskDescription": {
+          "type": "string",
+          "minLength": 1,
+          "description": "OPTIONAL — A concise, actionable task description for the user (e.g., \"Send update to #engineering channel\"). Required when conversationId is provided, as it will be shown on the task card. Describe what the user is accomplishing, not what the agent is doing."
+        },
+        "taskType": {
+          "type": "string",
+          "enum": [
+            "response",
+            "follow-up",
+            "post-meeting",
+            "pre-meeting",
+            "reactivation",
+            "manual",
+            "calendar",
+            "crm-opportunity",
+            "field-approval"
+          ],
+          "description": "Task type for categorization. Use \"response\" for replies, \"follow-up\" for follow-ups, \"pre-meeting\" for pre-meeting prep, \"manual\" for general tasks."
+        }
+      },
+      "required": [
+        "channelId",
+        "message"
+      ],
+      "additionalProperties": false
+    },
+    "draftLinkedinMessage": {
+      "type": "object",
+      "properties": {
+        "chatId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Existing LinkedIn chat id from list-linkedin-chats or the attached linkedin_chat context. Read the chat before drafting."
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 8000,
+          "description": "Pre-composed plain-text LinkedIn reply. No HTML or Markdown formatting."
+        },
+        "expectedDraftUpdatedAt": {
+          "type": "string",
+          "description": "For an explicitly requested rewrite only: the current draft version returned by an earlier save or conflict. Never guess it."
+        }
+      },
+      "required": [
+        "chatId",
+        "message"
+      ],
+      "additionalProperties": false
+    },
+    "showDraft": {
+      "type": "object",
+      "properties": {
+        "drafts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "draftId": {
+                "type": "string",
+                "minLength": 1,
+                "description": "The provider draft id, exactly as returned by the tool that listed or saved it."
+              },
+              "threadId": {
+                "type": "string",
+                "minLength": 1,
+                "description": "The thread the draft belongs to. Alone, shows every draft in that thread. With draftId, safely resolves a single current draft if the stored id is gone."
+              }
+            },
+            "additionalProperties": false
+          },
+          "minItems": 1,
+          "maxItems": 20,
+          "description": "The existing drafts to display (1 to 20)."
+        }
+      },
+      "required": [
+        "drafts"
+      ],
+      "additionalProperties": false
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

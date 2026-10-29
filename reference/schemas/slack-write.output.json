@@ -1,0 +1,34 @@
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "syncThread": {
+      "type": "object",
+      "properties": {
+        "synced": {
+          "type": "boolean"
+        },
+        "ingested": {
+          "type": "number"
+        },
+        "fetched": {
+          "type": "number"
+        },
+        "conversationId": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

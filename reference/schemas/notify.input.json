@@ -1,0 +1,277 @@
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "send",
+        "list-slack-channels"
+      ],
+      "description": "Which operation to perform — pass its matching params object below (e.g. action: \"send\" pairs with send: {...})."
+    },
+    "send": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string",
+          "description": "Delivered to the user's chosen notification channel (Slack, email, iMessage, or WhatsApp)."
+        },
+        "channel": {
+          "type": "string",
+          "enum": [
+            "email",
+            "slack",
+            "imessage",
+            "whatsapp"
+          ],
+          "description": "Deliver on a specific channel instead of the user's default. Leave UNSET almost always — the user picks where their notifications land. Set it (e.g. \"email\") only when the message argues for a channel, such as a long written report the user wants in their inbox. Not a retry mechanism: a failed send already falls back to email on its own."
+        },
+        "slack": {
+          "type": "object",
+          "properties": {
+            "buttons": {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "action"
+                      },
+                      "label": {
+                        "type": "string",
+                        "description": "1-3 words max. E.g. \"Draft\", \"Done\", \"Snooze\""
+                      },
+                      "emoji": {
+                        "type": "string"
+                      },
+                      "style": {
+                        "type": "string",
+                        "enum": [
+                          "primary",
+                          "danger",
+                          "default"
+                        ],
+                        "default": "default"
+                      },
+                      "op": {
+                        "type": "string",
+                        "description": "Operation key from the registry, e.g. cancel_task, snooze_task, agent_prompt"
+                      },
+                      "args": {
+                        "type": "object",
+                        "additionalProperties": {}
+                      },
+                      "confirm": {
+                        "type": "object",
+                        "properties": {
+                          "title": {
+                            "type": "string"
+                          },
+                          "text": {
+                            "type": "string"
+                          },
+                          "confirm": {
+                            "type": "string"
+                          },
+                          "deny": {
+                            "type": "string"
+                          },
+                          "style": {
+                            "type": "string",
+                            "enum": [
+                              "primary",
+                              "danger"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "title",
+                          "text",
+                          "confirm",
+                          "deny"
+                        ],
+                        "additionalProperties": false,
+                        "description": "Native Slack confirmation dialog shown before the click fires — required for any irreversible op (e.g. send_email_draft)."
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "label",
+                      "op",
+                      "args"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "link"
+                      },
+                      "label": {
+                        "type": "string",
+                        "description": "1-3 words max. E.g. \"Open\", \"View in Cedar\""
+                      },
+                      "emoji": {
+                        "type": "string"
+                      },
+                      "url": {
+                        "type": "string",
+                        "format": "uri"
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "label",
+                      "url"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "description": "Block Kit buttons (Slack only). 1-3 word labels."
+            },
+            "reactions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "emoji": {
+                    "type": "string",
+                    "description": "Slack shortcode e.g. white_check_mark"
+                  },
+                  "op": {
+                    "type": "string"
+                  },
+                  "args": {
+                    "type": "object",
+                    "additionalProperties": {}
+                  },
+                  "isDefault": {
+                    "type": "boolean",
+                    "description": "Cedar auto-adds this emoji to the message so the user sees it immediately"
+                  }
+                },
+                "required": [
+                  "emoji",
+                  "op",
+                  "args",
+                  "isDefault"
+                ],
+                "additionalProperties": false
+              },
+              "description": "Reaction definitions stored for dispatch. isDefault=true auto-adds the emoji."
+            },
+            "threadTs": {
+              "type": "string",
+              "description": "Send as a thread reply under this message ts"
+            },
+            "channelId": {
+              "type": "string",
+              "description": "Send to a specific Slack channel instead of the user DM. Use list-slack-channels to discover valid IDs."
+            },
+            "threadReplies": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "string"
+                  },
+                  "buttons": {
+                    "type": "array",
+                    "items": {
+                      "anyOf": [
+                        {
+                          "$ref": "#/properties/send/properties/slack/properties/buttons/items/anyOf/0"
+                        },
+                        {
+                          "$ref": "#/properties/send/properties/slack/properties/buttons/items/anyOf/1"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "text"
+                ],
+                "additionalProperties": false
+              },
+              "description": "Additional messages sent as thread replies under the parent message, each with its own buttons — e.g. one reply per grouped item in a digest. Max 10."
+            }
+          },
+          "additionalProperties": false,
+          "description": "Slack-specific options. Only applied when the user has Slack configured."
+        },
+        "imessage": {
+          "type": "object",
+          "properties": {
+            "tapbacks": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "emoji": {
+                    "type": "string",
+                    "enum": [
+                      "thumbsup",
+                      "thumbsdown",
+                      "heart",
+                      "haha",
+                      "exclamation",
+                      "question"
+                    ]
+                  },
+                  "op": {
+                    "type": "string"
+                  },
+                  "args": {
+                    "type": "object",
+                    "additionalProperties": {}
+                  }
+                },
+                "required": [
+                  "emoji",
+                  "op",
+                  "args"
+                ],
+                "additionalProperties": false
+              },
+              "description": "Tapback definitions stored per message for dispatch when the user reacts"
+            }
+          },
+          "additionalProperties": false,
+          "description": "iMessage-specific options. Only applied when the user has iMessage configured."
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "additionalProperties": false
+    },
+    "listSlackChannels": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

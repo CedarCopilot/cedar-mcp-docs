@@ -1,0 +1,219 @@
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "diagnose-conversation",
+        "recent-executions",
+        "execution-detail",
+        "tool-call-detail",
+        "health-report",
+        "create-monitor",
+        "test-run"
+      ],
+      "description": "Which operation to perform — pass its matching params object below (e.g. action: \"health-report\" pairs with healthReport: {...})."
+    },
+    "diagnoseConversation": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Conversation to diagnose. Self-scoped: the conversation must belong to your own org unless you are Cedar staff."
+        }
+      },
+      "required": [
+        "conversationId"
+      ],
+      "additionalProperties": false
+    },
+    "recentExecutions": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "List executions for this conversation. Self-scoped: the conversation must belong to your own org unless you are Cedar staff."
+        },
+        "targetUserId": {
+          "type": "string",
+          "description": "List executions for this user instead of a conversation. Defaults to yourself. Any-account if you are Cedar staff, or a teammate's if you are an org admin/owner in their same organization — a plain member passing a different user's id is rejected."
+        },
+        "runId": {
+          "type": "string",
+          "description": "Drill into one run's tool calls instead of listing executions (takes priority over conversationId/targetUserId). Self-scoped by default: the run must belong to you, unless you are Cedar staff or an org admin/owner viewing a teammate's run in your own organization."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50,
+          "default": 10,
+          "description": "Max executions to return, max 50 (ignored in runId mode)."
+        }
+      },
+      "additionalProperties": false
+    },
+    "executionDetail": {
+      "type": "object",
+      "properties": {
+        "runId": {
+          "type": "string",
+          "description": "Run ID to fetch the full debug dump for (execution row, tool calls, sub-agent executions). Self-scoped by default: must be your own run, unless you are Cedar staff or an org admin/owner viewing a teammate's run in your own organization."
+        }
+      },
+      "required": [
+        "runId"
+      ],
+      "additionalProperties": false
+    },
+    "toolCallDetail": {
+      "type": "object",
+      "properties": {
+        "toolCallId": {
+          "type": "string",
+          "description": "The `id` of one specific tool call (from execution-detail's toolCalls[] or subAgents[]) to fetch full input/output for. Use this to inspect a sub-agent's own tool calls — execution-detail's subAgents[] lists each sub-agent run but not its tool calls; drill into that sub-agent's own runId via execution-detail first to get its tool-call ids, then call this action per id."
+        }
+      },
+      "required": [
+        "toolCallId"
+      ],
+      "additionalProperties": false
+    },
+    "healthReport": {
+      "type": "object",
+      "properties": {
+        "targetUserId": {
+          "type": "string",
+          "description": "Per-user health snapshot for this user (meetings, tasks, agent-execution buckets, derived red/yellow issues). Defaults to yourself. Any-account if you are Cedar staff, or a teammate's if you are an org admin/owner in their same organization. IMPORTANT: this per-user view computes a \"post-meeting pipeline degraded\" red-flag signal that the org-wide view (pass orgId instead) deliberately skips because it is too expensive to run for every user in an org — always trust THIS view over the org-wide one when you need an authoritative read on one specific account."
+        },
+        "orgId": {
+          "type": "string",
+          "description": "Org-wide health snapshot (green/yellow/red status per user in the org) instead of one user's detail. Cedar-staff only. IMPORTANT: this view does NOT compute the post-meeting-pipeline red-flag signal the per-user view (targetUserId) does — a user can show green/yellow here but red when the same action is called again scoped to just that user. Do not report an account as healthy based on this view alone; drill into targetUserId for any account that had recent meetings."
+        },
+        "lookbackDays": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 90,
+          "default": 7
+        },
+        "orgAopId": {
+          "type": "string",
+          "description": "Per-user mode only: filter tasks/executions to AOPs under this org_aop_id."
+        }
+      },
+      "additionalProperties": false
+    },
+    "createMonitor": {
+      "type": "object",
+      "properties": {
+        "targetUserId": {
+          "type": "string",
+          "description": "The user account this monitor watches."
+        },
+        "orgId": {
+          "type": "string",
+          "description": "Org this monitor belongs to, if applicable."
+        },
+        "monitorType": {
+          "type": "string",
+          "description": "A slug describing the monitor kind, e.g. \"regression\", \"reinvestigate\", \"config_verification\". Not a DB enum — free text."
+        },
+        "triggerConfig": {
+          "type": "object",
+          "additionalProperties": {},
+          "description": "Must include `verify_condition` (a plain-English condition the evaluator checks against each new execution) — omitting it makes every future evaluation return \"uncertain\" instead of ever passing or failing; createMonitor() rejects a call missing it. Conventional keys used by the cedar-configuration skill's config-verification monitors: symptom_class, change_description, verify_condition, original_report, target_executions, event_type_filter."
+        },
+        "alertChannel": {
+          "type": "string",
+          "description": "Slack channel or DM to alert when the monitor fires or resolves."
+        },
+        "investigationId": {
+          "type": "string",
+          "description": "Ties this monitor to an existing Sherlock investigation row. Omit for monitors not tied to one (e.g. cedar-configuration config-verification monitors)."
+        }
+      },
+      "required": [
+        "targetUserId",
+        "monitorType",
+        "triggerConfig"
+      ],
+      "additionalProperties": false
+    },
+    "testRun": {
+      "type": "object",
+      "properties": {
+        "triggerType": {
+          "type": "string",
+          "enum": [
+            "cron",
+            "before_meeting",
+            "webhook"
+          ],
+          "description": "\"cron\" fires exactly ONE named subagent in isolation (requires subagentName). \"before_meeting\" fires EVERY before-meeting subagent wired to conversationId — not isolated to one subagent, since Cedar has no isolated-single-agent before_meeting path today; this mirrors what a real meeting trigger actually does. \"webhook\" fires one registered webhook (requires webhookId) through the same dispatch path a real inbound POST or Slack-channel message would take — conversationless, so save-draft/save-slack-draft/task creation are unavailable to whatever it runs."
+        },
+        "subagentName": {
+          "type": "string",
+          "description": "cron only. The subagent slug to run, in isolation. Required unless agentId is given instead — provide exactly one of the two."
+        },
+        "agentId": {
+          "type": "string",
+          "description": "cron only. Alternative to subagentName: the Agent Workspace agent_id (as shown in the UI, not the document filename). Resolved to its underlying {aopId, subagentName} before running — with targetUserId, this is how an admin runs a teammate's SAVED agent without already knowing its filename. Requires targetUserId when naming an agent that is not your own."
+        },
+        "level": {
+          "type": "string",
+          "enum": [
+            "user",
+            "org"
+          ],
+          "default": "user",
+          "description": "cron only. \"user\" reads the subagent from your own AOP; \"org\" reads it from the org AOP linked to your own AOP (you can only test an org-level agent your own AOP is actually linked to, never an arbitrary other org's)."
+        },
+        "aopId": {
+          "type": "string",
+          "description": "cron only. Your own AOP id. Omit to auto-resolve when you have exactly one AOP; required if you have more than one."
+        },
+        "conversationId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Required when triggerType is \"before_meeting\". Self-scoped: must be a conversation you own."
+        },
+        "webhookId": {
+          "type": "string",
+          "description": "Required when triggerType is \"webhook\". Must be a webhook registered to yourself (or, with targetUserId, to the teammate you are testing)."
+        },
+        "webhookPayload": {
+          "description": "webhook only. Explicit payload; omitted defaults to `{}`."
+        },
+        "deliverForReal": {
+          "type": "boolean",
+          "default": false,
+          "description": "Default false: outbound sends (Slack/email/notifications) are suppressed and this returns a preview of what WOULD have been sent. It is NOT a dry run: DB writes (tasks, fields, documents) AND writes to connected systems the agent makes itself (e.g. a HubSpot PATCH through run-code-executor, a Drive edit) still happen. To test without touching a CRM, use the agent's own read-only mode. Set true to actually deliver for real — for an org-level cron agent (level: \"org\") this requires you to be an org admin/owner, since it posts to a channel your whole team may share; a user-level agent only ever touches your own destinations, so no extra check applies there."
+        },
+        "targetUserId": {
+          "type": "string",
+          "description": "Test-run this specific teammate's own subagent instead of yours — their AOP, their conversation ownership, their execution history. Defaults to yourself. Any-teammate only if you are an org admin/owner in the same organization as them; a plain member naming someone else is rejected."
+        }
+      },
+      "required": [
+        "triggerType"
+      ],
+      "additionalProperties": false
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

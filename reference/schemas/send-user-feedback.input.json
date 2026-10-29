@@ -1,0 +1,51 @@
+{
+  "type": "object",
+  "properties": {
+    "message": {
+      "type": "string",
+      "maxLength": 4000,
+      "description": "What went wrong or what is being asked, in plain words: what was attempted, what happened, and what was expected. Include exact error text if there is any."
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "bug",
+        "confused",
+        "feature_request",
+        "other"
+      ],
+      "description": "bug: a Cedar tool or agent failed or behaved wrongly. confused: the user or agent could not tell how something works. feature_request: a capability that is missing. Default other."
+    },
+    "runId": {
+      "type": "string",
+      "description": "agent_executions run id the report is about, if any."
+    },
+    "conversationId": {
+      "type": "string",
+      "description": "Conversation (deal) id the report is about, if any."
+    },
+    "agentId": {
+      "type": "string",
+      "description": "Saved agent id the report is about, if any."
+    },
+    "source": {
+      "type": "string",
+      "description": "The page or context where this feedback originated (e.g. 'gallery')"
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "message",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

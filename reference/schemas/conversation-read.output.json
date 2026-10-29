@@ -1,0 +1,793 @@
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "get": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "The conversation ID"
+        },
+        "aopId": {
+          "type": "string",
+          "description": "The ID of the assigned AOP"
+        },
+        "aopName": {
+          "type": "string",
+          "description": "The name of the assigned AOP"
+        },
+        "agentOperatingProcedure": {
+          "type": "string",
+          "description": "The full agent operating procedure text"
+        },
+        "conversationContext": {
+          "type": "string",
+          "description": "Formatted conversation context for agent consumption"
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Field name"
+              },
+              "value": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Current field value"
+              },
+              "description": {
+                "type": "string",
+                "description": "Description of what this field represents"
+              },
+              "writable": {
+                "type": "boolean",
+                "description": "Whether YOU may write this field right now, decided by the same rules update-conversation-fields enforces (an external-CRM sync run is not classified there, so every field except taxonomy fields reports true). Only write fields where this is true."
+              },
+              "blockedBy": {
+                "type": "string",
+                "enum": [
+                  "owner",
+                  "locked",
+                  "system",
+                  "background"
+                ],
+                "description": "Why the field is not writable: 'owner' (another agent maintains it), 'locked' (an admin locked it against agent edits), 'system' (derived by Cedar, e.g. type, scope, lastContactedAt), 'background' (written only by the taxonomy extraction step). A name that is not a field of this playbook cannot appear here; update-conversation-fields reports it as 'unknown_field'."
+              },
+              "ownerAgentName": {
+                "type": "string",
+                "description": "The agent that maintains the field, when blockedBy is 'owner'."
+              },
+              "blockedReason": {
+                "type": "string",
+                "description": "The true reason the field is not writable and the way out. Tell the user this plainly; do not retry or guess another cause."
+              },
+              "agentEditsForbidden": {
+                "type": "boolean",
+                "description": "The flag on the field DEFINITION (an admin locked it against agents). It does NOT say whether you may write the field: it is the same for every caller. Use writable / blockedBy for that."
+              },
+              "signal": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "red",
+                      "yellow",
+                      "green"
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "Health signal for custom (working memory) fields"
+              },
+              "signalReasoning": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Rationale behind the current signal, when set"
+              }
+            },
+            "required": [
+              "name",
+              "value",
+              "description",
+              "agentEditsForbidden"
+            ],
+            "additionalProperties": false
+          },
+          "description": "Unified list of all conversation fields with edit permissions"
+        },
+        "domainGuidance": {
+          "type": "string",
+          "description": "Domain-specific guidance. Sent once per run for a given domain -- omitted on a repeat fetch-conversation call within the same run, since it is static reference text you already have."
+        },
+        "requestedEvent": {
+          "type": "string",
+          "description": "Full formatted content of the requested event (if expandEventId was provided)"
+        },
+        "buffered": {
+          "type": "boolean"
+        },
+        "path": {
+          "type": "string",
+          "description": "Buffer document path — pass to read-document(path=...) or search-documents(path=...) to access the buffered content"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "word_count": {
+          "type": "number"
+        },
+        "access_instructions": {
+          "type": "string",
+          "description": "Explicit instructions for how to access this buffer"
+        }
+      },
+      "additionalProperties": false
+    },
+    "find": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "type": "string",
+              "const": "column_filters"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "suggested",
+                "error"
+              ]
+            },
+            "userMessage": {
+              "type": "string"
+            },
+            "filters": {},
+            "sorts": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "active": {
+                    "type": "boolean"
+                  },
+                  "direction": {
+                    "type": "string",
+                    "enum": [
+                      "asc",
+                      "desc"
+                    ]
+                  },
+                  "priority": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "active",
+                  "direction",
+                  "priority"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "visibleColumns": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "matchingConversations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "status": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "priority": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "dealValue": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "lastContactedAt": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "nextStepDate": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "currentTasks": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "taskType": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "outputKind": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "dueDate": {
+                          "type": "string"
+                        },
+                        "notes": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "description",
+                        "taskType",
+                        "outputKind",
+                        "dueDate",
+                        "notes"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Active (todo) tasks for this conversation, ordered by due date ascending"
+                  }
+                },
+                "required": [
+                  "id",
+                  "name",
+                  "status",
+                  "priority",
+                  "dealValue",
+                  "lastContactedAt",
+                  "nextStepDate",
+                  "currentTasks"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "totalMatches": {
+              "type": "number"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "type": "string",
+              "const": "flexible_query"
+            },
+            "conversations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "status": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "priority": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "dealValue": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "lastContactedAt": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "nextStepDate": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "createdAt": {
+                    "type": "string"
+                  },
+                  "aopId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "aopName": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "primaryCompanyName": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "primaryCompanyDomain": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ownerName": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "isOwnedByCurrentUser": {
+                    "type": "boolean"
+                  },
+                  "customFields": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "id",
+                  "name",
+                  "status",
+                  "priority",
+                  "dealValue",
+                  "lastContactedAt",
+                  "nextStepDate",
+                  "createdAt",
+                  "aopId",
+                  "aopName",
+                  "primaryCompanyName",
+                  "primaryCompanyDomain",
+                  "ownerName",
+                  "isOwnedByCurrentUser"
+                ],
+                "additionalProperties": true
+              }
+            },
+            "totalMatches": {
+              "type": "number"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "searchSemantic": {
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "documentId": {
+                "type": "string"
+              },
+              "eventId": {
+                "type": "string"
+              },
+              "conversationId": {
+                "type": "string"
+              },
+              "eventType": {
+                "type": "string"
+              },
+              "eventTime": {
+                "type": "number"
+              },
+              "aopId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "threadId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "isSignificant": {
+                "type": "boolean"
+              },
+              "direction": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "emailClassification": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "content": {
+                "type": "string"
+              },
+              "score": {
+                "type": "number"
+              },
+              "eventTitle": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "documentId",
+              "eventId",
+              "conversationId",
+              "eventType",
+              "eventTime",
+              "aopId",
+              "threadId",
+              "isSignificant",
+              "direction",
+              "emailClassification",
+              "content",
+              "score"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "totalHits": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "searchExternalCrmDeals": {
+      "type": "object",
+      "properties": {
+        "deals": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "stage": {
+                "type": "string"
+              },
+              "amount": {
+                "type": "number"
+              },
+              "createdAt": {
+                "type": "string"
+              },
+              "updatedAt": {
+                "type": "string"
+              },
+              "company": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "domain": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "stage",
+              "createdAt",
+              "updatedAt"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "timeline": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "number"
+        },
+        "entries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": {}
+          }
+        },
+        "buffer": {
+          "type": "object",
+          "properties": {
+            "buffered": {
+              "type": "boolean",
+              "const": true
+            },
+            "path": {
+              "type": "string"
+            },
+            "summary": {
+              "type": "string"
+            },
+            "word_count": {
+              "type": "number"
+            },
+            "access_instructions": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "fieldEvolution": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "number"
+        },
+        "series": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "conversationId": {
+                "type": "string"
+              },
+              "series": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/properties/timeline/properties/entries/items"
+                }
+              }
+            },
+            "required": [
+              "conversationId",
+              "series"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "buffer": {
+          "$ref": "#/properties/timeline/properties/buffer"
+        }
+      },
+      "additionalProperties": false
+    },
+    "valueAsOf": {
+      "type": "object",
+      "properties": {
+        "found": {
+          "type": "boolean"
+        },
+        "value": {},
+        "strength": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "completeness": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "occurredAt": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "describeField": {
+      "type": "object",
+      "properties": {
+        "plane": {
+          "type": "string",
+          "enum": [
+            "instance",
+            "versioned"
+          ]
+        },
+        "scores": {
+          "type": "object",
+          "properties": {
+            "strength": {
+              "type": "boolean"
+            },
+            "completeness": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "strength",
+            "completeness"
+          ],
+          "additionalProperties": false
+        },
+        "vocab": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "labels": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "payloadKeys": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "rawContent": {
+      "type": "object",
+      "properties": {
+        "eventCount": {
+          "type": "number"
+        },
+        "stages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "markers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "eventId": {
+                "type": "string"
+              },
+              "stage": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "occurredAt": {
+                "type": "string"
+              },
+              "wordBase": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "eventId",
+              "stage",
+              "occurredAt",
+              "wordBase"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "buffer": {
+          "$ref": "#/properties/timeline/properties/buffer"
+        }
+      },
+      "additionalProperties": false
+    },
+    "search": {
+      "type": "object",
+      "properties": {
+        "totalHits": {
+          "type": "number"
+        },
+        "hits": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": {}
+          }
+        },
+        "buffer": {
+          "$ref": "#/properties/timeline/properties/buffer"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

@@ -1,0 +1,240 @@
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "find": {
+      "type": "object",
+      "properties": {
+        "meetings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "eventId": {
+                "type": "string"
+              },
+              "conversationId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "title": {
+                "type": "string"
+              },
+              "meetingTime": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "durationMinutes": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "organizerEmail": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "participants": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "meetingUrl": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "recordingUrl": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "meetingProvider": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "hasTranscription": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "eventId",
+              "conversationId",
+              "title",
+              "meetingTime",
+              "durationMinutes",
+              "organizerEmail",
+              "participants",
+              "meetingUrl",
+              "recordingUrl",
+              "meetingProvider",
+              "hasTranscription"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "total": {
+          "type": "number"
+        },
+        "provider": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "canList": {
+              "type": "boolean"
+            },
+            "guidance": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "canList",
+            "guidance"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "sync": {
+      "type": "object",
+      "properties": {
+        "synced": {
+          "type": "boolean"
+        },
+        "fetched": {
+          "type": "number"
+        },
+        "pushedDown": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "eventId": {
+          "type": "string"
+        },
+        "conversationId": {
+          "type": "string"
+        },
+        "providerId": {
+          "type": "string"
+        },
+        "alreadyInCedar": {
+          "type": "boolean"
+        },
+        "providerBasis": {
+          "type": "string",
+          "enum": [
+            "explicit",
+            "recent-meetings",
+            "connection",
+            "none"
+          ]
+        },
+        "guidance": {
+          "type": "string"
+        },
+        "canList": {
+          "type": "boolean"
+        },
+        "transcriptStored": {
+          "type": "boolean"
+        },
+        "candidates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "externalId": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "meetingTime": {
+                "type": "string"
+              },
+              "organizerEmail": {
+                "type": "string"
+              },
+              "participants": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "meetingUrl": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "externalId"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "capabilities": {
+      "type": "object",
+      "properties": {
+        "providerId": {
+          "type": "string"
+        },
+        "connected": {
+          "type": "boolean"
+        },
+        "canList": {
+          "type": "boolean"
+        },
+        "serverSide": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "guidance": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

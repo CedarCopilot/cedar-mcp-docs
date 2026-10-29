@@ -1,0 +1,200 @@
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "searchLive": {
+      "type": "object",
+      "properties": {
+        "matches": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "channelId": {
+                "type": "string"
+              },
+              "channelName": {
+                "type": "string"
+              },
+              "ts": {
+                "type": "string"
+              },
+              "threadTs": {
+                "type": "string"
+              },
+              "username": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              },
+              "permalink": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "channelId",
+              "ts"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "readThread": {
+      "type": "object",
+      "properties": {
+        "channelId": {
+          "type": "string"
+        },
+        "threadTs": {
+          "type": "string"
+        },
+        "messages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "ts": {
+                "type": "string"
+              },
+              "threadTs": {
+                "type": "string"
+              },
+              "slackUserId": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              },
+              "files": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "mimetype": {
+                      "type": "string"
+                    },
+                    "size": {
+                      "type": "number"
+                    },
+                    "isImage": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "isImage"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "ts"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "syncedTo": {
+          "type": "string"
+        },
+        "ingested": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "readFile": {
+      "type": "object",
+      "properties": {
+        "channelId": {
+          "type": "string"
+        },
+        "messageTs": {
+          "type": "string"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "$ref": "#/properties/readThread/properties/messages/items/properties/files/items/properties/id"
+              },
+              "name": {
+                "$ref": "#/properties/readThread/properties/messages/items/properties/files/items/properties/name"
+              },
+              "mimetype": {
+                "$ref": "#/properties/readThread/properties/messages/items/properties/files/items/properties/mimetype"
+              },
+              "size": {
+                "$ref": "#/properties/readThread/properties/messages/items/properties/files/items/properties/size"
+              },
+              "isImage": {
+                "$ref": "#/properties/readThread/properties/messages/items/properties/files/items/properties/isImage"
+              },
+              "returned": {
+                "type": "boolean"
+              },
+              "note": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "isImage",
+              "returned"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "channelId",
+        "messageTs",
+        "files"
+      ],
+      "additionalProperties": false
+    },
+    "mcpImages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "string"
+          },
+          "mimeType": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "mimeType"
+        ],
+        "additionalProperties": false
+      },
+      "description": "Image pixels for MCP clients, delivered as image content parts and removed from this JSON."
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

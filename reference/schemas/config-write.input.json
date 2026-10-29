@@ -1,0 +1,758 @@
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "reassign-aop",
+        "create-field",
+        "update-field",
+        "delete-field",
+        "link-mapping",
+        "unlink-mapping",
+        "add-field-option",
+        "update-field-option",
+        "remove-field-option",
+        "set-stage-criteria"
+      ],
+      "description": "Which write operation to perform — pass its matching params object below (e.g. action: \"create-field\" pairs with createField: {...})."
+    },
+    "reassignAop": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "The conversation ID to re-evaluate."
+        },
+        "deleteOldWorkingMemory": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether to delete old working memory fields before initializing new ones."
+        },
+        "initializeNewFields": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether to initialize new working memory fields from the new AOP schema."
+        },
+        "targetUserId": {
+          "type": "string",
+          "description": "Org owner/admin only: target a same-org member. Omit for self; non-admins and cross-org targets are rejected."
+        }
+      },
+      "required": [
+        "conversationId"
+      ],
+      "additionalProperties": false
+    },
+    "createField": {
+      "type": "object",
+      "properties": {
+        "internalSignals": {
+          "type": "object",
+          "properties": {
+            "definitions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "type": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "instructions": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "eligibility": {
+                    "type": "string",
+                    "enum": [
+                      "any",
+                      "lost_or_lapsed",
+                      "customer"
+                    ],
+                    "default": "any"
+                  }
+                },
+                "required": [
+                  "id",
+                  "type",
+                  "enabled",
+                  "instructions"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "lifecycle": {
+              "type": "object",
+              "properties": {
+                "lostStatuses": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "default": []
+                },
+                "customerStatuses": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "default": []
+                },
+                "activeStatuses": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "default": []
+                },
+                "excludedLossReasons": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "default": []
+                },
+                "contactRestrictionFieldId": {
+                  "type": "string"
+                },
+                "lossReasonFieldId": {
+                  "type": "string"
+                },
+                "lapsedFieldId": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "definitions",
+            "lifecycle"
+          ],
+          "additionalProperties": false
+        },
+        "signal": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "const": true
+            },
+            "description": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "enabled"
+          ],
+          "additionalProperties": false
+        },
+        "scope": {
+          "type": "string",
+          "enum": [
+            "user",
+            "org"
+          ],
+          "description": "Field owner: user AOP or linked org AOP. list-fields returns both; CRM mappings stay user-scoped."
+        },
+        "aopId": {
+          "type": "string",
+          "description": "The user AOP id (scope=\"user\") or org AOP id (scope=\"org\") to add the field to."
+        },
+        "fieldKey": {
+          "type": "string",
+          "description": "The field's stable map key (e.g. \"cf_loss_reason\"). people and summarized_history are built-in singleton fields; use update-field to configure their instructions/governance."
+        },
+        "label": {
+          "type": "string",
+          "description": "Display label."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "text",
+            "number",
+            "date",
+            "boolean",
+            "select",
+            "currency",
+            "url",
+            "email",
+            "phone",
+            "list",
+            "fraction",
+            "json",
+            "people",
+            "summarized_history",
+            "deal_brief"
+          ],
+          "description": "Field type. Fixed forever once created — there is no update-field path to change it."
+        },
+        "displayOrder": {
+          "type": "integer",
+          "description": "Order this field appears in the UI, relative to other fields."
+        },
+        "description": {
+          "type": "string"
+        },
+        "dealBriefStages": {
+          "type": "object",
+          "properties": {
+            "discovery": {
+              "type": "object",
+              "properties": {
+                "visible": {
+                  "type": "boolean"
+                },
+                "rows": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "label": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "instruction": {
+                        "type": "string"
+                      },
+                      "graded": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "label",
+                      "instruction",
+                      "graded"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "maxItems": 3
+                }
+              },
+              "required": [
+                "visible",
+                "rows"
+              ],
+              "additionalProperties": false
+            },
+            "demo": {
+              "$ref": "#/properties/createField/properties/dealBriefStages/properties/discovery"
+            },
+            "commercial": {
+              "$ref": "#/properties/createField/properties/dealBriefStages/properties/discovery"
+            },
+            "negotiation": {
+              "$ref": "#/properties/createField/properties/dealBriefStages/properties/discovery"
+            }
+          },
+          "additionalProperties": false
+        },
+        "researchPrompt": {
+          "type": "string"
+        },
+        "agentEditsForbidden": {
+          "type": "boolean",
+          "description": "true = human-only editing, agent cannot write this field."
+        },
+        "agentRequiresApproval": {
+          "type": "boolean",
+          "description": "When true, agent writes to this field create an approval task instead of applying directly."
+        },
+        "approvalRequiredOptions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "For select-type fields: option values that require approval when the agent tries to set them."
+        },
+        "ownerAgentId": {
+          "type": "string",
+          "description": "Owning subagent's agent_id — only that agent may write this field. Omit for no owner."
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "string",
+                "description": "Stable option value — never changes once set; use label for the display text."
+              },
+              "label": {
+                "type": "string"
+              },
+              "color": {
+                "type": "string"
+              },
+              "icon": {
+                "type": "string"
+              },
+              "enumOrder": {
+                "type": "integer",
+                "description": "Position in the list. Omit to append in array order."
+              }
+            },
+            "required": [
+              "value",
+              "color"
+            ],
+            "additionalProperties": false
+          },
+          "description": "Select/list only: seed options in array order. Mutually exclusive with sourceFromCrm; use that for CRM-backed picklists. Live-mapped options change only through link-mapping."
+        },
+        "sourceFromCrm": {
+          "type": "object",
+          "properties": {
+            "connectionId": {
+              "type": "string",
+              "description": "From read-settings sections:[\"connections\"]."
+            },
+            "crmFieldName": {
+              "type": "string",
+              "description": "The external CRM's own field name/API key whose live picklist becomes this field's options (e.g. HubSpot's \"dealstage\")."
+            }
+          },
+          "required": [
+            "connectionId",
+            "crmFieldName"
+          ],
+          "additionalProperties": false,
+          "description": "Select/list only: create and link+reconcile the live CRM picklist in one call. Options use current CRM values/labels, never hand-typed. Mutually exclusive with options."
+        },
+        "targetUserId": {
+          "type": "string",
+          "description": "Org owner/admin only: target a same-org member user AOP (scope=user). Omit for self; non-admins and cross-org targets are rejected."
+        }
+      },
+      "required": [
+        "scope",
+        "aopId",
+        "fieldKey",
+        "label",
+        "type",
+        "displayOrder"
+      ],
+      "additionalProperties": false
+    },
+    "updateField": {
+      "type": "object",
+      "properties": {
+        "internalSignals": {
+          "$ref": "#/properties/createField/properties/internalSignals"
+        },
+        "signal": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "const": true
+            },
+            "description": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "enabled"
+          ],
+          "additionalProperties": false,
+          "description": "Buyer Journey is a default card below Tasks, separate from People. It uses journey_problem, journey_solution, journey_buying, journey_alternatives and journey_commercial. Buyer Journey replaces the standard MEDDIC/MEDDPICC seed. Untouched legacy qualification fields are hidden in conversation views without deleting saved values or configuration; customized rubrics and CRM-mapped qualification fields remain visible. Configure stage versions with dealBriefStages: discovery, demo, commercial, negotiation, each with visible and up to three rows ({label, instruction, graded}). Commercial is hidden until the Commercial stage by default. Later rubrics may remove obsolete items. Keep Power and Competition. Use the same CRM Updater; buyer-journey selection is independent of CRM status. Row values are concise facts with strength 0–100 scored against fixed rubric anchors; unknown is null. Early Power uses Power known and Path to power agreed; later Power uses Power reached and Power engaged. Problem always uses Stated problem, Priority, Quantify impact. Stated problem may list up to three distinct established buyer problems on numbered lines (1., 2., 3.), normally 3–8 words each, using actual newlines. Never invent or pad problems; none established means Unknown and strength:null. Keep one assessment for the entire Stated problem row. Stated problem scores 75 for a concrete buyer-stated problem; 100 requires a buyer-validated shared definition, affected workflow and scope without material ambiguity. Solution fit uses Stated criteria, Sentiment, Solution solves stated problems; include product gaps within criteria. Current state belongs in Competition. description is base guidance; stage rows take precedence."
+        },
+        "dealBriefStages": {
+          "$ref": "#/properties/createField/properties/dealBriefStages"
+        },
+        "researchPrompt": {
+          "type": "string"
+        },
+        "scope": {
+          "$ref": "#/properties/createField/properties/scope"
+        },
+        "aopId": {
+          "type": "string"
+        },
+        "fieldKey": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string",
+          "description": "Stored as field instructions appended to base agent context. For status, use this for global change rules; use set-stage-criteria for individual stage entry/exit criteria shared by the org. Both reach the agent together."
+        },
+        "agentEditsForbidden": {
+          "type": "boolean"
+        },
+        "agentRequiresApproval": {
+          "type": "boolean"
+        },
+        "approvalRequiredOptions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ownerAgentId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Owning subagent's agent_id — only that agent may write this field. Omit to leave the current owner unchanged; pass null (not omit) to explicitly clear an existing owner."
+        },
+        "targetUserId": {
+          "type": "string",
+          "description": "Org owner/admin only: target a same-org member user AOP (scope=user). Omit for self; non-admins and cross-org targets are rejected."
+        }
+      },
+      "required": [
+        "scope",
+        "aopId",
+        "fieldKey"
+      ],
+      "additionalProperties": false,
+      "description": "Deliberately has no `type` field — type is immutable once a field is created. For a field with a live external CRM mapping, this action also rejects editing `options` — that must go through link-mapping instead."
+    },
+    "deleteField": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "$ref": "#/properties/createField/properties/scope"
+        },
+        "aopId": {
+          "type": "string"
+        },
+        "fieldKey": {
+          "type": "string"
+        },
+        "targetUserId": {
+          "type": "string",
+          "description": "Org owner/admin only: target a same-org member user AOP (scope=user). Omit for self; non-admins and cross-org targets are rejected."
+        }
+      },
+      "required": [
+        "scope",
+        "aopId",
+        "fieldKey"
+      ],
+      "additionalProperties": false
+    },
+    "linkMapping": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "$ref": "#/properties/createField/properties/scope"
+        },
+        "aopId": {
+          "type": "string"
+        },
+        "fieldKey": {
+          "type": "string"
+        },
+        "connectionId": {
+          "type": "string",
+          "description": "From read-settings sections:[\"connections\"]."
+        },
+        "crmFieldName": {
+          "type": "string",
+          "description": "The external CRM's own field name/API key (e.g. HubSpot's \"dealstage\")."
+        },
+        "resolutions": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "oldValue": {
+                    "type": "string",
+                    "description": "The removed CRM option's stable value, as previously surfaced in a link-mapping response's `reconciliation.removed`."
+                  },
+                  "action": {
+                    "type": "string",
+                    "const": "remap-to",
+                    "description": "Bulk-migrates every existing stored value from oldValue to newValue, then drops the old option."
+                  },
+                  "newValue": {
+                    "type": "string",
+                    "description": "The option value (from the current picklist) to migrate existing stored values to."
+                  }
+                },
+                "required": [
+                  "oldValue",
+                  "action",
+                  "newValue"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "oldValue": {
+                    "type": "string",
+                    "description": "The removed CRM option's stable value, as previously surfaced in a link-mapping response's `reconciliation.removed`."
+                  },
+                  "action": {
+                    "type": "string",
+                    "const": "keep-legacy",
+                    "description": "Leaves existing stored values as-is (no longer selectable going forward) and drops the old option."
+                  }
+                },
+                "required": [
+                  "oldValue",
+                  "action"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          },
+          "description": "Closes out previously-surfaced removed options from an earlier link-mapping call's `reconciliation.removed`. Omit on a first call for a field — there is nothing to resolve yet."
+        },
+        "targetUserId": {
+          "type": "string",
+          "description": "Org owner/admin only: target a same-org member user AOP (scope=user). Omit for self; non-admins and cross-org targets are rejected."
+        }
+      },
+      "required": [
+        "scope",
+        "aopId",
+        "fieldKey",
+        "connectionId",
+        "crmFieldName"
+      ],
+      "additionalProperties": false,
+      "description": "For select/list-type fields, this is the only agent tool path that changes options once a field is mapped — never hand-type allowedValues. Live-inspects the CRM field's real picklist (or falls back to a cached snapshot, flagged as such), then safely applies renames/additions and reports (never auto-resolves) any removed option."
+    },
+    "unlinkMapping": {
+      "type": "object",
+      "properties": {
+        "connectionId": {
+          "type": "string"
+        },
+        "crmFieldName": {
+          "type": "string"
+        },
+        "targetUserId": {
+          "type": "string",
+          "description": "Org owner/admin only: target a same-org member. Omit for self; non-admins and cross-org targets are rejected."
+        }
+      },
+      "required": [
+        "connectionId",
+        "crmFieldName"
+      ],
+      "additionalProperties": false
+    },
+    "addFieldOption": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "$ref": "#/properties/createField/properties/scope"
+        },
+        "aopId": {
+          "type": "string"
+        },
+        "fieldKey": {
+          "type": "string",
+          "description": "Your own custom select/list field key, or a built-in field key — \"status\" or \"priority\" only (the only built-in fields with an editable option list)."
+        },
+        "value": {
+          "type": "string",
+          "description": "Stable option value — never changes once set; use label for the display text."
+        },
+        "label": {
+          "type": "string"
+        },
+        "color": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "enumOrder": {
+          "type": "integer",
+          "description": "Position to insert at. Omit to append at the end."
+        },
+        "targetUserId": {
+          "type": "string",
+          "description": "Org owner/admin only: target a same-org member user AOP (scope=user). Omit for self; non-admins and cross-org targets are rejected."
+        }
+      },
+      "required": [
+        "scope",
+        "aopId",
+        "fieldKey",
+        "value",
+        "color"
+      ],
+      "additionalProperties": false
+    },
+    "updateFieldOption": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "$ref": "#/properties/createField/properties/scope"
+        },
+        "aopId": {
+          "type": "string"
+        },
+        "fieldKey": {
+          "type": "string",
+          "description": "Your own custom select/list field key, or a built-in field key — \"status\" or \"priority\" only (the only built-in fields with an editable option list)."
+        },
+        "value": {
+          "type": "string",
+          "description": "The existing option's stable value to patch."
+        },
+        "label": {
+          "type": "string"
+        },
+        "color": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "enumOrder": {
+          "type": "integer",
+          "description": "Move the option to this position."
+        },
+        "targetUserId": {
+          "type": "string",
+          "description": "Org owner/admin only: target a same-org member user AOP (scope=user). Omit for self; non-admins and cross-org targets are rejected."
+        }
+      },
+      "required": [
+        "scope",
+        "aopId",
+        "fieldKey",
+        "value"
+      ],
+      "additionalProperties": false
+    },
+    "removeFieldOption": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "$ref": "#/properties/createField/properties/scope"
+        },
+        "aopId": {
+          "type": "string"
+        },
+        "fieldKey": {
+          "type": "string",
+          "description": "Your own custom select/list field key, or a built-in field key — \"status\" or \"priority\" only (the only built-in fields with an editable option list)."
+        },
+        "value": {
+          "type": "string"
+        },
+        "resolution": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "action": {
+                  "type": "string",
+                  "const": "remap-to",
+                  "description": "Bulk-migrates every existing stored value from this option to newValue, then removes it."
+                },
+                "newValue": {
+                  "type": "string",
+                  "description": "The option value (from the field's remaining options) to migrate existing stored values to."
+                }
+              },
+              "required": [
+                "action",
+                "newValue"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "action": {
+                  "type": "string",
+                  "const": "keep-legacy",
+                  "description": "Leaves existing stored values as-is (no longer selectable going forward) and removes the option."
+                }
+              },
+              "required": [
+                "action"
+              ],
+              "additionalProperties": false
+            }
+          ],
+          "description": "For a CUSTOM field only (built-in fields' options are never value-reconciled): required when the option has existing stored values. Omit on a first call — if values exist, the call refuses and reports affectedValueCount instead of deleting silently; call again with a resolution once you know what to do with them."
+        },
+        "targetUserId": {
+          "type": "string",
+          "description": "Org owner/admin only: target a same-org member user AOP (scope=user). Omit for self; non-admins and cross-org targets are rejected."
+        }
+      },
+      "required": [
+        "scope",
+        "aopId",
+        "fieldKey",
+        "value"
+      ],
+      "additionalProperties": false
+    },
+    "setStageCriteria": {
+      "type": "object",
+      "properties": {
+        "aopId": {
+          "type": "string",
+          "description": "The ORG AOP id whose PLAYBOOK.md owns this stage."
+        },
+        "stageId": {
+          "type": "string",
+          "description": "The stage's id attribute, e.g. <stage id=\"appointmentscheduled\"> — from read-playbook."
+        },
+        "field": {
+          "type": "string",
+          "enum": [
+            "entry",
+            "exit"
+          ],
+          "description": "Which criteria block to set."
+        },
+        "text": {
+          "type": "string",
+          "description": "The new criteria prose. Replaces the tag's entire current content. Omit (or pass an empty string) to clear the stage back to its true empty, self-closing form (e.g. <entry/>) — matching how a freshly-seeded stage with no criteria set actually looks, rather than an open/close tag around blank content. A rule that applies regardless of stage (e.g. \"never skip a stage without confirmation\") belongs on the \"status\" field's own description (update-field) instead — don't repeat stage-agnostic rules here."
+        }
+      },
+      "required": [
+        "aopId",
+        "stageId",
+        "field"
+      ],
+      "additionalProperties": false
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

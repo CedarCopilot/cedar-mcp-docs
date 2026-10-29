@@ -1,0 +1,32 @@
+---
+title: "Cedar MCP"
+description: "Connect your AI agent to the context and actions behind your GTM work."
+---
+
+Cedar's Model Context Protocol server gives your AI client access to connected LinkedIn accounts, live Slack and email, customer conversations, signals, tasks, documents, tables, and configuration. Use it to investigate an account, prepare outreach, monitor a channel, or build a repeatable GTM workflow with the same services Cedar uses in its app.
+
+<CardGroup cols={2}>
+<Card title="Connect your client" icon="plug" href="/getting-started/quickstart">Authenticate, discover your tools, and make a first read.</Card>
+<Card title="LinkedIn" icon="linkedin" href="/linkedin/overview">Search, inspect engagement, screen prospects, draft, and send.</Card>
+<Card title="Signals and your website" icon="satellite-dish" href="/signals/website">Understand visitor events, profile changes, and web monitoring.</Card>
+<Card title="Watch Slack channels" icon="slack" href="/slack/watch-channels">Filter channel events and route useful alerts.</Card>
+<Card title="Queueing and sending limits" icon="clock" href="/automation/queueing">Schedule outreach, understand deferrals, and avoid bursts.</Card>
+<Card title="Complete tool reference" icon="code" href="/reference/index">40 family tools, action scopes, parameters, and response schemas.</Card>
+</CardGroup>
+
+## What you can build
+
+| Workflow | Cedar capabilities |
+| --- | --- |
+| Find relevant people and prepare outreach | LinkedIn search and engagement → prospect screening → CRM context → drafts or authorized scheduled sends |
+| Watch a customer Slack channel | Channel source → filtered playbook trigger → evidence check → notification |
+| Act on a website visit | Visitor provider or form → Cedar HTTP input/playbook → qualification → reviewable follow-up |
+| Monitor buyers and accounts | Person/company watchers → signal history → evidence-backed review → tasks or drafts |
+| Keep a pipeline current | Email, Slack, meetings and LinkedIn context → CRM fields → analytics |
+| Give agents a persistent workspace | Documents, row-addressed tables, tasks, and configured playbooks |
+
+## How to use these docs
+
+Start with the guides for the workflow you want. The tool reference preserves the complete schema for each family; consult it for exact field names, enums, limits, and response branches. JSON snippets in guides are **tool arguments** unless explicitly labeled JSON-RPC or HTTP. Replace example identifiers with values returned by your account.
+
+This documentation was audited against repository source on **October 29, 2026**. A deployed server may differ; its `tools/list` response, `load-skill` instructions, and runtime capability discovery take precedence. [Capability boundaries](/getting-started/capability-boundaries) identify app-only, gated, and separate-API features.

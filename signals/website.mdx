@@ -1,0 +1,74 @@
+---
+title: "Watch your own website"
+description: "Three useful website workflows, with clear integration boundaries."
+---
+
+## Choose the event you need
+
+| Goal | Recommended architecture | MCP coverage |
+| --- | --- | --- |
+| Know when an identified person visits pricing/docs | Visitor provider → Cedar input or playbook webhook | Ingest via separate HTTP surface; use MCP for context, qualification, tables, drafts, and notifications |
+| React to a signup, demo request, or product event | Your server/form → playbook webhook | Register the HTTP trigger through `connection-write`; author the playbook through docs |
+| Detect changes to your pricing, product, or docs pages | External scheduler fetches and diffs pages → Cedar | No dedicated website-diff MCP action; external client supplies browsing and scheduling |
+
+## Identified website visitors
+
+Cedar implements an **RB2B payload adapter** for website-visitor records. The external visitor service owns the website snippet and identification. Cedar does not turn on anonymous-visitor identification by calling `signals-read`.
+
+The adapter needs a `LinkedIn URL` or `Business Email`. It maps first/last name, title, company name, company website, city, and state. `Captured URL` and `Seen At` become `rb2b:page` and `rb2b:seenAt`; repeat-visit data is retained when supplied. Other nonempty provider fields are preserved under `rb2b:*`.
+
+A Cedar Input can accept the payload at its provisioned endpoint:
+
+```text
+POST /api/outbound/{ownerId}/cedar-input/{blockId}?adapter=rb2b
+```
+
+The endpoint accepts `x-cedar-secret`. For vendors unable to send custom headers, it also accepts the provisioned secret via `?secret=` or `?key=`. Use the URL/secret generated for the actual block. Keep secret-bearing URLs out of documents, screenshots, and logs you share.
+
+Example provider payload:
+
+```json
+{
+  "LinkedIn URL": "https://www.linkedin.com/in/example-person",
+  "Business Email": "person@example.com",
+  "First Name": "Alex",
+  "Last Name": "Example",
+  "Title": "Engineering Lead",
+  "Company Name": "Example Co",
+  "Website": "example.com",
+  "Captured URL": "https://your-company.example/pricing",
+  "Seen At": "2026-10-29T15:00:00Z"
+}
+```
+
+**Setup boundary:** this MCP registry has no tool to create a Cedar Input or outbound flow block. Provision those in the Cedar app or supported API first. An adapter in the codebase is not a one-call MCP installation.
+
+## Your own first-party website events
+
+For a signup or demo-request workflow, create an HTTP playbook webhook with `connection-write`:
+
+```json
+{
+  "description": "Run the inbound qualification playbook for website demo requests.",
+  "change": {
+    "type": "manage_playbook_webhook",
+    "op": "create",
+    "aopId": "aop_from_config_read",
+    "scope": "user",
+    "sourceType": "http",
+    "label": "Website demo requests"
+  }
+}
+```
+
+Use the returned registration and URL in a matching playbook webhook trigger. POST the website event JSON to that URL. HTTP receipt queues the playbook; it does not mean the agent finished or a message was delivered. [Playbook guide](/automation/playbooks).
+
+## Page-change monitoring
+
+Use an external job to fetch your selected public pages, normalize meaningful content, retain a baseline, and compare later snapshots. Send a compact diff with source URLs and timestamps into Cedar, or have your MCP client write it to a document and notify the user.
+
+The external MCP's `research web-fetch` and `web-search` actions are in-app-only. Use your client's own web tools for this path. A cron trigger by itself does not create a scraper, diff store, or visitor identity service.
+
+## Avoid repeated outreach from repeat visits
+
+Use a stable event key and person/company identity, preserve source evidence, check prior contact, and record processed decisions. Group low-value repeat visits into a digest. A visit is interest evidence, not a request for contact. Background processing should prepare a task or draft; real sends require user authorization. [Website-to-outreach recipe](/recipes/website-to-outreach).

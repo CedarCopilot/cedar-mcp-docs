@@ -1,0 +1,1511 @@
+---
+title: "debug"
+description: "Parameters, scopes, and response schema for debug."
+---
+
+Generated from Cedar's external registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+
+<Note>create-monitor requires the staff-only internal scope. Cross-account operations have additional authorization checks.</Note>
+
+## Capability
+
+For "why didn't X happen" questions, call load-skill('cedar-configuration') first — these actions surface raw signals, not an explanation of how integrations/playbooks/execution fit together. Debugging &amp; account-health ops, self-scoped by default (admin/owner: also a teammate in-org; staff: any account). ACTIONS: (1) diagnose-conversation — checks on a conversation (wrong company, vendor email contamination, missing AOP, failed executions). (2) recent-executions — recent agent executions for a conversation/user, or pass runId to drill into its tool calls. (3) execution-detail — one run's output/tool calls + each sub-agent it called (output, agentName, toolCallCount) but NOT their own tool calls — re-call with a sub-agent's runId for those. (4) tool-call-detail — full input/output for one tool call by id (from execution-detail's toolCalls&#91;&#93; or a sub-agent run's own calls). (5) health-report — per-user snapshot (targetUserId, defaults to yourself; admin/owner: also a teammate) OR org-wide status (orgId, Cedar-staff only) — the org-wide view skips an expensive red-flag signal the per-user view computes; never call an account healthy from it alone. (6) create-monitor — Sherlock verification/regression monitor. Cedar-staff only. (7) test-run — run a subagent you just authored/edited to see what it does before it ships. Self-scoped to your own agents + org-level agents your AOP links to. Sends suppressed by default (deliverForReal: false) — blocks sends only; DB and connected-system (CRM, Drive) writes still happen, so it is NOT a dry run. deliverForReal: true actually sends; on an org-level agent this needs org admin/owner. Each action's params go in a same-named object (e.g. action: "diagnose-conversation" pairs with diagnoseConversation: &#123;conversationId&#125;) — omit every object except the one for your action.
+
+## Operations and scopes
+
+| Action | Baseline scope |
+| --- | --- |
+| `diagnose-conversation` | `crm:read` |
+| `recent-executions` | `crm:read` |
+| `execution-detail` | `crm:read` |
+| `tool-call-detail` | `crm:read` |
+| `health-report` | `crm:read` |
+| `create-monitor` | `internal` — staff only |
+| `test-run` | `crm:read` |
+
+Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Parameters
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `action` | "diagnose-conversation" · "recent-executions" · "execution-detail" · "tool-call-detail" · "health-report" · "create-monitor" · "test-run" | Yes | Which operation to perform — pass its matching params object below (e.g. action: "health-report" pairs with healthReport: &#123;...&#125;).  |
+| `diagnoseConversation` | object | No |   |
+| `recentExecutions` | object | No |   |
+| `executionDetail` | object | No |   |
+| `toolCallDetail` | object | No |   |
+| `healthReport` | object | No |   |
+| `createMonitor` | object | No |   |
+| `testRun` | object | No |   |
+| `user_request_summary` | string | Yes | One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does.  |
+| `is_new_request` | boolean | Yes | true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread.  |
+
+### diagnoseConversation
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `conversationId` | string | Yes | Conversation to diagnose. Self-scoped: the conversation must belong to your own org unless you are Cedar staff. format: "uuid" |
+
+### recentExecutions
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `conversationId` | string | No | List executions for this conversation. Self-scoped: the conversation must belong to your own org unless you are Cedar staff. format: "uuid" |
+| `targetUserId` | string | No | List executions for this user instead of a conversation. Defaults to yourself. Any-account if you are Cedar staff, or a teammate's if you are an org admin/owner in their same organization — a plain member passing a different user's id is rejected.  |
+| `runId` | string | No | Drill into one run's tool calls instead of listing executions (takes priority over conversationId/targetUserId). Self-scoped by default: the run must belong to you, unless you are Cedar staff or an org admin/owner viewing a teammate's run in your own organization.  |
+| `limit` | integer | No | Max executions to return, max 50 (ignored in runId mode). default: 10; minimum: 1; maximum: 50 |
+
+### executionDetail
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `runId` | string | Yes | Run ID to fetch the full debug dump for (execution row, tool calls, sub-agent executions). Self-scoped by default: must be your own run, unless you are Cedar staff or an org admin/owner viewing a teammate's run in your own organization.  |
+
+### toolCallDetail
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `toolCallId` | string | Yes | The `id` of one specific tool call (from execution-detail's toolCalls&#91;&#93; or subAgents&#91;&#93;) to fetch full input/output for. Use this to inspect a sub-agent's own tool calls — execution-detail's subAgents&#91;&#93; lists each sub-agent run but not its tool calls; drill into that sub-agent's own runId via execution-detail first to get its tool-call ids, then call this action per id.  |
+
+### healthReport
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `targetUserId` | string | No | Per-user health snapshot for this user (meetings, tasks, agent-execution buckets, derived red/yellow issues). Defaults to yourself. Any-account if you are Cedar staff, or a teammate's if you are an org admin/owner in their same organization. IMPORTANT: this per-user view computes a "post-meeting pipeline degraded" red-flag signal that the org-wide view (pass orgId instead) deliberately skips because it is too expensive to run for every user in an org — always trust THIS view over the org-wide one when you need an authoritative read on one specific account.  |
+| `orgId` | string | No | Org-wide health snapshot (green/yellow/red status per user in the org) instead of one user's detail. Cedar-staff only. IMPORTANT: this view does NOT compute the post-meeting-pipeline red-flag signal the per-user view (targetUserId) does — a user can show green/yellow here but red when the same action is called again scoped to just that user. Do not report an account as healthy based on this view alone; drill into targetUserId for any account that had recent meetings.  |
+| `lookbackDays` | integer | No |  default: 7; minimum: 1; maximum: 90 |
+| `orgAopId` | string | No | Per-user mode only: filter tasks/executions to AOPs under this org_aop_id.  |
+
+### createMonitor
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `targetUserId` | string | Yes | The user account this monitor watches.  |
+| `orgId` | string | No | Org this monitor belongs to, if applicable.  |
+| `monitorType` | string | Yes | A slug describing the monitor kind, e.g. "regression", "reinvestigate", "config_verification". Not a DB enum — free text.  |
+| `triggerConfig` | object | Yes | Must include `verify_condition` (a plain-English condition the evaluator checks against each new execution) — omitting it makes every future evaluation return "uncertain" instead of ever passing or failing; createMonitor() rejects a call missing it. Conventional keys used by the cedar-configuration skill's config-verification monitors: symptom_class, change_description, verify_condition, original_report, target_executions, event_type_filter.  |
+| `alertChannel` | string | No | Slack channel or DM to alert when the monitor fires or resolves.  |
+| `investigationId` | string | No | Ties this monitor to an existing Sherlock investigation row. Omit for monitors not tied to one (e.g. cedar-configuration config-verification monitors).  |
+
+### testRun
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `triggerType` | "cron" · "before_meeting" · "webhook" | Yes | "cron" fires exactly ONE named subagent in isolation (requires subagentName). "before_meeting" fires EVERY before-meeting subagent wired to conversationId — not isolated to one subagent, since Cedar has no isolated-single-agent before_meeting path today; this mirrors what a real meeting trigger actually does. "webhook" fires one registered webhook (requires webhookId) through the same dispatch path a real inbound POST or Slack-channel message would take — conversationless, so save-draft/save-slack-draft/task creation are unavailable to whatever it runs.  |
+| `subagentName` | string | No | cron only. The subagent slug to run, in isolation. Required unless agentId is given instead — provide exactly one of the two.  |
+| `agentId` | string | No | cron only. Alternative to subagentName: the Agent Workspace agent_id (as shown in the UI, not the document filename). Resolved to its underlying &#123;aopId, subagentName&#125; before running — with targetUserId, this is how an admin runs a teammate's SAVED agent without already knowing its filename. Requires targetUserId when naming an agent that is not your own.  |
+| `level` | "user" · "org" | No | cron only. "user" reads the subagent from your own AOP; "org" reads it from the org AOP linked to your own AOP (you can only test an org-level agent your own AOP is actually linked to, never an arbitrary other org's). default: "user" |
+| `aopId` | string | No | cron only. Your own AOP id. Omit to auto-resolve when you have exactly one AOP; required if you have more than one.  |
+| `conversationId` | string | No | Required when triggerType is "before_meeting". Self-scoped: must be a conversation you own. format: "uuid" |
+| `webhookId` | string | No | Required when triggerType is "webhook". Must be a webhook registered to yourself (or, with targetUserId, to the teammate you are testing).  |
+| `webhookPayload` | any | No | webhook only. Explicit payload; omitted defaults to `&#123;&#125;`.  |
+| `deliverForReal` | boolean | No | Default false: outbound sends (Slack/email/notifications) are suppressed and this returns a preview of what WOULD have been sent. It is NOT a dry run: DB writes (tasks, fields, documents) AND writes to connected systems the agent makes itself (e.g. a HubSpot PATCH through run-code-executor, a Drive edit) still happen. To test without touching a CRM, use the agent's own read-only mode. Set true to actually deliver for real — for an org-level cron agent (level: "org") this requires you to be an org admin/owner, since it posts to a channel your whole team may share; a user-level agent only ever touches your own destinations, so no extra check applies there. default: false |
+| `targetUserId` | string | No | Test-run this specific teammate's own subagent instead of yours — their AOP, their conversation ownership, their execution history. Defaults to yourself. Any-teammate only if you are an org admin/owner in the same organization as them; a plain member naming someone else is rejected.  |
+
+## Full input schema
+
+[Download the input schema](/reference/schemas/debug.input.json). Nested objects, variants, and constraints are preserved in full. Runtime refinements and ownership checks still apply.
+
+<Accordion title="Input JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "diagnose-conversation",
+        "recent-executions",
+        "execution-detail",
+        "tool-call-detail",
+        "health-report",
+        "create-monitor",
+        "test-run"
+      ],
+      "description": "Which operation to perform — pass its matching params object below (e.g. action: \"health-report\" pairs with healthReport: {...})."
+    },
+    "diagnoseConversation": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Conversation to diagnose. Self-scoped: the conversation must belong to your own org unless you are Cedar staff."
+        }
+      },
+      "required": [
+        "conversationId"
+      ],
+      "additionalProperties": false
+    },
+    "recentExecutions": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "List executions for this conversation. Self-scoped: the conversation must belong to your own org unless you are Cedar staff."
+        },
+        "targetUserId": {
+          "type": "string",
+          "description": "List executions for this user instead of a conversation. Defaults to yourself. Any-account if you are Cedar staff, or a teammate's if you are an org admin/owner in their same organization — a plain member passing a different user's id is rejected."
+        },
+        "runId": {
+          "type": "string",
+          "description": "Drill into one run's tool calls instead of listing executions (takes priority over conversationId/targetUserId). Self-scoped by default: the run must belong to you, unless you are Cedar staff or an org admin/owner viewing a teammate's run in your own organization."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50,
+          "default": 10,
+          "description": "Max executions to return, max 50 (ignored in runId mode)."
+        }
+      },
+      "additionalProperties": false
+    },
+    "executionDetail": {
+      "type": "object",
+      "properties": {
+        "runId": {
+          "type": "string",
+          "description": "Run ID to fetch the full debug dump for (execution row, tool calls, sub-agent executions). Self-scoped by default: must be your own run, unless you are Cedar staff or an org admin/owner viewing a teammate's run in your own organization."
+        }
+      },
+      "required": [
+        "runId"
+      ],
+      "additionalProperties": false
+    },
+    "toolCallDetail": {
+      "type": "object",
+      "properties": {
+        "toolCallId": {
+          "type": "string",
+          "description": "The `id` of one specific tool call (from execution-detail's toolCalls[] or subAgents[]) to fetch full input/output for. Use this to inspect a sub-agent's own tool calls — execution-detail's subAgents[] lists each sub-agent run but not its tool calls; drill into that sub-agent's own runId via execution-detail first to get its tool-call ids, then call this action per id."
+        }
+      },
+      "required": [
+        "toolCallId"
+      ],
+      "additionalProperties": false
+    },
+    "healthReport": {
+      "type": "object",
+      "properties": {
+        "targetUserId": {
+          "type": "string",
+          "description": "Per-user health snapshot for this user (meetings, tasks, agent-execution buckets, derived red/yellow issues). Defaults to yourself. Any-account if you are Cedar staff, or a teammate's if you are an org admin/owner in their same organization. IMPORTANT: this per-user view computes a \"post-meeting pipeline degraded\" red-flag signal that the org-wide view (pass orgId instead) deliberately skips because it is too expensive to run for every user in an org — always trust THIS view over the org-wide one when you need an authoritative read on one specific account."
+        },
+        "orgId": {
+          "type": "string",
+          "description": "Org-wide health snapshot (green/yellow/red status per user in the org) instead of one user's detail. Cedar-staff only. IMPORTANT: this view does NOT compute the post-meeting-pipeline red-flag signal the per-user view (targetUserId) does — a user can show green/yellow here but red when the same action is called again scoped to just that user. Do not report an account as healthy based on this view alone; drill into targetUserId for any account that had recent meetings."
+        },
+        "lookbackDays": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 90,
+          "default": 7
+        },
+        "orgAopId": {
+          "type": "string",
+          "description": "Per-user mode only: filter tasks/executions to AOPs under this org_aop_id."
+        }
+      },
+      "additionalProperties": false
+    },
+    "createMonitor": {
+      "type": "object",
+      "properties": {
+        "targetUserId": {
+          "type": "string",
+          "description": "The user account this monitor watches."
+        },
+        "orgId": {
+          "type": "string",
+          "description": "Org this monitor belongs to, if applicable."
+        },
+        "monitorType": {
+          "type": "string",
+          "description": "A slug describing the monitor kind, e.g. \"regression\", \"reinvestigate\", \"config_verification\". Not a DB enum — free text."
+        },
+        "triggerConfig": {
+          "type": "object",
+          "additionalProperties": {},
+          "description": "Must include `verify_condition` (a plain-English condition the evaluator checks against each new execution) — omitting it makes every future evaluation return \"uncertain\" instead of ever passing or failing; createMonitor() rejects a call missing it. Conventional keys used by the cedar-configuration skill's config-verification monitors: symptom_class, change_description, verify_condition, original_report, target_executions, event_type_filter."
+        },
+        "alertChannel": {
+          "type": "string",
+          "description": "Slack channel or DM to alert when the monitor fires or resolves."
+        },
+        "investigationId": {
+          "type": "string",
+          "description": "Ties this monitor to an existing Sherlock investigation row. Omit for monitors not tied to one (e.g. cedar-configuration config-verification monitors)."
+        }
+      },
+      "required": [
+        "targetUserId",
+        "monitorType",
+        "triggerConfig"
+      ],
+      "additionalProperties": false
+    },
+    "testRun": {
+      "type": "object",
+      "properties": {
+        "triggerType": {
+          "type": "string",
+          "enum": [
+            "cron",
+            "before_meeting",
+            "webhook"
+          ],
+          "description": "\"cron\" fires exactly ONE named subagent in isolation (requires subagentName). \"before_meeting\" fires EVERY before-meeting subagent wired to conversationId — not isolated to one subagent, since Cedar has no isolated-single-agent before_meeting path today; this mirrors what a real meeting trigger actually does. \"webhook\" fires one registered webhook (requires webhookId) through the same dispatch path a real inbound POST or Slack-channel message would take — conversationless, so save-draft/save-slack-draft/task creation are unavailable to whatever it runs."
+        },
+        "subagentName": {
+          "type": "string",
+          "description": "cron only. The subagent slug to run, in isolation. Required unless agentId is given instead — provide exactly one of the two."
+        },
+        "agentId": {
+          "type": "string",
+          "description": "cron only. Alternative to subagentName: the Agent Workspace agent_id (as shown in the UI, not the document filename). Resolved to its underlying {aopId, subagentName} before running — with targetUserId, this is how an admin runs a teammate's SAVED agent without already knowing its filename. Requires targetUserId when naming an agent that is not your own."
+        },
+        "level": {
+          "type": "string",
+          "enum": [
+            "user",
+            "org"
+          ],
+          "default": "user",
+          "description": "cron only. \"user\" reads the subagent from your own AOP; \"org\" reads it from the org AOP linked to your own AOP (you can only test an org-level agent your own AOP is actually linked to, never an arbitrary other org's)."
+        },
+        "aopId": {
+          "type": "string",
+          "description": "cron only. Your own AOP id. Omit to auto-resolve when you have exactly one AOP; required if you have more than one."
+        },
+        "conversationId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Required when triggerType is \"before_meeting\". Self-scoped: must be a conversation you own."
+        },
+        "webhookId": {
+          "type": "string",
+          "description": "Required when triggerType is \"webhook\". Must be a webhook registered to yourself (or, with targetUserId, to the teammate you are testing)."
+        },
+        "webhookPayload": {
+          "description": "webhook only. Explicit payload; omitted defaults to `{}`."
+        },
+        "deliverForReal": {
+          "type": "boolean",
+          "default": false,
+          "description": "Default false: outbound sends (Slack/email/notifications) are suppressed and this returns a preview of what WOULD have been sent. It is NOT a dry run: DB writes (tasks, fields, documents) AND writes to connected systems the agent makes itself (e.g. a HubSpot PATCH through run-code-executor, a Drive edit) still happen. To test without touching a CRM, use the agent's own read-only mode. Set true to actually deliver for real — for an org-level cron agent (level: \"org\") this requires you to be an org admin/owner, since it posts to a channel your whole team may share; a user-level agent only ever touches your own destinations, so no extra check applies there."
+        },
+        "targetUserId": {
+          "type": "string",
+          "description": "Test-run this specific teammate's own subagent instead of yours — their AOP, their conversation ownership, their execution history. Defaults to yourself. Any-teammate only if you are an org admin/owner in the same organization as them; a plain member naming someone else is rejected."
+        }
+      },
+      "required": [
+        "triggerType"
+      ],
+      "additionalProperties": false
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+## Response
+
+Inspect `isError` on the MCP result and `success` / `errorMessage` in the action result. Optional response branches are populated only for the relevant action. Some results include additional provider or operation-specific data.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `success` | boolean | Yes |   |
+| `errorMessage` | string | No |   |
+| `diagnoseConversation` | object | No |   |
+| `recentExecutions` | object | No |   |
+| `executionDetail` | object | No |   |
+| `toolCallDetail` | object | No |   |
+| `healthReport` | object | No |   |
+| `createMonitor` | object | No |   |
+| `testRun` | object | No |   |
+
+<Accordion title="Output JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "diagnoseConversation": {
+      "type": "object",
+      "properties": {
+        "conversationName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "domainClean": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "assignedAop": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "totalEvents": {
+          "type": "number"
+        },
+        "fromDomains": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "domain": {
+                "type": "string"
+              },
+              "count": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "domain",
+              "count"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "recentExecutions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "runId": {
+                "type": "string"
+              },
+              "status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "createdAt": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "toolCallCount": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "runId",
+              "status",
+              "source",
+              "createdAt",
+              "toolCallCount"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "recentExecutions": {
+      "type": "object",
+      "properties": {
+        "executions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "runId": {
+                "type": "string"
+              },
+              "status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "eventType": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "summary": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "createdAt": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "completedAt": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "toolCallCount": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "runId",
+              "status",
+              "source",
+              "eventType",
+              "summary",
+              "createdAt",
+              "completedAt",
+              "toolCallCount"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "toolCalls": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "toolName": {
+                "type": "string"
+              },
+              "createdAt": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "resultSummary": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "toolName",
+              "createdAt",
+              "resultSummary"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "executionDetail": {
+      "type": "object",
+      "properties": {
+        "found": {
+          "type": "boolean"
+        },
+        "detail": {
+          "type": "object",
+          "properties": {
+            "runId": {
+              "type": "string"
+            },
+            "userId": {
+              "type": "string"
+            },
+            "userEmail": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "conversationId": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "conversationName": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "aopId": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "aopName": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "status": {
+              "type": "string"
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "eventType": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "parentRunId": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "agentId": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "agentName": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "models": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "model": {
+                    "type": "string"
+                  },
+                  "workload": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "calls": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "model",
+                  "workload",
+                  "calls"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "agentSpec": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    },
+                    "currentVersion": {
+                      "type": "number"
+                    },
+                    "currentLastEditedAt": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "inEffectAtRun": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "editedAt": {
+                              "type": "string"
+                            },
+                            "by": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "origin": {
+                              "type": "string"
+                            },
+                            "wordsBefore": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            },
+                            "wordsAfter": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "editedAt",
+                            "by",
+                            "origin",
+                            "wordsBefore",
+                            "wordsAfter"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "specVersionUncertain": {
+                      "type": "boolean"
+                    },
+                    "editSessionsSinceRun": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "currentVersion",
+                    "currentLastEditedAt",
+                    "inEffectAtRun",
+                    "specVersionUncertain",
+                    "editSessionsSinceRun"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "prompt": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "summary": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "output": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "createdAt": {
+              "type": "string"
+            },
+            "completedAt": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "toolCalls": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "toolName": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "arguments": {},
+                  "result": {},
+                  "createdAt": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "toolName",
+                  "createdAt"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "subAgents": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "runId": {
+                    "type": "string"
+                  },
+                  "agentId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "agentName": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "summary": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "output": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "toolCallCount": {
+                    "type": "number"
+                  },
+                  "createdAt": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "runId",
+                  "agentId",
+                  "agentName",
+                  "status",
+                  "source",
+                  "summary",
+                  "output",
+                  "toolCallCount",
+                  "createdAt"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "runId",
+            "userId",
+            "userEmail",
+            "conversationId",
+            "conversationName",
+            "aopId",
+            "aopName",
+            "status",
+            "source",
+            "eventType",
+            "parentRunId",
+            "agentId",
+            "agentName",
+            "models",
+            "agentSpec",
+            "prompt",
+            "summary",
+            "output",
+            "createdAt",
+            "completedAt",
+            "toolCalls",
+            "subAgents"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "found"
+      ],
+      "additionalProperties": false
+    },
+    "toolCallDetail": {
+      "type": "object",
+      "properties": {
+        "found": {
+          "type": "boolean"
+        },
+        "detail": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "runId": {
+              "type": "string"
+            },
+            "toolName": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "arguments": {},
+            "result": {},
+            "createdAt": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "runId",
+            "toolName",
+            "createdAt"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "found"
+      ],
+      "additionalProperties": false
+    },
+    "healthReport": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string",
+          "enum": [
+            "user",
+            "org"
+          ]
+        },
+        "userId": {
+          "type": "string",
+          "description": "Echoed back when scope=\"user\"."
+        },
+        "snapshot": {
+          "type": "object",
+          "properties": {
+            "meetings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "meetingTitle": {
+                    "type": "string"
+                  },
+                  "meetingTime": {
+                    "type": "string"
+                  },
+                  "hasTranscription": {
+                    "type": "boolean"
+                  },
+                  "meetingProvider": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "conversationName": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "conversationStatus": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ownerName": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "prepStatus": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "prepRunId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "prepSummary": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "postStatus": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "postRunId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "postSummary": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "hasDraft": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "meetingTitle",
+                  "meetingTime",
+                  "hasTranscription",
+                  "meetingProvider",
+                  "conversationName",
+                  "conversationStatus",
+                  "ownerName",
+                  "prepStatus",
+                  "prepRunId",
+                  "prepSummary",
+                  "postStatus",
+                  "postRunId",
+                  "postSummary",
+                  "hasDraft"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "tasks": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "taskType": {
+                    "type": "string"
+                  },
+                  "outputKind": {
+                    "type": "string"
+                  },
+                  "total": {
+                    "type": "number"
+                  },
+                  "agentEnabled": {
+                    "type": "number"
+                  },
+                  "executed": {
+                    "type": "number"
+                  },
+                  "hasDraft": {
+                    "type": "number"
+                  },
+                  "done": {
+                    "type": "number"
+                  },
+                  "overdue": {
+                    "type": "number"
+                  },
+                  "executedNoDraft": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "taskType",
+                  "outputKind",
+                  "total",
+                  "agentEnabled",
+                  "executed",
+                  "hasDraft",
+                  "done",
+                  "overdue",
+                  "executedNoDraft"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "agents": {
+              "type": "object",
+              "properties": {
+                "preMeetingPrep": {
+                  "type": "object",
+                  "properties": {
+                    "completed": {
+                      "type": "number"
+                    },
+                    "canceled": {
+                      "type": "number"
+                    },
+                    "pending": {
+                      "type": "number"
+                    },
+                    "stuckPending": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "completed",
+                    "canceled",
+                    "pending",
+                    "stuckPending"
+                  ],
+                  "additionalProperties": false
+                },
+                "postMeeting": {
+                  "type": "object",
+                  "properties": {
+                    "completed": {
+                      "type": "number"
+                    },
+                    "failed": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "completed",
+                    "failed"
+                  ],
+                  "additionalProperties": false
+                },
+                "automationAgent": {
+                  "type": "object",
+                  "properties": {
+                    "completed": {
+                      "type": "number"
+                    },
+                    "failed": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "completed",
+                    "failed"
+                  ],
+                  "additionalProperties": false
+                },
+                "emailEvent": {
+                  "type": "object",
+                  "properties": {
+                    "completed": {
+                      "type": "number"
+                    },
+                    "failed": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "completed",
+                    "failed"
+                  ],
+                  "additionalProperties": false
+                },
+                "slackEvent": {
+                  "type": "object",
+                  "properties": {
+                    "completed": {
+                      "type": "number"
+                    },
+                    "failed": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "completed",
+                    "failed"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "preMeetingPrep",
+                "postMeeting",
+                "automationAgent",
+                "emailEvent",
+                "slackEvent"
+              ],
+              "additionalProperties": false
+            },
+            "executionSummaries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "runId": {
+                    "type": "string"
+                  },
+                  "source": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "summary": {
+                    "type": "string"
+                  },
+                  "createdAt": {
+                    "type": "string"
+                  },
+                  "conversationName": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "conversationStatus": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "runId",
+                  "source",
+                  "status",
+                  "summary",
+                  "createdAt",
+                  "conversationName",
+                  "conversationStatus"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "events": {
+              "type": "object",
+              "properties": {
+                "emailTotal": {
+                  "type": "number"
+                },
+                "emailOutbound": {
+                  "type": "number"
+                },
+                "emailInbound": {
+                  "type": "number"
+                },
+                "slackTotal": {
+                  "type": "number"
+                },
+                "lastEmailAt": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "lastSlackAt": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "emailTotal",
+                "emailOutbound",
+                "emailInbound",
+                "slackTotal",
+                "lastEmailAt",
+                "lastSlackAt"
+              ],
+              "additionalProperties": false
+            },
+            "issues": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "severity": {
+                    "type": "string",
+                    "enum": [
+                      "red",
+                      "yellow"
+                    ]
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "runIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "details": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "label": {
+                          "type": "string"
+                        },
+                        "value": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "label",
+                        "value"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "severity",
+                  "type",
+                  "description",
+                  "runIds",
+                  "details"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "meetings",
+            "tasks",
+            "agents",
+            "executionSummaries",
+            "events",
+            "issues"
+          ],
+          "additionalProperties": false
+        },
+        "orgUsers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "userId": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "red",
+                  "yellow",
+                  "green"
+                ]
+              },
+              "issueCount": {
+                "type": "number"
+              },
+              "warningCount": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "userId",
+              "name",
+              "email",
+              "status",
+              "issueCount",
+              "warningCount"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "createMonitor": {
+      "type": "object",
+      "properties": {
+        "monitorId": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "testRun": {
+      "type": "object",
+      "properties": {
+        "deliveredForReal": {
+          "type": "boolean"
+        },
+        "note": {
+          "type": "string"
+        },
+        "runs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "runId": {
+                "type": "string"
+              },
+              "status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "agentId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "notify": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "text": {
+                      "type": "string"
+                    },
+                    "buttons": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": {}
+                      }
+                    },
+                    "threadReplies": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "text": {
+                            "type": "string"
+                          },
+                          "buttons": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "additionalProperties": {}
+                            }
+                          }
+                        },
+                        "required": [
+                          "text"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "text"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "toolCalls": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "toolName": {
+                      "type": "string"
+                    },
+                    "arguments": {},
+                    "result": {},
+                    "createdAt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "toolName",
+                    "createdAt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "runId",
+              "status",
+              "agentId",
+              "notify",
+              "toolCalls"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "deliveredForReal",
+        "runs"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+[Download the output schema](/reference/schemas/debug.output.json).

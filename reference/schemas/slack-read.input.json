@@ -1,0 +1,105 @@
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "search-live",
+        "read-thread",
+        "read-file"
+      ],
+      "description": "Which Slack read operation to perform — pass its matching params object below (e.g. action: \"search-live\" pairs with searchLive: {...})."
+    },
+    "searchLive": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "description": "Slack search text — supports Slack search operators (e.g. \"in:#deals from:@jane roadmap\", \"has:link renewal\"). Searches messages the connected user can see."
+        },
+        "count": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 50,
+          "description": "Max matches to return. Default 20, max 50."
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "additionalProperties": false,
+      "description": "Search the connected user's LIVE Slack for messages by text (search.messages). Returns matches (channelId + ts/threadTs + permalink + snippet) to inspect or to pass to slack-write's sync-thread. Requires the Slack \"search:read\" grant; if the user connected Slack before that scope existed, this returns a reconnect-required error."
+    },
+    "readThread": {
+      "type": "object",
+      "properties": {
+        "channelId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Slack channel id (e.g. \"C0123ABC\") — from a search-live match."
+        },
+        "threadTs": {
+          "type": "string",
+          "description": "Thread root ts (e.g. \"1700000000.123456\"). Omit to read the channel's most recent messages instead of a single thread."
+        },
+        "limit": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Max messages to return. Default 100."
+        }
+      },
+      "required": [
+        "channelId"
+      ],
+      "additionalProperties": false,
+      "description": "Read a specific Slack thread (conversations.replies) or the channel's recent messages LIVE. If the channel is ALREADY linked to one of your deals, the messages read are also stored on that deal's timeline automatically (idempotent) and the response returns `syncedTo` + `ingested`. Otherwise nothing is persisted — use slack-write's sync-thread to choose a deal."
+    },
+    "readFile": {
+      "type": "object",
+      "properties": {
+        "channelId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Slack channel id, from read-thread or a search-live match."
+        },
+        "messageTs": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The ts of the message that carries the file (`messages[].ts`)."
+        },
+        "threadTs": {
+          "type": "string",
+          "description": "Thread root ts when the message is a reply in a thread; omit for a top-level message."
+        },
+        "fileId": {
+          "type": "string",
+          "description": "One file id from `messages[].files[].id`. Omit to read every image on the message."
+        }
+      },
+      "required": [
+        "channelId",
+        "messageTs"
+      ],
+      "additionalProperties": false,
+      "description": "Look at the image(s) on one Slack message, LIVE. Images come back as image content (PNG, JPEG, GIF, WebP up to 3.5MB, at most 3 per call and 5MB in total). External MCP clients only: Cedar's own chat gets the file list, not pixels."
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

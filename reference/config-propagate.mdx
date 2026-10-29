@@ -1,0 +1,301 @@
+---
+title: "config-propagate"
+description: "Parameters, scopes, and response schema for config-propagate."
+---
+
+Generated from Cedar's external registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+
+## Capability
+
+ORG-ADMIN ONLY. Push one field definition or CRM mapping out to many reps at once, instead of repeating config-write/connection-write once per rep. Call config-read list-fields with targetUserIds:"org", rollup:true first to see who's uniform/diverging/missing. ACTIONS: (1) propagate-field — copies an ORG AOP's custom field definition (type/options/description/governance) onto targeted reps' own AOPs. Reps missing the field get it created; reps already matching it are a no-op; reps whose copy DIVERGES are refused (with the diff) unless force:true, which instead proposes an approval-gated overwrite — one card per rep, never a blanket accept. (2) propagate-mapping — copies one CRM field mapping from a source connection onto each target's OWN connection for the same provider (never the source's connectionId). Pass sourceAopId to propagate a Lead/Partner mapping instead of the default Deal one — the object is resolved from that AOP's own bound object, never a raw object name. Same missing/uniform/diverging-needs-force semantics; a select/list-type target field gets real CRM-introspected option reconciliation, same as connection-write. For a single rep's field or mapping use config-write/connection-write instead.
+
+## Operations and scopes
+
+| Action | Baseline scope |
+| --- | --- |
+| `propagate-field` | `playbook:write` |
+| `propagate-mapping` | `playbook:write` |
+
+Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Parameters
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `action` | "propagate-field" · "propagate-mapping" | Yes | Which propagation to run — pass its matching params object below (e.g. action: "propagate-field" pairs with propagateField: &#123;...&#125;).  |
+| `propagateField` | object | No |   |
+| `propagateMapping` | object | No |   |
+| `user_request_summary` | string | Yes | One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does.  |
+| `is_new_request` | boolean | Yes | true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread.  |
+
+### propagateField
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `sourceAopId` | string | Yes | The ORG aop whose field definition is the source of truth.  |
+| `fieldKey` | string | Yes | The custom field's stable map key on the org AOP.  |
+| `targets` | string&#91;&#93; or "uniform_and_missing" or "org" | Yes | Explicit array of userIds — every one must already be linked to the same org AOP as sourceAopId, or it is refused individually (the rest still run). "uniform_and_missing" — every rep whose copy already matches the org default, plus every rep who never configured the field at all; a rep whose copy genuinely diverges is silently excluded, never attempted. "org" — every rep linked to this org AOP, uniform/diverging/missing alike.  |
+| `force` | boolean | No | Without this, a target whose copy diverges from the org default is refused (its diff is returned, nothing is touched). With it, a diverging target is instead proposed as its own approval-gated write — one card per target, never a blanket accept for the batch. LIMIT: force:true may only be used when AT MOST ONE target in this call is diverging — if more than one is, the ENTIRE call is refused outright (nothing written, not even uniform/missing targets) with the full diverging list, because accepting one force-proposed card replays this whole call and would otherwise silently apply every other diverging target too. Call once per diverging target instead.  |
+
+### propagateMapping
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `sourceConnectionId` | string | Yes | The connection whose mapping for crmFieldName is the source of truth.  |
+| `crmFieldName` | string | Yes | Identifies WHICH mapping on the source connection to propagate.  |
+| `sourceAopId` | string | No | The source connection owner's AOP whose bound CRM object (a Lead, a Partner record, ...) this mapping belongs to. The object itself is resolved server-side from that AOP's boundObjectApiName — never pass a raw object name. Omit for the standard Deal mapping.  |
+| `targets` | string&#91;&#93; or "org" | Yes | Explicit array of userIds, or "org" for every member of your organization (excluding the source connection's own owner). Unlike propagate-field there is no "uniform_and_missing" shortcut — a mapping's "uniform" is judged by rule-shape, computed the same way for every target regardless.  |
+| `force` | boolean | No | Without this, a target whose existing mapping for crmFieldName diverges from the source is refused (diff returned, nothing touched). With it, it is proposed as its own approval-gated write instead. LIMIT: force:true may only be used when AT MOST ONE target in this call is diverging — if more than one is, the ENTIRE call is refused outright (nothing written, not even uniform/missing targets) with the full diverging list, because accepting one force-proposed card replays this whole call and would otherwise silently apply every other diverging target too. Call once per diverging target instead.  |
+
+## Full input schema
+
+[Download the input schema](/reference/schemas/config-propagate.input.json). Nested objects, variants, and constraints are preserved in full. Runtime refinements and ownership checks still apply.
+
+<Accordion title="Input JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "propagate-field",
+        "propagate-mapping"
+      ],
+      "description": "Which propagation to run — pass its matching params object below (e.g. action: \"propagate-field\" pairs with propagateField: {...})."
+    },
+    "propagateField": {
+      "type": "object",
+      "properties": {
+        "sourceAopId": {
+          "type": "string",
+          "description": "The ORG aop whose field definition is the source of truth."
+        },
+        "fieldKey": {
+          "type": "string",
+          "description": "The custom field's stable map key on the org AOP."
+        },
+        "targets": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "string",
+              "const": "uniform_and_missing"
+            },
+            {
+              "type": "string",
+              "const": "org"
+            }
+          ],
+          "description": "Explicit array of userIds — every one must already be linked to the same org AOP as sourceAopId, or it is refused individually (the rest still run). \"uniform_and_missing\" — every rep whose copy already matches the org default, plus every rep who never configured the field at all; a rep whose copy genuinely diverges is silently excluded, never attempted. \"org\" — every rep linked to this org AOP, uniform/diverging/missing alike."
+        },
+        "force": {
+          "type": "boolean",
+          "description": "Without this, a target whose copy diverges from the org default is refused (its diff is returned, nothing is touched). With it, a diverging target is instead proposed as its own approval-gated write — one card per target, never a blanket accept for the batch. LIMIT: force:true may only be used when AT MOST ONE target in this call is diverging — if more than one is, the ENTIRE call is refused outright (nothing written, not even uniform/missing targets) with the full diverging list, because accepting one force-proposed card replays this whole call and would otherwise silently apply every other diverging target too. Call once per diverging target instead."
+        }
+      },
+      "required": [
+        "sourceAopId",
+        "fieldKey",
+        "targets"
+      ],
+      "additionalProperties": false
+    },
+    "propagateMapping": {
+      "type": "object",
+      "properties": {
+        "sourceConnectionId": {
+          "type": "string",
+          "description": "The connection whose mapping for crmFieldName is the source of truth."
+        },
+        "crmFieldName": {
+          "type": "string",
+          "description": "Identifies WHICH mapping on the source connection to propagate."
+        },
+        "sourceAopId": {
+          "type": "string",
+          "description": "The source connection owner's AOP whose bound CRM object (a Lead, a Partner record, ...) this mapping belongs to. The object itself is resolved server-side from that AOP's boundObjectApiName — never pass a raw object name. Omit for the standard Deal mapping."
+        },
+        "targets": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "string",
+              "const": "org"
+            }
+          ],
+          "description": "Explicit array of userIds, or \"org\" for every member of your organization (excluding the source connection's own owner). Unlike propagate-field there is no \"uniform_and_missing\" shortcut — a mapping's \"uniform\" is judged by rule-shape, computed the same way for every target regardless."
+        },
+        "force": {
+          "type": "boolean",
+          "description": "Without this, a target whose existing mapping for crmFieldName diverges from the source is refused (diff returned, nothing touched). With it, it is proposed as its own approval-gated write instead. LIMIT: force:true may only be used when AT MOST ONE target in this call is diverging — if more than one is, the ENTIRE call is refused outright (nothing written, not even uniform/missing targets) with the full diverging list, because accepting one force-proposed card replays this whole call and would otherwise silently apply every other diverging target too. Call once per diverging target instead."
+        }
+      },
+      "required": [
+        "sourceConnectionId",
+        "crmFieldName",
+        "targets"
+      ],
+      "additionalProperties": false
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+## Response
+
+Inspect `isError` on the MCP result and `success` / `errorMessage` in the action result. Optional response branches are populated only for the relevant action. Some results include additional provider or operation-specific data.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `success` | boolean | Yes |   |
+| `errorMessage` | string | No |   |
+| `propagateField` | object | No |   |
+| `propagateMapping` | object | No |   |
+
+<Accordion title="Output JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "propagateField": {
+      "type": "object",
+      "properties": {
+        "patched": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "userId": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "userId",
+              "name"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "proposed": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "userId": {
+                "$ref": "#/properties/propagateField/properties/patched/items/properties/userId"
+              },
+              "name": {
+                "$ref": "#/properties/propagateField/properties/patched/items/properties/name"
+              },
+              "diff": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "org": {},
+                    "user": {}
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "cardId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "userId",
+              "name",
+              "diff",
+              "cardId"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "refused": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "userId": {
+                "$ref": "#/properties/propagateField/properties/patched/items/properties/userId"
+              },
+              "name": {
+                "$ref": "#/properties/propagateField/properties/patched/items/properties/name"
+              },
+              "reason": {
+                "type": "string"
+              },
+              "diff": {
+                "$ref": "#/properties/propagateField/properties/proposed/items/properties/diff"
+              }
+            },
+            "required": [
+              "userId",
+              "name",
+              "reason"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "patched",
+        "proposed",
+        "refused"
+      ],
+      "additionalProperties": false
+    },
+    "propagateMapping": {
+      "$ref": "#/properties/propagateField"
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+[Download the output schema](/reference/schemas/config-propagate.output.json).

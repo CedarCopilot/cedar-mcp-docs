@@ -1,0 +1,785 @@
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "get",
+        "find",
+        "search-semantic",
+        "search-external-crm-deals",
+        "timeline",
+        "field-evolution",
+        "value-as-of",
+        "describe-field",
+        "raw-content",
+        "search"
+      ],
+      "description": "Which read operation to perform — pass its matching params object below (e.g. action: \"find\" pairs with find: {...})."
+    },
+    "get": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "The conversation ID to fetch"
+        },
+        "expandEventId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional event ID to expand with full content. Use this when you need the complete content of a specific event in the timeline (e.g., full email body, meeting transcript). The event content will be returned in requestedEvent. NOTE: for external_crm events specifically, use mail.fetch-full-event-content instead — this path has no formatter for that event type."
+        },
+        "startDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional ISO 8601 datetime — only include timeline events that occurred ON or AFTER this date."
+        },
+        "endDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional ISO 8601 datetime — only include timeline events that occurred ON or BEFORE this date."
+        },
+        "eventTypes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "email",
+              "slack_message",
+              "meeting",
+              "external_crm"
+            ]
+          },
+          "description": "Optional list of event types to include in the timeline. If omitted, all event types are included. Valid values: email, slack_message, meeting, external_crm."
+        },
+        "write_to_file": {
+          "type": "boolean",
+          "description": "When true, fetches ALL full event content (email bodies, meeting transcripts, etc.) and writes everything to a TASK_BUFFER doc. The result will contain path and access_instructions — use these to read or search the buffer. Use this when you need the actual content of emails or transcripts. Without write_to_file, only a brief timeline summary is returned."
+        },
+        "showStageChanges": {
+          "type": "boolean",
+          "default": false,
+          "description": "When true, injects stage change milestones from the deal history into the timeline. Use only when you need to understand when the deal moved between stages — for analysis, wiki extraction, or understanding the deal arc. Default: false."
+        },
+        "includePlaybook": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to inline the full rendered playbook in `agentOperatingProcedure`. Default false: the playbook is often 40KB+, so it's omitted and `agentOperatingProcedure` instead carries a short directive naming the deal's playbook (aopId) and the exact tool call to read it in full when you actually need to decide behavior. `domainGuidance` is returned either way. Set true only when you specifically want the whole playbook inlined up front."
+        }
+      },
+      "required": [
+        "conversationId"
+      ],
+      "additionalProperties": false
+    },
+    "find": {
+      "type": "object",
+      "properties": {
+        "filters": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "field": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "id",
+                      "name",
+                      "status",
+                      "priority",
+                      "dealValue",
+                      "nextSteps",
+                      "lastContactedAt",
+                      "lastInboundAt",
+                      "lastOutboundEmailAt",
+                      "lastMeetingAt",
+                      "nextStepDate",
+                      "createdAt",
+                      "updatedAt",
+                      "aopId",
+                      "important",
+                      "ownerId",
+                      "aopName",
+                      "primaryCompanyName",
+                      "primaryCompanyDomain",
+                      "crmSynced",
+                      "hasFutureCalendar"
+                    ]
+                  },
+                  {
+                    "type": "string",
+                    "pattern": "^\\wm\\_"
+                  }
+                ],
+                "description": "The field to filter on: a standard field (see the enum) OR a custom field as \"wm_<fieldKey>\" (the ids in <available_columns>) — custom fields match on their current value with eq/neq/like/ilike/in/notIn/isNull/isNotNull, or gt/gte/lt/lte on date-shaped values."
+              },
+              "operator": {
+                "type": "string",
+                "enum": [
+                  "eq",
+                  "neq",
+                  "gt",
+                  "gte",
+                  "lt",
+                  "lte",
+                  "like",
+                  "ilike",
+                  "in",
+                  "notIn",
+                  "isNull",
+                  "isNotNull"
+                ],
+                "description": "The comparison operator"
+              },
+              "value": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    }
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "The value to compare against. Not needed for isNull/isNotNull operators. For ilike, use % as wildcard (e.g., \"%corgi%\" for contains)."
+              }
+            },
+            "required": [
+              "field",
+              "operator"
+            ],
+            "additionalProperties": false
+          },
+          "description": "Filter conditions, ANDed together. Filter ANY field: standard columns (name, status, priority, dealValue, nextStepDate, lastContactedAt, aopName, primaryCompanyName, ownerId, …), computed booleans (crmSynced, hasFutureCalendar), or custom fields as \"wm_<fieldKey>\" (the ids in <available_columns>). e.g. [{\"field\":\"status\",\"operator\":\"in\",\"value\":[\"pilot_planned\"]},{\"field\":\"crmSynced\",\"operator\":\"eq\",\"value\":true}]. For a name/company text search use an \"ilike\" filter (e.g. {\"field\":\"primaryCompanyName\",\"operator\":\"ilike\",\"value\":\"%acme%\"}). For the \"ownerId\" field pass the literal \"self\" to scope to the calling user (resolved server-side). SCOPE: results are ORG-WIDE by default — every conversation in the caller's organization, including other members'. When the user asks about THEIR OWN deals (\"my pipeline\", \"deals I own\"), you MUST add {\"field\":\"ownerId\",\"operator\":\"eq\",\"value\":\"self\"} or the answer will silently include other people's deals. Each result carries ownerName / isOwnedByCurrentUser."
+        },
+        "eventFilter": {
+          "type": "object",
+          "properties": {
+            "types": {
+              "type": "object",
+              "properties": {
+                "include": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "exclude": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "additionalProperties": false
+            },
+            "date": {
+              "type": "string",
+              "description": "Reference date as ISO YYYY-MM-DD. Today is 2026-10-29 - compute from this."
+            },
+            "dateTo": {
+              "type": "string",
+              "description": "Upper bound date for range operator as ISO YYYY-MM-DD."
+            },
+            "dateOperator": {
+              "type": "string",
+              "enum": [
+                "before",
+                "after",
+                "on",
+                "range"
+              ]
+            },
+            "count": {
+              "type": "object",
+              "properties": {
+                "eventType": {
+                  "type": "string",
+                  "description": "Event type to count (email, email_inbound, email_outbound, meeting, etc.)"
+                },
+                "operator": {
+                  "type": "string",
+                  "enum": [
+                    "gt",
+                    "gte",
+                    "lt",
+                    "lte",
+                    "eq"
+                  ],
+                  "description": "Comparison operator"
+                },
+                "value": {
+                  "type": "number",
+                  "description": "Count threshold"
+                }
+              },
+              "required": [
+                "eventType",
+                "operator",
+                "value"
+              ],
+              "additionalProperties": false,
+              "description": "Filter by event count (e.g., conversations with more than 5 emails)"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Optional event filter — filter by event types (include/exclude) or by event count (e.g. conversations with more than 5 emails via count)."
+        },
+        "orderBy": {
+          "type": "object",
+          "properties": {
+            "field": {
+              "$ref": "#/properties/find/properties/filters/items/properties/field/anyOf/0"
+            },
+            "direction": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          "required": [
+            "field",
+            "direction"
+          ],
+          "additionalProperties": false,
+          "description": "Optional sorting. Defaults to lastContactedAt desc."
+        },
+        "limit": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 50,
+          "description": "Maximum number of results to return. Default 20, max 50."
+        },
+        "extraFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "[flexible_query mode] Additional fields to include in each result beyond the defaults. Standard fields (camelCase columns from crmConversations): \"nextSteps\", \"statusOverview\", \"important\", \"lastEmailAt\", \"lastUpdatedAt\", \"updatedAt\", \"conversationScope\" — returned as top-level keys on each result. Custom fields: pass \"wm_<fieldKey>\" (the ids shown in <available_columns>) to get their current values, returned under each result's `customFields` object keyed by fieldKey. Unknown standard field names are silently ignored; list-type custom fields are not returned inline (they accumulate per-event)."
+        }
+      },
+      "additionalProperties": false
+    },
+    "searchSemantic": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "The search query (already embedding-optimized by main agent)"
+        },
+        "filters": {
+          "type": "object",
+          "properties": {
+            "conversationId": {
+              "type": "string"
+            },
+            "eventId": {
+              "type": "string"
+            },
+            "eventType": {
+              "type": "string",
+              "enum": [
+                "email",
+                "meeting",
+                "slack",
+                "external_crm"
+              ]
+            },
+            "aopId": {
+              "type": "string"
+            },
+            "dateFrom": {
+              "type": "string",
+              "description": "ISO 8601 date string (e.g., \"2026-02-17T00:00:00Z\")"
+            },
+            "dateTo": {
+              "type": "string",
+              "description": "ISO 8601 date string (e.g., \"2026-02-23T23:59:59Z\")"
+            },
+            "threadId": {
+              "type": "string",
+              "description": "Gmail/Outlook thread ID (for email events)"
+            },
+            "isSignificant": {
+              "type": "boolean",
+              "description": "Filter by significance flag"
+            },
+            "direction": {
+              "type": "string",
+              "enum": [
+                "inbound",
+                "outbound"
+              ],
+              "description": "Filter by email/meeting direction"
+            },
+            "emailClassification": {
+              "type": "string",
+              "description": "Filter by email classification (e.g. follow-up, initial-outreach, post-meeting, pre-meeting, reactivation, question, response, objection)"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Filters to apply to the search"
+        },
+        "topK": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 30,
+          "default": 15,
+          "description": "Number of results to retrieve (max 30)"
+        },
+        "searchType": {
+          "type": "string",
+          "enum": [
+            "vector",
+            "fts"
+          ],
+          "default": "vector",
+          "description": "Search method. \"vector\" = semantic similarity (default), for meaning. \"fts\" = exact keyword match (BM25), for a literal string — an order number, a URL, a name, or \"Attachments\" to find emails with attachments. Vectors blur exact tokens; use fts when the answer IS the string."
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "additionalProperties": false
+    },
+    "searchExternalCrmDeals": {
+      "type": "object",
+      "properties": {
+        "providerId": {
+          "type": "string",
+          "enum": [
+            "hubspot",
+            "attio",
+            "salesforce",
+            "copper"
+          ],
+          "description": "The CRM connection's providerId — get this from `config`'s `read-settings` action (sections: [\"connections\"])."
+        },
+        "keyword": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Search text — deal/opportunity name, company name, etc."
+        }
+      },
+      "required": [
+        "providerId",
+        "keyword"
+      ],
+      "additionalProperties": false,
+      "description": "Operates on the user's connected EXTERNAL CRM (Salesforce/HubSpot/Attio/Copper) — NOT Cedar's own conversation records (that's `find`). If it's unclear whether the user means \"search Cedar's deals\" or \"search our Salesforce/HubSpot\", ask before calling either."
+    },
+    "timeline": {
+      "type": "object",
+      "properties": {
+        "conversationIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "fieldIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "kinds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "event",
+              "instance",
+              "judgment"
+            ]
+          }
+        },
+        "eventIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "eventTypes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "emailClassifications": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "stages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "from": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
+        },
+        "reps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "values": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "valueContains": {
+          "type": "string"
+        },
+        "strength": {
+          "type": "object",
+          "properties": {
+            "min": {
+              "type": "number"
+            },
+            "max": {
+              "type": "number"
+            }
+          },
+          "additionalProperties": false
+        },
+        "completeness": {
+          "$ref": "#/properties/timeline/properties/strength"
+        },
+        "hasStrength": {
+          "type": "boolean"
+        },
+        "hasCompleteness": {
+          "type": "boolean"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "exists": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "exists"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          }
+        },
+        "hasResponseSpan": {
+          "type": "boolean"
+        },
+        "hasReason": {
+          "type": "boolean"
+        },
+        "current": {
+          "type": "boolean"
+        },
+        "maxInline": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Return inline only up to this many entries; above it the full timeline is written to the doc sink and a handle is returned. Default 200."
+        }
+      },
+      "required": [
+        "conversationIds"
+      ],
+      "additionalProperties": false,
+      "description": "Read one time-ordered stream across events + both taxonomy planes for one or more deals, filtered by any combination of the cube. Masks: raw spine = kinds:[\"event\"]; one field = fieldIds:[\"…\"]; cross-deal = N conversationIds. Large results → the doc sink."
+    },
+    "fieldEvolution": {
+      "type": "object",
+      "properties": {
+        "conversationIds": {
+          "$ref": "#/properties/timeline/properties/conversationIds"
+        },
+        "eventIds": {
+          "$ref": "#/properties/timeline/properties/eventIds"
+        },
+        "eventTypes": {
+          "$ref": "#/properties/timeline/properties/eventTypes"
+        },
+        "emailClassifications": {
+          "$ref": "#/properties/timeline/properties/emailClassifications"
+        },
+        "stages": {
+          "$ref": "#/properties/timeline/properties/stages"
+        },
+        "from": {
+          "$ref": "#/properties/timeline/properties/from"
+        },
+        "to": {
+          "$ref": "#/properties/timeline/properties/to"
+        },
+        "reps": {
+          "$ref": "#/properties/timeline/properties/reps"
+        },
+        "values": {
+          "$ref": "#/properties/timeline/properties/values"
+        },
+        "valueContains": {
+          "$ref": "#/properties/timeline/properties/valueContains"
+        },
+        "strength": {
+          "$ref": "#/properties/timeline/properties/strength"
+        },
+        "completeness": {
+          "$ref": "#/properties/timeline/properties/completeness"
+        },
+        "hasStrength": {
+          "$ref": "#/properties/timeline/properties/hasStrength"
+        },
+        "hasCompleteness": {
+          "$ref": "#/properties/timeline/properties/hasCompleteness"
+        },
+        "payload": {
+          "$ref": "#/properties/timeline/properties/payload"
+        },
+        "hasResponseSpan": {
+          "$ref": "#/properties/timeline/properties/hasResponseSpan"
+        },
+        "hasReason": {
+          "$ref": "#/properties/timeline/properties/hasReason"
+        },
+        "current": {
+          "$ref": "#/properties/timeline/properties/current"
+        },
+        "fieldId": {
+          "type": "string",
+          "description": "The single field whose change/occurrence series to trace over time."
+        },
+        "maxInline": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "conversationIds",
+        "fieldId"
+      ],
+      "additionalProperties": false,
+      "description": "One field's change/occurrence series over time, grouped by deal (the \"how did X evolve\" curve)."
+    },
+    "valueAsOf": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "type": "string",
+          "description": "The deal to read."
+        },
+        "fieldId": {
+          "type": "string",
+          "description": "The versioned field to resolve."
+        },
+        "at": {
+          "type": "object",
+          "properties": {
+            "stage": {
+              "type": "string",
+              "description": "End of this stage."
+            },
+            "date": {
+              "type": "string",
+              "description": "ISO 8601 instant."
+            },
+            "eventId": {
+              "type": "string",
+              "description": "As of this event's occurredAt."
+            }
+          },
+          "additionalProperties": false,
+          "description": "Exactly one of stage | date | eventId — the point in time to resolve the value at."
+        }
+      },
+      "required": [
+        "conversationId",
+        "fieldId",
+        "at"
+      ],
+      "additionalProperties": false,
+      "description": "A versioned field's value + scores at a given instant (latest change ≤ the resolved cutoff)."
+    },
+    "describeField": {
+      "type": "object",
+      "properties": {
+        "fieldId": {
+          "type": "string",
+          "description": "The field to describe."
+        }
+      },
+      "required": [
+        "fieldId"
+      ],
+      "additionalProperties": false,
+      "description": "Learn a field's filterable surface (plane, whether it carries strength/completeness, its vocab, and payload keys + observed values) before building a precise mask."
+    },
+    "rawContent": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "type": "string",
+          "description": "The deal whose RAW verbatim event content to resolve."
+        }
+      },
+      "required": [
+        "conversationId"
+      ],
+      "additionalProperties": false,
+      "description": "Resolve a deal's RAW verbatim events (full transcripts / email bodies / Slack) into a doc-sink buffer with greppable \"=== STAGE: <stage> (evt_<id> @ <ISO>) [word_base: N] ===\" section markers, then return only a handle + access instructions. Word offsets in the buffer are global; each marker's word_base + an atom's `position` gives the atom's global offset for a #words read. Read it via read-document (supports #lines/{a}-{b} and #words/{a}-{b} windowed reads) and search-documents (regex)."
+    },
+    "search": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Semantic query (embedding-optimized). Ranks candidates by vector similarity."
+        },
+        "filter": {
+          "type": "object",
+          "properties": {
+            "conversationIds": {
+              "$ref": "#/properties/timeline/properties/conversationIds"
+            },
+            "fieldIds": {
+              "$ref": "#/properties/timeline/properties/fieldIds"
+            },
+            "kinds": {
+              "$ref": "#/properties/timeline/properties/kinds"
+            },
+            "eventIds": {
+              "$ref": "#/properties/timeline/properties/eventIds"
+            },
+            "eventTypes": {
+              "$ref": "#/properties/timeline/properties/eventTypes"
+            },
+            "emailClassifications": {
+              "$ref": "#/properties/timeline/properties/emailClassifications"
+            },
+            "stages": {
+              "$ref": "#/properties/timeline/properties/stages"
+            },
+            "from": {
+              "$ref": "#/properties/timeline/properties/from"
+            },
+            "to": {
+              "$ref": "#/properties/timeline/properties/to"
+            },
+            "reps": {
+              "$ref": "#/properties/timeline/properties/reps"
+            },
+            "values": {
+              "$ref": "#/properties/timeline/properties/values"
+            },
+            "valueContains": {
+              "$ref": "#/properties/timeline/properties/valueContains"
+            },
+            "strength": {
+              "$ref": "#/properties/timeline/properties/strength"
+            },
+            "completeness": {
+              "$ref": "#/properties/timeline/properties/completeness"
+            },
+            "hasStrength": {
+              "$ref": "#/properties/timeline/properties/hasStrength"
+            },
+            "hasCompleteness": {
+              "$ref": "#/properties/timeline/properties/hasCompleteness"
+            },
+            "payload": {
+              "$ref": "#/properties/timeline/properties/payload"
+            },
+            "hasResponseSpan": {
+              "$ref": "#/properties/timeline/properties/hasResponseSpan"
+            },
+            "hasReason": {
+              "$ref": "#/properties/timeline/properties/hasReason"
+            },
+            "current": {
+              "$ref": "#/properties/timeline/properties/current"
+            }
+          },
+          "additionalProperties": false,
+          "description": "The SAME filter cube as `timeline`, applied to the semantic candidates. Only the cheap-to-combine dimensions filter natively (fieldId, conversationIds, stage, rep, sourceEventId, occurredAt range, strength/completeness range, current, payload membership); other dimensions post-filter via the pointer."
+        },
+        "topK": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Max candidates to return. Default 15."
+        },
+        "maxInline": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "additionalProperties": false,
+      "description": "Semantic search over the extracted taxonomy atoms — discover relevant moments/deals. Hits point back (fieldValueId / conversationId / sourceEventId) so you can hop to `timeline` (shape) and raw-content (prove). Large sets → the doc sink."
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

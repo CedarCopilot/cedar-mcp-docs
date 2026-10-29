@@ -1,0 +1,529 @@
+---
+title: "billing-write"
+description: "Parameters, scopes, and response schema for billing-write."
+---
+
+Generated from Cedar's external registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+
+## Capability
+
+Manage independent credit billing owned by the authenticated user’s organization. ensure-account creates an unfunded organization account and requires org administrator authority; personal accounts are historical read-only records; save-limit requires the current version from billing-read.limits and exact microcredit amounts. Caps apply to all matching account/member/feature/meter policies. reconcile expires stale holds and rebuilds balances; retry-delivery retries only a known pre-delivery infrastructure failure. checkout and finance-link return hosted payment URLs for approved offers; only a verified paid webhook grants credits. write-grant/revoke-grant require org admin authority. grant.recipientUserId identifies the grant recipient; member limits use policy.scope.memberUserId. Neither changes the acting user. request-import queues a staff ownership review. configure-postpaid requires an organization billing administrator, current version and an explicit user-authorized consentReference; read billing-read.postpaid first and select postpaid.subscriptionId from its verified subscriptions when ambiguous. Extra usage goes on that existing invoice. Never enable monthly charges as a side effect of enrichment. Existing subscription prices and quantities never change.
+
+## Operations and scopes
+
+| Action | Baseline scope |
+| --- | --- |
+| `ensure-account` | `billing:write` |
+| `save-limit` | `billing:write` |
+| `read-alert` | `billing:write` |
+| `reconcile` | `billing:write` |
+| `retry-delivery` | `billing:write` |
+| `checkout` | `billing:write` |
+| `portal` | `billing:write` |
+| `finance-link` | `billing:write` |
+| `write-grant` | `billing:write` |
+| `revoke-grant` | `billing:write` |
+| `request-import` | `billing:write` |
+| `configure-postpaid` | `billing:write` |
+| `reconcile-postpaid` | `billing:write` |
+
+Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Parameters
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `action` | "ensure-account" · "save-limit" · "read-alert" · "reconcile" · "retry-delivery" · "checkout" · "portal" · "finance-link" · "write-grant" · "revoke-grant" · "request-import" · "configure-postpaid" · "reconcile-postpaid" | Yes |   |
+| `scope` | "organization" | No |   |
+| `postpaid` | object | No |   |
+| `postpaidInvoice` | object | No |   |
+| `accountId` | string | No |  minLength: 1 |
+| `alertId` | string | No |  minLength: 1 |
+| `deliveryId` | string | No |  minLength: 1 |
+| `policy` | object | No |   |
+| `expectedVersion` | integer | No |  minimum: 0 |
+| `offerId` | string | No |  minLength: 1; maxLength: 256 |
+| `offerVersion` | integer | No |  exclusiveMinimum: 0 |
+| `idempotencyKey` | string | No |  minLength: 1; maxLength: 256 |
+| `expiresInHours` | integer | No |  minimum: 1; maximum: 168 |
+| `grant` | object | No |   |
+| `grantId` | string | No |  minLength: 1; maxLength: 256 |
+| `subscriptionId` | string | No |  pattern: "^sub_&#91;A-Za-z0-9&#93;+$" |
+| `user_request_summary` | string | Yes | One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does.  |
+| `is_new_request` | boolean | Yes | true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread.  |
+
+### postpaid
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `accountId` | string | Yes |  minLength: 1 |
+| `enabled` | boolean | Yes |   |
+| `expectedVersion` | integer | Yes |  minimum: 0 |
+| `consentReference` | string | Yes |  minLength: 1; maxLength: 500 |
+| `subscriptionId` | string | No |  minLength: 1; maxLength: 256 |
+
+### postpaidInvoice
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `batchId` | string | Yes |  minLength: 1; maxLength: 256 |
+| `invoiceId` | string | Yes |  pattern: "^in_&#91;A-Za-z0-9&#93;+$" |
+
+### policy
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `accountId` | string | Yes |  minLength: 1 |
+| `id` | string | No |  minLength: 1 |
+| `expectedVersion` | integer | Yes |  minimum: 0 |
+| `scope` | object or object or object or object or object | Yes |   |
+| `period` | "utc_day" · "utc_month" · "operation" | Yes |   |
+| `capMicrocredits` | string | Yes |  pattern: "^(0&#124;&#91;1-9&#93;&#91;0-9&#93;&#123;0,29&#125;)$" |
+| `alertThresholdPercent` | integer&#91;&#93; | No |  default: &#91;50,80,100&#93;; maxItems: 10 |
+| `lowBalanceMicrocredits` | string or null | No |  default: null |
+| `delivery` | "in_app" · "email"&#91;&#93; | No |  default: &#91;"in_app"&#93;; minItems: 1; maxItems: 2 |
+| `recipientUserIds` | string&#91;&#93; | Yes |  minItems: 1; maxItems: 20 |
+
+### grant
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `accountId` | string | Yes |  minLength: 1; maxLength: 256 |
+| `expectedVersion` | integer | Yes |  minimum: 0 |
+| `role` | "member" · "finance" · "admin" | Yes |   |
+| `canSpend` | boolean | Yes |   |
+| `allowedMeters` | string&#91;&#93; | Yes |  maxItems: 100 |
+| `startsAt` | string | Yes |  format: "date-time" |
+| `endsAt` | string or null | Yes |   |
+| `recipientUserId` | string | Yes |  minLength: 1; maxLength: 256 |
+
+## Full input schema
+
+[Download the input schema](/reference/schemas/billing-write.input.json). Nested objects, variants, and constraints are preserved in full. Runtime refinements and ownership checks still apply.
+
+<Accordion title="Input JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "ensure-account",
+        "save-limit",
+        "read-alert",
+        "reconcile",
+        "retry-delivery",
+        "checkout",
+        "portal",
+        "finance-link",
+        "write-grant",
+        "revoke-grant",
+        "request-import",
+        "configure-postpaid",
+        "reconcile-postpaid"
+      ]
+    },
+    "scope": {
+      "type": "string",
+      "const": "organization"
+    },
+    "postpaid": {
+      "type": "object",
+      "properties": {
+        "accountId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "expectedVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "consentReference": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "subscriptionId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "required": [
+        "accountId",
+        "enabled",
+        "expectedVersion",
+        "consentReference"
+      ],
+      "additionalProperties": false
+    },
+    "postpaidInvoice": {
+      "type": "object",
+      "properties": {
+        "batchId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "invoiceId": {
+          "type": "string",
+          "pattern": "^in_[A-Za-z0-9]+$"
+        }
+      },
+      "required": [
+        "batchId",
+        "invoiceId"
+      ],
+      "additionalProperties": false
+    },
+    "accountId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "alertId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "deliveryId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "policy": {
+      "type": "object",
+      "properties": {
+        "accountId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expectedVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "account"
+                }
+              },
+              "required": [
+                "kind"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "member"
+                },
+                "memberUserId": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "kind",
+                "memberUserId"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "meter"
+                },
+                "meterKey": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                }
+              },
+              "required": [
+                "kind",
+                "meterKey"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "feature"
+                },
+                "featureKey": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                }
+              },
+              "required": [
+                "kind",
+                "featureKey"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "features"
+                },
+                "featureKeys": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128
+                  },
+                  "minItems": 1,
+                  "maxItems": 100
+                }
+              },
+              "required": [
+                "kind",
+                "featureKeys"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "period": {
+          "type": "string",
+          "enum": [
+            "utc_day",
+            "utc_month",
+            "operation"
+          ]
+        },
+        "capMicrocredits": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]{0,29})$"
+        },
+        "alertThresholdPercent": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "maxItems": 10,
+          "default": [
+            50,
+            80,
+            100
+          ]
+        },
+        "lowBalanceMicrocredits": {
+          "anyOf": [
+            {
+              "$ref": "#/properties/policy/properties/capMicrocredits"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "delivery": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "in_app",
+              "email"
+            ]
+          },
+          "minItems": 1,
+          "maxItems": 2,
+          "default": [
+            "in_app"
+          ]
+        },
+        "recipientUserIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "maxItems": 20
+        }
+      },
+      "required": [
+        "accountId",
+        "expectedVersion",
+        "scope",
+        "period",
+        "capMicrocredits",
+        "recipientUserIds"
+      ],
+      "additionalProperties": false
+    },
+    "expectedVersion": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "offerId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "offerVersion": {
+      "type": "integer",
+      "exclusiveMinimum": 0
+    },
+    "idempotencyKey": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "expiresInHours": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 168
+    },
+    "grant": {
+      "type": "object",
+      "properties": {
+        "accountId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "expectedVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "role": {
+          "type": "string",
+          "enum": [
+            "member",
+            "finance",
+            "admin"
+          ]
+        },
+        "canSpend": {
+          "type": "boolean"
+        },
+        "allowedMeters": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_.-]{0,127}$"
+          },
+          "maxItems": 100
+        },
+        "startsAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "endsAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "recipientUserId": {
+          "$ref": "#/properties/grant/properties/accountId"
+        }
+      },
+      "required": [
+        "accountId",
+        "expectedVersion",
+        "role",
+        "canSpend",
+        "allowedMeters",
+        "startsAt",
+        "endsAt",
+        "recipientUserId"
+      ],
+      "additionalProperties": false
+    },
+    "grantId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "subscriptionId": {
+      "type": "string",
+      "pattern": "^sub_[A-Za-z0-9]+$"
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+## Response
+
+Inspect `isError` on the MCP result and `success` / `errorMessage` in the action result. Optional response branches are populated only for the relevant action. Some results include additional provider or operation-specific data.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `success` | boolean | Yes |   |
+| `data` | any | No |   |
+| `errorMessage` | string | No |   |
+
+<Accordion title="Output JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "data": {},
+    "errorMessage": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+[Download the output schema](/reference/schemas/billing-write.output.json).

@@ -1,0 +1,110 @@
+{
+  "type": "object",
+  "properties": {
+    "description": {
+      "type": "string",
+      "description": "ONE plain-English sentence describing the change — the only thing the user will see. Name the system and what is happening to it. NEVER quote a credential value here; this string is shown to the user and recorded verbatim."
+    },
+    "change": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "manage_mcp_connection"
+            },
+            "op": {
+              "type": "string",
+              "enum": [
+                "create",
+                "delete"
+              ],
+              "description": "create/delete an MCP server connection."
+            },
+            "connectionId": {
+              "type": "string",
+              "description": "Required for delete. From read-settings sections:[\"connections\"]."
+            },
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "description": "Required for create; the label the agent addresses this server by, e.g. \"Mintlify Docs\"."
+            },
+            "serverUrl": {
+              "type": "string",
+              "format": "uri",
+              "description": "Required for create; the MCP server URL. Public hosts only - loopback and private ranges are refused."
+            },
+            "instructions": {
+              "type": "string",
+              "maxLength": 4000,
+              "description": "Hint for the agent on when to use this source."
+            },
+            "scope": {
+              "type": "string",
+              "enum": [
+                "user",
+                "org"
+              ],
+              "description": "Defaults \"user\". \"org\" shares the server with every member of the organization (org admins only); a member's own connection of the same name still wins."
+            }
+          },
+          "required": [
+            "type",
+            "op"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "update_mcp_connection_settings"
+            },
+            "connectionId": {
+              "type": "string",
+              "description": "From read-settings sections:[\"connections\"]."
+            },
+            "instructions": {
+              "type": "string",
+              "maxLength": 4000,
+              "description": "Replaces the connection's agent instructions."
+            },
+            "availableToBackgroundAgents": {
+              "type": "boolean",
+              "description": "Whether cron/event/automation runs may call this server."
+            }
+          },
+          "required": [
+            "type",
+            "connectionId"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "targetUserId": {
+      "type": "string",
+      "description": "Store the entry for ANOTHER user in your organization instead of yourself. Omit for your own, which is almost always what you want."
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "description",
+    "change",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

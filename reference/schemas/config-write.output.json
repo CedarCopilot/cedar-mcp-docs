@@ -1,0 +1,566 @@
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "reassignAop": {
+      "type": "object",
+      "properties": {
+        "wasReassigned": {
+          "type": "boolean"
+        },
+        "previousAop": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "aopId": {
+                  "type": "string"
+                },
+                "aopName": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "aopId",
+                "aopName"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "newAop": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "aopId": {
+                  "type": "string"
+                },
+                "aopName": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "aopId",
+                "aopName"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reasoning": {
+          "type": "string"
+        },
+        "proposed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "wasReassigned",
+        "previousAop",
+        "newAop",
+        "reasoning"
+      ],
+      "additionalProperties": false
+    },
+    "createField": {
+      "type": "object",
+      "properties": {
+        "fieldKey": {
+          "type": "string"
+        },
+        "definition": {
+          "type": "object",
+          "properties": {
+            "internalSignals": {
+              "type": "object",
+              "properties": {
+                "definitions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "type": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "enabled": {
+                        "type": "boolean"
+                      },
+                      "instructions": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "eligibility": {
+                        "type": "string",
+                        "enum": [
+                          "any",
+                          "lost_or_lapsed",
+                          "customer"
+                        ],
+                        "default": "any"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "type",
+                      "enabled",
+                      "instructions"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "lifecycle": {
+                  "type": "object",
+                  "properties": {
+                    "lostStatuses": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "default": []
+                    },
+                    "customerStatuses": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "default": []
+                    },
+                    "activeStatuses": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "default": []
+                    },
+                    "excludedLossReasons": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "default": []
+                    },
+                    "contactRestrictionFieldId": {
+                      "type": "string"
+                    },
+                    "lossReasonFieldId": {
+                      "type": "string"
+                    },
+                    "lapsedFieldId": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "definitions",
+                "lifecycle"
+              ],
+              "additionalProperties": false
+            },
+            "signal": {
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "type": "boolean",
+                  "const": true
+                },
+                "description": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "enabled"
+              ],
+              "additionalProperties": false
+            },
+            "renameTrackingId": {
+              "type": "string",
+              "description": "Internal rename-tracking identifier — NOT a query key. Use the field's `fieldKey` (one level up on this list-fields entry) for run-sql's `field_id` or a `wm_<fieldKey>` filter (e.g. \"close_date\"); this is an opaque, unrelated string (e.g. \"cf_field_a1b2c3d4-...\"), not a derivable variant of `fieldKey`. A couple of internal code paths (delete-field, remove-field-option) currently key lookups off this identifier instead of `fieldKey` — that is a known bug, not a second valid way to reference the field."
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "text",
+                "number",
+                "date",
+                "boolean",
+                "select",
+                "currency",
+                "url",
+                "email",
+                "phone",
+                "list",
+                "fraction",
+                "json",
+                "people",
+                "summarized_history",
+                "deal_brief"
+              ]
+            },
+            "label": {
+              "type": "string"
+            },
+            "displayOrder": {
+              "type": "number"
+            },
+            "description": {
+              "type": "string"
+            },
+            "dealBriefStages": {
+              "type": "object",
+              "properties": {
+                "discovery": {
+                  "type": "object",
+                  "properties": {
+                    "visible": {
+                      "type": "boolean"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "label": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "instruction": {
+                            "type": "string"
+                          },
+                          "graded": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "label",
+                          "instruction",
+                          "graded"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 3
+                    }
+                  },
+                  "required": [
+                    "visible",
+                    "rows"
+                  ],
+                  "additionalProperties": false
+                },
+                "demo": {
+                  "$ref": "#/properties/createField/properties/definition/properties/dealBriefStages/properties/discovery"
+                },
+                "commercial": {
+                  "$ref": "#/properties/createField/properties/definition/properties/dealBriefStages/properties/discovery"
+                },
+                "negotiation": {
+                  "$ref": "#/properties/createField/properties/definition/properties/dealBriefStages/properties/discovery"
+                }
+              },
+              "additionalProperties": false
+            },
+            "researchPrompt": {
+              "type": "string",
+              "description": "For the built-in people field: who Multi-thread should research and which sources to use; never outreach."
+            },
+            "agentEditsForbidden": {
+              "type": "boolean"
+            },
+            "agentRequiresApproval": {
+              "type": "boolean"
+            },
+            "approvalRequiredOptions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "ownerAgentId": {
+              "type": "string",
+              "description": "Owning subagent's agent_id. Set = only that agent writes it."
+            },
+            "options": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "string"
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "enumOrder": {
+                    "type": "number"
+                  },
+                  "color": {
+                    "type": "string"
+                  },
+                  "icon": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "value",
+                  "enumOrder"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "background": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        },
+        "mapping": {
+          "type": "object",
+          "properties": {
+            "crmFieldName": {
+              "type": "string"
+            },
+            "cedarFieldName": {
+              "type": "string"
+            },
+            "allowedValues": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "reconciliation": {
+              "type": "object",
+              "properties": {
+                "renamed": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string"
+                      },
+                      "oldLabel": {
+                        "type": "string"
+                      },
+                      "newLabel": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "removed": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string"
+                      },
+                      "label": {
+                        "type": "string"
+                      },
+                      "affectedConversationCount": {
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "value",
+                      "affectedConversationCount"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "added": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string"
+                      },
+                      "label": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "renamed",
+                "removed",
+                "added"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "crmFieldName",
+            "cedarFieldName",
+            "allowedValues"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "fieldKey",
+        "definition"
+      ],
+      "additionalProperties": false
+    },
+    "updateField": {
+      "type": "object",
+      "properties": {
+        "fieldKey": {
+          "type": "string"
+        },
+        "definition": {
+          "$ref": "#/properties/createField/properties/definition"
+        }
+      },
+      "required": [
+        "fieldKey",
+        "definition"
+      ],
+      "additionalProperties": false
+    },
+    "deleteField": {
+      "type": "object",
+      "properties": {
+        "fieldKey": {
+          "type": "string"
+        },
+        "deletedValueCount": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "fieldKey",
+        "deletedValueCount"
+      ],
+      "additionalProperties": false
+    },
+    "linkMapping": {
+      "$ref": "#/properties/createField/properties/mapping"
+    },
+    "unlinkMapping": {
+      "type": "object",
+      "properties": {
+        "crmFieldName": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "crmFieldName"
+      ],
+      "additionalProperties": false
+    },
+    "addFieldOption": {
+      "type": "object",
+      "properties": {
+        "fieldKey": {
+          "type": "string"
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "$ref": "#/properties/createField/properties/definition/properties/options/items"
+          }
+        }
+      },
+      "required": [
+        "fieldKey",
+        "options"
+      ],
+      "additionalProperties": false
+    },
+    "updateFieldOption": {
+      "$ref": "#/properties/addFieldOption"
+    },
+    "removeFieldOption": {
+      "type": "object",
+      "properties": {
+        "fieldKey": {
+          "type": "string"
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "$ref": "#/properties/createField/properties/definition/properties/options/items"
+          }
+        },
+        "affectedValueCount": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "fieldKey"
+      ],
+      "additionalProperties": false
+    },
+    "setStageCriteria": {
+      "type": "object",
+      "properties": {
+        "stageId": {
+          "type": "string"
+        },
+        "field": {
+          "type": "string",
+          "enum": [
+            "entry",
+            "exit"
+          ]
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "stageId",
+        "field",
+        "text"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

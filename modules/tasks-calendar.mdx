@@ -1,0 +1,32 @@
+---
+title: "Tasks, meetings, and calendar"
+description: "Turn evidence into owned follow-up work and meeting context."
+---
+
+## Tasks
+
+The `task` family supports listing, creation, updates, approvals, cancellation, assignment discovery, reassignment, completion, deletion, starting preparation, and due-date changes. Load `tasks` first.
+
+Use `dealList` for a conversation's shared tasks and recommendations, `creationOptions` for eligible assignees, and `createAssigned` for an explicitly assigned manual task or personal reminder. Preserve source Slack permalinks in notes. Recommendations are distinct from persisted tasks; do not claim a recommendation has been assigned before creating it.
+
+`start` prepares caller-owned work in the current Cedar chat and can return a `seedPrompt`; it is not permission to send. Personal reminders do not schedule automatic agent execution. Agent-enabled tasks and their future execution times are a separate path from ordinary due dates.
+
+Task channel should reflect a real commitment. Leave it unset for an open-ended “follow up” if the eventual channel is not yet known. A task can be completed without claiming its proposed outreach was delivered; use the actual workflow result as evidence.
+
+## Meetings and recordings
+
+`meetings find` searches meetings Cedar already synced, by title, participant, organizer, dates, or a recording URL. It is the first step for “the pricing call last week.”
+
+`meetings sync` fetches a missing meeting from a connected recorder and attaches it to a deal. Providers generally expose days-back windows, so narrow with title, participant, or URL. Zero or multiple matches return candidates rather than choosing one arbitrarily.
+
+`meetings capabilities` explains the connected recorder's real search/ingestion abilities. Call it before a broad hunt or an assumption that a provider can search what was said in a transcript. A supported recorder integration does not mean every provider has the same API capabilities.
+
+## Calendar
+
+`calendar list-events` returns events with linked CRM context. `get-availability` checks busy periods. `modify-event` creates, updates, or deletes events and supports repeating invites through recurrence rules.
+
+Check `canModifyForEveryone` before rescheduling an existing event. A non-organizer cannot move the meeting for other guests; the mutation is refused in that case.
+
+External MCP calendar mutations apply immediately and can notify attendees. The external client must obtain the user's intended approval before calling. A date in a task, a proposed meeting slot, and an actual calendar invitation are three different states.
+
+[Tasks](/reference/task) · [Meetings](/reference/meetings) · [Calendar](/reference/calendar)

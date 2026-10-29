@@ -1,0 +1,384 @@
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "ensure-account",
+        "save-limit",
+        "read-alert",
+        "reconcile",
+        "retry-delivery",
+        "checkout",
+        "portal",
+        "finance-link",
+        "write-grant",
+        "revoke-grant",
+        "request-import",
+        "configure-postpaid",
+        "reconcile-postpaid"
+      ]
+    },
+    "scope": {
+      "type": "string",
+      "const": "organization"
+    },
+    "postpaid": {
+      "type": "object",
+      "properties": {
+        "accountId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "expectedVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "consentReference": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "subscriptionId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "required": [
+        "accountId",
+        "enabled",
+        "expectedVersion",
+        "consentReference"
+      ],
+      "additionalProperties": false
+    },
+    "postpaidInvoice": {
+      "type": "object",
+      "properties": {
+        "batchId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "invoiceId": {
+          "type": "string",
+          "pattern": "^in_[A-Za-z0-9]+$"
+        }
+      },
+      "required": [
+        "batchId",
+        "invoiceId"
+      ],
+      "additionalProperties": false
+    },
+    "accountId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "alertId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "deliveryId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "policy": {
+      "type": "object",
+      "properties": {
+        "accountId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expectedVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "account"
+                }
+              },
+              "required": [
+                "kind"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "member"
+                },
+                "memberUserId": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "kind",
+                "memberUserId"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "meter"
+                },
+                "meterKey": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                }
+              },
+              "required": [
+                "kind",
+                "meterKey"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "feature"
+                },
+                "featureKey": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                }
+              },
+              "required": [
+                "kind",
+                "featureKey"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "features"
+                },
+                "featureKeys": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128
+                  },
+                  "minItems": 1,
+                  "maxItems": 100
+                }
+              },
+              "required": [
+                "kind",
+                "featureKeys"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "period": {
+          "type": "string",
+          "enum": [
+            "utc_day",
+            "utc_month",
+            "operation"
+          ]
+        },
+        "capMicrocredits": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]{0,29})$"
+        },
+        "alertThresholdPercent": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "maxItems": 10,
+          "default": [
+            50,
+            80,
+            100
+          ]
+        },
+        "lowBalanceMicrocredits": {
+          "anyOf": [
+            {
+              "$ref": "#/properties/policy/properties/capMicrocredits"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "delivery": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "in_app",
+              "email"
+            ]
+          },
+          "minItems": 1,
+          "maxItems": 2,
+          "default": [
+            "in_app"
+          ]
+        },
+        "recipientUserIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "maxItems": 20
+        }
+      },
+      "required": [
+        "accountId",
+        "expectedVersion",
+        "scope",
+        "period",
+        "capMicrocredits",
+        "recipientUserIds"
+      ],
+      "additionalProperties": false
+    },
+    "expectedVersion": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "offerId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "offerVersion": {
+      "type": "integer",
+      "exclusiveMinimum": 0
+    },
+    "idempotencyKey": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "expiresInHours": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 168
+    },
+    "grant": {
+      "type": "object",
+      "properties": {
+        "accountId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "expectedVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "role": {
+          "type": "string",
+          "enum": [
+            "member",
+            "finance",
+            "admin"
+          ]
+        },
+        "canSpend": {
+          "type": "boolean"
+        },
+        "allowedMeters": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_.-]{0,127}$"
+          },
+          "maxItems": 100
+        },
+        "startsAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "endsAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "recipientUserId": {
+          "$ref": "#/properties/grant/properties/accountId"
+        }
+      },
+      "required": [
+        "accountId",
+        "expectedVersion",
+        "role",
+        "canSpend",
+        "allowedMeters",
+        "startsAt",
+        "endsAt",
+        "recipientUserId"
+      ],
+      "additionalProperties": false
+    },
+    "grantId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "subscriptionId": {
+      "type": "string",
+      "pattern": "^sub_[A-Za-z0-9]+$"
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

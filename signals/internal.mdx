@@ -1,0 +1,22 @@
+---
+title: "Internal signals and email evidence"
+description: "Read and curate persisted deal findings without treating a candidate as a verified opportunity."
+---
+
+`signals-read get-internal` reads persisted evidence-backed internal findings for one conversation, including inactive history. `list-internal` pages across accessible deals with due and suppression filters.
+
+Candidates can point to a commercial change worth reviewing. Their presence—and even an `eligibleSignalIds` response—does not verify customer qualification or authorize outreach. Read the original evidence and current commercial state before adding actionable workflow rows.
+
+## Curation operations
+
+`signals-write apply-extraction` validates proposals using `expectedRevision` and an idempotency key. `mutate-internal` supports disposition and note operations such as snooze, dismiss, resolve, reopen, append-note, and deactivate. Preserve human status and notes. Background agents have a narrower set of permitted mutations than user-directed chat or external MCP.
+
+`execute-action` claims an existing stored signal action by `actionId`. It requires explicit user intent and `email:draft`; it does not itself grant `email:send`. Discovering a signal is never sufficient reason to execute its stored action.
+
+## Email opens and clicks
+
+The `email-tracking` family lists tracked sends and retrieves classified events for a `trackingId`. `openCount` and `clickCount` reflect likely human activity; raw event counts can include proxies and automation. Unknown/automated events do not prove a human open.
+
+A single-recipient address describes the intended recipient. It does not identify who opened a forwarded email or who caused a proxy fetch. Do not infer a person's identity from IP, device, or geolocation. Native likely-open signals can appear on a deal even when paid external watches are disabled.
+
+Use signal evidence to prioritize a review, then corroborate with a reply, explicit request, or other meaningful context before preparing a follow-up.

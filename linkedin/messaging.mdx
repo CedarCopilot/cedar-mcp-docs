@@ -1,0 +1,74 @@
+---
+title: "Draft, send, and schedule"
+description: "Separate preparation from externally visible LinkedIn actions."
+---
+
+## Read the relationship first
+
+Call `find-chat` with a verified person URL, provider ID, Cedar person ID, or name. A name can return multiple candidates; resolve ambiguity before selecting a person. `refresh: true` requests fresh provider context. The lookup may ingest an unsynced chat into Cedar.
+
+```json
+{
+  "action": "find-chat",
+  "findChat": { "url": "https://www.linkedin.com/in/example-person", "refresh": true }
+}
+```
+
+Use `read-chat` for messages and the saved draft. `list-chats` supports a limit, draft-only filtering, and explicit inclusion of quarantined InMail chats. Returned chats are owner-scoped.
+
+## Draft first
+
+Use `draft-comms` with `action: "draft-linkedin-message"` and the matching `draftLinkedinMessage` object. It prepares a draft; it does not authorize delivery. Read the exact target and body fields in the [draft tool reference](/reference/draft-comms).
+
+## Send an authorized message
+
+`linkedin-write` can reply to an existing chat or start a conversation with a resolved target:
+
+```json
+{
+  "action": "send-message",
+  "sendMessage": {
+    "chatId": "chat_returned_by_find_chat",
+    "text": "Thanks for the discussion. Here is the technical summary you asked for."
+  }
+}
+```
+
+This sends immediately. The caller must have explicit user authorization for the recipient and final content. The seat health check, rate windows, ownership checks, and provider restrictions still apply. A cap refusal is not an accepted queue item.
+
+## Connection invitations
+
+```json
+{
+  "action": "send-invitation",
+  "sendInvitation": { "url": "https://www.linkedin.com/in/example-person" }
+}
+```
+
+Invitations are sent without a note by default. A note requires an explicit user request and `noteRequestedByUser: true`. The schema permits at most 300 characters; the provider/account may impose a tighter limit. Do not add a note just because personalization seems useful.
+
+`send-inmail` accepts body text, an optional subject, and a chat or person target. Cedar's monthly cap and the provider's actual entitlement both matter.
+
+## Schedule a message
+
+After the user authorizes the recipient, content, and time, call `schedule-send`. Replace the example date with a future ISO timestamp carrying the intended timezone offset:
+
+```json
+{
+  "channel": "linkedin",
+  "sendAt": "2026-11-02T09:15:00-08:00",
+  "body": "Following up with the technical summary you requested.",
+  "linkedin": {
+    "unipileAccountId": "seat_from_list_seats",
+    "chatId": "chat_from_find_chat"
+  }
+}
+```
+
+For a new chat, pass `attendeeProviderId` instead of `chatId`, never both. Cedar creates the chat only at delivery time. Scheduled items appear in the Scheduled folder and can be cancelled there. Scheduling accepts DMs; it is not a scheduling action for connection invitations or InMail.
+
+[Queueing](/automation/queueing) explains automatic cap deferrals and failures. No live sends were performed to produce these examples.
+
+## Attach a chat to a deal
+
+`linkedin-write sync-chat` ingests a chat into an authorized existing Cedar conversation. It requires `linkedin:read`, not the sending scope. It does not contact the prospect.

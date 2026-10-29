@@ -1,0 +1,44 @@
+---
+title: "Documents, tables, and saved views"
+description: "Give a GTM agent durable, editable output instead of transient chat text."
+---
+
+## Documents
+
+`document-read` reads, lists, and searches Cedar's virtual document workspace. `document-write` supports writing, deletion/restoration, moving, sharing, and requesting a file. Load `documents` for account-specific path conventions and templates.
+
+Choose the write mode deliberately:
+
+| Mode | Use |
+| --- | --- |
+| `upsert` | Create or replace the complete document |
+| `append` | Add new material to the end |
+| `patch` | Replace one unique, localized text fragment after reading it |
+
+Supported types include ordinary documents, workflows, HTML, agendas, attachments, and tables. Workflow documents can contain actionable buttons, but saving the document does not execute them. Sharing creates or revokes access and must follow the intended audience. Restoration is supported within 30 days of deletion, subject to permissions.
+
+## Tables
+
+Use `table` for every partial table edit. Replacing the entire document to modify one cell can destroy row identity. Load `tables` first and read the current schema/revision before changing it.
+
+The family supports:
+
+- Projected, filtered, typed/sorted reads and query-backed creation.
+- Adding/removing/reordering rows and columns; modifying column settings and view filters.
+- Cell set/clear, sections, and subrows.
+- CSV/XLSX import and export.
+- Bound CRM columns and delegated row work through `fill`.
+
+Address cells with stable `rowId.columnKey`, not a visually inferred row number. Ordinal/A1 operations require revision protection. `move_row` requires `ifRevision` and is constrained by active sorting/subrows. Bound columns are read-only. Section rows are headings, not data to enrich.
+
+Bulk row/cell values use the documented line-oriented formats, not arbitrary JSON arrays. Export returns base64 file bytes through the existing export pipeline. Import can merge an uploaded workbook by `_id` when `updateInPlace` is selected.
+
+## External fill behavior
+
+External `fill` returns `mode: "delegate"` and row briefs for the caller to execute with its own capabilities. It does not launch hidden Cedar agents with broader permissions. More than 25 rows requires the prescribed user confirmation. For manual person/company enrichment, explicitly use Fiber and persist results back through supported table operations.
+
+## Saved views
+
+`ui-config list-canvases` discovers saved/pinned views. Its create/update/delete actions manage caller-owned canvases; `configure-overview` changes which fields/docs appear in an AOP's strategic overview. View configuration can be replaced in full, so read first and preserve intended settings.
+
+Board/graph operations are not part of the external registry. A Cedar table or saved canvas is not a substitute name for those hidden tools.

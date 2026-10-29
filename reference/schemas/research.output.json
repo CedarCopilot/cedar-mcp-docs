@@ -1,0 +1,423 @@
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "errorCode": {
+      "type": "string"
+    },
+    "approvalId": {
+      "type": "string"
+    },
+    "capabilities": {
+      "type": "object",
+      "properties": {
+        "documentationReviewedAt": {
+          "type": "string"
+        },
+        "defaultProvider": {
+          "type": "string",
+          "const": "crustdata"
+        },
+        "automaticCompanyProvider": {
+          "type": "string",
+          "const": "fiber"
+        },
+        "watchProvider": {
+          "type": "string",
+          "const": "crustdata"
+        },
+        "automaticFallback": {
+          "type": "boolean",
+          "const": false
+        },
+        "credentialsChecked": {
+          "type": "boolean",
+          "const": false
+        },
+        "billing": {
+          "type": "string"
+        },
+        "providers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "provider": {
+                "type": "string"
+              },
+              "guidance": {
+                "type": "string"
+              },
+              "documentedButNotExposedHere": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "sources": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                }
+              },
+              "operations": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "requiresAnyOf": {
+                      "type": "array",
+                      "items": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "fields": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "cacheTtlDays": {
+                      "type": "number"
+                    },
+                    "explicitProviderRequired": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "requiresAnyOf",
+                    "fields",
+                    "cacheTtlDays",
+                    "explicitProviderRequired"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "provider",
+              "guidance",
+              "documentedButNotExposedHere",
+              "sources",
+              "operations"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "watchers": {
+          "type": "object",
+          "properties": {
+            "provider": {
+              "type": "string",
+              "const": "crustdata"
+            },
+            "tool": {
+              "type": "string",
+              "const": "signals-write"
+            },
+            "action": {
+              "type": "string",
+              "const": "activate"
+            },
+            "signals": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "guidance": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "provider",
+            "tool",
+            "action",
+            "signals",
+            "guidance"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "documentationReviewedAt",
+        "defaultProvider",
+        "automaticCompanyProvider",
+        "watchProvider",
+        "automaticFallback",
+        "credentialsChecked",
+        "billing",
+        "providers",
+        "watchers"
+      ],
+      "additionalProperties": false
+    },
+    "choice": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "recommended",
+            "unsupported"
+          ]
+        },
+        "reason": {
+          "type": "string"
+        },
+        "unsupportedNeeds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "recommendations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "provider": {
+                "type": "string"
+              },
+              "credentialsAvailable": {
+                "type": "boolean"
+              },
+              "requiresAnyOf": {
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "fields": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "type",
+                    "description"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "inputsAvailable": {
+                "type": "boolean"
+              },
+              "missingInputAlternatives": {
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "estimatedProviderUsd": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "cacheTtlDays": {
+                "type": "number"
+              },
+              "guidance": {
+                "type": "string"
+              },
+              "limitations": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "id",
+              "provider",
+              "credentialsAvailable",
+              "requiresAnyOf",
+              "fields",
+              "inputsAvailable",
+              "missingInputAlternatives",
+              "estimatedProviderUsd",
+              "cacheTtlDays",
+              "guidance",
+              "limitations"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "catalogFingerprint": {
+          "type": "string"
+        },
+        "selection": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "number",
+              "const": 1
+            },
+            "description": {
+              "type": "string"
+            },
+            "question": {
+              "type": "string"
+            },
+            "knownFields": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "provider": {
+              "type": "string",
+              "enum": [
+                "fiber",
+                "crustdata",
+                "apollo",
+                "moltsets"
+              ]
+            },
+            "operationIds": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "catalogFingerprint": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "version",
+            "description",
+            "question",
+            "knownFields",
+            "operationIds",
+            "catalogFingerprint"
+          ],
+          "additionalProperties": false
+        },
+        "reuseInstructions": {
+          "type": "string"
+        },
+        "executionChecksRequired": {
+          "type": "boolean",
+          "const": true
+        },
+        "supplierRequestsMade": {
+          "type": "number",
+          "const": 0
+        }
+      },
+      "required": [
+        "status",
+        "reason",
+        "unsupportedNeeds",
+        "recommendations",
+        "catalogFingerprint",
+        "selection",
+        "reuseInstructions",
+        "executionChecksRequired",
+        "supplierRequestsMade"
+      ],
+      "additionalProperties": false
+    },
+    "enrichCompany": {
+      "type": "object",
+      "properties": {
+        "company": {
+          "type": "object",
+          "additionalProperties": {}
+        },
+        "operationId": {
+          "type": "string"
+        },
+        "receiptId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "enrichPerson": {
+      "type": "object",
+      "properties": {
+        "person": {
+          "type": "object",
+          "additionalProperties": {}
+        },
+        "operationId": {
+          "type": "string"
+        },
+        "receiptId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "buffered": {
+          "type": "boolean"
+        },
+        "path": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "word_count": {
+          "type": "number"
+        },
+        "access_instructions": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "webSearch": {
+      "type": "object",
+      "additionalProperties": {}
+    },
+    "webFetch": {
+      "type": "object",
+      "additionalProperties": {}
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

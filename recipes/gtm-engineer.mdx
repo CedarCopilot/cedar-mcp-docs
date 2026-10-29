@@ -1,0 +1,46 @@
+---
+title: "A GTM engineer\u2019s first workflow"
+description: "A practical path from connected accounts to a qualified, reviewable outreach queue."
+---
+
+## Outcome
+
+Produce a table of relevant people, the evidence behind each choice, existing relationship status, a proposed message, and an explicit review decision. Only schedule messages the user has approved.
+
+## 1. Discover access
+
+Initialize MCP, list tools, load the applicable skills, inspect connections, and list LinkedIn seats. Confirm `linkedin:read`, CRM/document access, and any later write scopes. Discover signal and enrichment capabilities before using a provider.
+
+## 2. Choose the source
+
+Use one source with a clear commercial hypothesis:
+
+- Your LinkedIn post's reactors or recent connections.
+- A bounded native LinkedIn search.
+- A watched Slack channel containing explicit inbound requests.
+- Website visits or form submissions delivered through the configured HTTP path.
+- A specific company/person change signal on an existing deal.
+
+For an infrastructure product, relevance might be a verified engineering role and an explicit deployment or inference need. A vague keyword match is not qualification.
+
+## 3. Resolve and screen
+
+Keep the source URL/message ID, timestamp, person URL, and company domain. Use Fiber for requested manual enrichment. Check `screen-prospects` with authorized CRM matching and previous outreach exclusions. Read any existing conversation before drafting.
+
+## 4. Save the working set
+
+Create a Cedar table with columns for source, identity, role, company, relevance evidence, prior contact, proposed message, review status, scheduled time, and delivery state. Use stable row IDs. Preserve uncertainty rather than inventing profile facts.
+
+## 5. Prepare drafts
+
+Use the channel-specific draft operation with the actual relationship context. For a signal-driven follow-up, reference only evidence that supports the message. Do not state that a particular person visited or opened something unless the evidence warrants that attribution.
+
+## 6. Review and schedule
+
+Obtain explicit user approval for the batch's recipients, final copy, and times. Apply a conservative per-seat schedule within Cedar's caps, informed by the [HeyReach guidance](/linkedin/limits). Submit approved DMs through `schedule-send` and save returned schedule IDs.
+
+A scheduled item is queued work, not a delivered message. Keep refused/failed/pending/sent states separate. Do not duplicate an item to work around a limit. Use the [queueing guide](/automation/queueing) for deferrals and uncertain outcomes.
+
+## 7. Report useful changes
+
+Send a requested digest with qualified counts, outstanding reviews, scheduled/failed items, and links to the table/source evidence. Quiet periods should stay quiet. A channel event or signal should trigger a decision, not an automatic prospect message.

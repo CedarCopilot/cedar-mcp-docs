@@ -1,0 +1,254 @@
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "listEvents": {
+      "type": "object",
+      "properties": {
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "description": "List of calendar events in the requested time range"
+        },
+        "timezone": {
+          "type": "string",
+          "description": "User's timezone used for the query"
+        },
+        "queryRange": {
+          "type": "object",
+          "properties": {
+            "start": {
+              "type": "string"
+            },
+            "end": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "start",
+            "end"
+          ],
+          "additionalProperties": false,
+          "description": "The time range that was queried"
+        },
+        "totalCount": {
+          "type": "number",
+          "description": "Total number of events returned"
+        }
+      },
+      "additionalProperties": false
+    },
+    "getAvailability": {
+      "type": "object",
+      "properties": {
+        "busyPeriods": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "start": {
+                "type": "string",
+                "description": "Start time of busy period in ISO 8601 format (UTC)"
+              },
+              "end": {
+                "type": "string",
+                "description": "End time of busy period in ISO 8601 format (UTC)"
+              },
+              "startFormatted": {
+                "type": "string",
+                "description": "Start pre-formatted in the user's timezone with weekday, e.g. 'Tuesday Jul 21, 9:00 AM EDT'. Use this — never derive the weekday or local time from the raw start yourself."
+              },
+              "endFormatted": {
+                "type": "string",
+                "description": "End pre-formatted in the user's timezone, e.g. '10:30 AM EDT'."
+              }
+            },
+            "required": [
+              "start",
+              "end",
+              "startFormatted",
+              "endFormatted"
+            ],
+            "additionalProperties": false
+          },
+          "description": "Array of busy time periods when the user is not available"
+        },
+        "daysInRange": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "date": {
+                "type": "string",
+                "description": "Calendar date in the user timezone, YYYY-MM-DD"
+              },
+              "label": {
+                "type": "string",
+                "description": "Weekday + date, e.g. 'Tuesday Jul 21'"
+              }
+            },
+            "required": [
+              "date",
+              "label"
+            ],
+            "additionalProperties": false
+          },
+          "description": "Every calendar day in the queried range, each pre-labeled with its weekday in the user timezone. This is the AUTHORITATIVE date→weekday map: when you write a date in a draft, copy its weekday from here. Never compute a day of week yourself."
+        },
+        "timezone": {
+          "type": "string",
+          "description": "User's timezone used for the query"
+        },
+        "calendarIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Calendar IDs that were checked"
+        },
+        "queryRange": {
+          "type": "object",
+          "properties": {
+            "start": {
+              "type": "string"
+            },
+            "end": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "start",
+            "end"
+          ],
+          "additionalProperties": false,
+          "description": "The time range that was queried"
+        }
+      },
+      "required": [
+        "busyPeriods",
+        "daysInRange",
+        "timezone",
+        "calendarIds",
+        "queryRange"
+      ],
+      "additionalProperties": false
+    },
+    "modifyEvent": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "create",
+            "update",
+            "delete"
+          ],
+          "description": "The operation that was performed/proposed"
+        },
+        "proposed": {
+          "type": "boolean",
+          "description": "True when an approval card was streamed and the write was deferred"
+        },
+        "applied": {
+          "type": "boolean",
+          "description": "True when a real calendar mutation was performed"
+        },
+        "googleEventId": {
+          "type": "string",
+          "description": "The created/updated event's Google Calendar event ID"
+        },
+        "htmlLink": {
+          "type": "string",
+          "description": "Link to open the event in Google Calendar"
+        },
+        "meetLink": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Google Meet link, if one exists"
+        },
+        "summary": {
+          "type": "string",
+          "description": "The event's title"
+        },
+        "start": {
+          "type": "string",
+          "description": "The event's start time"
+        },
+        "end": {
+          "type": "string",
+          "description": "The event's end time"
+        },
+        "attendees": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "displayName": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "email"
+            ],
+            "additionalProperties": false
+          },
+          "description": "Attendees on the event"
+        },
+        "recurrence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "RFC 5545 recurrence rules on the event, if it repeats"
+        },
+        "eventId": {
+          "type": "string",
+          "description": "The event ID that was updated or deleted / proposed for modification"
+        },
+        "affectedEveryone": {
+          "type": "boolean",
+          "description": "Whether the change reached all guests. False means it only touched the user’s own copy of the event — never describe such a change as having moved/edited/cancelled the meeting for others."
+        },
+        "permissionNote": {
+          "type": "string",
+          "description": "What the user is and is not allowed to do to this event, and what to tell them"
+        },
+        "organizerEmail": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Who owns the event — who to ask when the user cannot make the change themselves"
+        },
+        "conversationId": {
+          "type": "string",
+          "description": "Associated conversation ID if available"
+        },
+        "userMessage": {
+          "type": "string",
+          "description": "UI instructions for interacting with a proposed card"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

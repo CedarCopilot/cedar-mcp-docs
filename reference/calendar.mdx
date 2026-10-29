@@ -1,0 +1,511 @@
+---
+title: "calendar"
+description: "Parameters, scopes, and response schema for calendar."
+---
+
+Generated from Cedar's external registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+
+## Capability
+
+Work with the user's Google Calendar. ACTIONS: (1) list-events — fetch events in a time range, enriched with linked CRM conversation info. (2) get-availability — check busy periods across the user's calendars before proposing meeting times. (3) modify-event — CREATE, UPDATE, or DELETE a calendar event (pick via the operation param: "create" needs summary/startDateTime/endDateTime/attendees; "update" needs eventId + the fields to change; "delete" needs eventId). Pass `recurrence` (RFC 5545 RRULE strings) to send a repeating invite. Before rescheduling or editing an existing event, check `canModifyForEveryone` from list-events — when it is false the user does NOT own the event and cannot move it for the other guests; modify-event will refuse the change, and you must offer to ask the organizer or propose times instead. In the in-app chat, modify-event streams a proposal card for the user to approve. On every other surface (external MCP, bots, automations) it applies the change immediately (creating/updating/deleting the real event and notifying attendees) — the calling client is the approval layer. Each action takes its params in a same-named object (e.g. action: "modify-event" pairs with a modifyEvent: &#123;...&#125; object) — omit every params object except the one matching your chosen action.
+
+## Operations and scopes
+
+| Action | Baseline scope |
+| --- | --- |
+| `list-events` | `crm:read` |
+| `get-availability` | `crm:read` |
+| `modify-event` | `crm:read` |
+
+Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Parameters
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `action` | "list-events" · "get-availability" · "modify-event" | Yes | Which operation to perform — pass its matching params object below (e.g. action: "modify-event" pairs with modifyEvent: &#123;...&#125;).  |
+| `listEvents` | object | No |   |
+| `getAvailability` | object | No |   |
+| `modifyEvent` | object | No |   |
+| `user_request_summary` | string | Yes | One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does.  |
+| `is_new_request` | boolean | Yes | true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread.  |
+
+### listEvents
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `timeMin` | string | Yes | Start of time range in ISO 8601 format (e.g., 2026-03-01T00:00:00-07:00). Required — the beginning of the period to fetch events for. If no clear input is provided, use the FIRST DAY of the current year.  |
+| `timeMax` | string | Yes | End of time range in ISO 8601 format (e.g., 2026-03-01T23:59:59-07:00). Required — the end of the period to fetch events for. If no clear input is provided, use the LAST DAY of the current year.  |
+| `calendarId` | string | No | Calendar ID to fetch events from. Defaults to 'primary'. Only pass a different value if the user explicitly asks about a specific calendar.  |
+| `q` | string | No | Free text search query. Filters events by matching against title, description, location, and attendee names/emails.  |
+
+### getAvailability
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `startDateTime` | string | Yes | Start of time range to check availability in ISO 8601 format (e.g., 2024-03-15T00:00:00-07:00). Should be the beginning of the day or time range you want to check.  |
+| `endDateTime` | string | Yes | End of time range to check availability in ISO 8601 format (e.g., 2024-03-15T23:59:59-07:00). Should be the end of the day or time range you want to check.  |
+| `calendarIds` | string&#91;&#93; | No | Optional array of calendar IDs to check. If not provided, uses the user's selected calendars from their calendar settings, or falls back to 'primary' calendar.  |
+
+### modifyEvent
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `operation` | "create" · "update" · "delete" | Yes | Which calendar mutation to perform. "create" needs summary/startDateTime/endDateTime/attendees. "update" needs eventId plus any fields you want to change. "delete" needs only eventId.  |
+| `eventId` | string | No | The Google Calendar event ID to update or delete. Required for operation=update/delete.  |
+| `summary` | string | No | Meeting title. Required for create. For update, provide only to change it. Use format "CompanyName &lt;&gt; CompanyName" if companies are clear, or "FirstName &lt;&gt; FirstName" if not.  |
+| `description` | string | No | Meeting description. For create, defaults to empty. If there is an agreed next topic, provide 2-3 bullet points.  |
+| `startDateTime` | string | No | Start time in ISO 8601 format (e.g., 2024-03-15T10:00:00-07:00). Required for create. MUST be in the future.  |
+| `endDateTime` | string | No | End time in ISO 8601 format (e.g., 2024-03-15T11:00:00-07:00). Required for create. MUST be after startDateTime.  |
+| `attendees` | object&#91;&#93; | No | Meeting attendees. Required for create. CRITICAL: ONLY include attendees whose ACTUAL email addresses you extracted from the conversation (headers, signatures, previous messages). ABSOLUTELY FORBIDDEN: making up emails or using placeholder domains (@example.com, @domain.com). Better to have fewer real attendees than fake ones.  |
+| `location` | string | No | Meeting location. For create, defaults to "Online" for virtual meetings.  |
+| `wantsMeetLink` | boolean | No | Whether to create a video conference link. For create, defaults to true when omitted, so leave it out. Pass false ONLY if the user explicitly asked for no video link or said the meeting is in person with no call. If they asked for a link, keep it even when the meeting is at an office. Never pass false on your own judgement.  |
+| `conferenceType` | "hangoutsMeet" · "zoom" | No | Which conference `wantsMeetLink` creates: `hangoutsMeet` (Google Meet, the default) or `zoom`, which Cedar mints on the user's own Zoom account and attaches to the event. Only set `zoom` when the user asked for Zoom by name; a user who has not connected Zoom gets an event with no video link rather than a failure.  |
+| `recurrence` | string&#91;&#93; | No | RFC 5545 recurrence rules to make this a repeating event, e.g. &#91;"RRULE:FREQ=WEEKLY;BYDAY=MO;COUNT=10"&#93;. Omit for a one-time event. Common patterns: daily "RRULE:FREQ=DAILY", weekly "RRULE:FREQ=WEEKLY;BYDAY=MO,WE,FR", biweekly "RRULE:FREQ=WEEKLY;INTERVAL=2", monthly "RRULE:FREQ=MONTHLY". Add ";COUNT=n" to stop after n occurrences, or ";UNTIL=YYYYMMDD" to stop on a date — do not set both. For "update", this REPLACES the whole recurrence (reissue every rule you want kept, or pass an empty array to make the series a one-time event). Always affects the WHOLE series — the tool resolves eventId to its series master itself, even if you pass a single expanded instance id from list-events. Other fields on the same update (time, summary, etc.) still apply only to the instance you named, if that's what eventId is.  |
+
+## Full input schema
+
+[Download the input schema](/reference/schemas/calendar.input.json). Nested objects, variants, and constraints are preserved in full. Runtime refinements and ownership checks still apply.
+
+<Accordion title="Input JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "list-events",
+        "get-availability",
+        "modify-event"
+      ],
+      "description": "Which operation to perform — pass its matching params object below (e.g. action: \"modify-event\" pairs with modifyEvent: {...})."
+    },
+    "listEvents": {
+      "type": "object",
+      "properties": {
+        "timeMin": {
+          "type": "string",
+          "description": "Start of time range in ISO 8601 format (e.g., 2026-03-01T00:00:00-07:00). Required — the beginning of the period to fetch events for. If no clear input is provided, use the FIRST DAY of the current year."
+        },
+        "timeMax": {
+          "type": "string",
+          "description": "End of time range in ISO 8601 format (e.g., 2026-03-01T23:59:59-07:00). Required — the end of the period to fetch events for. If no clear input is provided, use the LAST DAY of the current year."
+        },
+        "calendarId": {
+          "type": "string",
+          "description": "Calendar ID to fetch events from. Defaults to 'primary'. Only pass a different value if the user explicitly asks about a specific calendar."
+        },
+        "q": {
+          "type": "string",
+          "description": "Free text search query. Filters events by matching against title, description, location, and attendee names/emails."
+        }
+      },
+      "required": [
+        "timeMin",
+        "timeMax"
+      ],
+      "additionalProperties": false
+    },
+    "getAvailability": {
+      "type": "object",
+      "properties": {
+        "startDateTime": {
+          "type": "string",
+          "description": "Start of time range to check availability in ISO 8601 format (e.g., 2024-03-15T00:00:00-07:00). Should be the beginning of the day or time range you want to check."
+        },
+        "endDateTime": {
+          "type": "string",
+          "description": "End of time range to check availability in ISO 8601 format (e.g., 2024-03-15T23:59:59-07:00). Should be the end of the day or time range you want to check."
+        },
+        "calendarIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Optional array of calendar IDs to check. If not provided, uses the user's selected calendars from their calendar settings, or falls back to 'primary' calendar."
+        }
+      },
+      "required": [
+        "startDateTime",
+        "endDateTime"
+      ],
+      "additionalProperties": false
+    },
+    "modifyEvent": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "create",
+            "update",
+            "delete"
+          ],
+          "description": "Which calendar mutation to perform. \"create\" needs summary/startDateTime/endDateTime/attendees. \"update\" needs eventId plus any fields you want to change. \"delete\" needs only eventId."
+        },
+        "eventId": {
+          "type": "string",
+          "description": "The Google Calendar event ID to update or delete. Required for operation=update/delete."
+        },
+        "summary": {
+          "type": "string",
+          "description": "Meeting title. Required for create. For update, provide only to change it. Use format \"CompanyName <> CompanyName\" if companies are clear, or \"FirstName <> FirstName\" if not."
+        },
+        "description": {
+          "type": "string",
+          "description": "Meeting description. For create, defaults to empty. If there is an agreed next topic, provide 2-3 bullet points."
+        },
+        "startDateTime": {
+          "type": "string",
+          "description": "Start time in ISO 8601 format (e.g., 2024-03-15T10:00:00-07:00). Required for create. MUST be in the future."
+        },
+        "endDateTime": {
+          "type": "string",
+          "description": "End time in ISO 8601 format (e.g., 2024-03-15T11:00:00-07:00). Required for create. MUST be after startDateTime."
+        },
+        "attendees": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "displayName": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "email"
+            ],
+            "additionalProperties": false
+          },
+          "description": "Meeting attendees. Required for create. CRITICAL: ONLY include attendees whose ACTUAL email addresses you extracted from the conversation (headers, signatures, previous messages). ABSOLUTELY FORBIDDEN: making up emails or using placeholder domains (@example.com, @domain.com). Better to have fewer real attendees than fake ones."
+        },
+        "location": {
+          "type": "string",
+          "description": "Meeting location. For create, defaults to \"Online\" for virtual meetings."
+        },
+        "wantsMeetLink": {
+          "type": "boolean",
+          "description": "Whether to create a video conference link. For create, defaults to true when omitted, so leave it out. Pass false ONLY if the user explicitly asked for no video link or said the meeting is in person with no call. If they asked for a link, keep it even when the meeting is at an office. Never pass false on your own judgement."
+        },
+        "conferenceType": {
+          "type": "string",
+          "enum": [
+            "hangoutsMeet",
+            "zoom"
+          ],
+          "description": "Which conference `wantsMeetLink` creates: `hangoutsMeet` (Google Meet, the default) or `zoom`, which Cedar mints on the user's own Zoom account and attaches to the event. Only set `zoom` when the user asked for Zoom by name; a user who has not connected Zoom gets an event with no video link rather than a failure."
+        },
+        "recurrence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "RFC 5545 recurrence rules to make this a repeating event, e.g. [\"RRULE:FREQ=WEEKLY;BYDAY=MO;COUNT=10\"]. Omit for a one-time event. Common patterns: daily \"RRULE:FREQ=DAILY\", weekly \"RRULE:FREQ=WEEKLY;BYDAY=MO,WE,FR\", biweekly \"RRULE:FREQ=WEEKLY;INTERVAL=2\", monthly \"RRULE:FREQ=MONTHLY\". Add \";COUNT=n\" to stop after n occurrences, or \";UNTIL=YYYYMMDD\" to stop on a date — do not set both. For \"update\", this REPLACES the whole recurrence (reissue every rule you want kept, or pass an empty array to make the series a one-time event). Always affects the WHOLE series — the tool resolves eventId to its series master itself, even if you pass a single expanded instance id from list-events. Other fields on the same update (time, summary, etc.) still apply only to the instance you named, if that's what eventId is."
+        }
+      },
+      "required": [
+        "operation"
+      ],
+      "additionalProperties": false
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+## Response
+
+Inspect `isError` on the MCP result and `success` / `errorMessage` in the action result. Optional response branches are populated only for the relevant action. Some results include additional provider or operation-specific data.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `success` | boolean | Yes |   |
+| `errorMessage` | string | No |   |
+| `listEvents` | object | No |   |
+| `getAvailability` | object | No |   |
+| `modifyEvent` | object | No |   |
+
+<Accordion title="Output JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "listEvents": {
+      "type": "object",
+      "properties": {
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "description": "List of calendar events in the requested time range"
+        },
+        "timezone": {
+          "type": "string",
+          "description": "User's timezone used for the query"
+        },
+        "queryRange": {
+          "type": "object",
+          "properties": {
+            "start": {
+              "type": "string"
+            },
+            "end": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "start",
+            "end"
+          ],
+          "additionalProperties": false,
+          "description": "The time range that was queried"
+        },
+        "totalCount": {
+          "type": "number",
+          "description": "Total number of events returned"
+        }
+      },
+      "additionalProperties": false
+    },
+    "getAvailability": {
+      "type": "object",
+      "properties": {
+        "busyPeriods": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "start": {
+                "type": "string",
+                "description": "Start time of busy period in ISO 8601 format (UTC)"
+              },
+              "end": {
+                "type": "string",
+                "description": "End time of busy period in ISO 8601 format (UTC)"
+              },
+              "startFormatted": {
+                "type": "string",
+                "description": "Start pre-formatted in the user's timezone with weekday, e.g. 'Tuesday Jul 21, 9:00 AM EDT'. Use this — never derive the weekday or local time from the raw start yourself."
+              },
+              "endFormatted": {
+                "type": "string",
+                "description": "End pre-formatted in the user's timezone, e.g. '10:30 AM EDT'."
+              }
+            },
+            "required": [
+              "start",
+              "end",
+              "startFormatted",
+              "endFormatted"
+            ],
+            "additionalProperties": false
+          },
+          "description": "Array of busy time periods when the user is not available"
+        },
+        "daysInRange": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "date": {
+                "type": "string",
+                "description": "Calendar date in the user timezone, YYYY-MM-DD"
+              },
+              "label": {
+                "type": "string",
+                "description": "Weekday + date, e.g. 'Tuesday Jul 21'"
+              }
+            },
+            "required": [
+              "date",
+              "label"
+            ],
+            "additionalProperties": false
+          },
+          "description": "Every calendar day in the queried range, each pre-labeled with its weekday in the user timezone. This is the AUTHORITATIVE date→weekday map: when you write a date in a draft, copy its weekday from here. Never compute a day of week yourself."
+        },
+        "timezone": {
+          "type": "string",
+          "description": "User's timezone used for the query"
+        },
+        "calendarIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Calendar IDs that were checked"
+        },
+        "queryRange": {
+          "type": "object",
+          "properties": {
+            "start": {
+              "type": "string"
+            },
+            "end": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "start",
+            "end"
+          ],
+          "additionalProperties": false,
+          "description": "The time range that was queried"
+        }
+      },
+      "required": [
+        "busyPeriods",
+        "daysInRange",
+        "timezone",
+        "calendarIds",
+        "queryRange"
+      ],
+      "additionalProperties": false
+    },
+    "modifyEvent": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "create",
+            "update",
+            "delete"
+          ],
+          "description": "The operation that was performed/proposed"
+        },
+        "proposed": {
+          "type": "boolean",
+          "description": "True when an approval card was streamed and the write was deferred"
+        },
+        "applied": {
+          "type": "boolean",
+          "description": "True when a real calendar mutation was performed"
+        },
+        "googleEventId": {
+          "type": "string",
+          "description": "The created/updated event's Google Calendar event ID"
+        },
+        "htmlLink": {
+          "type": "string",
+          "description": "Link to open the event in Google Calendar"
+        },
+        "meetLink": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Google Meet link, if one exists"
+        },
+        "summary": {
+          "type": "string",
+          "description": "The event's title"
+        },
+        "start": {
+          "type": "string",
+          "description": "The event's start time"
+        },
+        "end": {
+          "type": "string",
+          "description": "The event's end time"
+        },
+        "attendees": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "displayName": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "email"
+            ],
+            "additionalProperties": false
+          },
+          "description": "Attendees on the event"
+        },
+        "recurrence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "RFC 5545 recurrence rules on the event, if it repeats"
+        },
+        "eventId": {
+          "type": "string",
+          "description": "The event ID that was updated or deleted / proposed for modification"
+        },
+        "affectedEveryone": {
+          "type": "boolean",
+          "description": "Whether the change reached all guests. False means it only touched the user’s own copy of the event — never describe such a change as having moved/edited/cancelled the meeting for others."
+        },
+        "permissionNote": {
+          "type": "string",
+          "description": "What the user is and is not allowed to do to this event, and what to tell them"
+        },
+        "organizerEmail": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Who owns the event — who to ask when the user cannot make the change themselves"
+        },
+        "conversationId": {
+          "type": "string",
+          "description": "Associated conversation ID if available"
+        },
+        "userMessage": {
+          "type": "string",
+          "description": "UI instructions for interacting with a proposed card"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+[Download the output schema](/reference/schemas/calendar.output.json).

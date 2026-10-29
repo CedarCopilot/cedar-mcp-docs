@@ -1,0 +1,62 @@
+---
+title: "Calling tools"
+description: "Tool names, argument shapes, pagination, results, and retries."
+---
+
+## Names on the wire
+
+The server registers names such as `linkedin-read`, `signals-write`, and `schedule-send`. Some clients display names with underscores or a namespace prefix. Use the name returned by your client's `tools/list`; these docs use the canonical server name.
+
+Most tools group related operations behind an `action` and a matching nested parameter object:
+
+```json
+{
+  "action": "read-thread",
+  "readThread": { "channelId": "C0123EXAMPLE", "limit": 30 }
+}
+```
+
+The action is hyphenated; its parameter key is often camelCase. Some keys differ entirely: `signals-read` uses `internal` for `get-internal`, for example. Follow the reference, and omit unrelated parameter objects.
+
+`connection-write`, `workspace-write`, and `systems-write` take a `change` object with a `type` discriminator. `schedule-send` uses `channel`. `run-sql` takes `query` directly. The server supports some flat-argument normalization; nested arguments remain the most portable form.
+
+## JSON-RPC example
+
+After the client completes the MCP initialization handshake, a call looks like:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "method": "tools/call",
+  "params": {
+    "name": "linkedin-read",
+    "arguments": { "action": "list-seats" }
+  }
+}
+```
+
+Use your MCP SDK for initialization, OAuth, protocol headers, session headers, and HTTP/SSE response handling. `/mcp` is a protocol endpoint; it is not a REST endpoint accepting a bare action object.
+
+## Results
+
+Handle both layers of failure:
+
+- MCP-level `isError: true`, protocol errors, or HTTP authentication failures.
+- An action result with `success: false`, `errorMessage`, and sometimes `errorCode`.
+
+Successful action data commonly lives in a branch such as `listSeats`, `readThread`, `signals`, or `activation`. Read the matching output schema rather than assuming one universal `data` envelope. MCP content can also contain images. Slack image reads are one example.
+
+## Pagination and partial results
+
+Preserve opaque cursors exactly. An empty page with `nextCursor` is not the end. For bounded walks, inspect `complete`, `stoppedBy`, and errors before describing a network or result set as exhaustive. LinkedIn batch outcomes may be mixed; a successful outer call does not make every profile a success.
+
+## Safe retries and concurrent edits
+
+Use the same idempotency key when retrying the same supported operation. Read the current revision/version before updating signals, tables, or billing limits. If it changes, re-read and merge the intended change instead of overwriting a newer state.
+
+Do not automatically retry an externally visible send after a timeout. It may have succeeded at the provider. Reconcile email through `send-email status`, LinkedIn through the relevant chat, and scheduled sends through Cedar's Scheduled folder before taking further action. Not every tool has a general idempotency parameter.
+
+## Intent metadata
+
+Family schemas include optional `user_request_summary` and `is_new_request` fields used for request observability. They do not grant permissions or authorize a send. Use them only to describe the real user request.

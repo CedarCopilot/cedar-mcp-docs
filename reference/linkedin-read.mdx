@@ -1,0 +1,1466 @@
+---
+title: "linkedin-read"
+description: "Parameters, scopes, and response schema for linkedin-read."
+---
+
+Generated from Cedar's external registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+
+<Note>includeCrm: true additionally requires crm:read. Live reads can consume LinkedIn rate budget; find-chat can ingest a previously unsynced chat.</Note>
+
+## Capability
+
+Read LinkedIn. Seat auto-resolves; unipileAccountId selects an owned seat; list-seats shows status. Use matching camelCase params objects. search/search-parameters: native Classic, Sales Navigator or Recruiter search/reference IDs (subscription-dependent). profiles: cached/live batches. companies: company profiles. connections-page/list-connections-page: resumable network; list-connections: bounded walk. list-own-posts: your authored posts/reshares, excluding other feed activity. list-post-reactions: pass reactionId as postId; never substitute the original post for a null reshare reactionId. post-page: posts, comments/replies or reactions. Pages return nextCursor/complete: resume even empty pages with a cursor, keeping seat/post. Partial data cannot prove absence. Network/engagement reads do no profile visits or enrichment. post-engagement: bounded reactors from recent posts/reshares, including originals reshared; sinceDays filters post age, not reaction time. new-connections: accepted invitations by sinceDays (default30), without advancing watermarks. profile-viewers: recent visitors. screen-prospects: prior-list/CRM/DM checks. outreach-status: refresh live messages/replies, including existing contacts; proposed cells only, no table writes. CRM checks need crm:read. Preserve table values/custom stages; unknown history stays unknown. list-chats: owned recent chats/drafts; draftsOnly supported; InMail excluded unless requested. read-chat: messages and unsent draft (body/source/updatedAt) by chatId. find-chat: exact person-to-DM lookup. Send only on explicit request via linkedin-write send-message with draft.body. view-profile: real notified visit, 64/day cap; identifier/url/personId or self:true. Never view just to resolve an invite target: send-invitation accepts URLs with its own lookup budget.
+
+## Operations and scopes
+
+| Action | Baseline scope |
+| --- | --- |
+| `list-seats` | `linkedin:read` |
+| `view-profile` | `linkedin:read` |
+| `list-connections` | `linkedin:read` |
+| `list-connections-page` | `linkedin:read` |
+| `list-own-posts` | `linkedin:read` |
+| `list-post-reactions` | `linkedin:read` |
+| `profile-viewers` | `linkedin:read` |
+| `post-engagement` | `linkedin:read` |
+| `new-connections` | `linkedin:read` |
+| `list-chats` | `linkedin:read` |
+| `read-chat` | `linkedin:read` |
+| `find-chat` | `linkedin:read` |
+| `search` | `linkedin:read` |
+| `search-parameters` | `linkedin:read` |
+| `connections-page` | `linkedin:read` |
+| `post-page` | `linkedin:read` |
+| `profiles` | `linkedin:read` |
+| `companies` | `linkedin:read` |
+| `screen-prospects` | `linkedin:read` |
+| `outreach-status` | `linkedin:read` |
+
+Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Parameters
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `action` | "list-seats" · "view-profile" · "list-connections" · "list-connections-page" · "list-own-posts" · "list-post-reactions" · "profile-viewers" · "post-engagement" · "new-connections" · "list-chats" · "read-chat" · "find-chat" · "search" · "search-parameters" · "connections-page" · "post-page" · "profiles" · "companies" · "screen-prospects" · "outreach-status" | Yes | Which read operation to perform — pass its matching params object (e.g. action: "view-profile" pairs with viewProfile: &#123;...&#125;).  |
+| `listSeats` | object | No | No parameters — lists your connected LinkedIn seats.  |
+| `viewProfile` | object | No |   |
+| `listConnections` | object | No |   |
+| `listConnectionsPage` | object | No |   |
+| `listOwnPosts` | object | No |   |
+| `listPostReactions` | object | No |   |
+| `profileViewers` | object | No |   |
+| `postEngagement` | object | No |   |
+| `newConnections` | object | No |   |
+| `listChats` | object | No |   |
+| `readChat` | object | No |   |
+| `findChat` | object | No |   |
+| `search` | object | No |   |
+| `searchParameters` | object | No |   |
+| `connectionsPage` | object | No |   |
+| `postPage` | object | No |   |
+| `profiles` | object | No |   |
+| `companies` | object | No |   |
+| `screenProspects` | object | No |   |
+| `outreachStatus` | object | No |   |
+| `user_request_summary` | string | Yes | One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does.  |
+| `is_new_request` | boolean | Yes | true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread.  |
+
+### listSeats
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+
+
+### viewProfile
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `identifier` | string | No | LinkedIn public identifier (the /in/&lt;slug&gt;) or member URN to view.  |
+| `url` | string | No | Full LinkedIn profile URL of the target (e.g. https://www.linkedin.com/in/jane).  |
+| `personId` | string | No | Cedar crm_person id of the target (resolved to a LinkedIn identifier server-side).  |
+| `self` | boolean | No | View the connected seat owner's own profile (smoke test) instead of a target.  |
+| `unipileAccountId` | string | No | Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one.  |
+
+### listConnections
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `maxPages` | integer | No | Max relation pages (50 rows each) to walk. Default 200 — enough for a 10k network. Lower it only to sample. minimum: 1; maximum: 400 |
+| `unipileAccountId` | string | No | Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one.  |
+
+### listConnectionsPage
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `cursor` | string | No | Opaque nextCursor from the previous page of this same action and seat. Omit for the first page. minLength: 1 |
+| `unipileAccountId` | string | No | Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one.  |
+
+### listOwnPosts
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `cursor` | string | No | Opaque nextCursor from the previous page of this same action and seat. Omit for the first page. minLength: 1 |
+| `unipileAccountId` | string | No | Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one.  |
+
+### listPostReactions
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `cursor` | string | No | Opaque nextCursor from the previous page of this same action and seat. Omit for the first page. minLength: 1 |
+| `unipileAccountId` | string | No | Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one.  |
+| `postId` | string | Yes | Use a reactionId from list-own-posts (the reshare activity id for a repost). Keep this postId unchanged while paging. minLength: 1 |
+
+### profileViewers
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `unipileAccountId` | string | No | Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one.  |
+
+### postEngagement
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `sinceDays` | integer | No | Only posts newer than this many days (default: all posts in the walked feed). minimum: 1; maximum: 365 |
+| `postMaxPages` | integer | No | How many pages of your own feed to walk (default 10). minimum: 1; maximum: 20 |
+| `maxReactors` | integer | No | Cap on reactors collected across all posts (default 500). minimum: 1; maximum: 5000 |
+| `unipileAccountId` | string | No | Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one.  |
+
+### newConnections
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `sinceDays` | integer | No | Look back this many days (default 30). This is an ad-hoc read and never advances the background poll's high-water mark. minimum: 1; maximum: 365 |
+| `unipileAccountId` | string | No | Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one.  |
+
+### listChats
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `draftsOnly` | boolean | No | Return only your chats with a saved draft, before applying the limit.  |
+| `limit` | integer | No | Max chats to return (default 100). minimum: 1; maximum: 200 |
+| `includeInmail` | boolean | No | Include quarantined InMail chats (excluded by default).  |
+| `unipileAccountId` | string | No | Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one.  |
+
+### readChat
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `chatId` | string | Yes | The LinkedIn chat id (from list-chats) to read messages from.  |
+| `limit` | integer | No | Max messages to return (default 200). minimum: 1; maximum: 200 |
+
+### findChat
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `refresh` | boolean | No | Refresh the indexed thread from LinkedIn before returning it.  |
+| `name` | string | No | The person's name as the user said it ("Isabelle", "Isabelle Ilyia"). Several matches come back as candidates to ask the user about — never pick one yourself.  |
+| `providerId` | string | No | Unipile provider id / member URN of the target (most direct).  |
+| `url` | string | No | Full LinkedIn profile URL of the target (e.g. https://www.linkedin.com/in/jane).  |
+| `personId` | string | No | Cedar crm_person id of the target (resolved to a LinkedIn identifier server-side).  |
+| `unipileAccountId` | string | No | Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one.  |
+
+### search
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `cursor` | string | No |  minLength: 1 |
+| `limit` | integer | No |  minimum: 1; maximum: 100 |
+| `unipileAccountId` | string | No | Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one.  |
+| `url` | string | No | Existing filtered LinkedIn search URL; alternative to structured parameters. format: "uri" |
+| `api` | "classic" · "sales_navigator" · "recruiter" | No |   |
+| `category` | "people" · "companies" | No |   |
+| `keywords` | string | No |   |
+| `networkDistance` | integer&#91;&#93; | No |  minItems: 1; maxItems: 3 |
+| `filters` | object | No | Read-only Unipile v1 search filters for the selected product. Use search-parameters to discover reference IDs. Subscription-dependent; never save a search.  |
+
+### searchParameters
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `type` | string | Yes |  minLength: 1 |
+| `keywords` | string | No |   |
+| `limit` | integer | No |  minimum: 1; maximum: 100 |
+| `unipileAccountId` | string | No | Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one.  |
+
+### connectionsPage
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `cursor` | string | No |  minLength: 1 |
+| `limit` | integer | No |  minimum: 1; maximum: 100 |
+| `unipileAccountId` | string | No | Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one.  |
+
+### postPage
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `cursor` | string | No |  minLength: 1 |
+| `limit` | integer | No |  minimum: 1; maximum: 100 |
+| `unipileAccountId` | string | No | Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one.  |
+| `kind` | "posts" · "comments" · "reactions" | Yes |   |
+| `identifier` | string | Yes | For posts: user provider ID. For comments/reactions: post social_id, not an assumed URL activity ID. minLength: 1 |
+| `commentId` | string | No | List replies to this comment.  |
+
+### profiles
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `people` | object&#91;&#93; | Yes |  minItems: 1; maxItems: 50 |
+| `cacheOnly` | boolean | No |   |
+| `maxAgeDays` | number | No |  minimum: 0; maximum: 365 |
+| `unipileAccountId` | string | No | Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one.  |
+
+### companies
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `identifiers` | string&#91;&#93; | Yes |  minItems: 1; maxItems: 20 |
+| `unipileAccountId` | string | No | Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one.  |
+
+### screenProspects
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `people` | object&#91;&#93; | Yes |  minItems: 1; maxItems: 50 |
+| `includeCrm` | boolean | No | Also check org person-keyed contacts and caller-owned legacy contacts. Requires crm:read.  |
+| `excludedUrls` | string&#91;&#93; | No | URLs already in prior outreach tables, read through the authorized table tool. maxItems: 2500 |
+| `checkConnections` | boolean | No | Match first-degree relations and obtain provider IDs without profile views (default true).  |
+| `connectionsMaxPages` | integer | No |  minimum: 1; maximum: 400 |
+| `unipileAccountId` | string | No | Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one.  |
+
+### outreachStatus
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `people` | object&#91;&#93; | Yes |  minItems: 1; maxItems: 50 |
+| `includeCrm` | boolean | No | Also check org person-keyed contacts and caller-owned legacy contacts. Requires crm:read.  |
+| `excludedUrls` | string&#91;&#93; | No | URLs already in prior outreach tables, read through the authorized table tool. maxItems: 2500 |
+| `checkConnections` | boolean | No | Match first-degree relations and obtain provider IDs without profile views (default true).  |
+| `connectionsMaxPages` | integer | No |  minimum: 1; maximum: 400 |
+| `unipileAccountId` | string | No | Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one.  |
+
+## Full input schema
+
+[Download the input schema](/reference/schemas/linkedin-read.input.json). Nested objects, variants, and constraints are preserved in full. Runtime refinements and ownership checks still apply.
+
+<Accordion title="Input JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "list-seats",
+        "view-profile",
+        "list-connections",
+        "list-connections-page",
+        "list-own-posts",
+        "list-post-reactions",
+        "profile-viewers",
+        "post-engagement",
+        "new-connections",
+        "list-chats",
+        "read-chat",
+        "find-chat",
+        "search",
+        "search-parameters",
+        "connections-page",
+        "post-page",
+        "profiles",
+        "companies",
+        "screen-prospects",
+        "outreach-status"
+      ],
+      "description": "Which read operation to perform — pass its matching params object (e.g. action: \"view-profile\" pairs with viewProfile: {...})."
+    },
+    "listSeats": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": true,
+      "description": "No parameters — lists your connected LinkedIn seats."
+    },
+    "viewProfile": {
+      "type": "object",
+      "properties": {
+        "identifier": {
+          "type": "string",
+          "description": "LinkedIn public identifier (the /in/<slug>) or member URN to view."
+        },
+        "url": {
+          "type": "string",
+          "description": "Full LinkedIn profile URL of the target (e.g. https://www.linkedin.com/in/jane)."
+        },
+        "personId": {
+          "type": "string",
+          "description": "Cedar crm_person id of the target (resolved to a LinkedIn identifier server-side)."
+        },
+        "self": {
+          "type": "boolean",
+          "description": "View the connected seat owner's own profile (smoke test) instead of a target."
+        },
+        "unipileAccountId": {
+          "type": "string",
+          "description": "Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one."
+        }
+      },
+      "additionalProperties": false
+    },
+    "listConnections": {
+      "type": "object",
+      "properties": {
+        "maxPages": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 400,
+          "description": "Max relation pages (50 rows each) to walk. Default 200 — enough for a 10k network. Lower it only to sample."
+        },
+        "unipileAccountId": {
+          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+        }
+      },
+      "additionalProperties": false
+    },
+    "listConnectionsPage": {
+      "type": "object",
+      "properties": {
+        "cursor": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Opaque nextCursor from the previous page of this same action and seat. Omit for the first page."
+        },
+        "unipileAccountId": {
+          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+        }
+      },
+      "additionalProperties": false
+    },
+    "listOwnPosts": {
+      "$ref": "#/properties/listConnectionsPage"
+    },
+    "listPostReactions": {
+      "type": "object",
+      "properties": {
+        "cursor": {
+          "$ref": "#/properties/listConnectionsPage/properties/cursor"
+        },
+        "unipileAccountId": {
+          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+        },
+        "postId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Use a reactionId from list-own-posts (the reshare activity id for a repost). Keep this postId unchanged while paging."
+        }
+      },
+      "required": [
+        "postId"
+      ],
+      "additionalProperties": false
+    },
+    "profileViewers": {
+      "type": "object",
+      "properties": {
+        "unipileAccountId": {
+          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+        }
+      },
+      "additionalProperties": false
+    },
+    "postEngagement": {
+      "type": "object",
+      "properties": {
+        "sinceDays": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 365,
+          "description": "Only posts newer than this many days (default: all posts in the walked feed)."
+        },
+        "postMaxPages": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20,
+          "description": "How many pages of your own feed to walk (default 10)."
+        },
+        "maxReactors": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5000,
+          "description": "Cap on reactors collected across all posts (default 500)."
+        },
+        "unipileAccountId": {
+          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+        }
+      },
+      "additionalProperties": false
+    },
+    "newConnections": {
+      "type": "object",
+      "properties": {
+        "sinceDays": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 365,
+          "description": "Look back this many days (default 30). This is an ad-hoc read and never advances the background poll's high-water mark."
+        },
+        "unipileAccountId": {
+          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+        }
+      },
+      "additionalProperties": false
+    },
+    "listChats": {
+      "type": "object",
+      "properties": {
+        "draftsOnly": {
+          "type": "boolean",
+          "description": "Return only your chats with a saved draft, before applying the limit."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200,
+          "description": "Max chats to return (default 100)."
+        },
+        "includeInmail": {
+          "type": "boolean",
+          "description": "Include quarantined InMail chats (excluded by default)."
+        },
+        "unipileAccountId": {
+          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+        }
+      },
+      "additionalProperties": false
+    },
+    "readChat": {
+      "type": "object",
+      "properties": {
+        "chatId": {
+          "type": "string",
+          "description": "The LinkedIn chat id (from list-chats) to read messages from."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200,
+          "description": "Max messages to return (default 200)."
+        }
+      },
+      "required": [
+        "chatId"
+      ],
+      "additionalProperties": false
+    },
+    "findChat": {
+      "type": "object",
+      "properties": {
+        "refresh": {
+          "type": "boolean",
+          "description": "Refresh the indexed thread from LinkedIn before returning it."
+        },
+        "name": {
+          "type": "string",
+          "description": "The person's name as the user said it (\"Isabelle\", \"Isabelle Ilyia\"). Several matches come back as candidates to ask the user about — never pick one yourself."
+        },
+        "providerId": {
+          "type": "string",
+          "description": "Unipile provider id / member URN of the target (most direct)."
+        },
+        "url": {
+          "$ref": "#/properties/viewProfile/properties/url"
+        },
+        "personId": {
+          "$ref": "#/properties/viewProfile/properties/personId"
+        },
+        "unipileAccountId": {
+          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+        }
+      },
+      "additionalProperties": false
+    },
+    "search": {
+      "type": "object",
+      "properties": {
+        "cursor": {
+          "type": "string",
+          "minLength": 1
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "unipileAccountId": {
+          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Existing filtered LinkedIn search URL; alternative to structured parameters."
+        },
+        "api": {
+          "type": "string",
+          "enum": [
+            "classic",
+            "sales_navigator",
+            "recruiter"
+          ]
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "people",
+            "companies"
+          ]
+        },
+        "keywords": {
+          "type": "string"
+        },
+        "networkDistance": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 3
+          },
+          "minItems": 1,
+          "maxItems": 3
+        },
+        "filters": {
+          "type": "object",
+          "additionalProperties": {},
+          "description": "Read-only Unipile v1 search filters for the selected product. Use search-parameters to discover reference IDs. Subscription-dependent; never save a search."
+        }
+      },
+      "additionalProperties": false
+    },
+    "searchParameters": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "keywords": {
+          "type": "string"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "unipileAccountId": {
+          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    "connectionsPage": {
+      "type": "object",
+      "properties": {
+        "cursor": {
+          "$ref": "#/properties/search/properties/cursor"
+        },
+        "limit": {
+          "$ref": "#/properties/search/properties/limit"
+        },
+        "unipileAccountId": {
+          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+        }
+      },
+      "additionalProperties": false
+    },
+    "postPage": {
+      "type": "object",
+      "properties": {
+        "cursor": {
+          "$ref": "#/properties/search/properties/cursor"
+        },
+        "limit": {
+          "$ref": "#/properties/search/properties/limit"
+        },
+        "unipileAccountId": {
+          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "posts",
+            "comments",
+            "reactions"
+          ]
+        },
+        "identifier": {
+          "type": "string",
+          "minLength": 1,
+          "description": "For posts: user provider ID. For comments/reactions: post social_id, not an assumed URL activity ID."
+        },
+        "commentId": {
+          "type": "string",
+          "description": "List replies to this comment."
+        }
+      },
+      "required": [
+        "kind",
+        "identifier"
+      ],
+      "additionalProperties": false
+    },
+    "profiles": {
+      "type": "object",
+      "properties": {
+        "people": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "rowId": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "providerId": {
+                "$ref": "#/properties/findChat/properties/providerId"
+              }
+            },
+            "required": [
+              "url"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1,
+          "maxItems": 50
+        },
+        "cacheOnly": {
+          "type": "boolean"
+        },
+        "maxAgeDays": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 365
+        },
+        "unipileAccountId": {
+          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+        }
+      },
+      "required": [
+        "people"
+      ],
+      "additionalProperties": false
+    },
+    "companies": {
+      "type": "object",
+      "properties": {
+        "identifiers": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "maxItems": 20
+        },
+        "unipileAccountId": {
+          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+        }
+      },
+      "required": [
+        "identifiers"
+      ],
+      "additionalProperties": false
+    },
+    "screenProspects": {
+      "type": "object",
+      "properties": {
+        "people": {
+          "type": "array",
+          "items": {
+            "$ref": "#/properties/profiles/properties/people/items"
+          },
+          "minItems": 1,
+          "maxItems": 50
+        },
+        "includeCrm": {
+          "type": "boolean",
+          "description": "Also check org person-keyed contacts and caller-owned legacy contacts. Requires crm:read."
+        },
+        "excludedUrls": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          },
+          "maxItems": 2500,
+          "description": "URLs already in prior outreach tables, read through the authorized table tool."
+        },
+        "checkConnections": {
+          "type": "boolean",
+          "description": "Match first-degree relations and obtain provider IDs without profile views (default true)."
+        },
+        "connectionsMaxPages": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 400
+        },
+        "unipileAccountId": {
+          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+        }
+      },
+      "required": [
+        "people"
+      ],
+      "additionalProperties": false
+    },
+    "outreachStatus": {
+      "$ref": "#/properties/screenProspects"
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+## Response
+
+Inspect `isError` on the MCP result and `success` / `errorMessage` in the action result. Optional response branches are populated only for the relevant action. Some results include additional provider or operation-specific data.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `success` | boolean | Yes |   |
+| `errorMessage` | string | No |   |
+| `listSeats` | object | No |   |
+| `viewProfile` | object | No |   |
+| `listConnections` | object | No |   |
+| `listConnectionsPage` | object | No |   |
+| `listOwnPosts` | object | No |   |
+| `listPostReactions` | object | No |   |
+| `profileViewers` | object | No |   |
+| `postEngagement` | object | No |   |
+| `newConnections` | object | No |   |
+| `listChats` | object | No |   |
+| `readChat` | object | No |   |
+| `findChat` | object | No |   |
+| `search` | object | No |   |
+| `searchParameters` | object | No |   |
+| `connectionsPage` | object | No |   |
+| `postPage` | object | No |   |
+| `profiles` | object | No |   |
+| `companies` | object | No |   |
+| `screenProspects` | object | No |   |
+| `outreachStatus` | object | No |   |
+
+<Accordion title="Output JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "listSeats": {
+      "type": "object",
+      "properties": {
+        "seats": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "viewProfile": {
+      "type": "object",
+      "properties": {
+        "providerId": {
+          "type": "string"
+        },
+        "publicIdentifier": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "headline": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "listConnections": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/properties/listSeats/properties/seats/items"
+          }
+        },
+        "complete": {
+          "type": "boolean"
+        },
+        "total": {
+          "type": "number"
+        },
+        "stoppedBy": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "listConnectionsPage": {
+      "type": "object",
+      "properties": {
+        "nextCursor": {
+          "type": "string",
+          "description": "Continue with this cursor even if the page has no items. Absent when exhausted."
+        },
+        "complete": {
+          "type": "boolean",
+          "description": "True only when there is no next page. This page alone is not the complete network or audience."
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "providerId": {
+                "type": "string"
+              },
+              "publicIdentifier": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "headline": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "profileUrl": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "connectedAt": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "name"
+            ],
+            "additionalProperties": true
+          }
+        }
+      },
+      "required": [
+        "complete",
+        "items"
+      ],
+      "additionalProperties": false
+    },
+    "listOwnPosts": {
+      "type": "object",
+      "properties": {
+        "nextCursor": {
+          "$ref": "#/properties/listConnectionsPage/properties/nextCursor"
+        },
+        "complete": {
+          "$ref": "#/properties/listConnectionsPage/properties/complete"
+        },
+        "owner": {
+          "type": "object",
+          "properties": {
+            "providerId": {
+              "type": "string"
+            },
+            "publicIdentifier": {
+              "type": "string"
+            },
+            "premiumFeatures": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "premiumFeatures"
+          ],
+          "additionalProperties": false
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "reactionId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Pass this to list-post-reactions.postId. Null means the provider omitted the reshare activity id; do not query the original post as your repost."
+              },
+              "text": {
+                "type": "string"
+              },
+              "author": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "public_identifier": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": true
+              },
+              "reposted_by": {
+                "$ref": "#/properties/listOwnPosts/properties/items/items/properties/author"
+              },
+              "is_repost": {
+                "type": "boolean"
+              },
+              "share_url": {
+                "type": "string"
+              },
+              "reaction_counter": {
+                "type": "number"
+              },
+              "parsed_datetime": {
+                "type": "string"
+              },
+              "repost_parsed_datetime": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "reactionId"
+            ],
+            "additionalProperties": true
+          }
+        }
+      },
+      "required": [
+        "complete",
+        "owner",
+        "items"
+      ],
+      "additionalProperties": false
+    },
+    "listPostReactions": {
+      "type": "object",
+      "properties": {
+        "nextCursor": {
+          "$ref": "#/properties/listConnectionsPage/properties/nextCursor"
+        },
+        "complete": {
+          "$ref": "#/properties/listConnectionsPage/properties/complete"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "author": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "$ref": "#/properties/listOwnPosts/properties/items/items/properties/author/properties/id"
+                  },
+                  "name": {
+                    "$ref": "#/properties/listOwnPosts/properties/items/items/properties/author/properties/name"
+                  },
+                  "public_identifier": {
+                    "$ref": "#/properties/listOwnPosts/properties/items/items/properties/author/properties/public_identifier"
+                  },
+                  "profile_url": {
+                    "type": "string"
+                  },
+                  "headline": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": true
+              },
+              "value": {
+                "type": "string",
+                "description": "Reaction type, such as LIKE or PRAISE."
+              },
+              "reaction_type": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        }
+      },
+      "required": [
+        "complete",
+        "items"
+      ],
+      "additionalProperties": false
+    },
+    "profileViewers": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/properties/listSeats/properties/seats/items"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "postEngagement": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/properties/listSeats/properties/seats/items"
+          }
+        },
+        "total": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": true
+    },
+    "newConnections": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/properties/listSeats/properties/seats/items"
+          }
+        },
+        "total": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": true
+    },
+    "listChats": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "chatId": {
+                "type": "string",
+                "description": "Pass to read-chat or sync-chat."
+              },
+              "draft": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "body": {
+                        "type": "string",
+                        "description": "Saved unsent text. Use as send-message.text only when the user asks to send it."
+                      },
+                      "source": {
+                        "type": "string",
+                        "enum": [
+                          "user",
+                          "agent"
+                        ]
+                      },
+                      "updatedAt": {
+                        "type": "string",
+                        "description": "Saved draft version timestamp."
+                      }
+                    },
+                    "required": [
+                      "body",
+                      "source",
+                      "updatedAt"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "Saved draft, or null when none exists."
+              },
+              "counterpartName": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Who the chat is with."
+              },
+              "counterpartHeadline": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "counterpartPublicId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The counterpart's LinkedIn public identifier."
+              },
+              "chatType": {
+                "type": "string",
+                "description": "dm | group | inmail"
+              },
+              "lastMessageAt": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "Recency — rows are sorted by this, newest first."
+              },
+              "lastMessageSnippet": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "lastMessageFromSelf": {
+                "type": "boolean",
+                "description": "True when the user sent the last message."
+              },
+              "unreadCount": {
+                "type": "number"
+              },
+              "conversationId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Set when this chat is ALREADY attached to a Cedar deal."
+              }
+            },
+            "required": [
+              "chatId"
+            ],
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "readChat": {
+      "type": "object",
+      "properties": {
+        "draft": {
+          "anyOf": [
+            {
+              "$ref": "#/properties/listChats/properties/items/items/properties/draft/anyOf/0"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "chatId": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "messages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Message body."
+              },
+              "chatId": {
+                "type": "string"
+              },
+              "readReceipt": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "const": "opened"
+                      },
+                      "source": {
+                        "type": "string",
+                        "enum": [
+                          "unipile_webhook",
+                          "unipile_sync"
+                        ]
+                      },
+                      "observedAt": {
+                        "type": "string",
+                        "description": "When Cedar first observed the receipt; not the time it was opened."
+                      }
+                    },
+                    "required": [
+                      "status",
+                      "source",
+                      "observedAt"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "Provider-confirmed read of our outbound message. Absent/null means unknown, not unopened. No recipient identity is inferred."
+              }
+            },
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "findChat": {
+      "type": "object",
+      "properties": {
+        "found": {
+          "type": "boolean"
+        },
+        "chatId": {
+          "type": "string",
+          "description": "Pass to read-chat, sync-chat, or send-message."
+        },
+        "counterpart": {
+          "type": "object",
+          "properties": {
+            "providerId": {
+              "type": "string",
+              "description": "Pass back as providerId to pick this person."
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "headline": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "providerId"
+          ],
+          "additionalProperties": true
+        },
+        "source": {
+          "type": "string",
+          "enum": [
+            "index",
+            "live"
+          ],
+          "description": "\"index\" = already in Cedar; \"live\" = found on LinkedIn and synced into Cedar just now."
+        },
+        "messagesSynced": {
+          "type": "number"
+        },
+        "reason": {
+          "type": "string",
+          "enum": [
+            "ambiguous_name",
+            "person_not_found",
+            "no_chat",
+            "incomplete_search"
+          ],
+          "description": "Why nothing was found. ambiguous_name → ask the user which candidate they mean."
+        },
+        "candidates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/properties/findChat/properties/counterpart"
+          }
+        }
+      },
+      "required": [
+        "found"
+      ],
+      "additionalProperties": true
+    },
+    "search": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/properties/listSeats/properties/seats/items"
+          }
+        },
+        "nextCursor": {
+          "type": "string"
+        },
+        "complete": {
+          "type": "boolean"
+        },
+        "paging": {
+          "$ref": "#/properties/listSeats/properties/seats/items"
+        }
+      },
+      "required": [
+        "items",
+        "complete"
+      ],
+      "additionalProperties": true
+    },
+    "searchParameters": {
+      "$ref": "#/properties/search"
+    },
+    "connectionsPage": {
+      "$ref": "#/properties/search"
+    },
+    "postPage": {
+      "$ref": "#/properties/search"
+    },
+    "profiles": {
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string"
+              },
+              "rowId": {
+                "type": "string"
+              },
+              "identifier": {
+                "type": "string"
+              },
+              "success": {
+                "type": "boolean"
+              },
+              "error": {
+                "type": "string"
+              },
+              "value": {
+                "$ref": "#/properties/listSeats/properties/seats/items"
+              },
+              "eligibility": {
+                "type": "string",
+                "enum": [
+                  "exclude",
+                  "unknown",
+                  "eligible_for_research"
+                ]
+              },
+              "crmStatus": {
+                "type": "string",
+                "enum": [
+                  "existing_contact",
+                  "no_match",
+                  "not_checked"
+                ]
+              },
+              "priorListMatch": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "success"
+            ],
+            "additionalProperties": true
+          }
+        },
+        "complete": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "results",
+        "complete"
+      ],
+      "additionalProperties": true
+    },
+    "companies": {
+      "$ref": "#/properties/profiles"
+    },
+    "screenProspects": {
+      "$ref": "#/properties/profiles"
+    },
+    "outreachStatus": {
+      "$ref": "#/properties/profiles"
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+[Download the output schema](/reference/schemas/linkedin-read.output.json).

@@ -1,0 +1,337 @@
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "dataServices": {
+      "type": "object",
+      "properties": {
+        "self": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "scopeKind": {
+                  "type": "string",
+                  "enum": [
+                    "user",
+                    "organization"
+                  ]
+                },
+                "scopeId": {
+                  "type": "string"
+                },
+                "version": {
+                  "type": "integer",
+                  "exclusiveMinimum": 0
+                },
+                "personProvider": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "enum": [
+                        "fiber",
+                        "crustdata",
+                        "apollo",
+                        "moltsets"
+                      ]
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "companyProvider": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/properties/dataServices/properties/self/anyOf/0/properties/personProvider/anyOf/0"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "allowedProviders": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/properties/dataServices/properties/self/anyOf/0/properties/personProvider/anyOf/0"
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "cacheMaxAgeDays": {
+                  "anyOf": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "watchDefaults": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string",
+                          "const": "crustdata"
+                        },
+                        "everyHours": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 168
+                        },
+                        "refreshFrequencyDays": {
+                          "type": "number",
+                          "enum": [
+                            1,
+                            3,
+                            7,
+                            14,
+                            30
+                          ]
+                        },
+                        "maxResultsPerRun": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 100
+                        },
+                        "signalTypes": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "title_change",
+                              "job_change",
+                              "headline_change",
+                              "person_location_change",
+                              "education_added",
+                              "skill_added",
+                              "headcount_change",
+                              "funding_change",
+                              "news_added",
+                              "funding_round_change",
+                              "investor_added",
+                              "acquisition_added",
+                              "hiring_change",
+                              "company_name_change",
+                              "certification_added",
+                              "honor_added",
+                              "connection_count_change",
+                              "funding_milestone_added",
+                              "follower_count_change",
+                              "industry_change",
+                              "company_location_change"
+                            ]
+                          },
+                          "minItems": 1,
+                          "maxItems": 21
+                        }
+                      },
+                      "required": [
+                        "provider",
+                        "everyHours",
+                        "refreshFrequencyDays",
+                        "maxResultsPerRun",
+                        "signalTypes"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "updatedBy": {
+                  "type": "string"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              },
+              "required": [
+                "id",
+                "scopeKind",
+                "scopeId",
+                "version",
+                "personProvider",
+                "companyProvider",
+                "allowedProviders",
+                "cacheMaxAgeDays",
+                "watchDefaults",
+                "updatedBy",
+                "createdAt",
+                "updatedAt"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "organization": {
+          "anyOf": [
+            {
+              "$ref": "#/properties/dataServices/properties/self/anyOf/0"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "effective": {
+          "type": "object",
+          "properties": {
+            "personProvider": {
+              "$ref": "#/properties/dataServices/properties/self/anyOf/0/properties/personProvider/anyOf/0"
+            },
+            "companyProvider": {
+              "$ref": "#/properties/dataServices/properties/self/anyOf/0/properties/personProvider/anyOf/0"
+            },
+            "allowedProviders": {
+              "type": "array",
+              "items": {
+                "$ref": "#/properties/dataServices/properties/self/anyOf/0/properties/personProvider/anyOf/0"
+              }
+            },
+            "cacheMaxAgeDays": {
+              "type": "integer"
+            },
+            "watchDefaults": {
+              "$ref": "#/properties/dataServices/properties/self/anyOf/0/properties/watchDefaults/anyOf/0"
+            },
+            "origins": {
+              "type": "object",
+              "properties": {
+                "personProvider": {
+                  "type": "string",
+                  "enum": [
+                    "request",
+                    "user",
+                    "organization",
+                    "system"
+                  ]
+                },
+                "companyProvider": {
+                  "$ref": "#/properties/dataServices/properties/effective/properties/origins/properties/personProvider"
+                },
+                "cacheMaxAgeDays": {
+                  "$ref": "#/properties/dataServices/properties/effective/properties/origins/properties/personProvider"
+                },
+                "watchDefaults": {
+                  "$ref": "#/properties/dataServices/properties/effective/properties/origins/properties/personProvider"
+                }
+              },
+              "required": [
+                "personProvider",
+                "companyProvider",
+                "cacheMaxAgeDays",
+                "watchDefaults"
+              ],
+              "additionalProperties": false
+            },
+            "settingsVersions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "version": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "id",
+                  "version"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "blockedProviders": {
+              "type": "array",
+              "items": {
+                "$ref": "#/properties/dataServices/properties/self/anyOf/0/properties/personProvider/anyOf/0"
+              }
+            },
+            "credentials": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "provider": {
+                    "$ref": "#/properties/dataServices/properties/self/anyOf/0/properties/personProvider/anyOf/0"
+                  },
+                  "available": {
+                    "type": "boolean"
+                  },
+                  "configuredOnOrganization": {
+                    "type": "boolean"
+                  },
+                  "platformFallbackAvailable": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "provider",
+                  "available",
+                  "configuredOnOrganization",
+                  "platformFallbackAvailable"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "personProvider",
+            "companyProvider",
+            "allowedProviders",
+            "cacheMaxAgeDays",
+            "watchDefaults",
+            "origins",
+            "settingsVersions",
+            "blockedProviders",
+            "credentials"
+          ],
+          "additionalProperties": false
+        },
+        "canManageOrganization": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "self",
+        "organization",
+        "effective",
+        "canManageOrganization"
+      ],
+      "additionalProperties": false
+    },
+    "errorMessage": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

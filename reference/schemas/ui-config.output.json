@@ -1,0 +1,246 @@
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "canvases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "selectedAopNames": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "columnFilters": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "columnId": {
+                          "type": "string"
+                        },
+                        "selected": {
+                          "type": "array",
+                          "items": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        },
+                        "excluded": {
+                          "type": "array",
+                          "items": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        },
+                        "searchText": {
+                          "type": "string"
+                        },
+                        "numberValue": {
+                          "type": "string"
+                        },
+                        "numberOperator": {
+                          "type": "string",
+                          "enum": [
+                            "gt",
+                            "lt",
+                            "eq",
+                            "empty"
+                          ]
+                        },
+                        "dateFrom": {
+                          "type": "string"
+                        },
+                        "dateTo": {
+                          "type": "string"
+                        },
+                        "dateOperator": {
+                          "type": "string",
+                          "enum": [
+                            "before",
+                            "after",
+                            "on",
+                            "range",
+                            "empty"
+                          ]
+                        },
+                        "binaryChoice": {
+                          "type": "string",
+                          "enum": [
+                            "true",
+                            "false"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "columnId"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "sorts": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "columnId": {
+                          "type": "string"
+                        },
+                        "active": {
+                          "type": "boolean"
+                        },
+                        "direction": {
+                          "type": "string",
+                          "enum": [
+                            "asc",
+                            "desc"
+                          ]
+                        },
+                        "priority": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "columnId",
+                        "active",
+                        "direction",
+                        "priority"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "searchQuery": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ownerUserIds": {
+                    "anyOf": [
+                      {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "const": "all_org"
+                          },
+                          {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "pinnedConversationIds": {
+                    "anyOf": [
+                      {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "selectedAopNames",
+                  "columnFilters",
+                  "sorts",
+                  "searchQuery",
+                  "ownerUserIds",
+                  "pinnedConversationIds"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "type",
+          "query"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "itemCount": {
+      "type": "number"
+    },
+    "keys": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "canvas": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "homeViewOrder": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "type",
+        "homeViewOrder"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

@@ -1,0 +1,28 @@
+---
+title: "Credits, budgets, and usage"
+description: "Inspect costs and permissions without starting provider work."
+---
+
+## Read first
+
+`billing-read accounts` discovers authorized billing accounts. Other actions inspect the catalog, wallet, usage/activity, limits, alerts, spending grants, delivery status, subscriptions, monthly billing, members, and preferences. `workflow-approvals` lists pending spending confirmations; only the user can approve those in Cedar Billing.
+
+Amounts are exact **microcredit strings**: 1 credit equals 1,000,000 microcredits. Preserve strings rather than converting large values through floating-point arithmetic. Provider-native credits, Cedar credits, and dollars are different quantities.
+
+A billing read does not buy credits or dispatch a paid lookup. Finance access also does not grant access to another user's deal evidence or raw provider payload.
+
+## Authorized changes
+
+`billing-write` can create an unfunded organization account with admin authority, change versioned limits, acknowledge alerts, reconcile holds/balances, handle known delivery retries, manage grants, and return hosted checkout or finance links. Credit grants follow verified paid webhook processing, not merely creating a checkout URL.
+
+All matching account/member/feature/meter policies apply. A spending grant is not permission to raise caps. Monthly postpaid configuration requires current version, verified subscription context, administrator authority, and explicit consent; never enable it as a side effect of research.
+
+## Usage observations
+
+`usage-observations-read` inspects supported producers and durable shadow measurements. It does not enable charging or invoke providers. `usage-observations-retry` retries delivery of an existing immutable measurement; it cannot edit quantities, create grants, or redo provider work.
+
+## Administration
+
+`billing-admin` is Cedar-staff-only even if a schema is visible through the broader family catalog. It includes inventory, import review, offer/catalog maintenance, usage correction, payment processing, and organization-account administration. Customer integrations should use the authorized read/write families rather than planning around staff actions.
+
+[Billing reads](/reference/billing-read) · [Billing writes](/reference/billing-write) · [Usage observations](/reference/usage-observations-read)

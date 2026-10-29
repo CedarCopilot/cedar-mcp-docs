@@ -1,0 +1,1719 @@
+---
+title: "conversation-write"
+description: "Parameters, scopes, and response schema for conversation-write."
+---
+
+Generated from Cedar's external registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+
+## Capability
+
+Creating/changing a CRM deal or conversation? FIRST read the effective crm-updater path from the agent directory (document-read), or use injected &lt;crm_write_rules&gt;, before searching email. Fallback only: #subagents/crm-updater.md. Write Cedar conversations. Creating one does not create or link an external CRM record (Salesforce/HubSpot/Attio/Copper). Link an existing deal with (6), or an agent-created deal with (2) linkCrmDeal. ACTIONS: (1) create — create a new CRM conversation. (2) update-fields — update conversation metadata/working-memory fields; pass linkCrmDeal to also link a newly-created CRM opportunity to this conversation (runs before the field update in the same call). (3) create-event — log a meeting/call/text/custom event on a conversation. (4) mutate — execute a structural conversation mutation (move_event, reassign_aop, refresh_conversation, clear_working_memory, merge_conversations, merge_companies, fix_misassignment, assign_aop_by_selection, rename_conversation). (5) reassign-ownership — transfer primary ownership of a conversation to another org member; auto-adds them as a member if they are not one already. (6) link-external-crm-deal — link an EXISTING external-CRM deal (found via conversation-read's search-external-crm-deals) to a conversation; writes the association only (call update-fields to sync values). (7) sync-gmail-thread — pull an email that never synced into Cedar from the user's LIVE Gmail (by threadId or searchQuery) into an existing deal, where it auto-processes. Each action takes its params in a same-named object (e.g. action: "update-fields" pairs with updateFields: &#123;...&#125;) — omit every params object except the one matching your chosen action.
+
+## Operations and scopes
+
+| Action | Baseline scope |
+| --- | --- |
+| `create` | `crm:read` |
+| `update-fields` | `crm:read` |
+| `create-event` | `crm:read` |
+| `mutate` | `crm:read` |
+| `reassign-ownership` | `crm:read` |
+| `link-external-crm-deal` | `crm:read` |
+| `sync-gmail-thread` | `email:read` |
+
+Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Parameters
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `action` | "create" · "update-fields" · "create-event" · "mutate" · "reassign-ownership" · "link-external-crm-deal" · "sync-gmail-thread" | Yes | Which write operation to perform — pass its matching params object below (e.g. action: "update-fields" pairs with updateFields: &#123;...&#125;).  |
+| `create` | object | No |   |
+| `updateFields` | object | No |   |
+| `createEvent` | object | No |   |
+| `mutate` | object | No |   |
+| `reassignOwnership` | object | No |   |
+| `linkExternalCrmDeal` | object | No | Operates on the user's connected EXTERNAL CRM (Salesforce/HubSpot/Attio/Copper) — NOT Cedar's own conversation records (that's `find`). If it's unclear whether the user means "search Cedar's deals" or "search our Salesforce/HubSpot", ask before calling either.  |
+| `syncGmailThread` | object | No | Search the user's LIVE Gmail for an email that never synced into Cedar and pull it into an existing deal, where it processes like a normal inbound (draft included). Use this only AFTER find-event confirms the email is not in Cedar at all — it is the "bring it in from the mailbox" repair.  |
+| `user_request_summary` | string | Yes | One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does.  |
+| `is_new_request` | boolean | Yes | true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread.  |
+
+### create
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `name` | string | Yes | Name for the new conversation, e.g. the company or deal name. minLength: 1 |
+| `status` | string | Yes | Initial status value, e.g. "Lead", "Active", "Closed Won". Must match one of the status options configured in the AOP.  |
+| `aopId` | string | No | ID of the AOP (playbook) to assign to this conversation. Omit to use the default AOP. Use list-aops to list available AOPs. format: "uuid" |
+| `priority` | string | No | Priority level, e.g. "High", "Medium", "Low". Omit if not applicable.  |
+| `nextStep` | string | No | Initial next step or action item for this conversation.  |
+| `objective` | string | No | Goal or objective for this conversation.  |
+| `dealValue` | number | No | Deal value in the smallest currency unit (e.g. cents for USD).  |
+| `participantEmails` | string&#91;&#93; | No | Email addresses of the main contacts to link to this conversation. If a single email is provided, that person is set as the main contact.  |
+| `companyDomains` | string&#91;&#93; | No | Company domains to link to this conversation, e.g. &#91;"acme.com"&#93;. Use lookup-company-fuzzy to resolve the domain if you only know the company name.  |
+| `searchEmails` | boolean | No | When true, Cedar will search the user's inbox in the background for past threads involving the linked company domain and attach them to the new conversation. Requires companyDomain to be set.  |
+| `companyDomain` | string | No | Primary company domain hint used by searchEmails to find historical threads. Required when searchEmails is true.  |
+
+### updateFields
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `conversationId` | string | No | Pass after get-conversation; omit only if the active UI conversation ID is in context. format: "uuid" |
+| `title` | string | No | Required chat approval title: e.g. "Update deal size to $50K" or "Set status to Qualified".  |
+| `reasoning` | string | No | Required: evidence for each value, e.g. "Email mentioned 600 students enrolled across both programs"; omit only for a direct user request alone.  |
+| `fields` | object&#91;&#93; | No | Only fields get-conversation marks writable=true; otherwise relay blockedReason. Omit/empty only when linking via linkCrmDeal.  |
+| `targetDealId` | string | No | Multiple linked CRM opportunities: Deal ID from &lt;linked_crm_deal&gt;; otherwise omit.  |
+| `linkCrmDeal` | object | No | Link a newly-created CRM deal/opportunity: save dealId in integration_metadata and close open crm-opportunity tasks. Runs before field updates so they sync to that deal.  |
+
+### createEvent
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `conversationId` | string | Yes | ID of the conversation to add the event to. This is provided in the &lt;conversation_id&gt; section of your prompt. format: "uuid" |
+| `eventType` | "meeting" · "call" · "text" · "custom" | Yes | Type of event: "meeting" for in-person or video meetings, "call" for phone calls, "text" for text/chat messages, "custom" for any other interaction.  |
+| `title` | string | Yes | Short descriptive title for the event, e.g. "Intro call with John" minLength: 1 |
+| `occurredAt` | string | Yes | ISO 8601 datetime when the event occurred, e.g. "2026-03-20T14:00:00Z". Use the current time if not specified.  |
+| `description` | string | No | Short description of the event.  |
+| `notes` | string | No | Personal notes about the event. For meetings stored as meeting.notes; for calls stored as call.notes.  |
+| `transcript` | string | No | Transcript or verbatim content. For meetings stored as meeting.aiNotes; for calls appended to call.notes.  |
+| `participants` | object&#91;&#93; | No | Participants in the event. Only relevant for meetings and calls.  |
+| `content` | string | No | The full text/message content. Only used when eventType is "text".  |
+| `requirePaste` | boolean | No | Set to true whenever any transcript content is involved — even if the user already pasted it in the chat. ALWAYS use requirePaste instead of the transcript field. The frontend renders a textarea so the user pastes directly there. Do NOT pass transcript when requirePaste is true.  |
+
+### mutate
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `description` | string | Yes | ONE plain-English sentence describing what will happen — shown to the user in the approval card. No IDs, no technical terms.  |
+| `mutation` | object or object or object or object or object or object or object or object or object or object | Yes |   |
+| `conversationId` | string | No | Primary conversation ID for the card UI context (shown alongside description).  |
+
+### reassignOwnership
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `conversationId` | string | Yes | ID of the conversation to reassign ownership of. format: "uuid" |
+| `newOwnerUserId` | string | Yes | Cedar user ID of the org member who should become the new owner.  |
+
+### linkExternalCrmDeal
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `conversationId` | string | Yes | The Cedar conversation to link — NOT the external CRM's own record id. format: "uuid" |
+| `providerId` | "hubspot" · "attio" · "salesforce" · "copper" | Yes |   |
+| `dealId` | string | Yes | The external CRM's own deal/opportunity id — from search-external-crm-deals's result. minLength: 1 |
+
+### syncGmailThread
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `conversationId` | string | Yes | The EXISTING Cedar deal to pull the email into. format: "uuid" |
+| `threadId` | string | No | Exact Gmail thread id, if you already have it. Provide this OR searchQuery.  |
+| `searchQuery` | string | No | A Gmail search string (full Gmail syntax, e.g. "from:jane@acme.com subject:intro after:2026/01/01") to find the thread when you do not have its id. If several threads match, the tool returns them as candidates for you to disambiguate rather than guessing. Provide this OR threadId.  |
+
+## Full input schema
+
+[Download the input schema](/reference/schemas/conversation-write.input.json). Nested objects, variants, and constraints are preserved in full. Runtime refinements and ownership checks still apply.
+
+<Accordion title="Input JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "create",
+        "update-fields",
+        "create-event",
+        "mutate",
+        "reassign-ownership",
+        "link-external-crm-deal",
+        "sync-gmail-thread"
+      ],
+      "description": "Which write operation to perform — pass its matching params object below (e.g. action: \"update-fields\" pairs with updateFields: {...})."
+    },
+    "create": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Name for the new conversation, e.g. the company or deal name."
+        },
+        "status": {
+          "type": "string",
+          "description": "Initial status value, e.g. \"Lead\", \"Active\", \"Closed Won\". Must match one of the status options configured in the AOP."
+        },
+        "aopId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "ID of the AOP (playbook) to assign to this conversation. Omit to use the default AOP. Use list-aops to list available AOPs."
+        },
+        "priority": {
+          "type": "string",
+          "description": "Priority level, e.g. \"High\", \"Medium\", \"Low\". Omit if not applicable."
+        },
+        "nextStep": {
+          "type": "string",
+          "description": "Initial next step or action item for this conversation."
+        },
+        "objective": {
+          "type": "string",
+          "description": "Goal or objective for this conversation."
+        },
+        "dealValue": {
+          "type": "number",
+          "description": "Deal value in the smallest currency unit (e.g. cents for USD)."
+        },
+        "participantEmails": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "email"
+          },
+          "description": "Email addresses of the main contacts to link to this conversation. If a single email is provided, that person is set as the main contact."
+        },
+        "companyDomains": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Company domains to link to this conversation, e.g. [\"acme.com\"]. Use lookup-company-fuzzy to resolve the domain if you only know the company name."
+        },
+        "searchEmails": {
+          "type": "boolean",
+          "description": "When true, Cedar will search the user's inbox in the background for past threads involving the linked company domain and attach them to the new conversation. Requires companyDomain to be set."
+        },
+        "companyDomain": {
+          "type": "string",
+          "description": "Primary company domain hint used by searchEmails to find historical threads. Required when searchEmails is true."
+        }
+      },
+      "required": [
+        "name",
+        "status"
+      ],
+      "additionalProperties": false
+    },
+    "updateFields": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Pass after get-conversation; omit only if the active UI conversation ID is in context."
+        },
+        "title": {
+          "type": "string",
+          "description": "Required chat approval title: e.g. \"Update deal size to $50K\" or \"Set status to Qualified\"."
+        },
+        "reasoning": {
+          "type": "string",
+          "description": "Required: evidence for each value, e.g. \"Email mentioned 600 students enrolled across both programs\"; omit only for a direct user request alone."
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Exact field name from get-conversation."
+              },
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "replace",
+                  "patch",
+                  "upsert",
+                  "append",
+                  "update"
+                ],
+                "description": "People: upsert value={people:[{id,...changes}]}; history: append complete new entries or update existing IDs in value={entries:[...]}. Omitted properties stay; arrays replace. New rows need all required data. replace=value only; patch=old_string+new_string only. Null/omitted never clears; \"\" clears."
+              },
+              "value": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "people": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "name": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "title": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "email": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "format": "email"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "contactId": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "engagement": {
+                                  "type": "string",
+                                  "enum": [
+                                    "mentioned",
+                                    "introduced",
+                                    "engaged",
+                                    "should_engage"
+                                  ]
+                                },
+                                "roles": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                },
+                                "support": {
+                                  "type": "string",
+                                  "enum": [
+                                    "strong_support",
+                                    "support",
+                                    "neutral",
+                                    "opposed",
+                                    "unknown"
+                                  ]
+                                },
+                                "summary": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "evidence": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "eventId": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "quote": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      }
+                                    },
+                                    "required": [
+                                      "eventId",
+                                      "quote"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                }
+                              },
+                              "required": [
+                                "id"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "maxItems": 40
+                          }
+                        },
+                        "required": [
+                          "people"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "entries": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "title": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "maxLength": 120
+                                },
+                                "occurredAt": {
+                                  "type": "string",
+                                  "format": "date-time"
+                                },
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "meeting",
+                                    "correspondence",
+                                    "email",
+                                    "milestone"
+                                  ]
+                                },
+                                "summary": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "maxLength": 600
+                                },
+                                "sourceEventIds": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "minItems": 1
+                                }
+                              },
+                              "required": [
+                                "id"
+                              ],
+                              "additionalProperties": false
+                            }
+                          }
+                        },
+                        "required": [
+                          "entries"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "anyOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "stage": {
+                                "type": "string",
+                                "enum": [
+                                  "discovery",
+                                  "demo",
+                                  "commercial",
+                                  "negotiation"
+                                ]
+                              },
+                              "rows": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "label": {
+                                      "type": "string",
+                                      "minLength": 1
+                                    },
+                                    "value": {
+                                      "type": "string"
+                                    },
+                                    "graded": {
+                                      "type": "boolean",
+                                      "default": true
+                                    },
+                                    "signal": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string",
+                                          "enum": [
+                                            "green",
+                                            "yellow",
+                                            "red"
+                                          ]
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ],
+                                      "default": null
+                                    },
+                                    "signalReasoning": {
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "strength": {
+                                      "anyOf": [
+                                        {
+                                          "type": "integer",
+                                          "minimum": 0,
+                                          "maximum": 100
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "label",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "maxItems": 3
+                              },
+                              "rubric": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "stage",
+                              "rows"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "rows": {
+                                "type": "array",
+                                "items": {
+                                  "$ref": "#/properties/updateFields/properties/fields/items/properties/value/anyOf/4/anyOf/2/anyOf/0/properties/rows/items"
+                                }
+                              }
+                            },
+                            "required": [
+                              "rows"
+                            ],
+                            "additionalProperties": false
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "description": "Scalar or native people/history/journey object, or JSON string. Preserve stable IDs. Omit for patches."
+              },
+              "old_string": {
+                "type": "string",
+                "description": "Exact substring appearing once in current value from get-conversation."
+              },
+              "new_string": {
+                "type": "string",
+                "description": "Patch replacement text; \"\" deletes old_string."
+              },
+              "signal": {
+                "type": "string",
+                "enum": [
+                  "red",
+                  "yellow",
+                  "green"
+                ],
+                "description": "Set only when the field description instructs a signal; follow its red/yellow/green rubric."
+              },
+              "signalReasoning": {
+                "type": "string",
+                "description": "Brief explanation for the signal."
+              },
+              "reasoning": {
+                "type": "string",
+                "description": "Always provide one sentence linking this field value to event evidence (e.g. \"Tony confirmed department and dean support for the subscription\")."
+              },
+              "strength": {
+                "type": "number",
+                "description": "Owned type:list scorecard only (e.g. coaching.followup.rs1): 1–100 rating; value=verbatim evidence, reasoning=one-line justification. All three go on one event atom, never a persistent field. Omit otherwise."
+              },
+              "contextQuote": {
+                "type": "string",
+                "description": "Owned list scorecard full triple only: verbatim lead-in immediately before value. Never fabricate; omit for bare quotes."
+              },
+              "reactionQuote": {
+                "type": "string",
+                "description": "Owned list scorecard triple with contextQuote only: other party's verbatim reaction immediately after value; omit if absent."
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "additionalProperties": false
+          },
+          "description": "Only fields get-conversation marks writable=true; otherwise relay blockedReason. Omit/empty only when linking via linkCrmDeal."
+        },
+        "targetDealId": {
+          "type": "string",
+          "description": "Multiple linked CRM opportunities: Deal ID from <linked_crm_deal>; otherwise omit."
+        },
+        "linkCrmDeal": {
+          "type": "object",
+          "properties": {
+            "provider": {
+              "type": "string",
+              "description": "The CRM provider identifier (e.g. \"hubspot\", \"salesforce\", \"attio\")"
+            },
+            "dealId": {
+              "type": "string",
+              "description": "The opportunity/deal ID returned by the CRM after creation"
+            },
+            "instanceUrl": {
+              "type": "string",
+              "description": "For Salesforce: the org Lightning base URL. For HubSpot: the portal hub_id (e.g. \"245934213\") — required to generate deep-link URLs."
+            }
+          },
+          "required": [
+            "provider",
+            "dealId"
+          ],
+          "additionalProperties": false,
+          "description": "Link a newly-created CRM deal/opportunity: save dealId in integration_metadata and close open crm-opportunity tasks. Runs before field updates so they sync to that deal."
+        }
+      },
+      "additionalProperties": false
+    },
+    "createEvent": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "ID of the conversation to add the event to. This is provided in the <conversation_id> section of your prompt."
+        },
+        "eventType": {
+          "type": "string",
+          "enum": [
+            "meeting",
+            "call",
+            "text",
+            "custom"
+          ],
+          "description": "Type of event: \"meeting\" for in-person or video meetings, \"call\" for phone calls, \"text\" for text/chat messages, \"custom\" for any other interaction."
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Short descriptive title for the event, e.g. \"Intro call with John\""
+        },
+        "occurredAt": {
+          "type": "string",
+          "description": "ISO 8601 datetime when the event occurred, e.g. \"2026-03-20T14:00:00Z\". Use the current time if not specified."
+        },
+        "description": {
+          "type": "string",
+          "description": "Short description of the event."
+        },
+        "notes": {
+          "type": "string",
+          "description": "Personal notes about the event. For meetings stored as meeting.notes; for calls stored as call.notes."
+        },
+        "transcript": {
+          "type": "string",
+          "description": "Transcript or verbatim content. For meetings stored as meeting.aiNotes; for calls appended to call.notes."
+        },
+        "participants": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "email": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "email",
+              "name"
+            ],
+            "additionalProperties": false
+          },
+          "description": "Participants in the event. Only relevant for meetings and calls."
+        },
+        "content": {
+          "type": "string",
+          "description": "The full text/message content. Only used when eventType is \"text\"."
+        },
+        "requirePaste": {
+          "type": "boolean",
+          "description": "Set to true whenever any transcript content is involved — even if the user already pasted it in the chat. ALWAYS use requirePaste instead of the transcript field. The frontend renders a textarea so the user pastes directly there. Do NOT pass transcript when requirePaste is true."
+        }
+      },
+      "required": [
+        "conversationId",
+        "eventType",
+        "title",
+        "occurredAt"
+      ],
+      "additionalProperties": false
+    },
+    "mutate": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "ONE plain-English sentence describing what will happen — shown to the user in the approval card. No IDs, no technical terms."
+        },
+        "mutation": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "operation": {
+                  "type": "string",
+                  "const": "move_event"
+                },
+                "eventId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID of any event in the thread to move"
+                },
+                "targetConversationId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "Destination conversation ID — an EXISTING deal. Provide this OR newConversation, not both."
+                },
+                "newConversation": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Name for the new deal (defaults to the company domain, else \"New deal\")"
+                    },
+                    "companyDomain": {
+                      "type": "string",
+                      "description": "Domain of the deal's REAL counterparty (the company the deal is actually with), used to tie the company to the new deal. Supply this yourself from the event context — do NOT default to the sender's domain if the event was misrouted, since a wrong sender-domain is usually what caused the misrouting. Omit if genuinely unsure (the deal is created with no primary company)."
+                    },
+                    "aopId": {
+                      "type": "string",
+                      "description": "AOP to assign to the new deal; omit to let Cedar pick the best one from the event."
+                    }
+                  },
+                  "additionalProperties": false,
+                  "description": "Create a NEW deal and move the event onto it. Provide this OR targetConversationId, not both."
+                }
+              },
+              "required": [
+                "operation",
+                "eventId"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "operation": {
+                  "type": "string",
+                  "const": "reassign_aop"
+                },
+                "conversationId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "aopId": {
+                  "type": "string",
+                  "description": "ID of the AOP to assign"
+                }
+              },
+              "required": [
+                "operation",
+                "conversationId",
+                "aopId"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "operation": {
+                  "type": "string",
+                  "const": "refresh_conversation"
+                },
+                "conversationId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "scope": {
+                  "type": "string",
+                  "enum": [
+                    "reconcile",
+                    "full"
+                  ],
+                  "default": "reconcile",
+                  "description": "'reconcile' (default): re-derive fields + tasks from the events now on the deal — NO draft. 'full': re-run the whole on-event pipeline for one event (incl. drafting) to reproduce a missing output — requires eventId."
+                },
+                "eventId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "Required for scope:'full' — the event whose on-event pipeline to re-run."
+                }
+              },
+              "required": [
+                "operation",
+                "conversationId"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "operation": {
+                  "type": "string",
+                  "const": "refresh_fields"
+                },
+                "conversationId": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "required": [
+                "operation",
+                "conversationId"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "operation": {
+                  "type": "string",
+                  "const": "clear_working_memory"
+                },
+                "conversationId": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "required": [
+                "operation",
+                "conversationId"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "operation": {
+                  "type": "string",
+                  "const": "merge_conversations"
+                },
+                "sourceConversationId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "Conversation to merge FROM — all its events, tasks, and history will be moved into the target, then it will be deleted"
+                },
+                "targetConversationId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "Conversation to merge INTO — this one survives"
+                }
+              },
+              "required": [
+                "operation",
+                "sourceConversationId",
+                "targetConversationId"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "operation": {
+                  "type": "string",
+                  "const": "merge_companies"
+                },
+                "sourceCompanyId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "Company to merge FROM — will be aliased to the target permanently"
+                },
+                "targetCompanyId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "Company to merge INTO — the canonical company that survives"
+                }
+              },
+              "required": [
+                "operation",
+                "sourceCompanyId",
+                "targetCompanyId"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "operation": {
+                  "type": "string",
+                  "const": "fix_misassignment"
+                },
+                "conversationId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "dryRun": {
+                  "type": "boolean",
+                  "default": true,
+                  "description": "When true, previews what would change without applying"
+                }
+              },
+              "required": [
+                "operation",
+                "conversationId"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "operation": {
+                  "type": "string",
+                  "const": "assign_aop_by_selection"
+                },
+                "conversationId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "Let Cedar's AI re-pick the best AOP from this conversation's email history"
+                }
+              },
+              "required": [
+                "operation",
+                "conversationId"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "operation": {
+                  "type": "string",
+                  "const": "rename_conversation"
+                },
+                "conversationId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "New display name for the conversation"
+                }
+              },
+              "required": [
+                "operation",
+                "conversationId",
+                "name"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "conversationId": {
+          "type": "string",
+          "description": "Primary conversation ID for the card UI context (shown alongside description)."
+        }
+      },
+      "required": [
+        "description",
+        "mutation"
+      ],
+      "additionalProperties": false
+    },
+    "reassignOwnership": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "ID of the conversation to reassign ownership of."
+        },
+        "newOwnerUserId": {
+          "type": "string",
+          "description": "Cedar user ID of the org member who should become the new owner."
+        }
+      },
+      "required": [
+        "conversationId",
+        "newOwnerUserId"
+      ],
+      "additionalProperties": false
+    },
+    "linkExternalCrmDeal": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "The Cedar conversation to link — NOT the external CRM's own record id."
+        },
+        "providerId": {
+          "type": "string",
+          "enum": [
+            "hubspot",
+            "attio",
+            "salesforce",
+            "copper"
+          ]
+        },
+        "dealId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The external CRM's own deal/opportunity id — from search-external-crm-deals's result."
+        }
+      },
+      "required": [
+        "conversationId",
+        "providerId",
+        "dealId"
+      ],
+      "additionalProperties": false,
+      "description": "Operates on the user's connected EXTERNAL CRM (Salesforce/HubSpot/Attio/Copper) — NOT Cedar's own conversation records (that's `find`). If it's unclear whether the user means \"search Cedar's deals\" or \"search our Salesforce/HubSpot\", ask before calling either."
+    },
+    "syncGmailThread": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "The EXISTING Cedar deal to pull the email into."
+        },
+        "threadId": {
+          "type": "string",
+          "description": "Exact Gmail thread id, if you already have it. Provide this OR searchQuery."
+        },
+        "searchQuery": {
+          "type": "string",
+          "description": "A Gmail search string (full Gmail syntax, e.g. \"from:jane@acme.com subject:intro after:2026/01/01\") to find the thread when you do not have its id. If several threads match, the tool returns them as candidates for you to disambiguate rather than guessing. Provide this OR threadId."
+        }
+      },
+      "required": [
+        "conversationId"
+      ],
+      "additionalProperties": false,
+      "description": "Search the user's LIVE Gmail for an email that never synced into Cedar and pull it into an existing deal, where it processes like a normal inbound (draft included). Use this only AFTER find-event confirms the email is not in Cedar at all — it is the \"bring it in from the mailbox\" repair."
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+## Response
+
+Inspect `isError` on the MCP result and `success` / `errorMessage` in the action result. Optional response branches are populated only for the relevant action. Some results include additional provider or operation-specific data.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `success` | boolean | Yes |   |
+| `errorMessage` | string | No |   |
+| `create` | object | No |   |
+| `updateFields` | object | No |   |
+| `createEvent` | object | No |   |
+| `mutate` | object | No |   |
+| `reassignOwnership` | object | No |   |
+| `linkExternalCrmDeal` | object | No |   |
+| `syncGmailThread` | object | No |   |
+
+<Accordion title="Output JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "create": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "type": "string"
+        },
+        "proposed": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "updateFields": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "updatedFields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          "description": "List of fields that were updated"
+        },
+        "blockedFields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "blockedBy": {
+                "type": "string",
+                "enum": [
+                  "owner",
+                  "locked",
+                  "system",
+                  "background",
+                  "unknown_field",
+                  "approval_required",
+                  "out_of_scope",
+                  "gated_option"
+                ]
+              },
+              "ownerAgentName": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string",
+                "description": "The true reason and the way out. Tell the user this plainly."
+              }
+            },
+            "required": [
+              "name",
+              "blockedBy",
+              "message"
+            ],
+            "additionalProperties": false
+          },
+          "description": "Requested fields that were NOT written, each with the reason. Present whenever anything you asked for was dropped, even when other fields were written. Tell the user which field and why; never guess a cause."
+        },
+        "proposed": {
+          "type": "boolean",
+          "description": "True if this is a proposed update awaiting approval"
+        },
+        "proposedFields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              },
+              "affectsExternalCrm": {
+                "type": "boolean",
+                "description": "Whether this field syncs to external CRM"
+              },
+              "entryOperation": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "const": "people"
+                      },
+                      "mode": {
+                        "type": "string",
+                        "const": "upsert"
+                      },
+                      "value": {
+                        "type": "object",
+                        "properties": {
+                          "people": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "name": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "title": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "email": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "format": "email"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "contactId": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "engagement": {
+                                  "type": "string",
+                                  "enum": [
+                                    "mentioned",
+                                    "introduced",
+                                    "engaged",
+                                    "should_engage"
+                                  ]
+                                },
+                                "roles": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                },
+                                "support": {
+                                  "type": "string",
+                                  "enum": [
+                                    "strong_support",
+                                    "support",
+                                    "neutral",
+                                    "opposed",
+                                    "unknown"
+                                  ]
+                                },
+                                "summary": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "evidence": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "eventId": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "quote": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      }
+                                    },
+                                    "required": [
+                                      "eventId",
+                                      "quote"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                }
+                              },
+                              "required": [
+                                "id"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "minItems": 1,
+                            "maxItems": 40
+                          }
+                        },
+                        "required": [
+                          "people"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "mode",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "const": "summarized_history"
+                      },
+                      "mode": {
+                        "type": "string",
+                        "const": "append"
+                      },
+                      "value": {
+                        "type": "object",
+                        "properties": {
+                          "entries": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "title": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "maxLength": 120
+                                },
+                                "occurredAt": {
+                                  "type": "string",
+                                  "format": "date-time"
+                                },
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "meeting",
+                                    "correspondence",
+                                    "email",
+                                    "milestone"
+                                  ]
+                                },
+                                "summary": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "maxLength": 600
+                                },
+                                "sourceEventIds": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "minItems": 1
+                                }
+                              },
+                              "required": [
+                                "id"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "minItems": 1
+                          }
+                        },
+                        "required": [
+                          "entries"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "mode",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "const": "summarized_history"
+                      },
+                      "mode": {
+                        "type": "string",
+                        "const": "update"
+                      },
+                      "value": {
+                        "$ref": "#/properties/updateFields/properties/proposedFields/items/properties/entryOperation/anyOf/1/properties/value"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "mode",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "entryBaseline": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "value",
+              "affectsExternalCrm"
+            ],
+            "additionalProperties": false
+          },
+          "description": "List of proposed field updates (chat mode only)"
+        },
+        "hasCrmIntegration": {
+          "type": "boolean",
+          "description": "Whether conversation has external CRM integration"
+        },
+        "userMessage": {
+          "type": "string",
+          "description": "UI instructions for the user"
+        },
+        "validationErrors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "field": {
+                "type": "string"
+              },
+              "path": {
+                "type": "array",
+                "items": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                }
+              },
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "entryId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "field",
+              "path",
+              "code",
+              "message"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "fieldOutcomes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "cedar": {
+                "type": "string",
+                "enum": [
+                  "saved",
+                  "not_saved"
+                ]
+              },
+              "crm": {
+                "type": "string",
+                "enum": [
+                  "pushed",
+                  "failed",
+                  "skipped",
+                  "not_attempted"
+                ]
+              },
+              "retryable": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "name",
+              "cedar",
+              "crm",
+              "retryable"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "pushedButNotSavedFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "remainingFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "errorCode": {
+          "type": "string"
+        },
+        "retryable": {
+          "type": "boolean"
+        },
+        "skippedCrmFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Fields whose CRM push was skipped on an atomic write. They were NOT saved in Cedar; do not retry them, tell the user."
+        },
+        "savedButNotPushedFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Fields that WERE saved in Cedar but whose CRM push was skipped, so the CRM was NOT updated; do not retry them, tell the user the CRM was not updated."
+        },
+        "isRecoverable": {
+          "type": "boolean"
+        },
+        "isExpected": {
+          "type": "boolean",
+          "description": "True when the failure is an intentional, normal outcome (does not alert)."
+        },
+        "fieldDescriptions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "description"
+            ],
+            "additionalProperties": false
+          },
+          "description": "The agent-facing description of each field in this call, including its unit, value rules, and — for enum fields such as status — its valid values. Returned because a caller can reach this tool without ever fetching the field definitions (e.g. chat does find → update-fields). Read these and correct the write if a value does not match the described unit, shape, or option set."
+        },
+        "notificationPosted": {
+          "type": "boolean",
+          "description": "True when Cedar told the user about this change in Slack. Do not notify them again."
+        },
+        "crmPushStatus": {
+          "type": "string",
+          "enum": [
+            "pushed",
+            "failed",
+            "partial",
+            "pending",
+            "skipped",
+            "not_applicable"
+          ],
+          "description": "Terminal external-CRM push status for this apply. On the chat/approval path the push is awaited, so a \"failed\"/\"partial\" here means the value was saved in Cedar but rejected by the CRM — the agent can reattempt or tell the user."
+        },
+        "linkedDeal": {
+          "type": "object",
+          "properties": {
+            "success": {
+              "type": "boolean"
+            },
+            "message": {
+              "type": "string"
+            },
+            "existingDeal": {
+              "type": "object",
+              "properties": {
+                "provider": {
+                  "type": "string"
+                },
+                "dealId": {
+                  "type": "string"
+                },
+                "dealName": {
+                  "type": "string"
+                },
+                "dealStage": {
+                  "type": "string"
+                },
+                "instanceUrl": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "provider",
+                "dealId"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "success",
+            "message"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "createEvent": {
+      "type": "object",
+      "properties": {
+        "eventId": {
+          "type": "string"
+        },
+        "conversationId": {
+          "type": "string"
+        },
+        "proposed": {
+          "type": "boolean"
+        },
+        "indexed": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "mutate": {
+      "type": "object",
+      "properties": {
+        "proposed": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {}
+        }
+      },
+      "additionalProperties": false
+    },
+    "reassignOwnership": {
+      "type": "object",
+      "properties": {
+        "proposed": {
+          "type": "boolean"
+        },
+        "aopReset": {
+          "type": "boolean"
+        },
+        "addedAsMember": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "linkExternalCrmDeal": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "type": "string"
+        },
+        "providerId": {
+          "type": "string"
+        },
+        "dealId": {
+          "type": "string"
+        },
+        "dealName": {
+          "type": "string"
+        },
+        "dealStage": {
+          "type": "string"
+        },
+        "existingDeal": {
+          "$ref": "#/properties/updateFields/properties/linkedDeal/properties/existingDeal"
+        }
+      },
+      "additionalProperties": false
+    },
+    "syncGmailThread": {
+      "type": "object",
+      "properties": {
+        "synced": {
+          "type": "boolean"
+        },
+        "threadId": {
+          "type": "string"
+        },
+        "conversationId": {
+          "type": "string"
+        },
+        "candidates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "threadId": {
+                "type": "string"
+              },
+              "subject": {
+                "type": "string"
+              },
+              "from": {
+                "type": "string"
+              },
+              "snippet": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "threadId"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+[Download the output schema](/reference/schemas/conversation-write.output.json).

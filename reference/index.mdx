@@ -1,0 +1,80 @@
+---
+title: "Tool catalog"
+description: "The complete external MCP surface, grouped by module."
+---
+
+Cedar exposes 40 family tools in this source snapshot, plus `load-skill` and the gated `load-brain-skills`. Each family groups related operations under an `action` or `channel`. Available tools vary by scopes, organization role, and feature flags.
+
+The reference records advertised schemas, including explicitly labeled restricted actions. It does not promise that every advertised operation is authorized. [Download the complete family catalog](/reference/catalog.json).
+
+## LinkedIn
+
+- [`linkedin-read`](/reference/linkedin-read)
+- [`linkedin-write`](/reference/linkedin-write)
+
+## Signals
+
+- [`signals-read`](/reference/signals-read)
+- [`signals-write`](/reference/signals-write)
+
+## Slack and notifications
+
+- [`slack-read`](/reference/slack-read)
+- [`slack-write`](/reference/slack-write)
+- [`notify`](/reference/notify)
+
+## Email and scheduling
+
+- [`mail`](/reference/mail)
+- [`email-tracking`](/reference/email-tracking)
+- [`draft-comms`](/reference/draft-comms)
+- [`send-email`](/reference/send-email)
+- [`schedule-send`](/reference/schedule-send)
+
+## CRM, meetings and tasks
+
+- [`conversation-read`](/reference/conversation-read)
+- [`conversation-write`](/reference/conversation-write)
+- [`conversation-analytics`](/reference/conversation-analytics)
+- [`run-sql`](/reference/run-sql)
+- [`taxonomy-fields`](/reference/taxonomy-fields)
+- [`meetings`](/reference/meetings)
+- [`calendar`](/reference/calendar)
+- [`task`](/reference/task)
+
+## Documents and research
+
+- [`document-read`](/reference/document-read)
+- [`document-write`](/reference/document-write)
+- [`table`](/reference/table)
+- [`research`](/reference/research)
+- [`ui-config`](/reference/ui-config)
+
+## Configuration
+
+- [`config-read`](/reference/config-read)
+- [`config-write`](/reference/config-write)
+- [`connection-write`](/reference/connection-write)
+- [`aop-write`](/reference/aop-write)
+- [`workspace-write`](/reference/workspace-write)
+- [`systems-write`](/reference/systems-write)
+- [`data-settings`](/reference/data-settings)
+- [`config-propagate`](/reference/config-propagate)
+
+## Billing and diagnostics
+
+- [`billing-read`](/reference/billing-read)
+- [`billing-write`](/reference/billing-write)
+- [`usage-observations-read`](/reference/usage-observations-read)
+- [`usage-observations-retry`](/reference/usage-observations-retry)
+- [`billing-admin`](/reference/billing-admin)
+- [`debug`](/reference/debug)
+- [`send-user-feedback`](/reference/send-user-feedback)
+
+## Skills
+
+- [`load-skill` and `load-brain-skills`](/reference/skills)
+
+## Surface boundaries
+
+Boards, graphs, general code execution, Cedar subagent spawning, outbound flow creation, and HeyReach campaign management are not registered external MCP families. Some have Cedar app or separate API surfaces; see [capability boundaries](/getting-started/capability-boundaries).

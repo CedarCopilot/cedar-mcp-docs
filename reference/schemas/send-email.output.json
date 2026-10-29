@@ -1,0 +1,140 @@
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "providerMessageId": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "providerThreadId": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "snapshot": {
+      "type": "object",
+      "properties": {
+        "draftId": {
+          "type": "string"
+        },
+        "senderAccountId": {
+          "type": "string"
+        },
+        "sender": {
+          "type": "string"
+        },
+        "threadId": {
+          "type": "string"
+        },
+        "to": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "cc": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "bcc": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "subject": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        },
+        "approvalHash": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "draftId",
+        "senderAccountId",
+        "sender",
+        "threadId",
+        "to",
+        "cc",
+        "bcc",
+        "subject",
+        "body",
+        "approvalHash"
+      ],
+      "additionalProperties": false
+    },
+    "receipt": {
+      "type": "object",
+      "properties": {
+        "draftId": {
+          "type": "string"
+        },
+        "operationId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "not_attempted",
+            "in_progress",
+            "sent",
+            "unknown",
+            "failed",
+            "transferring"
+          ]
+        },
+        "providerMessageId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "providerThreadId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "updatedAt": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "draftId",
+        "operationId",
+        "status",
+        "providerMessageId",
+        "providerThreadId",
+        "updatedAt"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

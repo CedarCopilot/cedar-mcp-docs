@@ -1,0 +1,112 @@
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "propagate-field",
+        "propagate-mapping"
+      ],
+      "description": "Which propagation to run — pass its matching params object below (e.g. action: \"propagate-field\" pairs with propagateField: {...})."
+    },
+    "propagateField": {
+      "type": "object",
+      "properties": {
+        "sourceAopId": {
+          "type": "string",
+          "description": "The ORG aop whose field definition is the source of truth."
+        },
+        "fieldKey": {
+          "type": "string",
+          "description": "The custom field's stable map key on the org AOP."
+        },
+        "targets": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "string",
+              "const": "uniform_and_missing"
+            },
+            {
+              "type": "string",
+              "const": "org"
+            }
+          ],
+          "description": "Explicit array of userIds — every one must already be linked to the same org AOP as sourceAopId, or it is refused individually (the rest still run). \"uniform_and_missing\" — every rep whose copy already matches the org default, plus every rep who never configured the field at all; a rep whose copy genuinely diverges is silently excluded, never attempted. \"org\" — every rep linked to this org AOP, uniform/diverging/missing alike."
+        },
+        "force": {
+          "type": "boolean",
+          "description": "Without this, a target whose copy diverges from the org default is refused (its diff is returned, nothing is touched). With it, a diverging target is instead proposed as its own approval-gated write — one card per target, never a blanket accept for the batch. LIMIT: force:true may only be used when AT MOST ONE target in this call is diverging — if more than one is, the ENTIRE call is refused outright (nothing written, not even uniform/missing targets) with the full diverging list, because accepting one force-proposed card replays this whole call and would otherwise silently apply every other diverging target too. Call once per diverging target instead."
+        }
+      },
+      "required": [
+        "sourceAopId",
+        "fieldKey",
+        "targets"
+      ],
+      "additionalProperties": false
+    },
+    "propagateMapping": {
+      "type": "object",
+      "properties": {
+        "sourceConnectionId": {
+          "type": "string",
+          "description": "The connection whose mapping for crmFieldName is the source of truth."
+        },
+        "crmFieldName": {
+          "type": "string",
+          "description": "Identifies WHICH mapping on the source connection to propagate."
+        },
+        "sourceAopId": {
+          "type": "string",
+          "description": "The source connection owner's AOP whose bound CRM object (a Lead, a Partner record, ...) this mapping belongs to. The object itself is resolved server-side from that AOP's boundObjectApiName — never pass a raw object name. Omit for the standard Deal mapping."
+        },
+        "targets": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "string",
+              "const": "org"
+            }
+          ],
+          "description": "Explicit array of userIds, or \"org\" for every member of your organization (excluding the source connection's own owner). Unlike propagate-field there is no \"uniform_and_missing\" shortcut — a mapping's \"uniform\" is judged by rule-shape, computed the same way for every target regardless."
+        },
+        "force": {
+          "type": "boolean",
+          "description": "Without this, a target whose existing mapping for crmFieldName diverges from the source is refused (diff returned, nothing touched). With it, it is proposed as its own approval-gated write instead. LIMIT: force:true may only be used when AT MOST ONE target in this call is diverging — if more than one is, the ENTIRE call is refused outright (nothing written, not even uniform/missing targets) with the full diverging list, because accepting one force-proposed card replays this whole call and would otherwise silently apply every other diverging target too. Call once per diverging target instead."
+        }
+      },
+      "required": [
+        "sourceConnectionId",
+        "crmFieldName",
+        "targets"
+      ],
+      "additionalProperties": false
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

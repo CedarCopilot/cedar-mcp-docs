@@ -1,0 +1,49 @@
+---
+title: "Slack module"
+description: "Read live conversations, attach evidence to deals, and configure channel-based workflows."
+---
+
+Cedar separates live Slack access, CRM ingestion, trigger registration, and notifications. These operations solve different parts of “watch this channel and ping me.”
+
+| Need | Tool / operation |
+| --- | --- |
+| Search messages visible to the connected user | `slack-read search-live` |
+| Read a thread or recent channel messages | `slack-read read-thread` |
+| Inspect images attached to a message | `slack-read read-file` |
+| Attach a thread to an existing deal | `slack-write sync-thread` |
+| Select channels for ongoing CRM sync | `connection-write update_slack_sync_config` |
+| Run an agent when a specific channel gets a matching message | `connection-write manage_playbook_webhook` with `sourceType: "slack_channel"` |
+| Discover notification destinations | `notify list-slack-channels` |
+| Deliver an alert | `notify send` |
+
+## Live search
+
+```json
+{
+  "action": "search-live",
+  "searchLive": { "query": "in:#customer-signals pricing", "count": 20 }
+}
+```
+
+Slack search syntax supports channel, author, and other operators. Maximum count is 50. Search requires the connected user's `search:read` grant; an older connection may need reconnection. It returns channel/message identifiers, snippets, and permalinks to inspect.
+
+## Read the evidence
+
+```json
+{
+  "action": "read-thread",
+  "readThread": {
+    "channelId": "C0123EXAMPLE",
+    "threadTs": "1793300000.000100",
+    "limit": 100
+  }
+}
+```
+
+Omit `threadTs` for recent channel messages. If the channel is already linked to an authorized deal, the read also stores new messages on its timeline and can return `syncedTo` and `ingested`. Otherwise use `slack-write sync-thread` with the existing conversation ID to choose the deal.
+
+## Read attachments
+
+`read-thread` returns file metadata. `read-file` reads images attached to a specific message: PNG, JPEG, GIF, or WebP; up to 3.5 MB per image, three images per call, and 5 MB total. Inspect the returned `returned` and `note` fields for files omitted. This is not a general arbitrary-file download tool.
+
+[Watch channels](/slack/watch-channels) · [Notifications](/slack/notifications) · [Slack schema](/reference/slack-read)

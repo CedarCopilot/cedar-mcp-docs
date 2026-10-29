@@ -1,0 +1,514 @@
+---
+title: "document-read"
+description: "Parameters, scopes, and response schema for document-read."
+---
+
+Generated from Cedar's external registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+
+## Capability
+
+Cedar Docs — agent-curated persistent memory. Read-only. ACTIONS: (1) read — fetch a specific doc by virtual path, full markdown content. (2) list — what docs exist under a path prefix (metadata only, no content). Call this at the start of complex tasks before deciding what to read. (3) search — regex search across docs, returns excerpts with context lines, not full content. Use for a specific fact; use read for full context. Each action takes its params in a same-named object (action: "read" with read: &#123;path&#125;) — omit every params object except the one for your action. Personal chat instructions: #chat-agent → user/playbooks/CHAT_AGENT.md. Path shortcuts (#kb, #wiki, #playbook, #here, ...) and content shortcuts (#sections, #outline, #section/&#123;Name&#125;, #lines/&#123;a&#125;-&#123;b&#125;) are NOT listed here — you MUST call load-skill("documents") for the full reference before constructing any non-trivial path or reading a doc you haven't sized up yet. Never modifies anything — use document-write to create, edit, delete, restore, move, or share a doc.
+
+## Operations and scopes
+
+| Action | Baseline scope |
+| --- | --- |
+| `read` | `docs:read` |
+| `list` | `docs:read` |
+| `search` | `docs:read` |
+
+Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Parameters
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `action` | "read" · "list" · "search" | Yes |   |
+| `read` | object | No |   |
+| `list` | object | No |   |
+| `search` | object | No |   |
+| `user_request_summary` | string | Yes | One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does.  |
+| `is_new_request` | boolean | Yes | true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread.  |
+
+### read
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `path` | string | Yes | Exact virtual path of the document to read. Supports both path shortcuts and content shortcuts — see this tool's description for the full reference.  |
+| `targetUserId` | string | No | Org owner/admin only: the org member whose documents to operate on instead of your own (e.g. to read or edit their playbook). Omit to operate on your own documents.  |
+| `ownerUserId` | string | No | Read the copy of this PATH owned by this person (list-documents rows carry ownerUserId). Path reads only, not document ids. Only among documents you can already read.  |
+| `includeHistory` | boolean | No | Also return the last few edit sessions (when, who, origin, word change; no content). Use to see whether and by whom a doc such as an agent spec was recently changed.  |
+
+### list
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `path` | string | Yes | Path prefix to list under. Supports path shortcuts — see this tool's description for the full reference.  |
+| `targetUserId` | string | No | Org owner/admin only: the org member whose documents to operate on instead of your own (e.g. to read or edit their playbook). Omit to operate on your own documents.  |
+
+### search
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `query` | string | Yes | Search query. Supports Postgres case-insensitive regex (~*). Examples: "pricing", "CRO initiative", "kyle.*figma", "objection&#124;blocker".  |
+| `path` | string | No | Optional path prefix or shortcut to scope the search. Omit to search across all docs.  |
+| `count_only` | boolean | No | When true, return only the total count without result excerpts. default: false |
+| `limit` | integer | No | Maximum number of matching documents to return (max 20). Default: 10. default: 10; minimum: 1; maximum: 20 |
+| `context_lines` | integer | No | Number of surrounding lines to include in each excerpt. Default: 5. default: 5; minimum: 0 |
+| `targetUserId` | string | No | Org owner/admin only: the org member whose documents to operate on instead of your own (e.g. to read or edit their playbook). Omit to operate on your own documents.  |
+
+## Full input schema
+
+[Download the input schema](/reference/schemas/document-read.input.json). Nested objects, variants, and constraints are preserved in full. Runtime refinements and ownership checks still apply.
+
+<Accordion title="Input JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "read",
+        "list",
+        "search"
+      ]
+    },
+    "read": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Exact virtual path of the document to read. Supports both path shortcuts and content shortcuts — see this tool's description for the full reference."
+        },
+        "targetUserId": {
+          "type": "string",
+          "description": "Org owner/admin only: the org member whose documents to operate on instead of your own (e.g. to read or edit their playbook). Omit to operate on your own documents."
+        },
+        "ownerUserId": {
+          "type": "string",
+          "description": "Read the copy of this PATH owned by this person (list-documents rows carry ownerUserId). Path reads only, not document ids. Only among documents you can already read."
+        },
+        "includeHistory": {
+          "type": "boolean",
+          "description": "Also return the last few edit sessions (when, who, origin, word change; no content). Use to see whether and by whom a doc such as an agent spec was recently changed."
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "additionalProperties": false
+    },
+    "list": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Path prefix to list under. Supports path shortcuts — see this tool's description for the full reference."
+        },
+        "targetUserId": {
+          "type": "string",
+          "description": "Org owner/admin only: the org member whose documents to operate on instead of your own (e.g. to read or edit their playbook). Omit to operate on your own documents."
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "additionalProperties": false
+    },
+    "search": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query. Supports Postgres case-insensitive regex (~*). Examples: \"pricing\", \"CRO initiative\", \"kyle.*figma\", \"objection|blocker\"."
+        },
+        "path": {
+          "type": "string",
+          "description": "Optional path prefix or shortcut to scope the search. Omit to search across all docs."
+        },
+        "count_only": {
+          "type": "boolean",
+          "default": false,
+          "description": "When true, return only the total count without result excerpts."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20,
+          "default": 10,
+          "description": "Maximum number of matching documents to return (max 20). Default: 10."
+        },
+        "context_lines": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 5,
+          "description": "Number of surrounding lines to include in each excerpt. Default: 5."
+        },
+        "targetUserId": {
+          "type": "string",
+          "description": "Org owner/admin only: the org member whose documents to operate on instead of your own (e.g. to read or edit their playbook). Omit to operate on your own documents."
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "additionalProperties": false
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+## Response
+
+Inspect `isError` on the MCP result and `success` / `errorMessage` in the action result. Optional response branches are populated only for the relevant action. Some results include additional provider or operation-specific data.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `success` | boolean | Yes |   |
+| `errorMessage` | string | No |   |
+| `read` | object | No |   |
+| `list` | object | No |   |
+| `search` | object | No |   |
+| `scroll` | object | No |   |
+
+<Accordion title="Output JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "read": {
+      "type": "object",
+      "properties": {
+        "found": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "documentType": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "lastEditedBy": {
+          "type": "string"
+        },
+        "version": {
+          "type": "number"
+        },
+        "wordCount": {
+          "type": "number"
+        },
+        "updatedAt": {
+          "type": "string"
+        },
+        "fileUrl": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "fileReadingRequired": {
+          "type": "boolean"
+        },
+        "sourceUrl": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "lastScrapedAt": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ingestionTier": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "llms_full",
+                "llms_txt",
+                "direct"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "note": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "recentEdits": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "editedAt": {
+                "type": "string"
+              },
+              "origin": {
+                "type": "string"
+              },
+              "by": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "editCount": {
+                "type": "number"
+              },
+              "wordsBefore": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "wordsAfter": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "editedAt",
+              "origin",
+              "by",
+              "editCount",
+              "wordsBefore",
+              "wordsAfter"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "list": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "number"
+        },
+        "documents": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "documentType": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string"
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "lastEditedBy": {
+                "type": "string"
+              },
+              "version": {
+                "type": "number"
+              },
+              "wordCount": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "updatedAt": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "text",
+                  "upload",
+                  "google_drive"
+                ]
+              },
+              "extractionStatus": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "searchable": {
+                "type": "boolean"
+              },
+              "readMode": {
+                "type": "string",
+                "enum": [
+                  "text",
+                  "whole_file"
+                ]
+              },
+              "ownerUserId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "ownerName": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "documentType",
+              "path",
+              "description",
+              "lastEditedBy",
+              "version",
+              "wordCount",
+              "updatedAt",
+              "type",
+              "extractionStatus",
+              "searchable",
+              "readMode",
+              "ownerUserId",
+              "ownerName"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "search": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string"
+        },
+        "totalMatches": {
+          "type": "number"
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "documentType": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string"
+              },
+              "lastEditedBy": {
+                "type": "string"
+              },
+              "updatedAt": {
+                "type": "string"
+              },
+              "excerpt": {
+                "type": "string"
+              },
+              "matchLine": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "id",
+              "documentType",
+              "path",
+              "lastEditedBy",
+              "updatedAt",
+              "excerpt",
+              "matchLine"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "scroll": {
+      "type": "object",
+      "properties": {
+        "documentId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "ID of the document already open in the app."
+        },
+        "marker": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Exact HTML id, data-report-section or data-node-id; no CSS selector."
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Visible text to locate; used if the marker is absent or not found."
+        },
+        "dispatched": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "documentId",
+        "dispatched"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+[Download the output schema](/reference/schemas/document-read.output.json).

@@ -1,0 +1,40 @@
+---
+title: "Configuration and connected systems"
+description: "Configure the right layer without overwriting unrelated settings."
+---
+
+Load `cedar-configuration` first. Read the current state with `config-read` and inspect version/revision fields before writing. Settings can be account-specific or inherited from organization defaults.
+
+| Tool | What it controls |
+| --- | --- |
+| `config-read` | Playbooks, settings, fields, org members, bot Slack channels |
+| `config-write` | Custom fields, options, stage criteria, AOP reassignment, field/CRM links |
+| `aop-write` | Clone a playbook, replace routing text, override assignment instructions |
+| `connection-write` | CRM mappings/sync, Slack sync, source webhooks, connection instructions, channel-link proposals, supported disconnects |
+| `workspace-write` | User mail/notification settings, inbox layout/tabs, task groups, webhook export |
+| `systems-write` | URL-based MCP connections and their instructions/background access |
+| `data-settings` | Future enrichment defaults and organization data policy |
+| `config-propagate` | Admin propagation of fields or mappings across reps |
+| `ui-config` | Saved views and strategic overview layout |
+
+## Field and CRM mappings
+
+Use introspected CRM options rather than hand-typing allowed values. Creating a Cedar field, linking it to a CRM field, changing its governance, and pushing values are separate operations. Review reconciliation output for renamed/removed values and affected conversations.
+
+`config-propagate` distinguishes matching, missing, and diverging target configuration. Divergence is refused unless the explicit force path is used, which can produce approval-gated proposals per target. A successful proposal is not a completed organization-wide overwrite.
+
+## Integration behavior
+
+Connection instructions replace existing text in full. They are read by interactive chat; background CRM behavior belongs in the relevant agent/playbook instructions. Slack channel lists also replace existing lists when supplied. Preserve unrelated channels and instructions during an additive edit.
+
+Connecting a LinkedIn or WhatsApp account is human-only through the returned connection links. Supported disconnect actions are different from connecting. `resolve_channel_link_proposal` links/dismisses an ambiguous channel proposal or runs a supported linking sweep.
+
+## External MCP connections inside Cedar
+
+`systems-write` can add/delete an MCP server by public URL and change its agent instructions/background access. Organization scope requires admin authority; a user-scoped entry shadows an org entry of the same name.
+
+Raw credential storage, credential retrieval, and static Authorization-header configuration are not offered by this external surface. Use the supported in-app connection workflow where required.
+
+## Settings are not execution
+
+Changing an enrichment default does not activate a watcher, buy credits, or grant spending. Saving a playbook is not proof its trigger fired. Changing inbox sorting instructions does not authorize sending. Read back the configuration and inspect the relevant execution when validating behavior.

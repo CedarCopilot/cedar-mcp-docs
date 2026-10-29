@@ -1,0 +1,494 @@
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "deal": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string",
+          "description": "JSON task/people data, including owner, assignedBy and assignmentNote."
+        },
+        "taskId": {
+          "type": "string"
+        },
+        "chatThreadId": {
+          "type": "string"
+        },
+        "seedPrompt": {
+          "type": "string"
+        },
+        "prepared": {
+          "type": "boolean",
+          "description": "Prepared context only; no agent run or send has happened."
+        }
+      },
+      "additionalProperties": false
+    },
+    "list": {
+      "type": "object",
+      "properties": {
+        "inventory": {
+          "type": "object",
+          "properties": {
+            "ownerId": {
+              "type": "string"
+            },
+            "conversationId": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "revision": {
+              "type": "string"
+            },
+            "complete": {
+              "type": "boolean"
+            },
+            "scopeComplete": {
+              "type": "boolean"
+            },
+            "offset": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "returnedCount": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "totalCount": {
+              "type": "number"
+            },
+            "categories": {
+              "type": "object",
+              "properties": {
+                "todo": {
+                  "type": "number"
+                },
+                "recommended": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "todo",
+                "recommended"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "ownerId",
+            "conversationId",
+            "revision",
+            "complete",
+            "totalCount",
+            "categories"
+          ],
+          "additionalProperties": false
+        },
+        "nextCursor": {
+          "type": "string"
+        },
+        "tasks": {
+          "type": "string",
+          "description": "Formatted list of tasks for agent consumption"
+        },
+        "taskIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Array of task IDs that can be used in cancel-task"
+        },
+        "agentScheduledTaskIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Array of task IDs that have agent execution enabled"
+        }
+      },
+      "additionalProperties": false
+    },
+    "applyApproval": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "message"
+      ],
+      "additionalProperties": false
+    },
+    "create": {
+      "type": "object",
+      "properties": {
+        "taskId": {
+          "type": "string",
+          "description": "ID of the created task"
+        },
+        "conversationId": {
+          "type": "string",
+          "description": "ID of the conversation"
+        },
+        "scheduledFor": {
+          "type": "string",
+          "description": "Confirmed scheduler registration time; does not guarantee execution"
+        },
+        "outcome": {
+          "type": "object",
+          "properties": {
+            "persistence": {
+              "type": "string",
+              "enum": [
+                "created",
+                "existing",
+                "unconfirmed"
+              ]
+            },
+            "scheduling": {
+              "type": "string",
+              "enum": [
+                "not_requested",
+                "not_attempted",
+                "accepted",
+                "unconfirmed"
+              ]
+            },
+            "dueDate": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "partial": {
+              "type": "boolean"
+            },
+            "warnings": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "persistence",
+            "scheduling",
+            "dueDate",
+            "partial",
+            "warnings"
+          ],
+          "additionalProperties": false,
+          "description": "Persisted task and scheduling outcomes. Never recreate a confirmed task to retry a later effect."
+        },
+        "agentExecutionEnabled": {
+          "type": "boolean",
+          "description": "Whether agent execution is enabled"
+        },
+        "conflict": {
+          "type": "boolean",
+          "description": "True if a task already exists in the same time window"
+        },
+        "isRecoverable": {
+          "type": "boolean"
+        },
+        "existingTask": {
+          "type": "object",
+          "properties": {
+            "taskId": {
+              "type": "string",
+              "description": "ID of the conflicting existing task"
+            },
+            "description": {
+              "type": "string",
+              "description": "Description of the existing task"
+            },
+            "notes": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Notes of the existing task"
+            },
+            "dueDate": {
+              "type": "string",
+              "description": "Due date of the existing task"
+            }
+          },
+          "required": [
+            "taskId",
+            "description",
+            "notes",
+            "dueDate"
+          ],
+          "additionalProperties": false,
+          "description": "Details of the existing task to merge into via update-task"
+        },
+        "proposed": {
+          "type": "boolean",
+          "description": "True if this is a proposed task awaiting approval"
+        },
+        "proposedTask": {
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": "string"
+            },
+            "notes": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "taskChannel": {
+              "type": "string"
+            },
+            "taskType": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "dueDate": {
+              "type": "string"
+            },
+            "agentExecutionEnabled": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "description",
+            "taskChannel",
+            "dueDate",
+            "agentExecutionEnabled"
+          ],
+          "additionalProperties": false,
+          "description": "Proposed task details (chat mode only)"
+        },
+        "userMessage": {
+          "type": "string",
+          "description": "UI instructions for the user"
+        }
+      },
+      "additionalProperties": false
+    },
+    "update": {
+      "type": "object",
+      "properties": {
+        "taskId": {
+          "type": "string",
+          "description": "ID of the updated task"
+        },
+        "changed": {
+          "type": "boolean",
+          "description": "Whether a row actually moved. `success: true` with `changed: false` means nothing was written — the values already matched, or the task is protected from this run."
+        },
+        "scheduledFor": {
+          "type": "string",
+          "description": "New scheduled time if agent execution is enabled"
+        },
+        "agentExecutionEnabled": {
+          "type": "boolean",
+          "description": "Whether agent execution is enabled"
+        },
+        "userMessage": {
+          "type": "string",
+          "description": "UI instructions for the user"
+        }
+      },
+      "additionalProperties": false
+    },
+    "cancel": {
+      "type": "object",
+      "properties": {
+        "cancelledTasks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of task IDs that were successfully cancelled"
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of any errors encountered"
+        },
+        "proposed": {
+          "type": "boolean",
+          "description": "True if this is a proposed cancellation awaiting approval"
+        },
+        "proposedCancellations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "taskId": {
+                "type": "string"
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "conversationId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "taskId",
+              "description",
+              "conversationId"
+            ],
+            "additionalProperties": false
+          },
+          "description": "List of tasks proposed for cancellation (chat mode only)"
+        },
+        "userMessage": {
+          "type": "string",
+          "description": "UI instructions for the user"
+        }
+      },
+      "additionalProperties": false
+    },
+    "assignmentOptions": {
+      "type": "object",
+      "properties": {
+        "canReassign": {
+          "type": "boolean"
+        },
+        "disabledReason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "requiresDraftDeletion": {
+          "type": "boolean"
+        },
+        "currentAssigneeUserId": {
+          "type": "string"
+        },
+        "assignmentVersion": {
+          "type": "number"
+        },
+        "assignees": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "userId": {
+                "type": "string"
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "email": {
+                "type": "string"
+              },
+              "image": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "userId",
+              "name",
+              "email",
+              "image"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "pendingTransfer": {
+          "type": "object",
+          "properties": {
+            "idempotencyKey": {
+              "type": "string"
+            },
+            "canRetarget": {
+              "type": "boolean"
+            },
+            "assigneeUserId": {
+              "type": "string"
+            },
+            "expectedVersion": {
+              "type": "number"
+            },
+            "requiresDraftDeletion": {
+              "type": "boolean"
+            },
+            "assigneeName": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "idempotencyKey",
+            "canRetarget",
+            "assigneeUserId",
+            "expectedVersion",
+            "requiresDraftDeletion",
+            "assigneeName"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "reassign": {
+      "type": "object",
+      "properties": {
+        "taskId": {
+          "type": "string"
+        },
+        "assigneeUserId": {
+          "type": "string"
+        },
+        "assignmentVersion": {
+          "type": "number"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "finishing"
+          ]
+        },
+        "draftDeleted": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

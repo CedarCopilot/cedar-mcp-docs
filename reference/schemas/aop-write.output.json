@@ -1,0 +1,79 @@
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "createAop": {
+      "type": "object",
+      "properties": {
+        "aopId": {
+          "type": "string"
+        },
+        "orgAopId": {
+          "type": "string"
+        },
+        "sourceAopName": {
+          "type": "string"
+        },
+        "clonedDocumentCount": {
+          "type": "number"
+        },
+        "remappedRefCount": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "aopId",
+        "orgAopId",
+        "sourceAopName",
+        "clonedDocumentCount",
+        "remappedRefCount"
+      ],
+      "additionalProperties": false
+    },
+    "updateSelectionProcedure": {
+      "type": "object",
+      "properties": {
+        "aopId": {
+          "type": "string"
+        },
+        "selectionProcedure": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "aopId",
+        "selectionProcedure"
+      ],
+      "additionalProperties": false
+    },
+    "updateCustomAssignmentInstruction": {
+      "type": "object",
+      "properties": {
+        "aopId": {
+          "type": "string"
+        },
+        "customAssignmentInstruction": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "aopId",
+        "customAssignmentInstruction"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

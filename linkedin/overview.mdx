@@ -1,0 +1,32 @@
+---
+title: "LinkedIn module"
+description: "A connected LinkedIn seat for prospecting, relationship context, and authorized outreach."
+---
+
+Cedar's LinkedIn integration uses a connected Unipile seat. `linkedin-read` covers 20 operations; `linkedin-write` covers four. Cedar resolves a single connected seat automatically. With multiple seats, use `list-seats` and provide the returned `unipileAccountId`. You cannot select another user's seat.
+
+## Capabilities
+
+| Area | Actions | Typical use |
+| --- | --- | --- |
+| Seats and profile | `list-seats`, `view-profile` | Verify connection health, inspect a person or your own profile |
+| Search | `search`, `search-parameters` | Classic, Sales Navigator, or Recruiter searches and reference IDs |
+| Batches | `profiles`, `companies` | Bounded profile/company reads and cache-aware lookups |
+| Network | `list-connections`, `list-connections-page`, `connections-page` | Bounded or resumable network traversal |
+| Content | `list-own-posts`, `post-page`, `list-post-reactions` | Authored posts, reshares, comments/replies, and reactions |
+| Relationship signals | `profile-viewers`, `post-engagement`, `new-connections` | Inspect attention and recent connections |
+| Screening | `screen-prospects`, `outreach-status` | Existing relationships, CRM matches, exclusions, and contact evidence |
+| Messaging context | `list-chats`, `read-chat`, `find-chat` | Saved chats and a targeted live lookup |
+| Actions | `send-message`, `send-invitation`, `send-inmail`, `sync-chat` | Authorized outreach or attaching a chat to a deal |
+
+## What reads cost
+
+Live provider calls can consume a LinkedIn rate window. Prefer cached batch profiles when sufficient and preserve pagination cursors. Reading one person's profile is not free simply because the tool has a read scope.
+
+Native LinkedIn profile access is distinct from third-party enrichment through `research`. For manual person or company enrichment, these guides use Fiber explicitly; see [research](/modules/research).
+
+## Provider and account limitations
+
+Search products depend on the connected account's subscription. Profile-viewer visibility can be incomplete or unavailable. Do not treat an unavailable viewer list as evidence that nobody visited. InMail requires provider entitlement/credits in addition to Cedar's cap. A disconnected or unhealthy seat must be repaired through Cedar's connection flow.
+
+[Prospecting](/linkedin/prospecting) · [Messaging](/linkedin/messaging) · [Limits](/linkedin/limits) · [Full read schema](/reference/linkedin-read) · [Full write schema](/reference/linkedin-write)

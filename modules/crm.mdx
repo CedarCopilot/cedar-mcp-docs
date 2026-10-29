@@ -1,0 +1,44 @@
+---
+title: "CRM and deal intelligence"
+description: "Search customer context, maintain deal records, and compute pipeline metrics."
+---
+
+## Find the right conversation
+
+`conversation-read` operates on Cedar's stored conversations. Use `find` for structured filtering; `search-semantic` for locating relevant content; and `get` to read a known conversation. Load the `conversation` skill for the complete field/filter reference.
+
+A semantic hit is a slice of evidence. For a question about one specific call or email, resolve the event ID and re-read the complete event with `get` and `expandEventId`. Use `raw-content` when the source content is needed. `get` can write a large result to a document buffer for deeper inspection.
+
+`search-external-crm-deals` searches the connected external CRM rather than Cedar's copy. Discover the provider with `config-read` first. Do not report a search of one system as a search of both.
+
+## Changes and associations
+
+`conversation-write` can create a conversation, update fields, log an event, transfer ownership, link an existing external CRM deal, or perform supported structural mutations. Read the effective CRM updater instructions before making changes.
+
+Creating a Cedar conversation does not create an opportunity in Salesforce, HubSpot, Attio, or Copper. `link-external-crm-deal` writes the association; use the supported field update path for values. Gmail thread ingestion is a live-mail operation and requires `email:read`.
+
+Structural mutations include moving an event, assigning an AOP, refreshing a conversation, clearing working memory, merging records, fixing assignments, and renaming. Those operations have different consequences; use the exact operation and verify the result.
+
+## Historical and evidence-based analysis
+
+| Action | Use |
+| --- | --- |
+| `timeline` | Time-ordered events and extracted taxonomy evidence across deals |
+| `field-evolution` | A field's change history |
+| `value-as-of` | A versioned field at a date, stage, or event |
+| `describe-field` | Vocabulary, score meaning, and payload shape before filtering |
+| `taxonomy-fields list/get` | Feature-gated organization taxonomy definitions |
+
+The Cedar Brain feature additionally exposes reasoning skills for deal-intelligence analysis and analysis decomposition. It is a separate feature gate, not a guarantee included with every CRM connection.
+
+## Metrics
+
+Call `conversation-analytics describe-metrics` before choosing a metric, grouping, or reducer. `compute-metric-batch` supports up to 50 independently evaluated items. Results include sample size and sample conversation IDs; ordinary empty samples usually produce null rather than a fabricated zero.
+
+Cedar outcome metrics need explicit won/lost status vocabulary. Live CRM won/open-due amounts require one rep, explicit date bounds, and an IANA reporting timezone. They use provider close dates and amounts, separate currencies, and do not silently fall back to Cedar data. Run live metrics sequentially to respect CRM rate limits.
+
+## Read-only SQL
+
+`run-sql` exposes guarded SELECT/CTE queries over an allowlist. Load `run-sql` first for column meanings, permitted joins, and tenant predicates. It is not a general database connection and cannot perform mutations. The server checks actual organization predicates; a UUID merely appearing in a query is not sufficient scoping.
+
+Prefer the dedicated metric tool for metrics it already defines. Use SQL for supported aggregations and taxonomy analysis that need a custom query. Save results to a document/table when they should become a persistent GTM artifact.

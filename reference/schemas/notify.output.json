@@ -1,0 +1,59 @@
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean",
+      "description": "Whether the operation succeeded (for `send`, iMessage/WhatsApp legs are fire-and-forget and do not affect this)"
+    },
+    "errorMessage": {
+      "type": "string",
+      "description": "Error message if the operation failed"
+    },
+    "proposed": {
+      "type": "boolean",
+      "description": "True if the notification was proposed for user approval (interactive chat) rather than sent immediately"
+    },
+    "userMessage": {
+      "type": "string",
+      "description": "UI/agent guidance, e.g. when a notification was proposed rather than sent"
+    },
+    "muted": {
+      "type": "boolean",
+      "description": "True if the user has muted every notification channel — nothing was sent"
+    },
+    "listSlackChannels": {
+      "type": "object",
+      "properties": {
+        "channels": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "isPrivate": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "isPrivate"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

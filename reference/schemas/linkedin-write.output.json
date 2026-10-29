@@ -1,0 +1,64 @@
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "sendMessage": {
+      "type": "object",
+      "properties": {
+        "chatId": {
+          "type": "string"
+        },
+        "messageId": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "sendInvitation": {
+      "type": "object",
+      "properties": {
+        "invitationId": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "sendInmail": {
+      "type": "object",
+      "properties": {
+        "providerMessageId": {
+          "type": "string"
+        },
+        "eventId": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "syncChat": {
+      "type": "object",
+      "properties": {
+        "attached": {
+          "type": "boolean"
+        },
+        "eventsAttached": {
+          "type": "number"
+        },
+        "chatId": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

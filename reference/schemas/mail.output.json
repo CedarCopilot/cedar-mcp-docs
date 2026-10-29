@@ -1,0 +1,658 @@
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "fetchAttachments": {
+      "type": "object",
+      "properties": {
+        "messageId": {
+          "type": "string"
+        },
+        "attachments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "attachmentId": {
+                "type": "string"
+              },
+              "filename": {
+                "type": "string"
+              },
+              "mimeType": {
+                "type": "string"
+              },
+              "size": {
+                "type": "number"
+              },
+              "content": {
+                "type": "string",
+                "description": "Extracted text content, when available"
+              },
+              "truncated": {
+                "type": "boolean"
+              },
+              "extractionMethod": {
+                "type": "string"
+              },
+              "note": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "attachmentId",
+              "filename",
+              "mimeType",
+              "size"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "buffered": {
+          "type": "boolean"
+        },
+        "path": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "word_count": {
+          "type": "number"
+        },
+        "access_instructions": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "listSent": {
+      "type": "object",
+      "properties": {
+        "emails": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "subject": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "draftedBody": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "sentBody": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "semanticSimilarity": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "sentAt": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "runId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "messageId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Gmail message ID — pass to fetch-attachments (fetchAttachments.messageId) to read this email's attachments. Null for older rows."
+              },
+              "threadId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "subject",
+              "draftedBody",
+              "sentBody",
+              "semanticSimilarity",
+              "sentAt",
+              "runId",
+              "messageId",
+              "threadId"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "totalSent": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "find": {
+      "type": "object",
+      "properties": {
+        "emails": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "messageId": {
+                "type": "string"
+              },
+              "eventId": {
+                "type": "string"
+              },
+              "conversationId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "threadId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "subject": {
+                "type": "string"
+              },
+              "fromEmail": {
+                "type": "string"
+              },
+              "toEmails": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "occurredAt": {
+                "type": "string"
+              },
+              "hasAttachments": {
+                "type": "boolean"
+              },
+              "attachmentCount": {
+                "type": "number"
+              },
+              "snippet": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "emailClassification": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "messageId",
+              "eventId",
+              "conversationId",
+              "threadId",
+              "subject",
+              "fromEmail",
+              "toEmails",
+              "occurredAt",
+              "hasAttachments",
+              "attachmentCount",
+              "snippet",
+              "emailClassification"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "total": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "searchLive": {
+      "type": "object",
+      "properties": {
+        "threads": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "threadId": {
+                "type": "string"
+              },
+              "subject": {
+                "type": "string"
+              },
+              "from": {
+                "type": "string"
+              },
+              "snippet": {
+                "type": "string"
+              },
+              "date": {
+                "type": "string",
+                "description": "When the thread last received a message."
+              },
+              "conversationId": {
+                "type": "string",
+                "description": "Set when the thread is ALREADY synced into Cedar and attached to that conversation."
+              }
+            },
+            "required": [
+              "threadId"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "nextPageToken": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "readThread": {
+      "type": "object",
+      "properties": {
+        "threadId": {
+          "type": "string"
+        },
+        "subject": {
+          "type": "string"
+        },
+        "messageCount": {
+          "type": "number"
+        },
+        "messages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Gmail message id — pass to fetch-email-attachments."
+              },
+              "from": {
+                "type": "string"
+              },
+              "to": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Recipients as `Name <email>`, or a bare address when the header had no name."
+              },
+              "cc": {
+                "$ref": "#/properties/readThread/properties/messages/items/properties/to"
+              },
+              "subject": {
+                "type": "string"
+              },
+              "date": {
+                "type": "string"
+              },
+              "snippet": {
+                "type": "string"
+              },
+              "unread": {
+                "type": "boolean"
+              },
+              "tracking": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "trackingId": {
+                        "type": "string"
+                      },
+                      "openTrackingEnabled": {
+                        "type": "boolean"
+                      },
+                      "linkTrackingEnabled": {
+                        "type": "boolean"
+                      },
+                      "openCount": {
+                        "type": "number"
+                      },
+                      "clickCount": {
+                        "type": "number"
+                      },
+                      "firstOpenedAt": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "lastOpenedAt": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "firstClickedAt": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "events": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "eventType": {
+                              "type": "string"
+                            },
+                            "occurredAt": {
+                              "type": "string",
+                              "description": "ISO timestamp of the recorded event."
+                            },
+                            "ipAddress": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "description": "Observed request IP; may belong to a mail proxy."
+                            },
+                            "userAgent": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "country": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "city": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "region": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "clientType": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "isReliable": {
+                              "type": "boolean"
+                            },
+                            "assessment": {
+                              "type": "object",
+                              "properties": {
+                                "version": {
+                                  "type": "number",
+                                  "const": 3
+                                },
+                                "verdict": {
+                                  "type": "string",
+                                  "enum": [
+                                    "likely_human",
+                                    "automated",
+                                    "unknown"
+                                  ]
+                                },
+                                "reason": {
+                                  "type": "string"
+                                },
+                                "clientType": {
+                                  "type": "string"
+                                },
+                                "source": {
+                                  "type": "string",
+                                  "enum": [
+                                    "gmail_prefetch",
+                                    "gmail_proxy",
+                                    "known_scanner",
+                                    "privacy_proxy",
+                                    "image_proxy",
+                                    "direct_client",
+                                    "unrecognized"
+                                  ]
+                                },
+                                "activity": {
+                                  "type": "string",
+                                  "enum": [
+                                    "likely_render",
+                                    "likely_interaction",
+                                    "automated_fetch",
+                                    "unknown"
+                                  ]
+                                },
+                                "attribution": {
+                                  "type": "string",
+                                  "const": "message"
+                                },
+                                "viewerIdentity": {
+                                  "type": "string",
+                                  "const": "unknown"
+                                },
+                                "selfActivity": {
+                                  "type": "string",
+                                  "enum": [
+                                    "possible",
+                                    "no_specific_evidence"
+                                  ]
+                                },
+                                "reasonCodes": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
+                                "evidence": {
+                                  "type": "object",
+                                  "properties": {
+                                    "version": {
+                                      "type": "number",
+                                      "const": 1
+                                    },
+                                    "origin": {
+                                      "type": "string",
+                                      "enum": [
+                                        "request",
+                                        "legacy_assessment",
+                                        "legacy_user_agent"
+                                      ]
+                                    },
+                                    "method": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string",
+                                          "maxLength": 32
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "purpose": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string",
+                                          "maxLength": 256
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "secPurpose": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string",
+                                          "maxLength": 256
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "senderIpMatch": {
+                                      "type": "boolean"
+                                    },
+                                    "elapsedSinceSendMs": {
+                                      "anyOf": [
+                                        {
+                                          "type": "number"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "headersTruncated": {
+                                      "type": "boolean"
+                                    },
+                                    "eventType": {
+                                      "type": "string",
+                                      "enum": [
+                                        "opened",
+                                        "clicked"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "version",
+                                    "origin",
+                                    "method",
+                                    "purpose",
+                                    "secPurpose",
+                                    "senderIpMatch",
+                                    "elapsedSinceSendMs",
+                                    "headersTruncated",
+                                    "eventType"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "required": [
+                                "version",
+                                "verdict",
+                                "reason",
+                                "clientType",
+                                "source",
+                                "activity",
+                                "attribution",
+                                "viewerIdentity",
+                                "selfActivity",
+                                "reasonCodes",
+                                "evidence"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "originalAssessment": {
+                              "anyOf": [
+                                {},
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "linkUrl": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "linkIndex": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "eventType",
+                            "occurredAt",
+                            "ipAddress",
+                            "userAgent",
+                            "country",
+                            "city",
+                            "region",
+                            "clientType",
+                            "isReliable",
+                            "assessment",
+                            "linkUrl",
+                            "linkIndex"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "description": "Full recorded open/click history, oldest first. assessment and isReliable use the same current classification as the summary; originalAssessment preserves recorded evidence. No request proves reader identity."
+                      }
+                    },
+                    "required": [
+                      "trackingId",
+                      "openTrackingEnabled",
+                      "linkTrackingEnabled",
+                      "openCount",
+                      "clickCount",
+                      "firstOpenedAt",
+                      "lastOpenedAt",
+                      "firstClickedAt",
+                      "events"
+                    ],
+                    "additionalProperties": false,
+                    "description": "Observed tracking activity, not verified human read receipts. Disabled tracking is distinct from zero activity."
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "Tracking for this message, scoped to the authenticated user. Null means no tracking record is available, not zero opens/clicks."
+              }
+            },
+            "required": [
+              "id",
+              "to",
+              "cc",
+              "tracking"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

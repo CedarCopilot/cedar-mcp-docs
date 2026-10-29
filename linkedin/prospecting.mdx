@@ -1,0 +1,72 @@
+---
+title: "Search and screen prospects"
+description: "Build an evidence-backed LinkedIn prospect list without losing pagination or relationship context."
+---
+
+## Search people or companies
+
+Use structured parameters or an existing filtered LinkedIn search URL. For filters requiring provider IDs, call `search-parameters` first; do not substitute a human-readable label for an ID.
+
+`linkedin-read`:
+
+```json
+{
+  "action": "search",
+  "search": {
+    "api": "classic",
+    "category": "people",
+    "keywords": "infrastructure engineering",
+    "networkDistance": [2],
+    "limit": 25
+  }
+}
+```
+
+Continue with the returned cursor. The read-only search does not save a search or create an ongoing watch. Select `sales_navigator` or `recruiter` only when the connected seat has that product.
+
+## Inspect profiles in batches
+
+`profiles` accepts 1–50 people. Each person has a LinkedIn URL and can include a stable `rowId` and known `providerId`. `cacheOnly` avoids live profile fetching; `maxAgeDays` controls acceptable cache age.
+
+```json
+{
+  "action": "profiles",
+  "profiles": {
+    "people": [{ "rowId": "prospect-1", "url": "https://www.linkedin.com/in/example-person" }],
+    "cacheOnly": true,
+    "maxAgeDays": 7
+  }
+}
+```
+
+A cache miss is not a missing person. Inspect per-row outcomes before deciding whether an authorized live lookup is necessary. `companies` provides the company-profile path; it has its own schema.
+
+## Check prior contact before outreach
+
+Use `screen-prospects` for qualification and `outreach-status` for ongoing contact tracking. Both accept up to 50 people, an optional exclusion list, and connection checks. `includeCrm` adds authorized CRM screening and requires `crm:read`.
+
+```json
+{
+  "action": "screen-prospects",
+  "screenProspects": {
+    "people": [{ "rowId": "prospect-1", "url": "https://www.linkedin.com/in/example-person" }],
+    "includeCrm": true,
+    "checkConnections": true,
+    "excludedUrls": []
+  }
+}
+```
+
+Populate `excludedUrls` from prior authorized outreach tables. A first-degree relationship, a pending invitation, a chat, or an existing CRM contact should influence the next step; a signal alone is not permission to contact someone.
+
+## Network and engagement
+
+Use the page-oriented connection actions for resumable jobs. `list-connections` is a bounded walk; its `complete`, `total`, and `stoppedBy` fields distinguish an exhaustive network from a stopped traversal.
+
+`list-own-posts` returns authored posts and reshares, excluding unrelated feed activity. Use the returned `reactionId` as `postId` for `list-post-reactions`. A reshare with no reaction identifier must not be replaced with the original post's identifier: that would attribute someone else's audience to you.
+
+`post-page` supports paginated posts, comments/replies, and reactions. `post-engagement` is a bounded convenience aggregation. `new-connections` defaults to a 30-day ad hoc lookback and does not consume the background input's watermark.
+
+## Persist a useful list
+
+Create a Cedar table with stable row identifiers for the profile URL, company, relevance evidence, relationship state, proposed message, and review status. Edit cells with `table set`; do not rewrite the entire document to change one row. [Tables guide](/modules/documents-tables).

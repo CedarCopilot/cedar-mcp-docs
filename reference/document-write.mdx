@@ -1,0 +1,516 @@
+---
+title: "document-write"
+description: "Parameters, scopes, and response schema for document-write."
+---
+
+Generated from Cedar's external registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+
+<Note>A write on a playbook or agenda path requires playbook:write. Ordinary document writes use docs:read plus the role and document authorization checks.</Note>
+
+## Capability
+
+Cedar Docs: persistent agent-curated documents. ACTIONS: (1) write: upsert (replace), append, or patch. Types: document, workflow, html, agenda, conversation_agenda, attachment. If load-skill lists "documents", load it FIRST for the correct AOP template; otherwise write plain markdown. (2) delete: hide by documentId from document-read output. Interactive chat proposes this and waits for approval: explain the removal, never claim completion early. Autonomous surfaces (cron, external MCP, bots) apply immediately. (3) restore: undo deletion by documentId within 30 days. Org KB docs may be deleted by any org member; other unowned docs, PLAYBOOK.md, playbook resources and subagents are protected. (4) move: relocate between virtual paths, e.g. promote a thread artifact to persistent scope. (5) share: generate/revoke a public token-gated link. Requires a live user; publishing is a person's decision. (6) request-file: show a picker for a needed Google Drive file; relay the result rather than saying no picker is available. Chat writes attach/open automatically; never tell the UI to show one. Put params only in the object named for the action, e.g. action:"write", write:&#123;...&#125;. Read and update personal chat instructions at #chat-agent (user/playbooks/CHAT_AGENT.md); patch existing rules, or upsert if missing when saving a standing instruction. Read back to verify. Load documents skill before non-trivial paths or shortcuts (#kb, #wiki, #playbook, #here, #sections, #outline, #section/Name, #lines/a-b). Workflow: inert JSON fences with clickable buttons. Load documents skill for authoring; discover eligible mutation inputs with workflow.list_operations. Saving never executes buttons.
+
+## Operations and scopes
+
+| Action | Baseline scope |
+| --- | --- |
+| `write` | `docs:read` |
+| `delete` | `playbook:write` |
+| `restore` | `docs:read` |
+| `move` | `docs:read` |
+| `share` | `docs:read` |
+| `request-file` | `docs:read` |
+
+Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Parameters
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `action` | "write" · "delete" · "restore" · "move" · "share" · "request-file" | Yes | Which write to perform — pass its matching params object below (e.g. action: "write" pairs with write: &#123;...&#125;).  |
+| `write` | object | No |   |
+| `delete` | object | No |   |
+| `restore` | object | No |   |
+| `move` | object | No |   |
+| `share` | object | No |   |
+| `requestFile` | object | No |   |
+| `user_request_summary` | string | Yes | One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does.  |
+| `is_new_request` | boolean | Yes | true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread.  |
+
+### write
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `path` | string | Yes | Virtual path for the document. Path encodes scope and name; see Cedar Docs guidance for path conventions and supported shortcuts.  |
+| `type` | "document" · "workflow" · "html" · "agenda" · "conversation_agenda" · "attachment" · "table" | Yes | Behavioural type for the document. "document" = Y.js markdown (default for all text). "workflow" = markdown with actionable workflow JSON fences; saving never executes buttons. "html" = self-contained HTML blob rendered as iframe (use for presentations, reports). "agenda" = Y.js + task sync for the user daily agenda. "conversation_agenda" = Y.js + task sync for a per-conversation agenda. "attachment" = file reference (no content; details in metadata). "table" = spreadsheet, rendered as a data grid; only for CREATING one or rewriting it whole (frontmatter schema + one pipe table with a leading _id column) — use the `table` tool for every partial read/write, because a partial write routed through here rewrites every row and destroys row identity.  |
+| `mode` | "upsert" · "append" · "patch" | Yes | Write mode. upsert=full replace (best for overview, strategy, meeting-prep, or ANY whole-document rewrite/restructure/dedup — pass the complete new content directly). append=add to end (best for canvas, research, chat history). patch=surgical edit for a SMALL, localized change only (read doc first, then replace old_string with new_string) — do not use patch with old_string/new_string spanning the whole document; that forces holding two full copies in context and will exhaust it on a large doc. Use upsert instead.  |
+| `content` | string | No | Document content. Required for upsert and append modes. Use plain markdown unless type is "html", where content must be the full HTML string.  |
+| `old_string` | string | No | patch mode: the exact string to find and replace. Must be unique within the document. Include surrounding context (e.g. the section header) to ensure uniqueness.  |
+| `new_string` | string | No | patch mode: the replacement string. Can be empty string to delete a section.  |
+| `description` | string | No | Short summary (≤ 200 chars) of what this document contains. Shown in list results so future agents can decide whether to read/grep without loading content. Write this on create. maxLength: 200 |
+| `metadata` | object | No | Optional structured metadata (e.g. related conversation IDs, task IDs).  |
+| `sourceEmailAttachment` | object | No | When set, fetches the file bytes from Gmail and uploads them to S3 as a confirmed KB upload. Use path="#kb/&lt;name&gt;" and type="attachment". The returned document ID can be passed in the attachments field of draft-email.  |
+| `targetUserId` | string | No | Org owner/admin only: the org member whose documents to operate on instead of your own (e.g. to read or edit their playbook). Omit to operate on your own documents.  |
+
+### delete
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `documentId` | string | Yes | ID of the document to delete — the `id` field returned by document-read(&#123;action: "list"&#125;) or document-read(&#123;action: "read"&#125;). Reversible: the doc is hidden, and action "restore" brings it back for 30 days. Refused for playbook/resource paths and for documents you do not own. minLength: 1 |
+| `targetUserId` | string | No | Org owner/admin only: the org member whose documents to operate on instead of your own (e.g. to read or edit their playbook). Omit to operate on your own documents.  |
+
+### restore
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `documentId` | string | Yes | ID of the deleted document to bring back — the same `id` you passed to action "delete". Works for 30 days after the delete, after which the row is purged for good. Refused if a live document has since taken the deleted one's path. minLength: 1 |
+| `targetUserId` | string | No | Org owner/admin only: the org member whose documents to operate on instead of your own (e.g. to read or edit their playbook). Omit to operate on your own documents.  |
+
+### move
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `from_path` | string | Yes | Current virtual path of the document. Example: "thread/&#123;threadId&#125;/my-deck". Supports path shortcuts — see this tool's description for the full reference.  |
+| `to_path` | string | Yes | Destination virtual path. Supports the same shortcuts as from_path.  |
+| `targetUserId` | string | No | Org owner/admin only: the org member whose documents to operate on instead of your own (e.g. to read or edit their playbook). Omit to operate on your own documents.  |
+
+### share
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `path` | string | Yes | Virtual path of the document to share, e.g. "conversation/&#123;convId&#125;/collateral/one-pager". Supports the same path shortcuts as write.  |
+| `revoke` | boolean | No | Set to true to revoke the existing share link — the old URL immediately stops working. Omit or set to false to create/retrieve the share URL.  |
+| `targetUserId` | string | No | Org owner/admin only: the org member whose documents to operate on instead of your own (e.g. to read or edit their playbook). Omit to operate on your own documents.  |
+
+### requestFile
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `purpose` | string | Yes | What the file is for, in a few words, shown on the picker card, e.g. "your overview deck template". Use request-file whenever a user wants to upload or share a Google Drive file, or a Drive link you were given cannot be read: only this picker can give Cedar a private file. In interactive chat it shows a "Choose from Drive" card and the user's pick is saved to the knowledge base; do not ask for a link or call it again, wait for their message naming the file. Elsewhere (Slack, scheduled runs, MCP) no card can be drawn and the result lists how the user can hand the file over: relay what it returns. minLength: 1 |
+
+## Full input schema
+
+[Download the input schema](/reference/schemas/document-write.input.json). Nested objects, variants, and constraints are preserved in full. Runtime refinements and ownership checks still apply.
+
+<Accordion title="Input JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "write",
+        "delete",
+        "restore",
+        "move",
+        "share",
+        "request-file"
+      ],
+      "description": "Which write to perform — pass its matching params object below (e.g. action: \"write\" pairs with write: {...})."
+    },
+    "write": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Virtual path for the document. Path encodes scope and name; see Cedar Docs guidance for path conventions and supported shortcuts."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "document",
+            "workflow",
+            "html",
+            "agenda",
+            "conversation_agenda",
+            "attachment",
+            "table"
+          ],
+          "description": "Behavioural type for the document. \"document\" = Y.js markdown (default for all text). \"workflow\" = markdown with actionable workflow JSON fences; saving never executes buttons. \"html\" = self-contained HTML blob rendered as iframe (use for presentations, reports). \"agenda\" = Y.js + task sync for the user daily agenda. \"conversation_agenda\" = Y.js + task sync for a per-conversation agenda. \"attachment\" = file reference (no content; details in metadata). \"table\" = spreadsheet, rendered as a data grid; only for CREATING one or rewriting it whole (frontmatter schema + one pipe table with a leading _id column) — use the `table` tool for every partial read/write, because a partial write routed through here rewrites every row and destroys row identity."
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "upsert",
+            "append",
+            "patch"
+          ],
+          "description": "Write mode. upsert=full replace (best for overview, strategy, meeting-prep, or ANY whole-document rewrite/restructure/dedup — pass the complete new content directly). append=add to end (best for canvas, research, chat history). patch=surgical edit for a SMALL, localized change only (read doc first, then replace old_string with new_string) — do not use patch with old_string/new_string spanning the whole document; that forces holding two full copies in context and will exhaust it on a large doc. Use upsert instead."
+        },
+        "content": {
+          "type": "string",
+          "description": "Document content. Required for upsert and append modes. Use plain markdown unless type is \"html\", where content must be the full HTML string."
+        },
+        "old_string": {
+          "type": "string",
+          "description": "patch mode: the exact string to find and replace. Must be unique within the document. Include surrounding context (e.g. the section header) to ensure uniqueness."
+        },
+        "new_string": {
+          "type": "string",
+          "description": "patch mode: the replacement string. Can be empty string to delete a section."
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Short summary (≤ 200 chars) of what this document contains. Shown in list results so future agents can decide whether to read/grep without loading content. Write this on create."
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {},
+          "description": "Optional structured metadata (e.g. related conversation IDs, task IDs)."
+        },
+        "sourceEmailAttachment": {
+          "type": "object",
+          "properties": {
+            "messageId": {
+              "type": "string",
+              "description": "Gmail message ID of the email containing the attachment."
+            },
+            "attachmentId": {
+              "type": "string",
+              "description": "Specific attachment ID. Omit to use the first attachment on the message."
+            }
+          },
+          "required": [
+            "messageId"
+          ],
+          "additionalProperties": false,
+          "description": "When set, fetches the file bytes from Gmail and uploads them to S3 as a confirmed KB upload. Use path=\"#kb/<name>\" and type=\"attachment\". The returned document ID can be passed in the attachments field of draft-email."
+        },
+        "targetUserId": {
+          "type": "string",
+          "description": "Org owner/admin only: the org member whose documents to operate on instead of your own (e.g. to read or edit their playbook). Omit to operate on your own documents."
+        }
+      },
+      "required": [
+        "path",
+        "type",
+        "mode"
+      ],
+      "additionalProperties": false
+    },
+    "delete": {
+      "type": "object",
+      "properties": {
+        "documentId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "ID of the document to delete — the `id` field returned by document-read({action: \"list\"}) or document-read({action: \"read\"}). Reversible: the doc is hidden, and action \"restore\" brings it back for 30 days. Refused for playbook/resource paths and for documents you do not own."
+        },
+        "targetUserId": {
+          "type": "string",
+          "description": "Org owner/admin only: the org member whose documents to operate on instead of your own (e.g. to read or edit their playbook). Omit to operate on your own documents."
+        }
+      },
+      "required": [
+        "documentId"
+      ],
+      "additionalProperties": false
+    },
+    "restore": {
+      "type": "object",
+      "properties": {
+        "documentId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "ID of the deleted document to bring back — the same `id` you passed to action \"delete\". Works for 30 days after the delete, after which the row is purged for good. Refused if a live document has since taken the deleted one's path."
+        },
+        "targetUserId": {
+          "type": "string",
+          "description": "Org owner/admin only: the org member whose documents to operate on instead of your own (e.g. to read or edit their playbook). Omit to operate on your own documents."
+        }
+      },
+      "required": [
+        "documentId"
+      ],
+      "additionalProperties": false
+    },
+    "move": {
+      "type": "object",
+      "properties": {
+        "from_path": {
+          "type": "string",
+          "description": "Current virtual path of the document. Example: \"thread/{threadId}/my-deck\". Supports path shortcuts — see this tool's description for the full reference."
+        },
+        "to_path": {
+          "type": "string",
+          "description": "Destination virtual path. Supports the same shortcuts as from_path."
+        },
+        "targetUserId": {
+          "type": "string",
+          "description": "Org owner/admin only: the org member whose documents to operate on instead of your own (e.g. to read or edit their playbook). Omit to operate on your own documents."
+        }
+      },
+      "required": [
+        "from_path",
+        "to_path"
+      ],
+      "additionalProperties": false
+    },
+    "share": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Virtual path of the document to share, e.g. \"conversation/{convId}/collateral/one-pager\". Supports the same path shortcuts as write."
+        },
+        "revoke": {
+          "type": "boolean",
+          "description": "Set to true to revoke the existing share link — the old URL immediately stops working. Omit or set to false to create/retrieve the share URL."
+        },
+        "targetUserId": {
+          "type": "string",
+          "description": "Org owner/admin only: the org member whose documents to operate on instead of your own (e.g. to read or edit their playbook). Omit to operate on your own documents."
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "additionalProperties": false
+    },
+    "requestFile": {
+      "type": "object",
+      "properties": {
+        "purpose": {
+          "type": "string",
+          "minLength": 1,
+          "description": "What the file is for, in a few words, shown on the picker card, e.g. \"your overview deck template\". Use request-file whenever a user wants to upload or share a Google Drive file, or a Drive link you were given cannot be read: only this picker can give Cedar a private file. In interactive chat it shows a \"Choose from Drive\" card and the user's pick is saved to the knowledge base; do not ask for a link or call it again, wait for their message naming the file. Elsewhere (Slack, scheduled runs, MCP) no card can be drawn and the result lists how the user can hand the file over: relay what it returns."
+        }
+      },
+      "required": [
+        "purpose"
+      ],
+      "additionalProperties": false
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+## Response
+
+Inspect `isError` on the MCP result and `success` / `errorMessage` in the action result. Optional response branches are populated only for the relevant action. Some results include additional provider or operation-specific data.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `success` | boolean | Yes |   |
+| `errorMessage` | string | No |   |
+| `write` | object | No |   |
+| `delete` | object | No |   |
+| `restore` | object | No |   |
+| `move` | object | No |   |
+| `share` | object | No |   |
+| `requestFile` | object | No |   |
+
+<Accordion title="Output JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "write": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "version": {
+          "type": "number"
+        },
+        "wordCount": {
+          "type": "number"
+        },
+        "message": {
+          "type": "string"
+        },
+        "isRecoverable": {
+          "type": "boolean"
+        },
+        "triggerSummary": {
+          "type": "object",
+          "properties": {
+            "eventTypes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "fieldWatchers": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "cronSchedules": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "beforeMeeting": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "webhooks": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "refIds": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "eventTypes",
+            "fieldWatchers",
+            "cronSchedules",
+            "beforeMeeting",
+            "webhooks",
+            "refIds"
+          ],
+          "additionalProperties": false,
+          "description": "PLAYBOOK.md writes only: the triggers this write armed, read back from the recompiled manifest. This IS the verification — report it rather than claiming a trigger is live. An empty list means that trigger type is NOT armed."
+        }
+      },
+      "additionalProperties": false
+    },
+    "delete": {
+      "type": "object",
+      "properties": {
+        "documentId": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "proposed": {
+          "type": "boolean"
+        },
+        "errorCode": {
+          "type": "string",
+          "enum": [
+            "DELETE_TARGET_MISSING",
+            "DELETE_FORBIDDEN_NOT_OWNER",
+            "DELETE_NOT_SUPPORTED_FOR_PROTECTED_PATH"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "restore": {
+      "type": "object",
+      "properties": {
+        "documentId": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "errorCode": {
+          "type": "string",
+          "enum": [
+            "RESTORE_TARGET_MISSING",
+            "RESTORE_FORBIDDEN_NOT_OWNER",
+            "RESTORE_PATH_TAKEN"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "move": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "fromPath": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "share": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "token": {
+          "type": "string"
+        },
+        "revoked": {
+          "type": "boolean"
+        },
+        "proposed": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "requestFile": {
+      "type": "object",
+      "properties": {
+        "cardShown": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+[Download the output schema](/reference/schemas/document-write.output.json).

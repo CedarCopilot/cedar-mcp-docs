@@ -1,0 +1,934 @@
+---
+title: "mail"
+description: "Parameters, scopes, and response schema for mail."
+---
+
+Generated from Cedar's external registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+
+## Capability
+
+Mail operations. ACTIONS: (1) fetch-attachments — download and read email attachment content by Gmail message ID. Pass messageId (from "Message ID:" on the email) and optionally attachmentId to fetch one file. (2) list-sent — fetch emails the Cedar agent drafted that were actually sent, to compare drafted vs. sent bodies. Use maxSimilarity &lt; 0.7 to find emails the user rewrote significantly. Each result's messageId can be passed straight into fetch-attachments to pull its attachments (null for older rows). (3) find — query sent/received emails by STRUCTURED criteria: direction (inbound/outbound), has attachments, sender, subject/snippet substring, date range. Use this instead of semantic search when you need emails matching specific metadata — e.g. "sent emails with attachments", "emails from X last week". Returns messageId values you can pass straight into fetch-attachments. (4) search-live — search the user's LIVE Gmail mailbox by full Gmail query syntax (search.messages-style, e.g. "from:jane@acme.com newer_than:30d has:attachment"); returns thread ids + subject/from/snippet. Use this (not find/search-semantic) for mail that may never have synced, or when you need the freshest state. (5) read-thread — read a full email thread LIVE from the mailbox by threadId (from search-live), including per-message observed open/click counts, timestamps, tracking-enabled flags and full event history with observed IP addresses when available. NOTE: for semantic (meaning-based) search over ALREADY-SYNCED mail, use conversation.search-semantic with filters.eventType: "email"; search-live is a raw live-mailbox query instead. Each action takes its params in a same-named object (e.g. action: "fetch-attachments" pairs with a fetchAttachments: &#123;messageId&#125; object) — omit every params object except the one matching your chosen action.
+
+## Operations and scopes
+
+| Action | Baseline scope |
+| --- | --- |
+| `fetch-attachments` | `email:read` |
+| `list-sent` | `email:read` |
+| `find` | `email:read` |
+| `search-live` | `email:read` |
+| `read-thread` | `email:read` |
+
+Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Parameters
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `action` | "fetch-attachments" · "list-sent" · "find" · "search-live" · "read-thread" | Yes | Which operation to perform — pass its matching params object below (e.g. action: "fetch-attachments" pairs with fetchAttachments: &#123;...&#125;).  |
+| `fetchAttachments` | object | No |   |
+| `listSent` | object | No |   |
+| `find` | object | No |   |
+| `searchLive` | object | No |   |
+| `readThread` | object | No |   |
+| `user_request_summary` | string | Yes | One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does.  |
+| `is_new_request` | boolean | Yes | true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread.  |
+
+### fetchAttachments
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `messageId` | string | Yes | Gmail message ID from fetch-conversation output (shown as "Message ID:" on each email). Required to fetch attachments. minLength: 1 |
+| `attachmentId` | string | No | Optional attachment ID from the attachments list. When omitted, fetches and extracts text from all attachments on the message.  |
+| `write_to_file` | boolean | No | When true, writes large extracted content to a TASK_BUFFER doc instead of returning inline.  |
+
+### listSent
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `targetUserId` | string | No | Read ANOTHER user instead of yourself. Omit for your own sent email, which is almost always what you want. This returns verbatim drafted and sent message bodies, so a cross-user read is refused even for an admin of the target's own organization.  |
+| `userId` | string | No | DEPRECATED alias for targetUserId, kept so existing callers keep working. It is NOT the authenticated identity: it names whose sent email to read, and goes through the same authorization gate.  |
+| `limit` | integer | No | Max emails to return. default: 15; minimum: 1; maximum: 50 |
+| `maxSimilarity` | number | No | Filter to emails where the user changed the draft significantly. 0.6 = user rewrote &gt;40% of the content. Use this to find examples of what the agent gets wrong. minimum: 0; maximum: 1 |
+
+### find
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `direction` | "inbound" · "outbound" | No | Filter by direction. Use "outbound" for emails the user sent.  |
+| `hasAttachments` | boolean | No | When true, only return emails that have file attachments.  |
+| `fromEmail` | string | No | Filter by sender email address (exact match).  |
+| `subjectContains` | string | No | Filter emails whose subject contains this string (case-insensitive).  |
+| `snippetContains` | string | No | Filter emails whose body snippet contains this string (case-insensitive). Useful for finding emails that mention a specific attachment by name, e.g. "explainer deck", "pitch deck", "qsbs-stacking".  |
+| `dateFrom` | string | No | ISO 8601 date — only include emails on or after this date.  |
+| `dateTo` | string | No | ISO 8601 date — only include emails on or before this date.  |
+| `limit` | number | No | Maximum number of results to return. default: 20; minimum: 1; maximum: 50 |
+
+### searchLive
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `query` | string | Yes | Gmail search query — full Gmail search syntax (e.g. "from:jane@acme.com newer_than:30d has:attachment subject:intro"). Searches the user's LIVE mailbox, not Cedar's synced store. Returns thread ids + subject/from/snippet previews. minLength: 1 |
+| `maxResults` | integer | No | Max threads to return. Default 10. minimum: 1; maximum: 25 |
+| `folder` | string | No | Gmail folder to scope the search to. Default "inbox".  |
+
+### readThread
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `threadId` | string | Yes | Gmail thread id (from search-live). Reads the full thread LIVE from the mailbox. minLength: 1 |
+
+## Full input schema
+
+[Download the input schema](/reference/schemas/mail.input.json). Nested objects, variants, and constraints are preserved in full. Runtime refinements and ownership checks still apply.
+
+<Accordion title="Input JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "fetch-attachments",
+        "list-sent",
+        "find",
+        "search-live",
+        "read-thread"
+      ],
+      "description": "Which operation to perform — pass its matching params object below (e.g. action: \"fetch-attachments\" pairs with fetchAttachments: {...})."
+    },
+    "fetchAttachments": {
+      "type": "object",
+      "properties": {
+        "messageId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Gmail message ID from fetch-conversation output (shown as \"Message ID:\" on each email). Required to fetch attachments."
+        },
+        "attachmentId": {
+          "type": "string",
+          "description": "Optional attachment ID from the attachments list. When omitted, fetches and extracts text from all attachments on the message."
+        },
+        "write_to_file": {
+          "type": "boolean",
+          "description": "When true, writes large extracted content to a TASK_BUFFER doc instead of returning inline."
+        }
+      },
+      "required": [
+        "messageId"
+      ],
+      "additionalProperties": false
+    },
+    "listSent": {
+      "type": "object",
+      "properties": {
+        "targetUserId": {
+          "type": "string",
+          "description": "Read ANOTHER user instead of yourself. Omit for your own sent email, which is almost always what you want. This returns verbatim drafted and sent message bodies, so a cross-user read is refused even for an admin of the target's own organization."
+        },
+        "userId": {
+          "type": "string",
+          "description": "DEPRECATED alias for targetUserId, kept so existing callers keep working. It is NOT the authenticated identity: it names whose sent email to read, and goes through the same authorization gate."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50,
+          "default": 15,
+          "description": "Max emails to return."
+        },
+        "maxSimilarity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Filter to emails where the user changed the draft significantly. 0.6 = user rewrote >40% of the content. Use this to find examples of what the agent gets wrong."
+        }
+      },
+      "additionalProperties": false
+    },
+    "find": {
+      "type": "object",
+      "properties": {
+        "direction": {
+          "type": "string",
+          "enum": [
+            "inbound",
+            "outbound"
+          ],
+          "description": "Filter by direction. Use \"outbound\" for emails the user sent."
+        },
+        "hasAttachments": {
+          "type": "boolean",
+          "description": "When true, only return emails that have file attachments."
+        },
+        "fromEmail": {
+          "type": "string",
+          "description": "Filter by sender email address (exact match)."
+        },
+        "subjectContains": {
+          "type": "string",
+          "description": "Filter emails whose subject contains this string (case-insensitive)."
+        },
+        "snippetContains": {
+          "type": "string",
+          "description": "Filter emails whose body snippet contains this string (case-insensitive). Useful for finding emails that mention a specific attachment by name, e.g. \"explainer deck\", \"pitch deck\", \"qsbs-stacking\"."
+        },
+        "dateFrom": {
+          "type": "string",
+          "description": "ISO 8601 date — only include emails on or after this date."
+        },
+        "dateTo": {
+          "type": "string",
+          "description": "ISO 8601 date — only include emails on or before this date."
+        },
+        "limit": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 50,
+          "default": 20,
+          "description": "Maximum number of results to return."
+        }
+      },
+      "additionalProperties": false
+    },
+    "searchLive": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Gmail search query — full Gmail search syntax (e.g. \"from:jane@acme.com newer_than:30d has:attachment subject:intro\"). Searches the user's LIVE mailbox, not Cedar's synced store. Returns thread ids + subject/from/snippet previews."
+        },
+        "maxResults": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 25,
+          "description": "Max threads to return. Default 10."
+        },
+        "folder": {
+          "type": "string",
+          "description": "Gmail folder to scope the search to. Default \"inbox\"."
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "additionalProperties": false
+    },
+    "readThread": {
+      "type": "object",
+      "properties": {
+        "threadId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Gmail thread id (from search-live). Reads the full thread LIVE from the mailbox."
+        }
+      },
+      "required": [
+        "threadId"
+      ],
+      "additionalProperties": false
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+## Response
+
+Inspect `isError` on the MCP result and `success` / `errorMessage` in the action result. Optional response branches are populated only for the relevant action. Some results include additional provider or operation-specific data.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `success` | boolean | Yes |   |
+| `errorMessage` | string | No |   |
+| `fetchAttachments` | object | No |   |
+| `listSent` | object | No |   |
+| `find` | object | No |   |
+| `searchLive` | object | No |   |
+| `readThread` | object | No |   |
+
+<Accordion title="Output JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "fetchAttachments": {
+      "type": "object",
+      "properties": {
+        "messageId": {
+          "type": "string"
+        },
+        "attachments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "attachmentId": {
+                "type": "string"
+              },
+              "filename": {
+                "type": "string"
+              },
+              "mimeType": {
+                "type": "string"
+              },
+              "size": {
+                "type": "number"
+              },
+              "content": {
+                "type": "string",
+                "description": "Extracted text content, when available"
+              },
+              "truncated": {
+                "type": "boolean"
+              },
+              "extractionMethod": {
+                "type": "string"
+              },
+              "note": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "attachmentId",
+              "filename",
+              "mimeType",
+              "size"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "buffered": {
+          "type": "boolean"
+        },
+        "path": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "word_count": {
+          "type": "number"
+        },
+        "access_instructions": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "listSent": {
+      "type": "object",
+      "properties": {
+        "emails": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "subject": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "draftedBody": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "sentBody": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "semanticSimilarity": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "sentAt": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "runId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "messageId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Gmail message ID — pass to fetch-attachments (fetchAttachments.messageId) to read this email's attachments. Null for older rows."
+              },
+              "threadId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "subject",
+              "draftedBody",
+              "sentBody",
+              "semanticSimilarity",
+              "sentAt",
+              "runId",
+              "messageId",
+              "threadId"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "totalSent": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "find": {
+      "type": "object",
+      "properties": {
+        "emails": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "messageId": {
+                "type": "string"
+              },
+              "eventId": {
+                "type": "string"
+              },
+              "conversationId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "threadId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "subject": {
+                "type": "string"
+              },
+              "fromEmail": {
+                "type": "string"
+              },
+              "toEmails": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "occurredAt": {
+                "type": "string"
+              },
+              "hasAttachments": {
+                "type": "boolean"
+              },
+              "attachmentCount": {
+                "type": "number"
+              },
+              "snippet": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "emailClassification": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "messageId",
+              "eventId",
+              "conversationId",
+              "threadId",
+              "subject",
+              "fromEmail",
+              "toEmails",
+              "occurredAt",
+              "hasAttachments",
+              "attachmentCount",
+              "snippet",
+              "emailClassification"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "total": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "searchLive": {
+      "type": "object",
+      "properties": {
+        "threads": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "threadId": {
+                "type": "string"
+              },
+              "subject": {
+                "type": "string"
+              },
+              "from": {
+                "type": "string"
+              },
+              "snippet": {
+                "type": "string"
+              },
+              "date": {
+                "type": "string",
+                "description": "When the thread last received a message."
+              },
+              "conversationId": {
+                "type": "string",
+                "description": "Set when the thread is ALREADY synced into Cedar and attached to that conversation."
+              }
+            },
+            "required": [
+              "threadId"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "nextPageToken": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "readThread": {
+      "type": "object",
+      "properties": {
+        "threadId": {
+          "type": "string"
+        },
+        "subject": {
+          "type": "string"
+        },
+        "messageCount": {
+          "type": "number"
+        },
+        "messages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Gmail message id — pass to fetch-email-attachments."
+              },
+              "from": {
+                "type": "string"
+              },
+              "to": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Recipients as `Name <email>`, or a bare address when the header had no name."
+              },
+              "cc": {
+                "$ref": "#/properties/readThread/properties/messages/items/properties/to"
+              },
+              "subject": {
+                "type": "string"
+              },
+              "date": {
+                "type": "string"
+              },
+              "snippet": {
+                "type": "string"
+              },
+              "unread": {
+                "type": "boolean"
+              },
+              "tracking": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "trackingId": {
+                        "type": "string"
+                      },
+                      "openTrackingEnabled": {
+                        "type": "boolean"
+                      },
+                      "linkTrackingEnabled": {
+                        "type": "boolean"
+                      },
+                      "openCount": {
+                        "type": "number"
+                      },
+                      "clickCount": {
+                        "type": "number"
+                      },
+                      "firstOpenedAt": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "lastOpenedAt": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "firstClickedAt": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "events": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "eventType": {
+                              "type": "string"
+                            },
+                            "occurredAt": {
+                              "type": "string",
+                              "description": "ISO timestamp of the recorded event."
+                            },
+                            "ipAddress": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "description": "Observed request IP; may belong to a mail proxy."
+                            },
+                            "userAgent": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "country": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "city": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "region": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "clientType": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "isReliable": {
+                              "type": "boolean"
+                            },
+                            "assessment": {
+                              "type": "object",
+                              "properties": {
+                                "version": {
+                                  "type": "number",
+                                  "const": 3
+                                },
+                                "verdict": {
+                                  "type": "string",
+                                  "enum": [
+                                    "likely_human",
+                                    "automated",
+                                    "unknown"
+                                  ]
+                                },
+                                "reason": {
+                                  "type": "string"
+                                },
+                                "clientType": {
+                                  "type": "string"
+                                },
+                                "source": {
+                                  "type": "string",
+                                  "enum": [
+                                    "gmail_prefetch",
+                                    "gmail_proxy",
+                                    "known_scanner",
+                                    "privacy_proxy",
+                                    "image_proxy",
+                                    "direct_client",
+                                    "unrecognized"
+                                  ]
+                                },
+                                "activity": {
+                                  "type": "string",
+                                  "enum": [
+                                    "likely_render",
+                                    "likely_interaction",
+                                    "automated_fetch",
+                                    "unknown"
+                                  ]
+                                },
+                                "attribution": {
+                                  "type": "string",
+                                  "const": "message"
+                                },
+                                "viewerIdentity": {
+                                  "type": "string",
+                                  "const": "unknown"
+                                },
+                                "selfActivity": {
+                                  "type": "string",
+                                  "enum": [
+                                    "possible",
+                                    "no_specific_evidence"
+                                  ]
+                                },
+                                "reasonCodes": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
+                                "evidence": {
+                                  "type": "object",
+                                  "properties": {
+                                    "version": {
+                                      "type": "number",
+                                      "const": 1
+                                    },
+                                    "origin": {
+                                      "type": "string",
+                                      "enum": [
+                                        "request",
+                                        "legacy_assessment",
+                                        "legacy_user_agent"
+                                      ]
+                                    },
+                                    "method": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string",
+                                          "maxLength": 32
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "purpose": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string",
+                                          "maxLength": 256
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "secPurpose": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string",
+                                          "maxLength": 256
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "senderIpMatch": {
+                                      "type": "boolean"
+                                    },
+                                    "elapsedSinceSendMs": {
+                                      "anyOf": [
+                                        {
+                                          "type": "number"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "headersTruncated": {
+                                      "type": "boolean"
+                                    },
+                                    "eventType": {
+                                      "type": "string",
+                                      "enum": [
+                                        "opened",
+                                        "clicked"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "version",
+                                    "origin",
+                                    "method",
+                                    "purpose",
+                                    "secPurpose",
+                                    "senderIpMatch",
+                                    "elapsedSinceSendMs",
+                                    "headersTruncated",
+                                    "eventType"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "required": [
+                                "version",
+                                "verdict",
+                                "reason",
+                                "clientType",
+                                "source",
+                                "activity",
+                                "attribution",
+                                "viewerIdentity",
+                                "selfActivity",
+                                "reasonCodes",
+                                "evidence"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "originalAssessment": {
+                              "anyOf": [
+                                {},
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "linkUrl": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "linkIndex": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "eventType",
+                            "occurredAt",
+                            "ipAddress",
+                            "userAgent",
+                            "country",
+                            "city",
+                            "region",
+                            "clientType",
+                            "isReliable",
+                            "assessment",
+                            "linkUrl",
+                            "linkIndex"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "description": "Full recorded open/click history, oldest first. assessment and isReliable use the same current classification as the summary; originalAssessment preserves recorded evidence. No request proves reader identity."
+                      }
+                    },
+                    "required": [
+                      "trackingId",
+                      "openTrackingEnabled",
+                      "linkTrackingEnabled",
+                      "openCount",
+                      "clickCount",
+                      "firstOpenedAt",
+                      "lastOpenedAt",
+                      "firstClickedAt",
+                      "events"
+                    ],
+                    "additionalProperties": false,
+                    "description": "Observed tracking activity, not verified human read receipts. Disabled tracking is distinct from zero activity."
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "Tracking for this message, scoped to the authenticated user. Null means no tracking record is available, not zero opens/clicks."
+              }
+            },
+            "required": [
+              "id",
+              "to",
+              "cc",
+              "tracking"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+[Download the output schema](/reference/schemas/mail.output.json).

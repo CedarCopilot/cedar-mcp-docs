@@ -1,0 +1,206 @@
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "write",
+        "delete",
+        "restore",
+        "move",
+        "share",
+        "request-file"
+      ],
+      "description": "Which write to perform — pass its matching params object below (e.g. action: \"write\" pairs with write: {...})."
+    },
+    "write": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Virtual path for the document. Path encodes scope and name; see Cedar Docs guidance for path conventions and supported shortcuts."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "document",
+            "workflow",
+            "html",
+            "agenda",
+            "conversation_agenda",
+            "attachment",
+            "table"
+          ],
+          "description": "Behavioural type for the document. \"document\" = Y.js markdown (default for all text). \"workflow\" = markdown with actionable workflow JSON fences; saving never executes buttons. \"html\" = self-contained HTML blob rendered as iframe (use for presentations, reports). \"agenda\" = Y.js + task sync for the user daily agenda. \"conversation_agenda\" = Y.js + task sync for a per-conversation agenda. \"attachment\" = file reference (no content; details in metadata). \"table\" = spreadsheet, rendered as a data grid; only for CREATING one or rewriting it whole (frontmatter schema + one pipe table with a leading _id column) — use the `table` tool for every partial read/write, because a partial write routed through here rewrites every row and destroys row identity."
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "upsert",
+            "append",
+            "patch"
+          ],
+          "description": "Write mode. upsert=full replace (best for overview, strategy, meeting-prep, or ANY whole-document rewrite/restructure/dedup — pass the complete new content directly). append=add to end (best for canvas, research, chat history). patch=surgical edit for a SMALL, localized change only (read doc first, then replace old_string with new_string) — do not use patch with old_string/new_string spanning the whole document; that forces holding two full copies in context and will exhaust it on a large doc. Use upsert instead."
+        },
+        "content": {
+          "type": "string",
+          "description": "Document content. Required for upsert and append modes. Use plain markdown unless type is \"html\", where content must be the full HTML string."
+        },
+        "old_string": {
+          "type": "string",
+          "description": "patch mode: the exact string to find and replace. Must be unique within the document. Include surrounding context (e.g. the section header) to ensure uniqueness."
+        },
+        "new_string": {
+          "type": "string",
+          "description": "patch mode: the replacement string. Can be empty string to delete a section."
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Short summary (≤ 200 chars) of what this document contains. Shown in list results so future agents can decide whether to read/grep without loading content. Write this on create."
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {},
+          "description": "Optional structured metadata (e.g. related conversation IDs, task IDs)."
+        },
+        "sourceEmailAttachment": {
+          "type": "object",
+          "properties": {
+            "messageId": {
+              "type": "string",
+              "description": "Gmail message ID of the email containing the attachment."
+            },
+            "attachmentId": {
+              "type": "string",
+              "description": "Specific attachment ID. Omit to use the first attachment on the message."
+            }
+          },
+          "required": [
+            "messageId"
+          ],
+          "additionalProperties": false,
+          "description": "When set, fetches the file bytes from Gmail and uploads them to S3 as a confirmed KB upload. Use path=\"#kb/<name>\" and type=\"attachment\". The returned document ID can be passed in the attachments field of draft-email."
+        },
+        "targetUserId": {
+          "type": "string",
+          "description": "Org owner/admin only: the org member whose documents to operate on instead of your own (e.g. to read or edit their playbook). Omit to operate on your own documents."
+        }
+      },
+      "required": [
+        "path",
+        "type",
+        "mode"
+      ],
+      "additionalProperties": false
+    },
+    "delete": {
+      "type": "object",
+      "properties": {
+        "documentId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "ID of the document to delete — the `id` field returned by document-read({action: \"list\"}) or document-read({action: \"read\"}). Reversible: the doc is hidden, and action \"restore\" brings it back for 30 days. Refused for playbook/resource paths and for documents you do not own."
+        },
+        "targetUserId": {
+          "type": "string",
+          "description": "Org owner/admin only: the org member whose documents to operate on instead of your own (e.g. to read or edit their playbook). Omit to operate on your own documents."
+        }
+      },
+      "required": [
+        "documentId"
+      ],
+      "additionalProperties": false
+    },
+    "restore": {
+      "type": "object",
+      "properties": {
+        "documentId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "ID of the deleted document to bring back — the same `id` you passed to action \"delete\". Works for 30 days after the delete, after which the row is purged for good. Refused if a live document has since taken the deleted one's path."
+        },
+        "targetUserId": {
+          "type": "string",
+          "description": "Org owner/admin only: the org member whose documents to operate on instead of your own (e.g. to read or edit their playbook). Omit to operate on your own documents."
+        }
+      },
+      "required": [
+        "documentId"
+      ],
+      "additionalProperties": false
+    },
+    "move": {
+      "type": "object",
+      "properties": {
+        "from_path": {
+          "type": "string",
+          "description": "Current virtual path of the document. Example: \"thread/{threadId}/my-deck\". Supports path shortcuts — see this tool's description for the full reference."
+        },
+        "to_path": {
+          "type": "string",
+          "description": "Destination virtual path. Supports the same shortcuts as from_path."
+        },
+        "targetUserId": {
+          "type": "string",
+          "description": "Org owner/admin only: the org member whose documents to operate on instead of your own (e.g. to read or edit their playbook). Omit to operate on your own documents."
+        }
+      },
+      "required": [
+        "from_path",
+        "to_path"
+      ],
+      "additionalProperties": false
+    },
+    "share": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Virtual path of the document to share, e.g. \"conversation/{convId}/collateral/one-pager\". Supports the same path shortcuts as write."
+        },
+        "revoke": {
+          "type": "boolean",
+          "description": "Set to true to revoke the existing share link — the old URL immediately stops working. Omit or set to false to create/retrieve the share URL."
+        },
+        "targetUserId": {
+          "type": "string",
+          "description": "Org owner/admin only: the org member whose documents to operate on instead of your own (e.g. to read or edit their playbook). Omit to operate on your own documents."
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "additionalProperties": false
+    },
+    "requestFile": {
+      "type": "object",
+      "properties": {
+        "purpose": {
+          "type": "string",
+          "minLength": 1,
+          "description": "What the file is for, in a few words, shown on the picker card, e.g. \"your overview deck template\". Use request-file whenever a user wants to upload or share a Google Drive file, or a Drive link you were given cannot be read: only this picker can give Cedar a private file. In interactive chat it shows a \"Choose from Drive\" card and the user's pick is saved to the knowledge base; do not ask for a link or call it again, wait for their message naming the file. Elsewhere (Slack, scheduled runs, MCP) no card can be drawn and the result lists how the user can hand the file over: relay what it returns."
+        }
+      },
+      "required": [
+        "purpose"
+      ],
+      "additionalProperties": false
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
