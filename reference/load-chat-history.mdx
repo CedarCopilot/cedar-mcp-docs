@@ -1,0 +1,99 @@
+---
+title: "load-chat-history"
+description: "Parameters, scopes, and response schema for load-chat-history."
+---
+
+Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+
+<Warning>This tool is registered only inside Cedar. External MCP clients cannot call it. Its contract is included to document the complete module boundary.</Warning>
+
+## Capability
+
+Load a past chat thread's own message history — use after search-chat-history finds the thread you want, when the user wants to pick that conversation back up rather than just being told it exists.  Pass &#123; threadId, limit? &#125;. Returns the thread's messages (including prior tool calls/results) as a formatted transcript for you to read and continue from. This does NOT switch the user's screen to that thread — it only gives you the content for this turn, so tell the user what you found/did if it matters that they see it.
+
+Required baseline scope: `in-app`. Additional role and target checks apply.
+
+## Parameters
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `threadId` | string | Yes | The id of the past chat thread to load, from a search-chat-history result.  |
+| `limit` | integer | No | Max messages to load, most-recent-first cutoff. Default 60. minimum: 1; maximum: 100 |
+
+## Full input schema
+
+[Download the input schema](/reference/schemas/load-chat-history.input.json). Nested objects, variants, and constraints are preserved in full. Runtime refinements and ownership checks still apply.
+
+<Accordion title="Input JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "threadId": {
+      "type": "string",
+      "description": "The id of the past chat thread to load, from a search-chat-history result."
+    },
+    "limit": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 100,
+      "description": "Max messages to load, most-recent-first cutoff. Default 60."
+    }
+  },
+  "required": [
+    "threadId"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+## Response
+
+Inspect `isError` on the MCP result and `success` / `errorMessage` in the action result. Optional response branches are populated only for the relevant action. Some results include additional provider or operation-specific data.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `success` | boolean | Yes |   |
+| `message` | string | Yes |   |
+| `threadName` | string | No |   |
+| `updatedAt` | string | No |   |
+| `history` | string | No |   |
+
+<Accordion title="Output JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "message": {
+      "type": "string"
+    },
+    "threadName": {
+      "type": "string"
+    },
+    "updatedAt": {
+      "type": "string"
+    },
+    "history": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "success",
+    "message"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+[Download the output schema](/reference/schemas/load-chat-history.output.json).

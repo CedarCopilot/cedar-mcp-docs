@@ -1,0 +1,42 @@
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "operations": {
+      "type": "array",
+      "items": {}
+    },
+    "capacity": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "number"
+        },
+        "used": {
+          "type": "number"
+        },
+        "remaining": {
+          "type": "number"
+        },
+        "requiresNewDocument": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "limit",
+        "used",
+        "remaining",
+        "requiresNewDocument"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "success",
+    "operations"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

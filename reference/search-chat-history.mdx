@@ -1,0 +1,124 @@
+---
+title: "search-chat-history"
+description: "Parameters, scopes, and response schema for search-chat-history."
+---
+
+Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+
+<Warning>This tool is registered only inside Cedar. External MCP clients cannot call it. Its contract is included to document the complete module boundary.</Warning>
+
+## Capability
+
+Search the user's own past chat threads by title AND message content — use this when the user asks about a previous conversation ("which chat did I...", "find that chat where...", "what did we discuss about...") that isn't the one you're currently in.  Pass &#123; query, limit? &#125;. Returns matching threads ordered by most recently active, each with a snippet of the matching message when the match wasn't in the thread's title. Pass a result's threadId to load-chat-history to read its content into your own context, or to switch-chat-thread to move the user's screen into it.
+
+Required baseline scope: `in-app`. Additional role and target checks apply.
+
+## Parameters
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `query` | string | Yes | Text to search for in past chat titles and messages. minLength: 2; maxLength: 200 |
+| `limit` | integer | No | Max threads to return. Default 20. minimum: 1; maximum: 50 |
+
+## Full input schema
+
+[Download the input schema](/reference/schemas/search-chat-history.input.json). Nested objects, variants, and constraints are preserved in full. Runtime refinements and ownership checks still apply.
+
+<Accordion title="Input JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "query": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 200,
+      "description": "Text to search for in past chat titles and messages."
+    },
+    "limit": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 50,
+      "description": "Max threads to return. Default 20."
+    }
+  },
+  "required": [
+    "query"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+## Response
+
+Inspect `isError` on the MCP result and `success` / `errorMessage` in the action result. Optional response branches are populated only for the relevant action. Some results include additional provider or operation-specific data.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `success` | boolean | Yes |   |
+| `message` | string | Yes |   |
+| `results` | object&#91;&#93; | No |   |
+
+<Accordion title="Output JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "message": {
+      "type": "string"
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "threadId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "matchedIn": {
+            "type": "string",
+            "enum": [
+              "title",
+              "message"
+            ]
+          },
+          "snippet": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "threadId",
+          "name",
+          "updatedAt",
+          "matchedIn"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "success",
+    "message"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+[Download the output schema](/reference/schemas/search-chat-history.output.json).

@@ -1,0 +1,30 @@
+---
+title: "CRM sync, mapping transforms and write controls"
+description: "Configure connected Salesforce, HubSpot, Attio and Copper behavior through supported settings."
+---
+
+`connection-write` changes the behavior of an existing connected integration. Read `config-read read-settings` with `sections: ["connections"]` first; each operation needs the correct connection ID and current configuration.
+
+## Mapping values
+
+`update_crm_field_mappings` supports adding, updating and removing mappings between Cedar fields and provider fields, including supported template mappings and per-placeholder transforms. Multi-select handling belongs in the mapping configuration where supported.
+
+Do not invent allowed picklist values. Use field creation/link reconciliation to introspect provider choices. A mapping belongs to a particular connection; a field definition belongs to an AOP. They are separate layers even when the UI presents them together.
+
+## Sync and push policy
+
+`update_crm_settings` controls supported sync/push switches, deal sync filtering, write guards and stage-required field settings. A sync filter decides what enters the workflow; a write guard controls which external deals Cedar may write. The documented HubSpot guard uses field/value matching. Do not assume every provider implements identical guard semantics.
+
+Turning off one push setting does not remove a connection or erase already-ingested evidence. Conversely, connecting a CRM does not mean every Cedar field has a valid provider mapping.
+
+## Standing instructions
+
+`update_connection_instructions` replaces the connection's current text in full. These instructions are read by interactive chat. Background CRM updater behavior belongs in the agent/playbook rules that actually run during those workflows.
+
+Read the existing instructions before adding a rule so unrelated instructions survive. Use the effective playbook `editMap` to find the owner when the desired change concerns background behavior.
+
+## Validate a change
+
+Read back both the connection settings and affected field definitions. Inspect reconciliation data for removed, renamed or added values. Then verify the relevant execution/provider result rather than treating saved configuration as proof of a successful sync.
+
+[Connection variants](/reference/connection-write) · [Field mapping](/configuration/fields) · [Diagnosis](/modules/diagnostics)

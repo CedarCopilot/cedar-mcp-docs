@@ -1,0 +1,46 @@
+---
+title: "drafting"
+description: "Workflow capabilities and resources for the drafting skill."
+---
+
+Draft or rewrite sales emails, Slack messages, and LinkedIn replies that sound genuinely human and conversational — follow-ups, meeting recaps, outreach, pre-meeting agendas, post-demo summaries, or any prospect/client communication, over email, Slack, or LinkedIn. Use when the user asks to draft, write, rewrite, or improve any email, Slack, or LinkedIn message. Ensures drafts match the user's authentic voice using their AOP style guide and examples. Includes email, Slack, and LinkedIn guidance in one load.
+
+## Load the module
+
+Call `load-skill` with:
+
+```json
+{
+  "name": "drafting"
+}
+```
+
+Read the returned instructions in full. Account-specific playbook context is assembled at load time; this static reference does not publish it.
+
+## Resources
+
+This skill has no separately registered named resources. Its primary instructions contain the workflow.
+
+## Tools and surface compatibility
+
+Use the canonical family tools in your connection’s `tools/list`. Skill source may still mention older granular names. The source dependencies below describe implementation composition; they are **not additional external MCP registrations**. The [complete capability index](/reference/coverage) records callable family/action contracts.
+
+- `fetch-conversation`
+- `fetch-email-attachments`
+- `save-draft`
+- `show-draft`
+- `save-slack-draft`
+- `save-linkedin-draft`
+- `schedule-send`
+- `send-email`
+- `list-linkedin-chats`
+- `read-linkedin-chat`
+- `create-task`
+- `list-documents`
+- `search-documents`
+- `read-document`
+- `call-mcp-tool`
+- `find-emails`
+- `spawn-subagent`
+- `list-calendar-events`
+- `get-calendar-availability`

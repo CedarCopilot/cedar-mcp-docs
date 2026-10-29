@@ -1,0 +1,121 @@
+---
+title: "workflow"
+description: "Parameters, scopes, and response schema for workflow."
+---
+
+Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+
+<Warning>This tool is registered only inside Cedar. External MCP clients cannot call it. Its contract is included to document the complete module boundary.</Warning>
+
+## Capability
+
+Discover mutation operations for workflow document buttons. Use these existing input schemas unchanged. Author workflow documents with document-write.write and fenced workflow rows. No operation runs until the user clicks. inspect_capacity reads an authorized document’s remaining execution-history capacity; a full document needs a manually configured successor, never automatic pruning. agent_prompt and add_to_chat_context are also supported button ops.
+
+## Operations and scopes
+
+| Action | Baseline scope |
+| --- | --- |
+| `list_operations` | `in-app` — unavailable externally |
+| `inspect_capacity` | `in-app` — unavailable externally |
+
+Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Parameters
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `action` | "list_operations" · "inspect_capacity" | Yes |   |
+| `documentId` | string | No |  format: "uuid" |
+
+## Full input schema
+
+[Download the input schema](/reference/schemas/workflow.input.json). Nested objects, variants, and constraints are preserved in full. Runtime refinements and ownership checks still apply.
+
+<Accordion title="Input JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "list_operations",
+        "inspect_capacity"
+      ]
+    },
+    "documentId": {
+      "type": "string",
+      "format": "uuid"
+    }
+  },
+  "required": [
+    "action"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+## Response
+
+Inspect `isError` on the MCP result and `success` / `errorMessage` in the action result. Optional response branches are populated only for the relevant action. Some results include additional provider or operation-specific data.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `success` | boolean | Yes |   |
+| `operations` | any&#91;&#93; | Yes |   |
+| `capacity` | object | No |   |
+
+<Accordion title="Output JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "operations": {
+      "type": "array",
+      "items": {}
+    },
+    "capacity": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "number"
+        },
+        "used": {
+          "type": "number"
+        },
+        "remaining": {
+          "type": "number"
+        },
+        "requiresNewDocument": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "limit",
+        "used",
+        "remaining",
+        "requiresNewDocument"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "success",
+    "operations"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+[Download the output schema](/reference/schemas/workflow.output.json).

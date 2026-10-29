@@ -1,0 +1,37 @@
+---
+title: "Author agents and persistent rules"
+description: "Configure agent documents, references, triggers and effective scope."
+---
+
+Persistent Cedar automation is configured through playbook and agent documents. The MCP client edits the configuration; Cedar's runtime executes eligible persisted work. There is no general externally registered `spawn-subagent` tool.
+
+## Discover the effective configuration
+
+Load `cedar-configuration`, then `read-playbook` in `load_full` or `load_sections` mode. The result includes relevant organization content and an `editMap` for resources, subagents and inline playbook sections. Write to the returned `writeTarget` for the behavior being changed.
+
+## Authoring resources
+
+| Resource | Use it when |
+| --- | --- |
+| `choosing-a-trigger` | Deciding when a rule should run |
+| `building-an-agent` | Writing an agent after trigger and capability choices are settled |
+| `agent-capabilities` | Checking whether that agent can perform the required calls |
+| `playbook-anatomy` | Editing the document/trigger syntax |
+| `voice-and-preferences` | Persisting tone, behavior and standing instructions |
+| `surfaces-and-delivery` | Choosing drafts, tasks, documents, Slack or an interactive handoff |
+| `scope-and-sharing` | Applying the rule to the right users and shared resources |
+| `playbook-execution` | Understanding supported execution/testing semantics |
+
+## Persist a complete rule
+
+Read the current content, make a focused edit, and preserve unrelated instructions. Save the supporting agent/resource first, validate that its required calls exist on its runtime surface, then wire the consuming reference/trigger. Keep shared rules and their dependencies at compatible scope.
+
+A referenced file alone does not establish the intended trigger. A trigger body that mentions an unavailable tool does not grant that capability. Check the actual system-agent allowlists and custom-agent connection permissions from the loaded instructions.
+
+## Verify and observe
+
+Read back the saved files and use supported diagnosis/test-run operations. Tests can suppress outbound sends but still mutate Cedar or connected CRM state, so they are not universal dry runs. Inspect the execution and resulting artifact.
+
+Creating or cloning an AOP uses `aop-write create-aop` with an existing source. Routing text and custom assignment instructions have their own update actions. These are distinct from editing a subagent document.
+
+[Playbook triggers](/automation/playbooks) · [AOP changes](/reference/aop-write) · [All configuration resources](/skills/cedar-configuration)

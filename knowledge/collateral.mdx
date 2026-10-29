@@ -1,0 +1,41 @@
+---
+title: "Sales collateral"
+description: "Create decks, one-pagers, competitive materials, business cases, and mutual action plans."
+---
+
+The `collateral` module is a workflow skill that combines deal evidence, company knowledge, templates, and document delivery. It is accessible through `load-skill`; there is no separate `create-pitch-deck` MCP tool.
+
+## Supported collateral types
+
+| Resource | Use it for |
+| --- | --- |
+| `type-pitch-deck` | A sales deck for a specific deal, champion, demo, or buying discussion |
+| `type-one-pager` | A concise leave-behind the buyer can forward internally |
+| `type-battle-card` | A scannable competitor-specific reference for a rep |
+| `type-case-study` | A customer decision story with alternatives, objections and outcomes |
+| `type-executive-brief` | A recommendation, evidence, and explicit decision request |
+| `type-competitive-matrix` | Feature, positioning, pricing, or win/loss comparisons |
+| `type-business-case` | Benefits, assumptions, ROI and payback reasoning |
+| `type-mutual-action-plan` | Milestones, owners and commitments across both organizations |
+
+Call `load-skill` with the type you need:
+
+```json
+{ "name": "collateral", "resource": "type-business-case" }
+```
+
+## Build from customer evidence
+
+1. Resolve the target deal and read its relevant events with `conversation-read`.
+2. Retrieve product facts, approved proof points and existing examples from the KB/documents.
+3. Load the collateral skill and the type/format resources.
+4. Use an existing template, or develop the requested artifact from the available evidence.
+5. Save the artifact with `document-write`, then share it only with the intended audience.
+
+Keep assumptions explicit in business cases. Missing customer facts remain missing; the workflow does not make invented logos, quotes, revenue numbers or buying commitments authoritative.
+
+## Output formats
+
+The skill has HTML, Markdown, Google Slides and Google Docs resources. HTML and Markdown can be saved through Cedar's document surface. Google formats require the corresponding authorized Google access and execution capability; external MCP does not expose Cedar's internal credential broker or a general code executor. Use the external client's own connector where needed.
+
+[All collateral resources](/skills/collateral) · [Templates and imported files](/knowledge/templates) · [Sharing](/documents/sharing)

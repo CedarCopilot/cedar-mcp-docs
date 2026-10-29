@@ -1,0 +1,910 @@
+---
+title: "Complete capability coverage"
+description: "Every action, operation, change type, mode, and channel in the registered schemas."
+---
+
+This index is generated from the same schemas as the reference, including nested change unions. It contains **524 selector choices** across **52 tools**. Choices include operation modes and document types; they are not a count of independent APIs. Tools without a selector appear as single-call capabilities.
+
+Staff, feature-gated, and app-only entries are labeled. An action requiring `in-app` remains unavailable externally even when its parent family is listed. Additional path, role, and provider checks still apply.
+
+## LinkedIn
+
+### linkedin-read
+
+[Full parameters and responses](/reference/linkedin-read) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `list-seats` | linkedin:read |
+| `action` | `view-profile` | linkedin:read |
+| `action` | `list-connections` | linkedin:read |
+| `action` | `list-connections-page` | linkedin:read |
+| `action` | `list-own-posts` | linkedin:read |
+| `action` | `list-post-reactions` | linkedin:read |
+| `action` | `profile-viewers` | linkedin:read |
+| `action` | `post-engagement` | linkedin:read |
+| `action` | `new-connections` | linkedin:read |
+| `action` | `list-chats` | linkedin:read |
+| `action` | `read-chat` | linkedin:read |
+| `action` | `find-chat` | linkedin:read |
+| `action` | `search` | linkedin:read |
+| `action` | `search-parameters` | linkedin:read |
+| `action` | `connections-page` | linkedin:read |
+| `action` | `post-page` | linkedin:read |
+| `action` | `profiles` | linkedin:read |
+| `action` | `companies` | linkedin:read |
+| `action` | `screen-prospects` | linkedin:read |
+| `action` | `outreach-status` | linkedin:read |
+
+### linkedin-write
+
+[Full parameters and responses](/reference/linkedin-write) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `send-message` | linkedin:write |
+| `action` | `send-invitation` | linkedin:write |
+| `action` | `send-inmail` | linkedin:write |
+| `action` | `sync-chat` | linkedin:read |
+
+## Signals
+
+### signals-read
+
+[Full parameters and responses](/reference/signals-read) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `get` | signals:read |
+| `action` | `capabilities` | signals:read |
+| `action` | `admin-inventory` | signals:read |
+| `action` | `get-internal` | signals:read |
+| `action` | `list-internal` | signals:read |
+
+### signals-write
+
+[Full parameters and responses](/reference/signals-write) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `apply-extraction` | signals:write |
+| `action` | `mutate-internal` | signals:write |
+| `action` | `activate` | signals:write |
+| `action` | `update` | signals:write |
+| `action` | `set-state` | signals:write |
+| `action` | `resolve-identity` | signals:write |
+| `action` | `execute-action` | email:draft |
+| `action` | `mark-read` | signals:write |
+| `internalMutation.operation` | `snooze` | See tool and target permissions |
+| `internalMutation.operation` | `dismiss` | See tool and target permissions |
+| `internalMutation.operation` | `resolve` | See tool and target permissions |
+| `internalMutation.operation` | `reopen` | See tool and target permissions |
+| `internalMutation.operation` | `append-note` | See tool and target permissions |
+| `internalMutation.operation` | `deactivate` | See tool and target permissions |
+| `internalMutation.operation` | `hold-reconciliation` | See tool and target permissions |
+| `internalMutation.operation` | `clear-reconciliation` | See tool and target permissions |
+| `update.additionalWatches[].filters.type` | `=` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.type` | `!=` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.type` | `&gt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.type` | `&lt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.type` | `=&gt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.type` | `=&lt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.type` | `in` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.type` | `not_in` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.type` | `(.)` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.type` | `(!)` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.type` | `&#91;.&#93;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.type` | `not_contains` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.op` | `and` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.op` | `or` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].type` | `=` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].type` | `!=` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].type` | `&gt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].type` | `&lt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].type` | `=&gt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].type` | `=&lt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].type` | `in` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].type` | `not_in` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].type` | `(.)` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].type` | `(!)` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].type` | `&#91;.&#93;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].type` | `not_contains` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].op` | `and` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].op` | `or` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].type` | `=` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].type` | `!=` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].type` | `&gt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].type` | `&lt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].type` | `=&gt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].type` | `=&lt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].type` | `in` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].type` | `not_in` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].type` | `(.)` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].type` | `(!)` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].type` | `&#91;.&#93;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].type` | `not_contains` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].op` | `and` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].op` | `or` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].type` | `=` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].type` | `!=` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].type` | `&gt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].type` | `&lt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].type` | `=&gt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].type` | `=&lt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].type` | `in` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].type` | `not_in` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].type` | `(.)` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].type` | `(!)` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].type` | `&#91;.&#93;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].type` | `not_contains` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].op` | `and` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].op` | `or` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type` | `=` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type` | `!=` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type` | `&gt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type` | `&lt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type` | `=&gt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type` | `=&lt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type` | `in` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type` | `not_in` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type` | `(.)` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type` | `(!)` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type` | `&#91;.&#93;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type` | `not_contains` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].track.type` | `changed` | update.additionalWatches&#91;&#93;.kind=entity |
+| `update.additionalWatches[].track.type` | `added` | update.additionalWatches&#91;&#93;.kind=entity |
+| `update.additionalWatches[].track.op` | `and` | update.additionalWatches&#91;&#93;.kind=entity |
+| `update.additionalWatches[].track.op` | `or` | update.additionalWatches&#91;&#93;.kind=entity |
+| `update.additionalWatches[].track.conditions[].type` | `changed` | update.additionalWatches&#91;&#93;.kind=entity |
+| `update.additionalWatches[].track.conditions[].type` | `added` | update.additionalWatches&#91;&#93;.kind=entity |
+| `update.additionalWatches[].track.conditions[].op` | `and` | update.additionalWatches&#91;&#93;.kind=entity |
+| `update.additionalWatches[].track.conditions[].op` | `or` | update.additionalWatches&#91;&#93;.kind=entity |
+| `update.additionalWatches[].track.conditions[].conditions[].type` | `changed` | update.additionalWatches&#91;&#93;.kind=entity |
+| `update.additionalWatches[].track.conditions[].conditions[].type` | `added` | update.additionalWatches&#91;&#93;.kind=entity |
+| `update.additionalWatches[].track.conditions[].conditions[].op` | `and` | update.additionalWatches&#91;&#93;.kind=entity |
+| `update.additionalWatches[].track.conditions[].conditions[].op` | `or` | update.additionalWatches&#91;&#93;.kind=entity |
+| `update.additionalWatches[].track.conditions[].conditions[].conditions[].type` | `changed` | update.additionalWatches&#91;&#93;.kind=entity |
+| `update.additionalWatches[].track.conditions[].conditions[].conditions[].type` | `added` | update.additionalWatches&#91;&#93;.kind=entity |
+| `update.fiberTrackers[].rules[].type` | `person_got_promoted` | update.fiberTrackers&#91;&#93;.rules&#91;&#93;.entityType=person |
+| `update.fiberTrackers[].rules[].type` | `person_got_demoted` | update.fiberTrackers&#91;&#93;.rules&#91;&#93;.entityType=person |
+| `update.fiberTrackers[].rules[].type` | `person_posted` | update.fiberTrackers&#91;&#93;.rules&#91;&#93;.entityType=person |
+| `update.fiberTrackers[].rules[].type` | `company_posted` | update.fiberTrackers&#91;&#93;.rules&#91;&#93;.entityType=company |
+| `update.fiberTrackers[].rules[].type` | `technology_added` | update.fiberTrackers&#91;&#93;.rules&#91;&#93;.entityType=company |
+| `update.fiberTrackers[].rules[].type` | `new_office_location` | update.fiberTrackers&#91;&#93;.rules&#91;&#93;.entityType=company |
+| `update.fiberTrackers[].rules[].type` | `recent_layoffs` | update.fiberTrackers&#91;&#93;.rules&#91;&#93;.entityType=company |
+| `update.fiberTrackers[].rules[].type` | `department_size_threshold` | update.fiberTrackers&#91;&#93;.rules&#91;&#93;.entityType=company |
+| `update.fiberTrackers[].rules[].type` | `recently_hired_with_title` | update.fiberTrackers&#91;&#93;.rules&#91;&#93;.entityType=company |
+| `update.fiberTrackers[].rules[].type` | `job_posting_in_function` | update.fiberTrackers&#91;&#93;.rules&#91;&#93;.entityType=company |
+| `update.fiberTrackers[].rules[].type` | `job_posting_with_keyword` | update.fiberTrackers&#91;&#93;.rules&#91;&#93;.entityType=company |
+| `update.fiberTrackers[].rules[].type` | `headcount_growth_percent` | update.fiberTrackers&#91;&#93;.rules&#91;&#93;.entityType=company |
+
+## Slack and notifications
+
+### slack-read
+
+[Full parameters and responses](/reference/slack-read) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `search-live` | slack:read |
+| `action` | `read-thread` | slack:read |
+| `action` | `read-file` | slack:read |
+
+### slack-write
+
+[Full parameters and responses](/reference/slack-write) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `sync-thread` | slack:read |
+
+### notify
+
+[Full parameters and responses](/reference/notify) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `send` | crm:read |
+| `action` | `list-slack-channels` | crm:read |
+| `send.channel` | `email` | See tool and target permissions |
+| `send.channel` | `slack` | See tool and target permissions |
+| `send.channel` | `imessage` | See tool and target permissions |
+| `send.channel` | `whatsapp` | See tool and target permissions |
+
+## Email and scheduling
+
+### mail
+
+[Full parameters and responses](/reference/mail) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `fetch-attachments` | email:read |
+| `action` | `list-sent` | email:read |
+| `action` | `find` | email:read |
+| `action` | `search-live` | email:read |
+| `action` | `read-thread` | email:read |
+
+### email-tracking
+
+[Full parameters and responses](/reference/email-tracking) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `list` | email:read |
+| `action` | `get` | email:read |
+
+### draft-comms
+
+[Full parameters and responses](/reference/draft-comms) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `draft-email` | email:draft |
+| `action` | `draft-slack-message` | crm:read |
+| `action` | `draft-linkedin-message` | linkedin:read |
+| `action` | `show-draft` | email:read |
+
+### send-email
+
+[Full parameters and responses](/reference/send-email) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `prepare` | email:send |
+| `action` | `send` | email:send |
+| `action` | `status` | email:send |
+
+### schedule-send
+
+[Full parameters and responses](/reference/schedule-send) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `channel` | `email` | email:send |
+| `channel` | `linkedin` | linkedin:write |
+| `channel` | `slack` | crm:read |
+
+## CRM, meetings and tasks
+
+### conversation-read
+
+[Full parameters and responses](/reference/conversation-read) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `get` | crm:read |
+| `action` | `find` | crm:read |
+| `action` | `search-semantic` | crm:read |
+| `action` | `search-external-crm-deals` | crm:read |
+| `action` | `timeline` | crm:read |
+| `action` | `field-evolution` | crm:read |
+| `action` | `value-as-of` | crm:read |
+| `action` | `describe-field` | crm:read |
+| `action` | `raw-content` | crm:read |
+| `action` | `search` | crm:read |
+
+### conversation-write
+
+[Full parameters and responses](/reference/conversation-write) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `create` | crm:read |
+| `action` | `update-fields` | crm:read |
+| `action` | `create-event` | crm:read |
+| `action` | `mutate` | crm:read |
+| `action` | `reassign-ownership` | crm:read |
+| `action` | `link-external-crm-deal` | crm:read |
+| `action` | `sync-gmail-thread` | email:read |
+| `updateFields.fields[].mode` | `replace` | See tool and target permissions |
+| `updateFields.fields[].mode` | `patch` | See tool and target permissions |
+| `updateFields.fields[].mode` | `upsert` | See tool and target permissions |
+| `updateFields.fields[].mode` | `append` | See tool and target permissions |
+| `updateFields.fields[].mode` | `update` | See tool and target permissions |
+| `mutate.mutation.operation` | `move_event` | mutate.mutation.operation=move_event |
+| `mutate.mutation.operation` | `reassign_aop` | mutate.mutation.operation=reassign_aop |
+| `mutate.mutation.operation` | `refresh_conversation` | mutate.mutation.operation=refresh_conversation |
+| `mutate.mutation.operation` | `refresh_fields` | mutate.mutation.operation=refresh_fields |
+| `mutate.mutation.operation` | `clear_working_memory` | mutate.mutation.operation=clear_working_memory |
+| `mutate.mutation.operation` | `merge_conversations` | mutate.mutation.operation=merge_conversations |
+| `mutate.mutation.operation` | `merge_companies` | mutate.mutation.operation=merge_companies |
+| `mutate.mutation.operation` | `fix_misassignment` | mutate.mutation.operation=fix_misassignment |
+| `mutate.mutation.operation` | `assign_aop_by_selection` | mutate.mutation.operation=assign_aop_by_selection |
+| `mutate.mutation.operation` | `rename_conversation` | mutate.mutation.operation=rename_conversation |
+
+### conversation-analytics
+
+[Full parameters and responses](/reference/conversation-analytics) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `compute-metric` | crm:read |
+| `action` | `compute-metric-batch` | crm:read |
+| `action` | `describe-metrics` | crm:read |
+
+### run-sql
+
+[Full parameters and responses](/reference/run-sql) · Availability: **external**.
+
+Single call, baseline scope: `crm:read`.
+
+### taxonomy-fields
+
+[Full parameters and responses](/reference/taxonomy-fields) · Availability: **feature-gated**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `list` | brain:read |
+| `action` | `get` | brain:read |
+
+### meetings
+
+[Full parameters and responses](/reference/meetings) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `find` | crm:read |
+| `action` | `sync` | crm:read |
+| `action` | `capabilities` | crm:read |
+
+### calendar
+
+[Full parameters and responses](/reference/calendar) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `list-events` | crm:read |
+| `action` | `get-availability` | crm:read |
+| `action` | `modify-event` | crm:read |
+| `modifyEvent.operation` | `create` | See tool and target permissions |
+| `modifyEvent.operation` | `update` | See tool and target permissions |
+| `modifyEvent.operation` | `delete` | See tool and target permissions |
+
+### task
+
+[Full parameters and responses](/reference/task) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `list` | crm:read |
+| `action` | `applyApproval` | crm:read |
+| `action` | `create` | crm:read |
+| `action` | `update` | crm:read |
+| `action` | `cancel` | crm:read |
+| `action` | `assignmentOptions` | crm:read |
+| `action` | `reassign` | crm:read |
+| `action` | `dealList` | crm:read |
+| `action` | `creationOptions` | crm:read |
+| `action` | `createAssigned` | crm:read |
+| `action` | `complete` | crm:read |
+| `action` | `delete` | crm:read |
+| `action` | `start` | crm:read |
+| `action` | `updateDueDate` | crm:read |
+
+## Documents and research
+
+### document-read
+
+[Full parameters and responses](/reference/document-read) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `read` | docs:read |
+| `action` | `list` | docs:read |
+| `action` | `search` | docs:read |
+
+### document-write
+
+[Full parameters and responses](/reference/document-write) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `write` | docs:read |
+| `action` | `delete` | playbook:write |
+| `action` | `restore` | docs:read |
+| `action` | `move` | docs:read |
+| `action` | `share` | docs:read |
+| `action` | `request-file` | docs:read |
+| `write.type` | `document` | See tool and target permissions |
+| `write.type` | `workflow` | See tool and target permissions |
+| `write.type` | `html` | See tool and target permissions |
+| `write.type` | `agenda` | See tool and target permissions |
+| `write.type` | `conversation_agenda` | See tool and target permissions |
+| `write.type` | `attachment` | See tool and target permissions |
+| `write.type` | `table` | See tool and target permissions |
+| `write.mode` | `upsert` | See tool and target permissions |
+| `write.mode` | `append` | See tool and target permissions |
+| `write.mode` | `patch` | See tool and target permissions |
+
+### table
+
+[Full parameters and responses](/reference/table) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `read` | docs:read |
+| `action` | `create` | docs:read |
+| `action` | `add_columns` | docs:read |
+| `action` | `add_rows` | docs:read |
+| `action` | `set` | docs:read |
+| `action` | `clear` | docs:read |
+| `action` | `delete_rows` | docs:read |
+| `action` | `import` | docs:read |
+| `action` | `fill` | docs:read |
+| `action` | `bindings` | docs:read |
+| `action` | `update_columns` | docs:read |
+| `action` | `remove_columns` | docs:read |
+| `action` | `reorder_columns` | docs:read |
+| `action` | `update_view` | docs:read |
+| `action` | `move_row` | docs:read |
+| `action` | `insert_section` | docs:read |
+| `action` | `export` | docs:read |
+| `create.schema.columns[].type` | `text` | See tool and target permissions |
+| `create.schema.columns[].type` | `long_text` | See tool and target permissions |
+| `create.schema.columns[].type` | `number` | See tool and target permissions |
+| `create.schema.columns[].type` | `currency` | See tool and target permissions |
+| `create.schema.columns[].type` | `percent` | See tool and target permissions |
+| `create.schema.columns[].type` | `date` | See tool and target permissions |
+| `create.schema.columns[].type` | `checkbox` | See tool and target permissions |
+| `create.schema.columns[].type` | `select` | See tool and target permissions |
+| `create.schema.columns[].type` | `multi_select` | See tool and target permissions |
+| `create.schema.columns[].type` | `url` | See tool and target permissions |
+| `create.schema.columns[].type` | `email` | See tool and target permissions |
+| `create.schema.columns[].type` | `output` | See tool and target permissions |
+| `create.schema.columns[].type` | `conversation` | See tool and target permissions |
+| `create.schema.columns[].type` | `task` | See tool and target permissions |
+| `create.schema.columns[].type` | `draft` | See tool and target permissions |
+| `create.schema.columns[].type` | `doc` | See tool and target permissions |
+| `create.schema.columns[].type` | `person` | See tool and target permissions |
+| `create.schema.columns[].type` | `company` | See tool and target permissions |
+| `add_columns.columns[].type` | `text` | See tool and target permissions |
+| `add_columns.columns[].type` | `long_text` | See tool and target permissions |
+| `add_columns.columns[].type` | `number` | See tool and target permissions |
+| `add_columns.columns[].type` | `currency` | See tool and target permissions |
+| `add_columns.columns[].type` | `percent` | See tool and target permissions |
+| `add_columns.columns[].type` | `date` | See tool and target permissions |
+| `add_columns.columns[].type` | `checkbox` | See tool and target permissions |
+| `add_columns.columns[].type` | `select` | See tool and target permissions |
+| `add_columns.columns[].type` | `multi_select` | See tool and target permissions |
+| `add_columns.columns[].type` | `url` | See tool and target permissions |
+| `add_columns.columns[].type` | `email` | See tool and target permissions |
+| `add_columns.columns[].type` | `output` | See tool and target permissions |
+| `add_columns.columns[].type` | `conversation` | See tool and target permissions |
+| `add_columns.columns[].type` | `task` | See tool and target permissions |
+| `add_columns.columns[].type` | `draft` | See tool and target permissions |
+| `add_columns.columns[].type` | `doc` | See tool and target permissions |
+| `add_columns.columns[].type` | `person` | See tool and target permissions |
+| `add_columns.columns[].type` | `company` | See tool and target permissions |
+| `update_columns.columns[].patch.type` | `text` | See tool and target permissions |
+| `update_columns.columns[].patch.type` | `long_text` | See tool and target permissions |
+| `update_columns.columns[].patch.type` | `number` | See tool and target permissions |
+| `update_columns.columns[].patch.type` | `currency` | See tool and target permissions |
+| `update_columns.columns[].patch.type` | `percent` | See tool and target permissions |
+| `update_columns.columns[].patch.type` | `date` | See tool and target permissions |
+| `update_columns.columns[].patch.type` | `checkbox` | See tool and target permissions |
+| `update_columns.columns[].patch.type` | `select` | See tool and target permissions |
+| `update_columns.columns[].patch.type` | `multi_select` | See tool and target permissions |
+| `update_columns.columns[].patch.type` | `url` | See tool and target permissions |
+| `update_columns.columns[].patch.type` | `email` | See tool and target permissions |
+| `update_columns.columns[].patch.type` | `output` | See tool and target permissions |
+| `update_columns.columns[].patch.type` | `conversation` | See tool and target permissions |
+| `update_columns.columns[].patch.type` | `task` | See tool and target permissions |
+| `update_columns.columns[].patch.type` | `draft` | See tool and target permissions |
+| `update_columns.columns[].patch.type` | `doc` | See tool and target permissions |
+| `update_columns.columns[].patch.type` | `person` | See tool and target permissions |
+| `update_columns.columns[].patch.type` | `company` | See tool and target permissions |
+
+### research
+
+[Full parameters and responses](/reference/research) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `capabilities` | crm:read |
+| `action` | `choose-enrichment` | enrichment:write |
+| `action` | `enrich-company` | enrichment:write |
+| `action` | `enrich-person` | enrichment:write |
+| `action` | `web-search` | in-app |
+| `action` | `web-fetch` | in-app |
+
+### ui-config
+
+[Full parameters and responses](/reference/ui-config) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `list-canvases` | crm:read |
+| `action` | `configure-overview` | playbook:write |
+| `action` | `create-canvas` | crm:read |
+| `action` | `update-canvas` | crm:read |
+| `action` | `delete-canvas` | crm:read |
+| `configureOverview.ops[].op` | `add` | configureOverview.ops&#91;&#93;.op=add |
+| `configureOverview.ops[].op` | `remove` | configureOverview.ops&#91;&#93;.op=remove |
+| `configureOverview.ops[].op` | `setVisibleWhen` | configureOverview.ops&#91;&#93;.op=setVisibleWhen |
+| `configureOverview.ops[].op` | `setRender` | configureOverview.ops&#91;&#93;.op=setRender |
+| `configureOverview.ops[].op` | `setOwner` | configureOverview.ops&#91;&#93;.op=setOwner |
+| `configureOverview.ops[].op` | `reorder` | configureOverview.ops&#91;&#93;.op=reorder |
+| `createCanvas.type` | `conversationCanvas` | See tool and target permissions |
+| `createCanvas.type` | `kanbanConversation` | See tool and target permissions |
+| `createCanvas.type` | `cardList` | See tool and target permissions |
+| `createCanvas.type` | `table` | See tool and target permissions |
+| `createCanvas.type` | `report` | See tool and target permissions |
+| `createCanvas.type` | `statistics` | See tool and target permissions |
+| `createCanvas.type` | `tasks` | See tool and target permissions |
+| `createCanvas.type` | `agenda` | See tool and target permissions |
+| `createCanvas.type` | `calendar` | See tool and target permissions |
+| `updateCanvas.type` | `conversationCanvas` | See tool and target permissions |
+| `updateCanvas.type` | `kanbanConversation` | See tool and target permissions |
+| `updateCanvas.type` | `cardList` | See tool and target permissions |
+| `updateCanvas.type` | `table` | See tool and target permissions |
+| `updateCanvas.type` | `report` | See tool and target permissions |
+| `updateCanvas.type` | `statistics` | See tool and target permissions |
+| `updateCanvas.type` | `tasks` | See tool and target permissions |
+| `updateCanvas.type` | `agenda` | See tool and target permissions |
+| `updateCanvas.type` | `calendar` | See tool and target permissions |
+
+## Configuration
+
+### config-read
+
+[Full parameters and responses](/reference/config-read) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `read-playbook` | docs:read |
+| `action` | `read-settings` | crm:read |
+| `action` | `list-fields` | crm:read |
+| `action` | `list-org-members` | crm:read |
+| `action` | `find-bot-slack-channels` | crm:read |
+| `readPlaybook.mode` | `list` | See tool and target permissions |
+| `readPlaybook.mode` | `load_full` | See tool and target permissions |
+| `readPlaybook.mode` | `load_sections` | See tool and target permissions |
+
+### config-write
+
+[Full parameters and responses](/reference/config-write) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `reassign-aop` | playbook:write |
+| `action` | `create-field` | playbook:write |
+| `action` | `update-field` | playbook:write |
+| `action` | `delete-field` | playbook:write |
+| `action` | `link-mapping` | playbook:write |
+| `action` | `unlink-mapping` | playbook:write |
+| `action` | `add-field-option` | playbook:write |
+| `action` | `update-field-option` | playbook:write |
+| `action` | `remove-field-option` | playbook:write |
+| `action` | `set-stage-criteria` | playbook:write |
+| `createField.type` | `text` | See tool and target permissions |
+| `createField.type` | `number` | See tool and target permissions |
+| `createField.type` | `date` | See tool and target permissions |
+| `createField.type` | `boolean` | See tool and target permissions |
+| `createField.type` | `select` | See tool and target permissions |
+| `createField.type` | `currency` | See tool and target permissions |
+| `createField.type` | `url` | See tool and target permissions |
+| `createField.type` | `email` | See tool and target permissions |
+| `createField.type` | `phone` | See tool and target permissions |
+| `createField.type` | `list` | See tool and target permissions |
+| `createField.type` | `fraction` | See tool and target permissions |
+| `createField.type` | `json` | See tool and target permissions |
+| `createField.type` | `people` | See tool and target permissions |
+| `createField.type` | `summarized_history` | See tool and target permissions |
+| `createField.type` | `deal_brief` | See tool and target permissions |
+| `linkMapping.resolutions[].action` | `remap-to` | linkMapping.resolutions&#91;&#93;.action=remap-to |
+| `linkMapping.resolutions[].action` | `keep-legacy` | linkMapping.resolutions&#91;&#93;.action=keep-legacy |
+| `removeFieldOption.resolution.action` | `remap-to` | removeFieldOption.resolution.action=remap-to |
+| `removeFieldOption.resolution.action` | `keep-legacy` | removeFieldOption.resolution.action=keep-legacy |
+
+### connection-write
+
+[Full parameters and responses](/reference/connection-write) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `change.type` | `update_crm_field_mappings` | change.type=update_crm_field_mappings |
+| `change.op` | `add` | change.type=update_crm_field_mappings |
+| `change.op` | `update` | change.type=update_crm_field_mappings |
+| `change.op` | `remove` | change.type=update_crm_field_mappings |
+| `change.type` | `manage_playbook_webhook` | change.type=manage_playbook_webhook |
+| `change.op` | `create` | change.type=manage_playbook_webhook |
+| `change.op` | `enable` | change.type=manage_playbook_webhook |
+| `change.op` | `disable` | change.type=manage_playbook_webhook |
+| `change.op` | `list` | change.type=manage_playbook_webhook |
+| `change.op` | `test` | change.type=manage_playbook_webhook |
+| `change.op` | `delete` | change.type=manage_playbook_webhook |
+| `change.type` | `update_slack_sync_config` | change.type=update_slack_sync_config |
+| `change.type` | `update_crm_settings` | change.type=update_crm_settings |
+| `change.stageRequiredFieldsOp.op` | `set` | change.type=update_crm_settings |
+| `change.stageRequiredFieldsOp.op` | `remove` | change.type=update_crm_settings |
+| `change.type` | `update_connection_instructions` | change.type=update_connection_instructions |
+| `change.type` | `disconnect_linkedin_seat` | change.type=disconnect_linkedin_seat |
+| `change.type` | `disconnect_whatsapp_account` | change.type=disconnect_whatsapp_account |
+| `change.type` | `update_whatsapp_sync_config` | change.type=update_whatsapp_sync_config |
+| `change.type` | `resolve_channel_link_proposal` | change.type=resolve_channel_link_proposal |
+| `change.op` | `resolve` | change.type=resolve_channel_link_proposal |
+| `change.op` | `sweep` | change.type=resolve_channel_link_proposal |
+| `change.channel` | `slack` | change.type=resolve_channel_link_proposal |
+| `change.channel` | `linkedin` | change.type=resolve_channel_link_proposal |
+| `change.channel` | `whatsapp` | change.type=resolve_channel_link_proposal |
+
+### aop-write
+
+[Full parameters and responses](/reference/aop-write) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `create-aop` | playbook:write |
+| `action` | `update-selection-procedure` | playbook:write |
+| `action` | `update-custom-assignment-instruction` | playbook:write |
+
+### workspace-write
+
+[Full parameters and responses](/reference/workspace-write) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `change.type` | `update_user_settings` | change.type=update_user_settings |
+| `change.type` | `update_inbox_settings` | change.type=update_inbox_settings |
+| `change.type` | `manage_inbox` | change.type=manage_inbox |
+| `change.op` | `create` | change.type=manage_inbox |
+| `change.op` | `update` | change.type=manage_inbox |
+| `change.op` | `delete` | change.type=manage_inbox |
+| `change.op` | `reorder` | change.type=manage_inbox |
+| `change.type` | `manage_task_group` | change.type=manage_task_group |
+| `change.op` | `create` | change.type=manage_task_group |
+| `change.op` | `update` | change.type=manage_task_group |
+| `change.op` | `delete` | change.type=manage_task_group |
+| `change.op` | `reorder` | change.type=manage_task_group |
+| `change.overduePolicy.mode` | `nag` | change.type=manage_task_group |
+| `change.overduePolicy.mode` | `auto-complete` | change.type=manage_task_group |
+| `change.overduePolicy.mode` | `ignore` | change.type=manage_task_group |
+| `change.type` | `update_webhook_export_config` | change.type=update_webhook_export_config |
+
+### systems-write
+
+[Full parameters and responses](/reference/systems-write) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `change.type` | `manage_mcp_connection` | change.type=manage_mcp_connection |
+| `change.op` | `create` | change.type=manage_mcp_connection |
+| `change.op` | `delete` | change.type=manage_mcp_connection |
+| `change.type` | `update_mcp_connection_settings` | change.type=update_mcp_connection_settings |
+
+### data-settings
+
+[Full parameters and responses](/reference/data-settings) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `update` | playbook:write |
+
+### config-propagate
+
+[Full parameters and responses](/reference/config-propagate) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `propagate-field` | playbook:write |
+| `action` | `propagate-mapping` | playbook:write |
+
+## Billing and diagnostics
+
+### billing-read
+
+[Full parameters and responses](/reference/billing-read) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `workflow-approvals` | billing:read |
+| `action` | `accounts` | billing:read |
+| `action` | `catalog` | billing:read |
+| `action` | `wallet` | billing:read |
+| `action` | `usage` | billing:read |
+| `action` | `activity` | billing:read |
+| `action` | `limits` | billing:read |
+| `action` | `alerts` | billing:read |
+| `action` | `grants` | billing:read |
+| `action` | `deliveries` | billing:read |
+| `action` | `commercial` | billing:read |
+| `action` | `postpaid` | billing:read |
+| `action` | `members` | billing:read |
+| `action` | `preference` | billing:read |
+
+### billing-write
+
+[Full parameters and responses](/reference/billing-write) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `ensure-account` | billing:write |
+| `action` | `save-limit` | billing:write |
+| `action` | `read-alert` | billing:write |
+| `action` | `reconcile` | billing:write |
+| `action` | `retry-delivery` | billing:write |
+| `action` | `checkout` | billing:write |
+| `action` | `portal` | billing:write |
+| `action` | `finance-link` | billing:write |
+| `action` | `write-grant` | billing:write |
+| `action` | `revoke-grant` | billing:write |
+| `action` | `request-import` | billing:write |
+| `action` | `configure-postpaid` | billing:write |
+| `action` | `reconcile-postpaid` | billing:write |
+
+### usage-observations-read
+
+[Full parameters and responses](/reference/usage-observations-read) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `producers` | billing:read |
+| `action` | `list` | billing:read |
+
+### usage-observations-retry
+
+[Full parameters and responses](/reference/usage-observations-retry) · Availability: **external**.
+
+Single call, baseline scope: `billing:write`.
+
+### billing-admin
+
+[Full parameters and responses](/reference/billing-admin) · Availability: **staff-only**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `inventory` | billing:read |
+| `action` | `preview-import` | billing:read |
+| `action` | `verify-import` | billing:write |
+| `action` | `reconcile-subscription` | billing:write |
+| `action` | `save-offer` | billing:write |
+| `action` | `save-catalog` | billing:write |
+| `action` | `save-allowance` | billing:write |
+| `action` | `payment-events` | billing:read |
+| `action` | `retry-payment` | billing:write |
+| `action` | `process-postpaid` | billing:write |
+| `action` | `postpaid` | billing:read |
+| `action` | `configure-postpaid` | billing:write |
+| `action` | `correct-usage` | billing:write |
+| `action` | `organization-monthly-limits` | billing:write |
+| `action` | `organization-accounts` | billing:read |
+| `action` | `provision-organization-accounts` | billing:write |
+| `offer.type` | `topup` | See tool and target permissions |
+| `offer.type` | `subscription` | See tool and target permissions |
+
+### debug
+
+[Full parameters and responses](/reference/debug) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `diagnose-conversation` | crm:read |
+| `action` | `recent-executions` | crm:read |
+| `action` | `execution-detail` | crm:read |
+| `action` | `tool-call-detail` | crm:read |
+| `action` | `health-report` | crm:read |
+| `action` | `create-monitor` | internal |
+| `action` | `test-run` | crm:read |
+
+### send-user-feedback
+
+[Full parameters and responses](/reference/send-user-feedback) · Availability: **external**.
+
+Single call, baseline scope: `crm:read`.
+
+## Skill loading
+
+### load-skill
+
+[Full parameters and responses](/reference/load-skill) · Availability: **external**.
+
+Single call, baseline scope: `authenticated`.
+
+### load-brain-skills
+
+[Full parameters and responses](/reference/load-brain-skills) · Availability: **feature-gated**.
+
+Single call, baseline scope: `brain:read`.
+
+## Staff tools
+
+### analytics
+
+[Full parameters and responses](/reference/analytics) · Availability: **staff-only**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `attribution-rate` | internal |
+| `action` | `attribution-by-category` | internal |
+| `action` | `similarity-distribution` | internal |
+| `action` | `user-tiers` | internal |
+| `action` | `overview` | internal |
+| `action` | `monthly-growth` | internal |
+
+### cedar-staff-debug
+
+[Full parameters and responses](/reference/cedar-staff-debug) · Availability: **staff-only**.
+
+Single call, baseline scope: `internal`.
+
+## Cedar app only
+
+### board
+
+[Full parameters and responses](/reference/board) · Availability: **in-app-only**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `list_boards` | in-app |
+| `action` | `list_templates` | in-app |
+| `action` | `read` | in-app |
+| `action` | `create_board` | in-app |
+| `action` | `get_schema` | in-app |
+| `action` | `set_schema` | in-app |
+| `action` | `add_fields` | in-app |
+| `action` | `set_view` | in-app |
+| `action` | `set_board_meta` | in-app |
+| `action` | `add_card` | in-app |
+| `action` | `set` | in-app |
+| `action` | `move` | in-app |
+| `action` | `comment` | in-app |
+| `action` | `cards` | in-app |
+| `action` | `archive` | in-app |
+| `action` | `list_triggers` | in-app |
+
+### workflow
+
+[Full parameters and responses](/reference/workflow) · Availability: **in-app-only**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `list_operations` | in-app |
+| `action` | `inspect_capacity` | in-app |
+
+### chat-context
+
+[Full parameters and responses](/reference/chat-context) · Availability: **in-app-only**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `manage` | in-app |
+| `action` | `resolve` | in-app |
+
+### delegate
+
+[Full parameters and responses](/reference/delegate) · Availability: **in-app-only**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `subagent` | in-app |
+| `action` | `code` | in-app |
+| `subagent.type` | `orchestrator` | See tool and target permissions |
+| `subagent.type` | `analyzer` | See tool and target permissions |
+
+### external-mcp
+
+[Full parameters and responses](/reference/external-mcp) · Availability: **in-app-only**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `call` | in-app |
+
+### search-chat-history
+
+[Full parameters and responses](/reference/search-chat-history) · Availability: **in-app-only**.
+
+Single call, baseline scope: `in-app`.
+
+### load-chat-history
+
+[Full parameters and responses](/reference/load-chat-history) · Availability: **in-app-only**.
+
+Single call, baseline scope: `in-app`.
+
+### switch-chat-thread
+
+[Full parameters and responses](/reference/switch-chat-thread) · Availability: **in-app-only**.
+
+Single call, baseline scope: `in-app`.
+

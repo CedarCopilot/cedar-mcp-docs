@@ -1,0 +1,160 @@
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "attribution-rate",
+        "attribution-by-category",
+        "similarity-distribution",
+        "user-tiers",
+        "overview",
+        "monthly-growth"
+      ],
+      "description": "Which operation to perform — pass its matching params object below (e.g. action: \"attribution-rate\" pairs with attributionRate: {...})."
+    },
+    "attributionRate": {
+      "type": "object",
+      "properties": {
+        "startDate": {
+          "type": "string",
+          "description": "ISO date/datetime — start of the range (inclusive)."
+        },
+        "endDate": {
+          "type": "string",
+          "description": "ISO date/datetime — end of the range (inclusive)."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Restrict to one user. Omit for the org-wide breakdown (all users)."
+        },
+        "aopName": {
+          "type": "string",
+          "description": "Restrict to one AOP by name (e.g. \"Deals\"). Omit for all AOPs."
+        }
+      },
+      "required": [
+        "startDate",
+        "endDate"
+      ],
+      "additionalProperties": false
+    },
+    "attributionByCategory": {
+      "type": "object",
+      "properties": {
+        "startDate": {
+          "type": "string",
+          "description": "ISO date/datetime — start of the range (inclusive)."
+        },
+        "endDate": {
+          "type": "string",
+          "description": "ISO date/datetime — end of the range (inclusive)."
+        },
+        "aopName": {
+          "type": "string",
+          "description": "AOP to scope to. Defaults to \"Deals\" if omitted."
+        }
+      },
+      "required": [
+        "startDate",
+        "endDate"
+      ],
+      "additionalProperties": false
+    },
+    "similarityDistribution": {
+      "type": "object",
+      "properties": {
+        "startDate": {
+          "type": "string",
+          "description": "ISO date/datetime — start of the range (inclusive)."
+        },
+        "endDate": {
+          "type": "string",
+          "description": "ISO date/datetime — end of the range (inclusive)."
+        },
+        "aopName": {
+          "type": "string",
+          "description": "AOP to scope to. Defaults to \"Deals\" if omitted."
+        }
+      },
+      "required": [
+        "startDate",
+        "endDate"
+      ],
+      "additionalProperties": false
+    },
+    "userTiers": {
+      "type": "object",
+      "properties": {
+        "startDate": {
+          "type": "string",
+          "description": "ISO date/datetime — start of the range (inclusive)."
+        },
+        "endDate": {
+          "type": "string",
+          "description": "ISO date/datetime — end of the range (inclusive)."
+        },
+        "aopName": {
+          "type": "string",
+          "description": "AOP to scope to. Defaults to \"Deals\" if omitted."
+        }
+      },
+      "required": [
+        "startDate",
+        "endDate"
+      ],
+      "additionalProperties": false
+    },
+    "overview": {
+      "type": "object",
+      "properties": {
+        "startDate": {
+          "type": "string",
+          "description": "ISO date/datetime — start of the range. Defaults to 5 days ago if omitted."
+        },
+        "endDate": {
+          "type": "string",
+          "description": "ISO date/datetime — end of the range. Defaults to unbounded (no upper limit) if omitted."
+        },
+        "aopName": {
+          "type": "string",
+          "description": "Restrict to one AOP by name. Omit for all AOPs."
+        }
+      },
+      "additionalProperties": false
+    },
+    "monthlyGrowth": {
+      "type": "object",
+      "properties": {
+        "startDate": {
+          "type": "string",
+          "description": "ISO date/datetime — start of the range (inclusive)."
+        },
+        "endDate": {
+          "type": "string",
+          "description": "ISO date/datetime — end of the range (inclusive). Data-quality note: the North Star attribution count dedups sent drafts by thread + a 5-minute time bucket, not by message_id — a documented, accepted imprecision (see services/analytics/monthly-growth-report.ts), not a bug to fix here."
+        }
+      },
+      "required": [
+        "startDate",
+        "endDate"
+      ],
+      "additionalProperties": false
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

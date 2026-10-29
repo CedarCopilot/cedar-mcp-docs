@@ -1,0 +1,66 @@
+---
+title: "conversation"
+description: "Workflow capabilities and resources for the conversation skill."
+---
+
+Find/filter CRM conversations, update conversation fields, create new conversations, log events, and reassign ownership. Filtering: analyzes natural language requests, suggests filter configurations, and executes queries to find matching conversations — streams filter suggestions to the frontend for user approval. Load when the user says ''show me'', ''find'', ''filter'', or asks about deals by status, date, priority, or company — e.g. ''show stalled deals'', ''find my Acme conversation'', ''which deals are in negotiation''. Updating: extracts information from communications and updates CRM conversation fields with clean, digestible, high-confidence content that respects temporal context and AOP governance; also creates new deals/conversations, logs meetings/calls/events, and reassigns conversation ownership. For creating a new opportunity in the connected external CRM (not a new Cedar conversation), see this skill''s opportunity-creation resource. For finding and linking an EXISTING external-CRM deal to a conversation, see ''Two different things are called "CRM"'' below. Also covers pulling a message in from the user''s LIVE Gmail, Slack, or LinkedIn when they say it belongs to a deal but it isn''t on the timeline — ''there was an email for this conversation from X'', ''we discussed this in Slack'', ''that LinkedIn thread isn''t showing up here'' — finding it in the channel, disambiguating with the user, and attaching it to the conversation; see ''Pulling a missing message in from Gmail, Slack, or LinkedIn'' below.
+
+## Load the module
+
+Call `load-skill` with:
+
+```json
+{
+  "name": "conversation"
+}
+```
+
+Read the returned instructions in full. Account-specific playbook context is assembled at load time; this static reference does not publish it.
+
+## Resources
+
+Each resource is independently loadable using the same skill name and its exact resource key.
+
+### opportunity-creation
+
+Create a new opportunity in the connected external CRM. Looks up the linked account and contact, then creates the opportunity following the user's configured naming and field conventions.
+
+```json
+{
+  "name": "conversation",
+  "resource": "opportunity-creation"
+}
+```
+
+## Tools and surface compatibility
+
+Use the canonical family tools in your connection’s `tools/list`. Skill source may still mention older granular names. The source dependencies below describe implementation composition; they are **not additional external MCP registrations**. The [complete capability index](/reference/coverage) records callable family/action contracts.
+
+- `signals-read`
+- `signals-write`
+- `conversation-analytics`
+- `fetch-conversation`
+- `find-crm-conversations`
+- `list-my-canvases`
+- `fetch-email-attachments`
+- `search-live-emails`
+- `read-live-email-thread`
+- `sync-gmail-thread`
+- `search-live-slack`
+- `read-live-slack-thread`
+- `sync-slack-thread`
+- `list-linkedin-chats`
+- `find-linkedin-chat`
+- `read-linkedin-chat`
+- `sync-linkedin-chat`
+- `find-meetings`
+- `sync-meeting`
+- `meeting-capabilities`
+- `update-conversation-fields`
+- `reassign-conversation-ownership`
+- `list-documents`
+- `search-documents`
+- `read-document`
+- `create-conversation-event`
+- `create-conversation`
+- `link-crm-deal`

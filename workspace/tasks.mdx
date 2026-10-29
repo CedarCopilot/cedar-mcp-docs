@@ -1,0 +1,35 @@
+---
+title: "Task lifecycle, assignment and follow-up"
+description: "Create owned work, handle recommendations and approvals, and track completion."
+---
+
+Load `tasks` for the account's task rules. The `task` family covers personal work and conversation-shared work, with distinct discovery operations for eligible assignments.
+
+| Actions | Purpose |
+| --- | --- |
+| `list`, `dealList` | Read personal tasks or a deal's shared tasks/recommendations |
+| `creationOptions`, `assignmentOptions` | Discover valid assignees and creation/assignment choices |
+| `create`, `createAssigned` | Create work using the appropriate ownership flow |
+| `update`, `updateDueDate` | Edit a task or its due date |
+| `reassign` | Change the assignee through the authorized service |
+| `applyApproval` | Apply a supported pending task approval |
+| `start` | Start preparation for eligible caller-owned work |
+| `complete`, `cancel`, `delete` | Finish, cancel or remove a task with distinct semantics |
+
+## Create the right kind of work
+
+A recommendation is not yet an assigned persisted task. Discover the valid options, create the task, and keep its ID for updates. Preserve the source deal and useful source permalinks in the task's notes.
+
+A due date is when work is due. Agent execution time determines when an agent-enabled task runs. A personal reminder does not become automatic agent execution just because it has a future date.
+
+## Starting and completing work
+
+`start` can return a seed prompt for preparing the task in Cedar chat; it is not outbound-send authorization. Completing a task should reflect the actual result. A prepared draft is not a delivered message, and a scheduled message is not proof of delivery.
+
+Use the explicit completion/cancellation/deletion operation intended by the user. If a call produces an approval proposal, track that as pending rather than marking the requested change finished.
+
+## Task groups
+
+`workspace-write manage_task_group` controls groups, ordering, visual metadata, routing criteria, agent visibility and supported overdue policies. Those workspace settings are separate from changing individual tasks. Read existing group IDs using `config-read read-settings` first.
+
+[Task contract](/reference/task) · [Workspace preferences](/workspace/preferences)

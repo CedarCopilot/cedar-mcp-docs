@@ -1,0 +1,30 @@
+---
+title: "external-systems"
+description: "Workflow capabilities and resources for the external-systems skill."
+---
+
+Connect to and interact with external, non-Cedar systems. Three paths: MCP-connected integrations (Notion, outreach trackers, custom tools) via call-mcp-tool; Cedar-integrated providers (Google, Salesforce, HubSpot, Slack, Stripe); and credentials the user stored themselves (Xero, Microsoft Graph, an internal API). The last two both go through get-provider-credentials, then an HTTP caller (run-code-executor in the background, native Bash in chat). Load when the user wants to read from or write to any external system.
+
+## Load the module
+
+Call `load-skill` with:
+
+```json
+{
+  "name": "external-systems"
+}
+```
+
+Read the returned instructions in full. Account-specific playbook context is assembled at load time; this static reference does not publish it.
+
+## Resources
+
+This skill has no separately registered named resources. Its primary instructions contain the workflow.
+
+## Tools and surface compatibility
+
+Use the canonical family tools in your connection’s `tools/list`. Skill source may still mention older granular names. The source dependencies below describe implementation composition; they are **not additional external MCP registrations**. The [complete capability index](/reference/coverage) records callable family/action contracts.
+
+- `call-mcp-tool`
+- `get-provider-credentials`
+- `run-code-executor`

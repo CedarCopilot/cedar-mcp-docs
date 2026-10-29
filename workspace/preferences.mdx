@@ -1,0 +1,32 @@
+---
+title: "Inboxes, task groups and preferences"
+description: "Configure mail, LinkedIn navigation, notifications, task lanes and field-update exports."
+---
+
+The `workspace-write` family accepts five change types. Start with `config-read read-settings` to get the existing settings and stable IDs.
+
+| `change.type` | Capabilities |
+| --- | --- |
+| `update_user_settings` | Mail signature, alias, undo-send and supported channel notification preferences |
+| `update_inbox_settings` | Inbox layout/order, importance signal, shared sorting instructions and LinkedIn navigation filters |
+| `manage_inbox` | Create, update, delete and reorder custom inbox tabs |
+| `manage_task_group` | Create, update, delete and reorder task groups |
+| `update_webhook_export_config` | Set or clear the HTTPS destination for conversation-field update exports |
+
+## Custom inboxes
+
+Custom inboxes can use supported channel selections, queries/exclusions, conversation filters, lookback, ordering and empty-state visibility settings. Resolve the actual tab ID before updating or deleting it. Reordering requires the intended ordered IDs.
+
+Inbox sorting instructions are shared across supported Gmail/LinkedIn/Slack inbox routing and can apply before CRM admission. They govern organization/classification; they do not authorize outbound messages.
+
+LinkedIn navigation can control visible/order entries and named filters over supported inbox views, read state, waiting state and search terms. These are workspace filters, not changes to the LinkedIn account's provider settings.
+
+## Task lanes and overdue behavior
+
+Task groups support naming, color/icon, routing criteria, agent visibility and overdue policies such as nag, auto-complete or ignore, with associated timing/reschedule settings. Read the existing policy before replacing it; automatic completion is a meaningful behavior change.
+
+## Export field changes
+
+The webhook export change controls where Cedar posts conversation-field updates. Setting `url` to null clears the endpoint. This outbound export is different from an inbound playbook webhook, which triggers Cedar work, and from a website visitor source.
+
+[Workspace change variants](/reference/workspace-write) · [Webhook triggers](/automation/playbooks)

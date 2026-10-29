@@ -1,0 +1,26 @@
+---
+title: "Templates and imported files"
+description: "Reuse examples, import reference files, and distinguish readable content from a link."
+---
+
+Load `collateral` with `template-builder` to turn several examples into a reusable template. The resource compares fixed material with variable slots and produces a template the next run can fill from deal context.
+
+## Build a reusable template
+
+Use more than one representative example when the goal is to infer a pattern. Preserve common structure and wording; mark account-specific names, claims, figures and sections as variables. Save the template in a discoverable document or knowledge path and point the consuming workflow at that path.
+
+A template is reference content. It becomes an automatic workflow only when an agent/playbook explicitly consumes it. For team use, both the template and consuming rule must be available at team scope.
+
+## Bring a Google file into Cedar
+
+`document-write request-file` is the supported handoff for a user-selected file. In Cedar web chat it can show a picker; external MCP returns the supported connection/settings handoff rather than rendering that picker inside the external client.
+
+Cedar's Google grant reaches files selected through its app flow. Merely storing a private Drive URL in a KB note does not grant access. A public-view link can be imported through the supported `sourceUrl` write path; a private file needs the file-selection/connection flow.
+
+## Read uploaded material correctly
+
+Check whether an upload has extracted searchable text. If it requires whole-file reading, use the returned short-lived file reference and a capable file reader. Do not interpret a search miss as evidence that the source document says nothing about a topic.
+
+CSV and XLSX row data belong in the [table import/export workflow](/documents/tables), where column mapping and row identity are preserved. A file attachment, a rendered HTML artifact, and an editable row table are different document uses.
+
+[Template-builder resource](/skills/collateral#template-builder) · [document-write](/reference/document-write)

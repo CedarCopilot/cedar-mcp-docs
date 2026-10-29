@@ -1,0 +1,60 @@
+---
+title: "load-skill"
+description: "Parameters, scopes, and response schema for load-skill."
+---
+
+Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+
+## Capability
+
+Load a Cedar skill's full instructions by name. When your task matches a skill below — including whenever another tool's own description tells you to load one first — you MUST call this tool for that skill before using any tool in its domain. The one-liners below are only for picking WHICH skill applies — they do not replace loading it. If your client saves this tool's response to a file instead of showing it inline, you MUST read that file in full before acting. Call with no `name` for the full catalog. Available skills: &lt;available_skills&gt; - drafting: Draft or rewrite sales emails, Slack messag… - knowledge-base: Access the user's Knowledge Base text entri… - calendar: View existing calendar events or propose ne… - conversation: Find/filter CRM conversations, update conve… &#91;resources: opportunity-creation&#93; - tasks: Everything task-related: creating, updating… - multi-conversation-operations: Required before batch operations across 3+… - customer-support: Report a problem to the Cedar team when the… - external-systems: Connect to and interact with external, non-… - connected-systems: Guidance for interacting with a user's exte… - research: Read your LinkedIn network and post reactor… - documents: Read, write, and search Cedar Docs — persis… &#91;resources: agenda-format&#93; - tables: Build and drive a Cedar TABLE — a row-addre… - notifications: Send notifications to the user via Slack DM… - cedar-configuration: The foundational skill for anything related… &#91;+15 resources&#93; - collateral: Create any sales collateral — pitch decks,… &#91;+14 resources&#93; - coaching: Sales methodology frameworks — BANT, SAYA (… &#91;+5 resources&#93; - run-sql: Full column and join reference for the run-… - field-query: Discover, select, and query CRM field data… &lt;/available_skills&gt;  When your task matches a skill, use the load-skill tool to read its full instructions before proceeding.
+
+Required baseline scope: `authenticated`. Additional role and target checks apply.
+
+## Parameters
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `name` | string | No | Skill name — see the tool description for available names. Omit to get the full catalog with complete (non-truncated) descriptions, if the short one-liners in the tool description aren't enough to decide which skill you need.  |
+| `resource` | string | No | Optional sub-resource within the skill, if it has one.  |
+| `user_request_summary` | string | Yes | One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does.  |
+| `is_new_request` | boolean | Yes | true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread.  |
+
+## Full input schema
+
+[Download the input schema](/reference/schemas/load-skill.input.json). Nested objects, variants, and constraints are preserved in full. Runtime refinements and ownership checks still apply.
+
+<Accordion title="Input JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Skill name — see the tool description for available names. Omit to get the full catalog with complete (non-truncated) descriptions, if the short one-liners in the tool description aren't enough to decide which skill you need."
+    },
+    "resource": {
+      "type": "string",
+      "description": "Optional sub-resource within the skill, if it has one."
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+

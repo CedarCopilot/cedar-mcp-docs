@@ -1,0 +1,30 @@
+---
+title: "tables"
+description: "Workflow capabilities and resources for the tables skill."
+---
+
+Build and drive a Cedar TABLE — a row-addressed spreadsheet an agent fills. Load before reading or writing ANY table document, and whenever a task has N independent units of work: designing the columns and their fill instructions with the user, binding columns to live Cedar data (`conversation.stage`, `conversation.fields.&lt;key&gt;`), sourcing rows from a query or an import, and fanning out one agent per row to fill them in parallel.
+
+## Load the module
+
+Call `load-skill` with:
+
+```json
+{
+  "name": "tables"
+}
+```
+
+Read the returned instructions in full. Account-specific playbook context is assembled at load time; this static reference does not publish it.
+
+## Resources
+
+This skill has no separately registered named resources. Its primary instructions contain the workflow.
+
+## Tools and surface compatibility
+
+Use the canonical family tools in your connection’s `tools/list`. Skill source may still mention older granular names. The source dependencies below describe implementation composition; they are **not additional external MCP registrations**. The [complete capability index](/reference/coverage) records callable family/action contracts.
+
+- `table`
+- `read-document`
+- `list-documents`

@@ -1,0 +1,28 @@
+---
+title: "Fields, picklists, mappings and stage rubrics"
+description: "Configure field definitions, governance, CRM options and stage entry/exit criteria."
+---
+
+Load `cedar-configuration` with `fields-and-values` before changing fields. Read `config-read list-fields` to get canonical field keys, user/org ownership, options and external mappings.
+
+## Field definitions and governance
+
+`config-write create-field`, `update-field` and `delete-field` manage supported custom definitions. The schema includes text, number, date, boolean, select, currency, URL/email/phone, list, fraction, JSON, people, summarized history and deal-brief types. Updates also expose supported governance and extraction/display configuration; inspect the full nested parameter tables before editing.
+
+The field system also supports configured internal-signal definitions/lifecycle and signal-enabled fields. These configure what is extracted and displayed; signal activation and record lifecycle use the separate signals tools.
+
+## Options and external CRM mappings
+
+Use `sourceFromCrm` when creating a field backed by a CRM picklist/multi-select. `link-mapping` associates and reconciles a Cedar field with an external field; `unlink-mapping` removes that association. Read the result back to confirm canonical options are present.
+
+For unmapped editable select/list options, use `add-field-option`, `update-field-option` and `remove-field-option`. Stable values are identities; labels are presentation. Mapped options must follow the provider reconciliation path rather than hand-typed replacements.
+
+Removing an option with stored values can require an explicit `remap-to` or `keep-legacy` resolution. Inspect affected counts before choosing; a schema edit must not silently reinterpret existing deals.
+
+## Stage and buyer-journey configuration
+
+`set-stage-criteria` replaces a shared stage's entry or exit criteria in its organization playbook. It applies to the team using that process, not one rep's private note.
+
+The supported deal-brief/buyer-journey configuration includes stage-specific visibility and rubric rows. Where strength is used, preserve fixed rubric meaning and represent unknown values as null. Editing presentation does not itself backfill historical evidence.
+
+[Every config-write parameter](/reference/config-write) · [Field history](/crm/field-history) · [Organization propagation](/configuration/team)

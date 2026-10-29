@@ -3,7 +3,7 @@ title: "conversation-write"
 description: "Parameters, scopes, and response schema for conversation-write."
 ---
 
-Generated from Cedar's external registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
 ## Capability
 
@@ -65,6 +65,113 @@ Path, account role, feature gates, target ownership, and billing permissions can
 | `targetDealId` | string | No | Multiple linked CRM opportunities: Deal ID from &lt;linked_crm_deal&gt;; otherwise omit.  |
 | `linkCrmDeal` | object | No | Link a newly-created CRM deal/opportunity: save dealId in integration_metadata and close open crm-opportunity tasks. Runs before field updates so they sync to that deal.  |
 
+### updateFields.fields item
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `name` | string | Yes | Exact field name from get-conversation.  |
+| `mode` | "replace" · "patch" · "upsert" · "append" · "update" | No | People: upsert value=&#123;people:&#91;&#123;id,...changes&#125;&#93;&#125;; history: append complete new entries or update existing IDs in value=&#123;entries:&#91;...&#93;&#125;. Omitted properties stay; arrays replace. New rows need all required data. replace=value only; patch=old_string+new_string only. Null/omitted never clears; "" clears.  |
+| `value` | string or number or boolean or null or object or object or object or object | No | Scalar or native people/history/journey object, or JSON string. Preserve stable IDs. Omit for patches.  |
+| `old_string` | string | No | Exact substring appearing once in current value from get-conversation.  |
+| `new_string` | string | No | Patch replacement text; "" deletes old_string.  |
+| `signal` | "red" · "yellow" · "green" | No | Set only when the field description instructs a signal; follow its red/yellow/green rubric.  |
+| `signalReasoning` | string | No | Brief explanation for the signal.  |
+| `reasoning` | string | No | Always provide one sentence linking this field value to event evidence (e.g. "Tony confirmed department and dean support for the subscription").  |
+| `strength` | number | No | Owned type:list scorecard only (e.g. coaching.followup.rs1): 1–100 rating; value=verbatim evidence, reasoning=one-line justification. All three go on one event atom, never a persistent field. Omit otherwise.  |
+| `contextQuote` | string | No | Owned list scorecard full triple only: verbatim lead-in immediately before value. Never fabricate; omit for bare quotes.  |
+| `reactionQuote` | string | No | Owned list scorecard triple with contextQuote only: other party's verbatim reaction immediately after value; omit if absent.  |
+
+### updateFields.fields item.value — variant 5 — variant 1
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `people` | object&#91;&#93; | Yes |  maxItems: 40 |
+
+### updateFields.fields item.value — variant 5 — variant 1.people item
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `id` | string | Yes |  minLength: 1 |
+| `name` | string | No |  minLength: 1 |
+| `title` | string or null | No |   |
+| `email` | string or null | No |   |
+| `contactId` | string or null | No |   |
+| `engagement` | "mentioned" · "introduced" · "engaged" · "should_engage" | No |   |
+| `roles` | string&#91;&#93; | No |   |
+| `support` | "strong_support" · "support" · "neutral" · "opposed" · "unknown" | No |   |
+| `summary` | string | No |  minLength: 1 |
+| `evidence` | object&#91;&#93; | No |   |
+
+### updateFields.fields item.value — variant 5 — variant 1.people item.evidence item
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `eventId` | string | Yes |  minLength: 1 |
+| `quote` | string | Yes |  minLength: 1 |
+
+### updateFields.fields item.value — variant 5 — variant 2
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `entries` | object&#91;&#93; | Yes |   |
+
+### updateFields.fields item.value — variant 5 — variant 2.entries item
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `id` | string | Yes |  minLength: 1 |
+| `title` | string | No |  minLength: 1; maxLength: 120 |
+| `occurredAt` | string | No |  format: "date-time" |
+| `kind` | "meeting" · "correspondence" · "email" · "milestone" | No |   |
+| `summary` | string | No |  minLength: 1; maxLength: 600 |
+| `sourceEventIds` | string&#91;&#93; | No |  minItems: 1 |
+
+### updateFields.fields item.value — variant 5 — variant 3 — variant 1
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `stage` | "discovery" · "demo" · "commercial" · "negotiation" | Yes |   |
+| `rows` | object&#91;&#93; | Yes |  maxItems: 3 |
+| `rubric` | string | No |   |
+
+### updateFields.fields item.value — variant 5 — variant 3 — variant 1.rows item
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `label` | string | Yes |  minLength: 1 |
+| `value` | string | Yes |   |
+| `graded` | boolean | No |  default: true |
+| `signal` | "green" · "yellow" · "red" or null | No |  default: null |
+| `signalReasoning` | string or null | No |   |
+| `strength` | integer or null | No |   |
+
+### updateFields.fields item.value — variant 5 — variant 3 — variant 2
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `rows` | object&#91;&#93; | Yes |   |
+
+### updateFields.fields item.value — variant 5 — variant 3 — variant 2.rows item
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `label` | string | Yes |  minLength: 1 |
+| `value` | string | Yes |   |
+| `graded` | boolean | No |  default: true |
+| `signal` | "green" · "yellow" · "red" or null | No |  default: null |
+| `signalReasoning` | string or null | No |   |
+| `strength` | integer or null | No |   |
+
+### updateFields.linkCrmDeal
+
+Link a newly-created CRM deal/opportunity: save dealId in integration_metadata and close open crm-opportunity tasks. Runs before field updates so they sync to that deal.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `provider` | string | Yes | The CRM provider identifier (e.g. "hubspot", "salesforce", "attio")  |
+| `dealId` | string | Yes | The opportunity/deal ID returned by the CRM after creation  |
+| `instanceUrl` | string | No | For Salesforce: the org Lightning base URL. For HubSpot: the portal hub_id (e.g. "245934213") — required to generate deep-link URLs.  |
+
 ### createEvent
 
 | Parameter | Type | Required | Details |
@@ -80,6 +187,13 @@ Path, account role, feature gates, target ownership, and billing permissions can
 | `content` | string | No | The full text/message content. Only used when eventType is "text".  |
 | `requirePaste` | boolean | No | Set to true whenever any transcript content is involved — even if the user already pasted it in the chat. ALWAYS use requirePaste instead of the transcript field. The frontend renders a textarea so the user pastes directly there. Do NOT pass transcript when requirePaste is true.  |
 
+### createEvent.participants item
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `email` | string | Yes |   |
+| `name` | string | Yes |   |
+
 ### mutate
 
 | Parameter | Type | Required | Details |
@@ -87,6 +201,95 @@ Path, account role, feature gates, target ownership, and billing permissions can
 | `description` | string | Yes | ONE plain-English sentence describing what will happen — shown to the user in the approval card. No IDs, no technical terms.  |
 | `mutation` | object or object or object or object or object or object or object or object or object or object | Yes |   |
 | `conversationId` | string | No | Primary conversation ID for the card UI context (shown alongside description).  |
+
+### mutate.mutation — operation: move_event
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `operation` | "move_event" | Yes |   |
+| `eventId` | string | Yes | ID of any event in the thread to move format: "uuid" |
+| `targetConversationId` | string | No | Destination conversation ID — an EXISTING deal. Provide this OR newConversation, not both. format: "uuid" |
+| `newConversation` | object | No | Create a NEW deal and move the event onto it. Provide this OR targetConversationId, not both.  |
+
+### mutate.mutation — operation: move_event.newConversation
+
+Create a NEW deal and move the event onto it. Provide this OR targetConversationId, not both.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `name` | string | No | Name for the new deal (defaults to the company domain, else "New deal")  |
+| `companyDomain` | string | No | Domain of the deal's REAL counterparty (the company the deal is actually with), used to tie the company to the new deal. Supply this yourself from the event context — do NOT default to the sender's domain if the event was misrouted, since a wrong sender-domain is usually what caused the misrouting. Omit if genuinely unsure (the deal is created with no primary company).  |
+| `aopId` | string | No | AOP to assign to the new deal; omit to let Cedar pick the best one from the event.  |
+
+### mutate.mutation — operation: reassign_aop
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `operation` | "reassign_aop" | Yes |   |
+| `conversationId` | string | Yes |  format: "uuid" |
+| `aopId` | string | Yes | ID of the AOP to assign  |
+
+### mutate.mutation — operation: refresh_conversation
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `operation` | "refresh_conversation" | Yes |   |
+| `conversationId` | string | Yes |  format: "uuid" |
+| `scope` | "reconcile" · "full" | No | 'reconcile' (default): re-derive fields + tasks from the events now on the deal — NO draft. 'full': re-run the whole on-event pipeline for one event (incl. drafting) to reproduce a missing output — requires eventId. default: "reconcile" |
+| `eventId` | string | No | Required for scope:'full' — the event whose on-event pipeline to re-run. format: "uuid" |
+
+### mutate.mutation — operation: refresh_fields
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `operation` | "refresh_fields" | Yes |   |
+| `conversationId` | string | Yes |  format: "uuid" |
+
+### mutate.mutation — operation: clear_working_memory
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `operation` | "clear_working_memory" | Yes |   |
+| `conversationId` | string | Yes |  format: "uuid" |
+
+### mutate.mutation — operation: merge_conversations
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `operation` | "merge_conversations" | Yes |   |
+| `sourceConversationId` | string | Yes | Conversation to merge FROM — all its events, tasks, and history will be moved into the target, then it will be deleted format: "uuid" |
+| `targetConversationId` | string | Yes | Conversation to merge INTO — this one survives format: "uuid" |
+
+### mutate.mutation — operation: merge_companies
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `operation` | "merge_companies" | Yes |   |
+| `sourceCompanyId` | string | Yes | Company to merge FROM — will be aliased to the target permanently format: "uuid" |
+| `targetCompanyId` | string | Yes | Company to merge INTO — the canonical company that survives format: "uuid" |
+
+### mutate.mutation — operation: fix_misassignment
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `operation` | "fix_misassignment" | Yes |   |
+| `conversationId` | string | Yes |  format: "uuid" |
+| `dryRun` | boolean | No | When true, previews what would change without applying default: true |
+
+### mutate.mutation — operation: assign_aop_by_selection
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `operation` | "assign_aop_by_selection" | Yes |   |
+| `conversationId` | string | Yes | Let Cedar's AI re-pick the best AOP from this conversation's email history format: "uuid" |
+
+### mutate.mutation — operation: rename_conversation
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `operation` | "rename_conversation" | Yes |   |
+| `conversationId` | string | Yes |  format: "uuid" |
+| `name` | string | Yes | New display name for the conversation  |
 
 ### reassignOwnership
 
@@ -97,6 +300,8 @@ Path, account role, feature gates, target ownership, and billing permissions can
 
 ### linkExternalCrmDeal
 
+Operates on the user's connected EXTERNAL CRM (Salesforce/HubSpot/Attio/Copper) — NOT Cedar's own conversation records (that's `find`). If it's unclear whether the user means "search Cedar's deals" or "search our Salesforce/HubSpot", ask before calling either.
+
 | Parameter | Type | Required | Details |
 | --- | --- | --- | --- |
 | `conversationId` | string | Yes | The Cedar conversation to link — NOT the external CRM's own record id. format: "uuid" |
@@ -104,6 +309,8 @@ Path, account role, feature gates, target ownership, and billing permissions can
 | `dealId` | string | Yes | The external CRM's own deal/opportunity id — from search-external-crm-deals's result. minLength: 1 |
 
 ### syncGmailThread
+
+Search the user's LIVE Gmail for an email that never synced into Cedar and pull it into an existing deal, where it processes like a normal inbound (draft included). Use this only AFTER find-event confirms the email is not in Cedar at all — it is the "bring it in from the mailbox" repair.
 
 | Parameter | Type | Required | Details |
 | --- | --- | --- | --- |

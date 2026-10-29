@@ -3,7 +3,7 @@ title: "signals-write"
 description: "Parameters, scopes, and response schema for signals-write."
 ---
 
-Generated from Cedar's external registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
 ## Capability
 
@@ -51,6 +51,17 @@ Path, account role, feature gates, target ownership, and billing permissions can
 | `assessmentTransitionId` | string | No |  format: "uuid" |
 | `completeReconciliationSourceEventId` | string | No |  format: "uuid" |
 | `proposals` | object&#91;&#93; | Yes |  maxItems: 100 |
+
+### internalExtraction.proposals item
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `id` | string | No |  format: "uuid" |
+| `type` | string | Yes |  minLength: 1; maxLength: 100 |
+| `reason` | string | Yes |  minLength: 1; maxLength: 12000 |
+| `sourceEventId` | string | Yes |  format: "uuid" |
+| `revisitAt` | string or null | Yes |   |
+| `active` | boolean | No |  default: true |
 
 ### internalMutation
 
@@ -113,6 +124,303 @@ Path, account role, feature gates, target ownership, and billing permissions can
 | `maxResultsPerRun` | integer | Yes |  minimum: 1; maximum: 100 |
 | `additionalWatches` | object or object&#91;&#93; | No |  maxItems: 20 |
 | `fiberTrackers` | object&#91;&#93; | No |  maxItems: 1001 |
+
+### update.targets item
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `kind` | "person" · "company" | Yes |   |
+| `recordId` | string | Yes |  minLength: 1; maxLength: 320 |
+| `signalTypes` | string&#91;&#93; | Yes |  minItems: 1; maxItems: 21 |
+
+### update.additionalWatches item — kind: discovery
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `id` | string | Yes |  minLength: 1; maxLength: 100; pattern: "^&#91;a-zA-Z0-9_-&#93;+$" |
+| `label` | string | Yes |  minLength: 1; maxLength: 160 |
+| `enabled` | boolean | No |  default: true |
+| `fields` | string&#91;&#93; | No |  minItems: 1; maxItems: 30 |
+| `kind` | "discovery" | Yes |   |
+| `dataset` | "person" · "company" · "job" · "social_post" | Yes |   |
+| `filters` | object or object | Yes |   |
+| `subject` | object | No |   |
+
+### update.additionalWatches item — kind: discovery.filters — variant 1
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `field` | string | Yes |  minLength: 1; maxLength: 200; pattern: "^&#91;a-zA-Z_&#93;&#91;a-zA-Z0-9_.&#93;*$" |
+| `type` | "=" · "!=" · "&gt;" · "&lt;" · "=&gt;" · "=&lt;" · "in" · "not_in" · "(.)" · "(!)" · "&#91;.&#93;" · "not_contains" | Yes |   |
+| `value` | string or number or boolean or null or string or number or boolean or null&#91;&#93; | Yes |   |
+
+### update.additionalWatches item — kind: discovery.filters — variant 2
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `op` | "and" · "or" | Yes |   |
+| `conditions` | object or object&#91;&#93; | Yes |  minItems: 1; maxItems: 25 |
+
+### update.additionalWatches item — kind: discovery.filters — variant 2.conditions item — variant 1
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `field` | string | Yes |  minLength: 1; maxLength: 200; pattern: "^&#91;a-zA-Z_&#93;&#91;a-zA-Z0-9_.&#93;*$" |
+| `type` | "=" · "!=" · "&gt;" · "&lt;" · "=&gt;" · "=&lt;" · "in" · "not_in" · "(.)" · "(!)" · "&#91;.&#93;" · "not_contains" | Yes |   |
+| `value` | string or number or boolean or null or string or number or boolean or null&#91;&#93; | Yes |   |
+
+### update.additionalWatches item — kind: discovery.filters — variant 2.conditions item — variant 2
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `op` | "and" · "or" | Yes |   |
+| `conditions` | object or object&#91;&#93; | Yes |  minItems: 1; maxItems: 25 |
+
+### update.additionalWatches item — kind: discovery.filters — variant 2.conditions item — variant 2.conditions item — variant 1
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `field` | string | Yes |  minLength: 1; maxLength: 200; pattern: "^&#91;a-zA-Z_&#93;&#91;a-zA-Z0-9_.&#93;*$" |
+| `type` | "=" · "!=" · "&gt;" · "&lt;" · "=&gt;" · "=&lt;" · "in" · "not_in" · "(.)" · "(!)" · "&#91;.&#93;" · "not_contains" | Yes |   |
+| `value` | string or number or boolean or null or string or number or boolean or null&#91;&#93; | Yes |   |
+
+### update.additionalWatches item — kind: discovery.filters — variant 2.conditions item — variant 2.conditions item — variant 2
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `op` | "and" · "or" | Yes |   |
+| `conditions` | object or object&#91;&#93; | Yes |  minItems: 1; maxItems: 25 |
+
+### update.additionalWatches item — kind: discovery.filters — variant 2.conditions item — variant 2.conditions item — variant 2.conditions item — variant 1
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `field` | string | Yes |  minLength: 1; maxLength: 200; pattern: "^&#91;a-zA-Z_&#93;&#91;a-zA-Z0-9_.&#93;*$" |
+| `type` | "=" · "!=" · "&gt;" · "&lt;" · "=&gt;" · "=&lt;" · "in" · "not_in" · "(.)" · "(!)" · "&#91;.&#93;" · "not_contains" | Yes |   |
+| `value` | string or number or boolean or null or string or number or boolean or null&#91;&#93; | Yes |   |
+
+### update.additionalWatches item — kind: discovery.filters — variant 2.conditions item — variant 2.conditions item — variant 2.conditions item — variant 2
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `op` | "and" · "or" | Yes |   |
+| `conditions` | object&#91;&#93; | Yes |  minItems: 1; maxItems: 25 |
+
+### update.additionalWatches item — kind: discovery.filters — variant 2.conditions item — variant 2.conditions item — variant 2.conditions item — variant 2.conditions item
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `field` | string | Yes |  minLength: 1; maxLength: 200; pattern: "^&#91;a-zA-Z_&#93;&#91;a-zA-Z0-9_.&#93;*$" |
+| `type` | "=" · "!=" · "&gt;" · "&lt;" · "=&gt;" · "=&lt;" · "in" · "not_in" · "(.)" · "(!)" · "&#91;.&#93;" · "not_contains" | Yes |   |
+| `value` | string or number or boolean or null or string or number or boolean or null&#91;&#93; | Yes |   |
+
+### update.additionalWatches item — kind: discovery.subject
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `kind` | "person" · "company" | Yes |   |
+| `recordId` | string | Yes |  minLength: 1; maxLength: 320 |
+
+### update.additionalWatches item — kind: entity
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `id` | string | Yes |  minLength: 1; maxLength: 100; pattern: "^&#91;a-zA-Z0-9_-&#93;+$" |
+| `label` | string | Yes |  minLength: 1; maxLength: 160 |
+| `enabled` | boolean | No |  default: true |
+| `fields` | string&#91;&#93; | No |  minItems: 1; maxItems: 30 |
+| `kind` | "entity" | Yes |   |
+| `dataset` | "person" · "company" | Yes |   |
+| `targetIds` | string&#91;&#93; | Yes |  minItems: 1; maxItems: 1000 |
+| `track` | object or object | Yes |   |
+
+### update.additionalWatches item — kind: entity.track — variant 1
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `field` | string | Yes |  minLength: 1; maxLength: 200 |
+| `type` | "changed" · "added" | Yes |   |
+
+### update.additionalWatches item — kind: entity.track — variant 2
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `op` | "and" · "or" | Yes |   |
+| `conditions` | object or object&#91;&#93; | Yes |  minItems: 1; maxItems: 15 |
+
+### update.additionalWatches item — kind: entity.track — variant 2.conditions item — variant 1
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `field` | string | Yes |  minLength: 1; maxLength: 200 |
+| `type` | "changed" · "added" | Yes |   |
+
+### update.additionalWatches item — kind: entity.track — variant 2.conditions item — variant 2
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `op` | "and" · "or" | Yes |   |
+| `conditions` | object or object&#91;&#93; | Yes |  minItems: 1; maxItems: 15 |
+
+### update.additionalWatches item — kind: entity.track — variant 2.conditions item — variant 2.conditions item — variant 1
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `field` | string | Yes |  minLength: 1; maxLength: 200 |
+| `type` | "changed" · "added" | Yes |   |
+
+### update.additionalWatches item — kind: entity.track — variant 2.conditions item — variant 2.conditions item — variant 2
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `op` | "and" · "or" | Yes |   |
+| `conditions` | object&#91;&#93; | Yes |  minItems: 1; maxItems: 15 |
+
+### update.additionalWatches item — kind: entity.track — variant 2.conditions item — variant 2.conditions item — variant 2.conditions item
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `field` | string | Yes |  minLength: 1; maxLength: 200 |
+| `type` | "changed" · "added" | Yes |   |
+
+### update.fiberTrackers item
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `id` | string | Yes |  minLength: 1; maxLength: 100; pattern: "^&#91;a-zA-Z0-9_-&#93;+$" |
+| `subject` | object | Yes |   |
+| `enabled` | boolean | No |  default: true |
+| `refreshIntervalDays` | integer | No |  default: 30; minimum: 1; maximum: 180 |
+| `rules` | object or object or object or object or object or object or object or object or object or object or object or object&#91;&#93; | Yes |  minItems: 1; maxItems: 25 |
+
+### update.fiberTrackers item.subject
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `kind` | "person" · "company" | Yes |   |
+| `recordId` | string | Yes |  minLength: 1; maxLength: 320 |
+
+### update.fiberTrackers item.rules item — entityType: person
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `lookbackDays` | integer | No |  minimum: 1; maximum: 90 |
+| `entityType` | "person" | Yes |   |
+| `type` | "person_got_promoted" | Yes |   |
+| `seniorityKeywords` | string&#91;&#93; | No |  minItems: 1; maxItems: 50 |
+
+### update.fiberTrackers item.rules item — entityType: person
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `lookbackDays` | integer | No |  minimum: 1; maximum: 90 |
+| `entityType` | "person" | Yes |   |
+| `type` | "person_got_demoted" | Yes |   |
+| `seniorityKeywords` | string&#91;&#93; | No |  minItems: 1; maxItems: 50 |
+
+### update.fiberTrackers item.rules item — entityType: person
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `lookbackDays` | integer | No |  minimum: 1; maximum: 90 |
+| `entityType` | "person" | Yes |   |
+| `type` | "person_posted" | Yes |   |
+| `minReactions` | integer | No |  minimum: 0 |
+
+### update.fiberTrackers item.rules item — entityType: company
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `lookbackDays` | integer | No |  minimum: 1; maximum: 90 |
+| `entityType` | "company" | Yes |   |
+| `type` | "company_posted" | Yes |   |
+| `minReactions` | integer | No |  minimum: 0 |
+
+### update.fiberTrackers item.rules item — entityType: company
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `lookbackDays` | integer | No |  minimum: 1; maximum: 90 |
+| `entityType` | "company" | Yes |   |
+| `type` | "technology_added" | Yes |   |
+| `technologies` | string&#91;&#93; | No |  minItems: 1; maxItems: 50 |
+
+### update.fiberTrackers item.rules item — entityType: company
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `lookbackDays` | integer | No |  minimum: 1; maximum: 90 |
+| `entityType` | "company" | Yes |   |
+| `type` | "new_office_location" | Yes |   |
+| `countries` | string&#91;&#93; | No |  minItems: 1; maxItems: 100 |
+| `cities` | string&#91;&#93; | No |  minItems: 1; maxItems: 50 |
+| `regions` | string&#91;&#93; | No |  minItems: 1; maxItems: 50 |
+| `states` | string&#91;&#93; | No |  minItems: 1; maxItems: 50 |
+
+### update.fiberTrackers item.rules item — entityType: company
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `lookbackDays` | integer | No |  minimum: 1; maximum: 90 |
+| `entityType` | "company" | Yes |   |
+| `type` | "recent_layoffs" | Yes |   |
+| `minPeopleAffected` | integer | No |  exclusiveMinimum: 0 |
+| `minPercentAffected` | number | No |  maximum: 100; exclusiveMinimum: 0 |
+
+### update.fiberTrackers item.rules item — entityType: company
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `lookbackDays` | integer | No |  minimum: 1; maximum: 90 |
+| `entityType` | "company" | Yes |   |
+| `type` | "department_size_threshold" | Yes |   |
+| `department` | string | Yes | Use a value from signals-read capabilities.fiber.jobFunctions.  |
+| `threshold` | integer | Yes |  exclusiveMinimum: 0 |
+| `direction` | "above" · "below" | Yes |   |
+
+### update.fiberTrackers item.rules item — entityType: company
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `lookbackDays` | integer | No |  minimum: 1; maximum: 90 |
+| `entityType` | "company" | Yes |   |
+| `type` | "recently_hired_with_title" | Yes |   |
+| `titleKeywords` | string&#91;&#93; | Yes |  minItems: 1; maxItems: 50 |
+| `minNewHires` | integer | No |  exclusiveMinimum: 0 |
+
+### update.fiberTrackers item.rules item — entityType: company
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `lookbackDays` | integer | No |  minimum: 1; maximum: 90 |
+| `entityType` | "company" | Yes |   |
+| `type` | "job_posting_in_function" | Yes |   |
+| `jobFunctions` | string&#91;&#93; | Yes |  minItems: 1; maxItems: 40 |
+| `minPostings` | integer | No |  exclusiveMinimum: 0 |
+
+### update.fiberTrackers item.rules item — entityType: company
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `lookbackDays` | integer | No |  minimum: 1; maximum: 90 |
+| `entityType` | "company" | Yes |   |
+| `type` | "job_posting_with_keyword" | Yes |   |
+| `keywords` | string&#91;&#93; | Yes |  minItems: 1; maxItems: 50 |
+| `searchFields` | "title" · "description"&#91;&#93; | No |  minItems: 1; maxItems: 2 |
+| `seniorityLevels` | "Internship" · "Entry level" · "Associate" · "Mid-Senior level" · "Director" · "Executive"&#91;&#93; | No |  minItems: 1; maxItems: 6 |
+| `modalities` | "On-site" · "Remote" · "Hybrid"&#91;&#93; | No |  minItems: 1; maxItems: 3 |
+| `minPostings` | integer | No |  exclusiveMinimum: 0 |
+
+### update.fiberTrackers item.rules item — entityType: company
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `lookbackDays` | integer | No |  minimum: 1; maximum: 90 |
+| `entityType` | "company" | Yes |   |
+| `type` | "headcount_growth_percent" | Yes |   |
+| `minPercentChange` | number | Yes |  maximum: 1000; exclusiveMinimum: 0 |
+| `direction` | "grew" · "shrank" · "either" | Yes |   |
+| `minStartingHeadcount` | integer | No |  exclusiveMinimum: 0 |
 
 ### setState
 

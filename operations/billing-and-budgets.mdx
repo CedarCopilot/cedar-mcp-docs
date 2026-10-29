@@ -1,0 +1,34 @@
+---
+title: "Spending accounts, limits and delivery recovery"
+description: "Inspect every billing workflow and distinguish financial state from provider work."
+---
+
+Billing tools use authorized accounts, exact microcredit strings and versioned policy. One credit is 1,000,000 microcredits. Keep these units distinct from provider-native credits and currency.
+
+## Read capabilities
+
+`billing-read` covers `accounts`, `catalog`, `wallet`, `usage`, `activity`, `limits`, `alerts`, `grants`, `deliveries`, `commercial`, `postpaid`, `members`, `preference` and `workflow-approvals`. Start by discovering authorized accounts. Pending workflow spending approvals are completed by the user through Cedar Billing.
+
+## Write capabilities
+
+| Action group | Operations |
+| --- | --- |
+| Account and policy | `ensure-account`, `save-limit`, `read-alert` |
+| Balance and delivery recovery | `reconcile`, `retry-delivery` |
+| Hosted finance workflows | `checkout`, `portal`, `finance-link` |
+| Spending grants | `write-grant`, `revoke-grant` |
+| Imports and monthly billing | `request-import`, `configure-postpaid`, `reconcile-postpaid` |
+
+An unfunded account does not contain purchased credits. A checkout link does not prove payment. Credits follow verified payment processing. A grant does not override account/member/feature/meter limits.
+
+## Observations and retry boundaries
+
+`usage-observations-read producers/list` reads durable measurements and delivery state. `usage-observations-retry` retries delivery of an existing immutable measurement; it does not rerun the paid provider request or edit its quantity.
+
+Inspect an operation's exact recovery contract before retrying. Reconciliation, payment processing, ledger delivery and enrichment are different operations with different duplicate risks.
+
+## Staff administration
+
+`billing-admin` adds catalog/offers/allowances, payment events/retries, subscription reconciliation, import verification, usage corrections and organization account/monthly-limit administration. These are explicitly staff-only capabilities; customer integrations should use their authorized read/write surface.
+
+[Read reference](/reference/billing-read) · [Write reference](/reference/billing-write) · [Staff administration](/reference/billing-admin)

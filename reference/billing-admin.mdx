@@ -3,7 +3,9 @@ title: "billing-admin"
 description: "Parameters, scopes, and response schema for billing-admin."
 ---
 
-Generated from Cedar's external registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+
+<Warning>This tool requires Cedar staff access. It is not available to ordinary customer connections.</Warning>
 
 <Note>Cedar staff only. A billing scope alone does not authorize administration.</Note>
 
@@ -79,12 +81,49 @@ Path, account role, feature gates, target ownership, and billing permissions can
 | `terms` | string | Yes |  minLength: 1; maxLength: 4000 |
 | `approvalReference` | string or null | No |  default: null |
 
+### offer.money
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `minorUnits` | string | Yes |  pattern: "^&#91;1-9&#93;&#91;0-9&#93;&#123;0,11&#125;$" |
+| `currency` | string | Yes |  pattern: "^&#91;a-z&#93;&#123;3&#125;$" |
+
 ### catalog
 
 | Parameter | Type | Required | Details |
 | --- | --- | --- | --- |
 | `meters` | object&#91;&#93; | Yes |  maxItems: 100 |
 | `rates` | object&#91;&#93; | Yes |  maxItems: 100 |
+
+### catalog.meters item
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `key` | string | Yes |  minLength: 1; maxLength: 256 |
+| `version` | integer | Yes |  exclusiveMinimum: 0 |
+| `featureKey` | string | Yes |  minLength: 1; maxLength: 256 |
+| `producerKey` | string | Yes |  minLength: 1; maxLength: 256 |
+| `unit` | string | Yes |  minLength: 1; maxLength: 256 |
+| `dimensionKeys` | string&#91;&#93; | Yes |   |
+| `quantityScale` | integer | Yes |  minimum: 0; maximum: 12 |
+| `chargingMode` | "disabled" · "shadow" · "billable" | Yes |   |
+| `displayName` | string | Yes |  minLength: 1; maxLength: 256 |
+
+### catalog.rates item
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `id` | string | Yes |  minLength: 1; maxLength: 256 |
+| `version` | integer | Yes |  exclusiveMinimum: 0 |
+| `meterKey` | string | Yes |  minLength: 1; maxLength: 256 |
+| `meterVersion` | integer | Yes |  exclusiveMinimum: 0 |
+| `matchDimensions` | object | Yes |   |
+| `microcreditsPerUnit` | string | Yes |  pattern: "^\\d+(\\.\\d&#123;1,12&#125;)?$" |
+| `effectiveFrom` | string | Yes |  format: "date-time" |
+| `effectiveUntil` | string or null | Yes |   |
+| `billableOutcome` | "success_only" · "consumed_units" | Yes |   |
+| `cachePolicy` | "free" | Yes |   |
+| `customerDescription` | string | Yes |  minLength: 1; maxLength: 256 |
 
 ### allowance
 

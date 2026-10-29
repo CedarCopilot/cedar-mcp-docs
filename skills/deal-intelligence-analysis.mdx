@@ -1,0 +1,118 @@
+---
+title: "deal-intelligence-analysis"
+description: "Workflow capabilities and resources for the deal-intelligence-analysis skill."
+---
+
+Analyze a customer's deals to uncover non-obvious, grounded sales insight from the extracted sub-event taxonomy — compare deals/reps, trace how a field (MEDDPICC, objections, next steps, discovery questions…) evolved, find what behaviors correlate with wins, and prove every claim against verbatim source. Load when the user asks *why* deals are won or lost, wants cross-deal patterns, rep coaching from real calls, objection / competitor / pricing analysis, cadence or timing analysis, or any question about what's actually happening across their pipeline that needs evidence, not vibes. Runs a hypothesis→proof loop over the Cedar MCP reasoning tools (conversation-read, conversation-analytics, document, run-sql); every number carries a sample size and drill-back, every qualitative claim carries a verbatim span.
+
+## Load the module
+
+Call `load-brain-skills` with:
+
+```json
+{
+  "name": "deal-intelligence-analysis"
+}
+```
+
+Read the returned instructions in full. Account-specific playbook context is assembled at load time; this static reference does not publish it.
+
+<Note>Requires Cedar Brain and the brain:read scope.</Note>
+
+## Resources
+
+Each resource is independently loadable using the same skill name and its exact resource key.
+
+### tool-catalog
+
+Each reasoning tool/action: when to reach for it, its inputs, and how outputs point back.
+
+```json
+{
+  "name": "deal-intelligence-analysis",
+  "resource": "tool-catalog"
+}
+```
+
+### filter-cube
+
+The shared TimelineFilter cube — every dimension, with example masks.
+
+```json
+{
+  "name": "deal-intelligence-analysis",
+  "resource": "filter-cube"
+}
+```
+
+### field-map
+
+The taxonomy fields by role (behavior/state/signal) + a question→field mapping.
+
+```json
+{
+  "name": "deal-intelligence-analysis",
+  "resource": "field-map"
+}
+```
+
+### selecting-deals
+
+Pick representative (not cherry-picked) deals — sampleIds-driven / stratified — + draw the selection timeline for approval.
+
+```json
+{
+  "name": "deal-intelligence-analysis",
+  "resource": "selecting-deals"
+}
+```
+
+### metrics
+
+The compute-metric catalog (metrics × groupBy) + the agent-supplied outcome-mapping recipe.
+
+```json
+{
+  "name": "deal-intelligence-analysis",
+  "resource": "metrics"
+}
+```
+
+### escalation
+
+The "no field can answer this" runbook: author → seed → dry-run → full → reason.
+
+```json
+{
+  "name": "deal-intelligence-analysis",
+  "resource": "escalation"
+}
+```
+
+### examples
+
+Fully worked end-to-end analyses, each ending in a grounded assertion.
+
+```json
+{
+  "name": "deal-intelligence-analysis",
+  "resource": "examples"
+}
+```
+
+### visuals
+
+How to pick the best visual per claim, plus the "every title explains itself" rule — per-title ELI5 popovers instead of explanatory prose blocks.
+
+```json
+{
+  "name": "deal-intelligence-analysis",
+  "resource": "visuals"
+}
+```
+
+## Tools and surface compatibility
+
+Use the canonical family tools in your connection’s `tools/list`. Skill source may still mention older granular names. The source dependencies below describe implementation composition; they are **not additional external MCP registrations**. The [complete capability index](/reference/coverage) records callable family/action contracts.
+
+This is an instruction/reasoning module with no standalone tool dependencies. Use the relevant CRM, document, or reporting tools for evidence and output.

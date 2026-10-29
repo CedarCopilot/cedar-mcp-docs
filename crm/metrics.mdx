@@ -1,0 +1,37 @@
+---
+title: "Pipeline, cadence and outcome metrics"
+description: "Compute all supported metrics with explicit samples, outcomes and reporting windows."
+---
+
+Call `conversation-analytics describe-metrics` to retrieve the runtime metric catalog, supported groupings, units and requirements.
+
+```json
+{ "action": "describe-metrics", "describeMetrics": {} }
+```
+
+## Metric families
+
+| Area | Metrics |
+| --- | --- |
+| Live external CRM amounts | `crm_won_amount`, `crm_open_due_amount` |
+| Response and follow-up cadence | `response_time`, `followup_time`, `post_meeting_time`, `reply_rate`, `event_count` |
+| Funnel movement | `time_between_stages`, `stage_funnel`, `win_rate`, `aop_conversion`, `deals_dropped` |
+| Pipeline hygiene | `quiet_gap`, `gave_up_count`, `hygiene`, `contacts_reached`, `open_deal_age` |
+| Revenue | `stalled_deal_revenue`, `total_pipeline`, `won_pipeline`, `avg_acv` |
+| Extracted coaching/qualification | `judged_strength` |
+
+Use `compute-metric` for one question or `compute-metric-batch` for up to 50 independently identified items. Batch item IDs map results back to the question; do not rely on array order. Trend items can expand into consecutive week/month windows.
+
+## Cohorts and denominators
+
+Filters can restrict deals, reps, stages, dates and supported evidence dimensions. Omitting conversation IDs can widen the query to the organization. Pick the cohort deliberately. Rows return `value`, sample count `n`, and sample IDs; report these when explaining a result. An empty ordinary sample commonly yields null.
+
+Outcome-sensitive Cedar metrics require an explicit `outcome` definition with the account's won/lost values. Cedar does not infer which custom statuses are terminal. `judged_strength` requires the intended taxonomy family in `target`.
+
+## Live CRM reporting
+
+Live amount metrics require exactly one rep, explicit date bounds and an IANA reporting timezone. They use the provider's close dates and mapped amounts, return verification/provenance information, and keep currencies separate. They do not silently substitute Cedar values if the provider is unavailable.
+
+A verified empty live window can be zero; missing amounts yield null with known subtotal and missing-amount counts. Call live metrics sequentially to respect the provider's rate limits.
+
+[Complete analytics contract](/reference/conversation-analytics) · [Custom SQL](/reference/run-sql)

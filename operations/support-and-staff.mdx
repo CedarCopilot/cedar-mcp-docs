@@ -1,0 +1,28 @@
+---
+title: "Troubleshooting, feedback and staff tools"
+description: "Diagnose executions, report a problem, and identify staff-only capabilities."
+---
+
+For “why didn't this happen?”, load `cedar-configuration` and its `diagnose-and-repair` resource. Configuration alone does not establish what a particular execution did.
+
+## Customer diagnosis
+
+The `debug` family provides `diagnose-conversation`, `recent-executions`, `execution-detail`, `tool-call-detail`, `health-report` and `test-run`, subject to target authorization. Follow a concrete conversation or execution from trigger through tool calls to output. Record the actual error/outcome instead of inferring failure from a missing notification.
+
+`test-run` suppresses sends by default but can still write Cedar/CRM state. `create-monitor` requires staff-only internal scope; its presence in a mixed-family schema does not make it customer-callable.
+
+## Feedback
+
+The `customer-support` skill explains when to use `send-user-feedback`. The tool reports a user-requested issue to the Cedar team with the supported diagnostic context. Use it when the user wants the problem reported; merely reading the documentation does not submit a report.
+
+## Staff analytics
+
+`analytics` is an external registration restricted to Cedar staff. Its actions cover attribution rate, attribution by category, similarity distribution, user tiers, overview and monthly growth. These operational analytics differ from customer pipeline metrics in `conversation-analytics`.
+
+## Staff debug sessions
+
+`cedar-staff-debug` starts an authorized support acting session using a target user ID/email and ends it with `clear: true`. Subsequent calls use that target's effective identity and role. The session belongs to that MCP connection and expires after 30 minutes of inactivity.
+
+This is not a customer impersonation feature. Ordinary users cannot obtain it by requesting a different target ID or adding an internal scope. Staff must keep the active identity explicit while diagnosing and clear the session when done.
+
+[Debug reference](/reference/debug) · [Feedback reference](/reference/send-user-feedback) · [Staff analytics](/reference/analytics) · [Staff session tool](/reference/cedar-staff-debug)

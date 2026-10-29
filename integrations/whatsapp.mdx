@@ -1,0 +1,30 @@
+---
+title: "WhatsApp connections and channel linking"
+description: "Configure consent and syncing, disconnect a line, and resolve ambiguous channel associations."
+---
+
+WhatsApp-related capabilities are part of `connection-write` and the conversation context model. The external MCP registry does **not** currently include a standalone WhatsApp send/read family. Use the actual exposed operations below rather than translating a Slack or LinkedIn call into an invented WhatsApp action.
+
+| Change | Purpose |
+| --- | --- |
+| `update_whatsapp_sync_config` | Configure the supported “index every chat” override and per-chat consent tracking |
+| `disconnect_whatsapp_account` | Disconnect a specific line by its Unipile account ID |
+| `resolve_channel_link_proposal` | Resolve/dismiss a proposed deal association or run the supported linking sweep |
+
+## Connection and consent
+
+Discover current connections and the supported `connectLinks` handoff with `config-read read-settings`. Connecting a WhatsApp account is a human authentication flow; the external tool does not log in or pair a device on the user's behalf.
+
+Read the current sync/consent configuration before editing it. Broader indexing is a meaningful expansion of which chats enter Cedar. Use the declared per-chat settings and explicit intended scope.
+
+## Deal association
+
+Channel-link proposals can involve Slack, LinkedIn or WhatsApp. `op: "resolve"` handles a known ambiguous proposal; `op: "sweep"` runs the supported automatic linking pass. Resolve against actual conversation IDs and preserve the intended ownership.
+
+Once evidence is ingested into a deal, the supported conversation tools can use that stored context. This is separate from live provider search or outbound messaging.
+
+## Delivery limits
+
+`schedule-send` supports email, Slack and LinkedIn in this registry. It does not accept WhatsApp as a scheduled channel. Workspace notification preferences may expose additional channels; preference fields alone do not establish an arbitrary sending API.
+
+[WhatsApp configuration parameters](/reference/connection-write) · [Connections](/modules/configuration)

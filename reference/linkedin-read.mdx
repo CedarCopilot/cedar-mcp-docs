@@ -3,7 +3,7 @@ title: "linkedin-read"
 description: "Parameters, scopes, and response schema for linkedin-read."
 ---
 
-Generated from Cedar's external registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
 <Note>includeCrm: true additionally requires crm:read. Live reads can consume LinkedIn rate budget; find-chat can ingest a previously unsynced chat.</Note>
 
@@ -67,6 +67,8 @@ Path, account role, feature gates, target ownership, and billing permissions can
 | `is_new_request` | boolean | Yes | true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread.  |
 
 ### listSeats
+
+No parameters — lists your connected LinkedIn seats.
 
 | Parameter | Type | Required | Details |
 | --- | --- | --- | --- |
@@ -211,6 +213,14 @@ Path, account role, feature gates, target ownership, and billing permissions can
 | `maxAgeDays` | number | No |  minimum: 0; maximum: 365 |
 | `unipileAccountId` | string | No | Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one.  |
 
+### profiles.people item
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `rowId` | string | No |   |
+| `url` | string | Yes |  format: "uri" |
+| `providerId` | string | No | Unipile provider id / member URN of the target (most direct).  |
+
 ### companies
 
 | Parameter | Type | Required | Details |
@@ -229,6 +239,14 @@ Path, account role, feature gates, target ownership, and billing permissions can
 | `connectionsMaxPages` | integer | No |  minimum: 1; maximum: 400 |
 | `unipileAccountId` | string | No | Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one.  |
 
+### screenProspects.people item
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `rowId` | string | No |   |
+| `url` | string | Yes |  format: "uri" |
+| `providerId` | string | No | Unipile provider id / member URN of the target (most direct).  |
+
 ### outreachStatus
 
 | Parameter | Type | Required | Details |
@@ -239,6 +257,14 @@ Path, account role, feature gates, target ownership, and billing permissions can
 | `checkConnections` | boolean | No | Match first-degree relations and obtain provider IDs without profile views (default true).  |
 | `connectionsMaxPages` | integer | No |  minimum: 1; maximum: 400 |
 | `unipileAccountId` | string | No | Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one.  |
+
+### outreachStatus.people item
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `rowId` | string | No |   |
+| `url` | string | Yes |  format: "uri" |
+| `providerId` | string | No | Unipile provider id / member URN of the target (most direct).  |
 
 ## Full input schema
 

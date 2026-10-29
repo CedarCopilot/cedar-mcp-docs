@@ -3,7 +3,7 @@ title: "slack-read"
 description: "Parameters, scopes, and response schema for slack-read."
 ---
 
-Generated from Cedar's external registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
 <Note>read-thread may persist messages into an already-linked deal. Read scope is not a guarantee of zero side effects.</Note>
 
@@ -34,12 +34,16 @@ Path, account role, feature gates, target ownership, and billing permissions can
 
 ### searchLive
 
+Search the connected user's LIVE Slack for messages by text (search.messages). Returns matches (channelId + ts/threadTs + permalink + snippet) to inspect or to pass to slack-write's sync-thread. Requires the Slack "search:read" grant; if the user connected Slack before that scope existed, this returns a reconnect-required error.
+
 | Parameter | Type | Required | Details |
 | --- | --- | --- | --- |
 | `query` | string | Yes | Slack search text — supports Slack search operators (e.g. "in:#deals from:@jane roadmap", "has:link renewal"). Searches messages the connected user can see. minLength: 1; maxLength: 500 |
 | `count` | number | No | Max matches to return. Default 20, max 50. minimum: 1; maximum: 50 |
 
 ### readThread
+
+Read a specific Slack thread (conversations.replies) or the channel's recent messages LIVE. If the channel is ALREADY linked to one of your deals, the messages read are also stored on that deal's timeline automatically (idempotent) and the response returns `syncedTo` + `ingested`. Otherwise nothing is persisted — use slack-write's sync-thread to choose a deal.
 
 | Parameter | Type | Required | Details |
 | --- | --- | --- | --- |
@@ -48,6 +52,8 @@ Path, account role, feature gates, target ownership, and billing permissions can
 | `limit` | number | No | Max messages to return. Default 100. minimum: 1; maximum: 100 |
 
 ### readFile
+
+Look at the image(s) on one Slack message, LIVE. Images come back as image content (PNG, JPEG, GIF, WebP up to 3.5MB, at most 3 per call and 5MB in total). External MCP clients only: Cedar's own chat gets the file list, not pixels.
 
 | Parameter | Type | Required | Details |
 | --- | --- | --- | --- |

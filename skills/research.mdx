@@ -1,0 +1,36 @@
+---
+title: "research"
+description: "Workflow capabilities and resources for the research skill."
+---
+
+Read your LinkedIn network and post reactors; look up external information about people and companies — structured profiles (LinkedIn, headcount, funding) via configured enrichment providers (Crustdata by default for rich research), real-time web/news search, and full page content fetching.
+
+## Load the module
+
+Call `load-skill` with:
+
+```json
+{
+  "name": "research"
+}
+```
+
+Read the returned instructions in full. Account-specific playbook context is assembled at load time; this static reference does not publish it.
+
+## Resources
+
+This skill has no separately registered named resources. Its primary instructions contain the workflow.
+
+## Tools and surface compatibility
+
+Use the canonical family tools in your connection’s `tools/list`. Skill source may still mention older granular names. The source dependencies below describe implementation composition; they are **not additional external MCP registrations**. The [complete capability index](/reference/coverage) records callable family/action contracts.
+
+- `choose-enrichment`
+- `signals-read`
+- `signals-write`
+- `data-settings`
+- `enrich-person`
+- `enrich-company`
+- `web-search`
+- `web-fetch`
+- `linkedin-read`

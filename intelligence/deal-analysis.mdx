@@ -1,0 +1,36 @@
+---
+title: "Deal intelligence and analysis decomposition"
+description: "Investigate objections, competitors, buyer behavior, and cross-deal patterns."
+---
+
+Cedar Brain adds two instruction modules through `load-brain-skills`: `deal-intelligence-analysis` and `analysis-decomposition`. Both require the `brain:read` scope and the Cedar Brain feature. Ordinary CRM access does not guarantee this loader is available.
+
+## Decompose a business question
+
+The analysis-decomposition module helps turn a question such as “Why are late-stage deals stalling?” into explicit deal cohorts, time windows, hypotheses and evidence requirements. Its resources cover `lenses`, `procedure`, `theme-catalog`, and `required-inputs`.
+
+Define which deals and reps are in the sample before interpreting an outcome. Distinguish extracted occurrences, judgments, current field values and historical values; those are different evidence types.
+
+## Read the evidence using the right tool
+
+| Need | MCP capability |
+| --- | --- |
+| Discover extracted fields | `taxonomy-fields list/get` |
+| Learn vocabulary and score meaning | `conversation-read describe-field` |
+| Follow evidence across events/deals | `timeline` |
+| Trace one field over time | `field-evolution` |
+| Reconstruct a value at a point in time | `value-as-of` |
+| Find relevant extracted atoms | `search` |
+| Inspect complete source material | `raw-content` or `get` with an expanded event |
+| Compute supported metrics | `conversation-analytics` |
+| Perform supported custom aggregation | Guarded `run-sql` after schema/field discovery |
+
+The deal-intelligence-analysis resources cover the tool catalog, filter cube, field map, deal selection, metrics, escalation, examples and visuals. Use these to design the analysis rather than inventing undocumented field IDs.
+
+## Filter and preserve provenance
+
+The shared evidence filters include conversation IDs, fields, event types, stages, dates, reps, values, strength/completeness, payload keys and response/reason presence. Not every field has every score or payload key; inspect its definition first.
+
+Large results can be written to a document buffer. Raw-content buffers retain stage markers and offsets so the agent can return from an extracted atom to verbatim evidence. Keep the source event/deal IDs in the resulting report and state what the sample cannot establish.
+
+[Brain skills](/skills/deal-intelligence-analysis) · [Analysis resources](/skills/analysis-decomposition) · [Field history](/crm/field-history)

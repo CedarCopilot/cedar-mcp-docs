@@ -1,0 +1,886 @@
+---
+title: "analytics"
+description: "Parameters, scopes, and response schema for analytics."
+---
+
+Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+
+<Warning>This tool requires Cedar staff access. It is not available to ordinary customer connections.</Warning>
+
+<Note>Cedar staff only. Customer-facing pipeline metrics use conversation-analytics.</Note>
+
+## Capability
+
+INTERNAL/STAFF-TIER ONLY — rejects any caller that is not Cedar staff (see this tool's top-of-file comment for why the check lives here and not only on the wrapped tRPC procedures). Org-wide draft-analytics and growth reporting. ACTIONS: (1) attribution-rate — of a user's (or all users') actual outbound emails, what fraction originated from a Cedar draft. Optionally scoped to one userId and/or one aopName. (2) attribution-by-category — draft volume/send-rate/avg-similarity broken down by email category, for one AOP (defaults to "Deals"). (3) similarity-distribution — histogram of word-count-similarity scores across sent drafts, for one AOP (defaults to "Deals"). (4) user-tiers — segments all active users into cold/low/high attribution tiers for one AOP (defaults to "Deals"). (5) overview — per-user draft totals/send-rate for ALL users at once; startDate/endDate/aopName are all optional (defaults: startDate 5 days ago, endDate unbounded). (6) monthly-growth — North Star email-attribution rate (with numerator/denominator broken out) plus PostHog engagement (DAU/WAU/MAU/stickiness) and per-user attribution spread, hardcoded to the "Deals" AOP. Its attribution count has a documented dedup imprecision (thread + 5-minute bucket, not message_id) — see this action's schema description. Each action takes its params in a same-named object (e.g. action: "attribution-rate" pairs with an attributionRate: &#123;...&#125; object) — omit every params object except the one matching your chosen action.
+
+## Operations and scopes
+
+| Action | Baseline scope |
+| --- | --- |
+| `attribution-rate` | `internal` — staff only |
+| `attribution-by-category` | `internal` — staff only |
+| `similarity-distribution` | `internal` — staff only |
+| `user-tiers` | `internal` — staff only |
+| `overview` | `internal` — staff only |
+| `monthly-growth` | `internal` — staff only |
+
+Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Parameters
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `action` | "attribution-rate" · "attribution-by-category" · "similarity-distribution" · "user-tiers" · "overview" · "monthly-growth" | Yes | Which operation to perform — pass its matching params object below (e.g. action: "attribution-rate" pairs with attributionRate: &#123;...&#125;).  |
+| `attributionRate` | object | No |   |
+| `attributionByCategory` | object | No |   |
+| `similarityDistribution` | object | No |   |
+| `userTiers` | object | No |   |
+| `overview` | object | No |   |
+| `monthlyGrowth` | object | No |   |
+| `user_request_summary` | string | Yes | One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does.  |
+| `is_new_request` | boolean | Yes | true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread.  |
+
+### attributionRate
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `startDate` | string | Yes | ISO date/datetime — start of the range (inclusive).  |
+| `endDate` | string | Yes | ISO date/datetime — end of the range (inclusive).  |
+| `userId` | string | No | Restrict to one user. Omit for the org-wide breakdown (all users).  |
+| `aopName` | string | No | Restrict to one AOP by name (e.g. "Deals"). Omit for all AOPs.  |
+
+### attributionByCategory
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `startDate` | string | Yes | ISO date/datetime — start of the range (inclusive).  |
+| `endDate` | string | Yes | ISO date/datetime — end of the range (inclusive).  |
+| `aopName` | string | No | AOP to scope to. Defaults to "Deals" if omitted.  |
+
+### similarityDistribution
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `startDate` | string | Yes | ISO date/datetime — start of the range (inclusive).  |
+| `endDate` | string | Yes | ISO date/datetime — end of the range (inclusive).  |
+| `aopName` | string | No | AOP to scope to. Defaults to "Deals" if omitted.  |
+
+### userTiers
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `startDate` | string | Yes | ISO date/datetime — start of the range (inclusive).  |
+| `endDate` | string | Yes | ISO date/datetime — end of the range (inclusive).  |
+| `aopName` | string | No | AOP to scope to. Defaults to "Deals" if omitted.  |
+
+### overview
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `startDate` | string | No | ISO date/datetime — start of the range. Defaults to 5 days ago if omitted.  |
+| `endDate` | string | No | ISO date/datetime — end of the range. Defaults to unbounded (no upper limit) if omitted.  |
+| `aopName` | string | No | Restrict to one AOP by name. Omit for all AOPs.  |
+
+### monthlyGrowth
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `startDate` | string | Yes | ISO date/datetime — start of the range (inclusive).  |
+| `endDate` | string | Yes | ISO date/datetime — end of the range (inclusive). Data-quality note: the North Star attribution count dedups sent drafts by thread + a 5-minute time bucket, not by message_id — a documented, accepted imprecision (see services/analytics/monthly-growth-report.ts), not a bug to fix here.  |
+
+## Full input schema
+
+[Download the input schema](/reference/schemas/analytics.input.json). Nested objects, variants, and constraints are preserved in full. Runtime refinements and ownership checks still apply.
+
+<Accordion title="Input JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "attribution-rate",
+        "attribution-by-category",
+        "similarity-distribution",
+        "user-tiers",
+        "overview",
+        "monthly-growth"
+      ],
+      "description": "Which operation to perform — pass its matching params object below (e.g. action: \"attribution-rate\" pairs with attributionRate: {...})."
+    },
+    "attributionRate": {
+      "type": "object",
+      "properties": {
+        "startDate": {
+          "type": "string",
+          "description": "ISO date/datetime — start of the range (inclusive)."
+        },
+        "endDate": {
+          "type": "string",
+          "description": "ISO date/datetime — end of the range (inclusive)."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Restrict to one user. Omit for the org-wide breakdown (all users)."
+        },
+        "aopName": {
+          "type": "string",
+          "description": "Restrict to one AOP by name (e.g. \"Deals\"). Omit for all AOPs."
+        }
+      },
+      "required": [
+        "startDate",
+        "endDate"
+      ],
+      "additionalProperties": false
+    },
+    "attributionByCategory": {
+      "type": "object",
+      "properties": {
+        "startDate": {
+          "type": "string",
+          "description": "ISO date/datetime — start of the range (inclusive)."
+        },
+        "endDate": {
+          "type": "string",
+          "description": "ISO date/datetime — end of the range (inclusive)."
+        },
+        "aopName": {
+          "type": "string",
+          "description": "AOP to scope to. Defaults to \"Deals\" if omitted."
+        }
+      },
+      "required": [
+        "startDate",
+        "endDate"
+      ],
+      "additionalProperties": false
+    },
+    "similarityDistribution": {
+      "type": "object",
+      "properties": {
+        "startDate": {
+          "type": "string",
+          "description": "ISO date/datetime — start of the range (inclusive)."
+        },
+        "endDate": {
+          "type": "string",
+          "description": "ISO date/datetime — end of the range (inclusive)."
+        },
+        "aopName": {
+          "type": "string",
+          "description": "AOP to scope to. Defaults to \"Deals\" if omitted."
+        }
+      },
+      "required": [
+        "startDate",
+        "endDate"
+      ],
+      "additionalProperties": false
+    },
+    "userTiers": {
+      "type": "object",
+      "properties": {
+        "startDate": {
+          "type": "string",
+          "description": "ISO date/datetime — start of the range (inclusive)."
+        },
+        "endDate": {
+          "type": "string",
+          "description": "ISO date/datetime — end of the range (inclusive)."
+        },
+        "aopName": {
+          "type": "string",
+          "description": "AOP to scope to. Defaults to \"Deals\" if omitted."
+        }
+      },
+      "required": [
+        "startDate",
+        "endDate"
+      ],
+      "additionalProperties": false
+    },
+    "overview": {
+      "type": "object",
+      "properties": {
+        "startDate": {
+          "type": "string",
+          "description": "ISO date/datetime — start of the range. Defaults to 5 days ago if omitted."
+        },
+        "endDate": {
+          "type": "string",
+          "description": "ISO date/datetime — end of the range. Defaults to unbounded (no upper limit) if omitted."
+        },
+        "aopName": {
+          "type": "string",
+          "description": "Restrict to one AOP by name. Omit for all AOPs."
+        }
+      },
+      "additionalProperties": false
+    },
+    "monthlyGrowth": {
+      "type": "object",
+      "properties": {
+        "startDate": {
+          "type": "string",
+          "description": "ISO date/datetime — start of the range (inclusive)."
+        },
+        "endDate": {
+          "type": "string",
+          "description": "ISO date/datetime — end of the range (inclusive). Data-quality note: the North Star attribution count dedups sent drafts by thread + a 5-minute time bucket, not by message_id — a documented, accepted imprecision (see services/analytics/monthly-growth-report.ts), not a bug to fix here."
+        }
+      },
+      "required": [
+        "startDate",
+        "endDate"
+      ],
+      "additionalProperties": false
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "action",
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": true,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+## Response
+
+Inspect `isError` on the MCP result and `success` / `errorMessage` in the action result. Optional response branches are populated only for the relevant action. Some results include additional provider or operation-specific data.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `attributionRate` | object | No |   |
+| `attributionByCategory` | object&#91;&#93; | No |   |
+| `similarityDistribution` | object&#91;&#93; | No |   |
+| `userTiers` | object&#91;&#93; | No |   |
+| `overview` | object&#91;&#93; | No |   |
+| `monthlyGrowth` | object | No |   |
+
+<Accordion title="Output JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "attributionRate": {
+      "type": "object",
+      "properties": {
+        "users": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "userId": {
+                "type": "string"
+              },
+              "userName": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "userEmail": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "totalSent": {
+                "type": "number"
+              },
+              "sentFromCedarDraft": {
+                "type": "number"
+              },
+              "attributionRate": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "userId",
+              "userName",
+              "userEmail",
+              "totalSent",
+              "sentFromCedarDraft",
+              "attributionRate"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "overall": {
+          "type": "object",
+          "properties": {
+            "totalSent": {
+              "type": "number"
+            },
+            "sentFromCedarDraft": {
+              "type": "number"
+            },
+            "attributionRate": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "totalSent",
+            "sentFromCedarDraft",
+            "attributionRate"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "users",
+        "overall"
+      ],
+      "additionalProperties": false
+    },
+    "attributionByCategory": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string"
+          },
+          "total": {
+            "type": "number"
+          },
+          "sent": {
+            "type": "number"
+          },
+          "sendRate": {
+            "type": "number"
+          },
+          "avgSimilarity": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "category",
+          "total",
+          "sent",
+          "sendRate",
+          "avgSimilarity"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "similarityDistribution": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "bucket": {
+            "type": "string"
+          },
+          "count": {
+            "type": "number"
+          },
+          "pct": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "bucket",
+          "count",
+          "pct"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "userTiers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "email": {
+            "type": "string"
+          },
+          "tier": {
+            "type": "string",
+            "enum": [
+              "cold",
+              "low",
+              "high"
+            ]
+          },
+          "totalDrafts": {
+            "type": "number"
+          },
+          "sentDrafts": {
+            "type": "number"
+          },
+          "sendRate": {
+            "type": "number"
+          },
+          "totalSent": {
+            "type": "number"
+          },
+          "sentFromCedar": {
+            "type": "number"
+          },
+          "attributionRatePct": {
+            "type": "number"
+          },
+          "avgSimilarity": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "userId",
+          "name",
+          "email",
+          "tier",
+          "totalDrafts",
+          "sentDrafts",
+          "sendRate",
+          "totalSent",
+          "sentFromCedar",
+          "attributionRatePct",
+          "avgSimilarity"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "overview": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "userName": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "userEmail": {
+            "type": "string"
+          },
+          "userStatus": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "totalDrafts": {
+            "type": "number"
+          },
+          "sentDrafts": {
+            "type": "number"
+          },
+          "notSentDrafts": {
+            "type": "number"
+          },
+          "sendRate": {
+            "type": "number"
+          },
+          "avgSimilarity": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "avgWordCountMatch": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "userId",
+          "userName",
+          "userEmail",
+          "userStatus",
+          "totalDrafts",
+          "sentDrafts",
+          "notSentDrafts",
+          "sendRate",
+          "avgSimilarity",
+          "avgWordCountMatch"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "monthlyGrowth": {
+      "type": "object",
+      "properties": {
+        "dateRange": {
+          "type": "object",
+          "properties": {
+            "startDate": {
+              "type": "string"
+            },
+            "endDate": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "startDate",
+            "endDate"
+          ],
+          "additionalProperties": false
+        },
+        "engagementDateRange": {
+          "type": "object",
+          "properties": {
+            "startDate": {
+              "type": "string"
+            },
+            "endDate": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "startDate",
+            "endDate"
+          ],
+          "additionalProperties": false
+        },
+        "eligibleUserCount": {
+          "type": "number"
+        },
+        "posthogConfigured": {
+          "type": "boolean"
+        },
+        "northStar": {
+          "type": "object",
+          "properties": {
+            "attributionRatePct": {
+              "type": "number"
+            },
+            "attributedEmails": {
+              "type": "number"
+            },
+            "totalSentEmails": {
+              "type": "number"
+            },
+            "avgWordMatchPct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "byCategory": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "category": {
+                    "type": "string"
+                  },
+                  "attributedCount": {
+                    "type": "number"
+                  },
+                  "avgWordMatchPct": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "category",
+                  "attributedCount",
+                  "avgWordMatchPct"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "attributionRatePct",
+            "attributedEmails",
+            "totalSentEmails",
+            "avgWordMatchPct",
+            "byCategory"
+          ],
+          "additionalProperties": false
+        },
+        "engagement": {
+          "type": "object",
+          "properties": {
+            "mau": {
+              "type": "number"
+            },
+            "avgDau": {
+              "type": "number"
+            },
+            "avgWau": {
+              "type": "number"
+            },
+            "stickinessPct": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "mau",
+            "avgDau",
+            "avgWau",
+            "stickinessPct"
+          ],
+          "additionalProperties": false
+        },
+        "userSpread": {
+          "type": "object",
+          "properties": {
+            "users": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "userId": {
+                    "type": "string"
+                  },
+                  "userName": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "userEmail": {
+                    "type": "string"
+                  },
+                  "attributedCount": {
+                    "type": "number"
+                  },
+                  "warmOutboundCount": {
+                    "type": "number"
+                  },
+                  "attributionRatePct": {
+                    "type": "number"
+                  },
+                  "avgWordMatchPct": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "bucket": {
+                    "type": "string",
+                    "enum": [
+                      "power",
+                      "mid",
+                      "cold"
+                    ]
+                  }
+                },
+                "required": [
+                  "userId",
+                  "userName",
+                  "userEmail",
+                  "attributedCount",
+                  "warmOutboundCount",
+                  "attributionRatePct",
+                  "avgWordMatchPct",
+                  "bucket"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "medianRatePct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "highest": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "userId": {
+                      "type": "string"
+                    },
+                    "userName": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "userEmail": {
+                      "type": "string"
+                    },
+                    "attributedCount": {
+                      "type": "number"
+                    },
+                    "warmOutboundCount": {
+                      "type": "number"
+                    },
+                    "attributionRatePct": {
+                      "type": "number"
+                    },
+                    "avgWordMatchPct": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "bucket": {
+                      "type": "string",
+                      "enum": [
+                        "power",
+                        "mid",
+                        "cold"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "userId",
+                    "userName",
+                    "userEmail",
+                    "attributedCount",
+                    "warmOutboundCount",
+                    "attributionRatePct",
+                    "avgWordMatchPct",
+                    "bucket"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "lowest": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "userId": {
+                      "type": "string"
+                    },
+                    "userName": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "userEmail": {
+                      "type": "string"
+                    },
+                    "attributedCount": {
+                      "type": "number"
+                    },
+                    "warmOutboundCount": {
+                      "type": "number"
+                    },
+                    "attributionRatePct": {
+                      "type": "number"
+                    },
+                    "avgWordMatchPct": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "bucket": {
+                      "type": "string",
+                      "enum": [
+                        "power",
+                        "mid",
+                        "cold"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "userId",
+                    "userName",
+                    "userEmail",
+                    "attributedCount",
+                    "warmOutboundCount",
+                    "attributionRatePct",
+                    "avgWordMatchPct",
+                    "bucket"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "bucketCounts": {
+              "type": "object",
+              "properties": {
+                "power": {
+                  "type": "number"
+                },
+                "mid": {
+                  "type": "number"
+                },
+                "cold": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "power",
+                "mid",
+                "cold"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "users",
+            "medianRatePct",
+            "highest",
+            "lowest",
+            "bucketCounts"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "dateRange",
+        "engagementDateRange",
+        "eligibleUserCount",
+        "posthogConfigured",
+        "northStar",
+        "engagement",
+        "userSpread"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+[Download the output schema](/reference/schemas/analytics.output.json).

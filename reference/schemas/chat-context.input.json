@@ -1,0 +1,133 @@
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "manage",
+        "resolve"
+      ],
+      "description": "Which operation to perform — pass its matching params object below (action: \"manage\" pairs with manage: {...}; action: \"resolve\" pairs with resolve: {...})."
+    },
+    "manage": {
+      "type": "object",
+      "properties": {
+        "add": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "conversation",
+                  "email_thread",
+                  "slack_thread",
+                  "linkedin_chat",
+                  "whatsapp_chat",
+                  "file",
+                  "task"
+                ]
+              },
+              "id": {
+                "type": "string",
+                "description": "Ref id: conversationId | crmEmailThreadId | slackThreadTs | documentId"
+              },
+              "label": {
+                "type": "string",
+                "description": "Display name for the badge/side-panel"
+              }
+            },
+            "required": [
+              "kind",
+              "id"
+            ],
+            "additionalProperties": false
+          },
+          "description": "Items to attach (upsert by kind+id)"
+        },
+        "remove": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "$ref": "#/properties/manage/properties/add/items/properties/kind"
+              },
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind",
+              "id"
+            ],
+            "additionalProperties": false
+          },
+          "description": "Items to detach"
+        },
+        "setPrimary": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id"
+          ],
+          "additionalProperties": false,
+          "description": "Make a conversation the thread primary — provide its conversationId (+ optional name)"
+        },
+        "reasoning": {
+          "type": "string",
+          "description": "Why you are changing the context — what the thread is now about."
+        }
+      },
+      "required": [
+        "reasoning"
+      ],
+      "additionalProperties": false
+    },
+    "resolve": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "The name/phrase to resolve, e.g. \"Numeral\" or \"the Acme deal\"."
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "conversation",
+            "email_thread",
+            "slack_thread",
+            "linkedin_chat",
+            "whatsapp_chat",
+            "file",
+            "task"
+          ],
+          "default": "conversation",
+          "description": "Entity kind to resolve. Only \"conversation\" is supported today."
+        },
+        "reasoning": {
+          "type": "string",
+          "description": "Why you are attaching this — what the thread is now about."
+        }
+      },
+      "required": [
+        "query",
+        "reasoning"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "action"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

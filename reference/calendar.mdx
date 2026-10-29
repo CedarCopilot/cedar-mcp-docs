@@ -3,7 +3,7 @@ title: "calendar"
 description: "Parameters, scopes, and response schema for calendar."
 ---
 
-Generated from Cedar's external registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
 ## Capability
 
@@ -62,6 +62,13 @@ Path, account role, feature gates, target ownership, and billing permissions can
 | `wantsMeetLink` | boolean | No | Whether to create a video conference link. For create, defaults to true when omitted, so leave it out. Pass false ONLY if the user explicitly asked for no video link or said the meeting is in person with no call. If they asked for a link, keep it even when the meeting is at an office. Never pass false on your own judgement.  |
 | `conferenceType` | "hangoutsMeet" · "zoom" | No | Which conference `wantsMeetLink` creates: `hangoutsMeet` (Google Meet, the default) or `zoom`, which Cedar mints on the user's own Zoom account and attaches to the event. Only set `zoom` when the user asked for Zoom by name; a user who has not connected Zoom gets an event with no video link rather than a failure.  |
 | `recurrence` | string&#91;&#93; | No | RFC 5545 recurrence rules to make this a repeating event, e.g. &#91;"RRULE:FREQ=WEEKLY;BYDAY=MO;COUNT=10"&#93;. Omit for a one-time event. Common patterns: daily "RRULE:FREQ=DAILY", weekly "RRULE:FREQ=WEEKLY;BYDAY=MO,WE,FR", biweekly "RRULE:FREQ=WEEKLY;INTERVAL=2", monthly "RRULE:FREQ=MONTHLY". Add ";COUNT=n" to stop after n occurrences, or ";UNTIL=YYYYMMDD" to stop on a date — do not set both. For "update", this REPLACES the whole recurrence (reissue every rule you want kept, or pass an empty array to make the series a one-time event). Always affects the WHOLE series — the tool resolves eventId to its series master itself, even if you pass a single expanded instance id from list-events. Other fields on the same update (time, summary, etc.) still apply only to the instance you named, if that's what eventId is.  |
+
+### modifyEvent.attendees item
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `email` | string | Yes |  format: "email" |
+| `displayName` | string | No |   |
 
 ## Full input schema
 

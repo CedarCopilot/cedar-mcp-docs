@@ -3,7 +3,7 @@ title: "ui-config"
 description: "Parameters, scopes, and response schema for ui-config."
 ---
 
-Generated from Cedar's external registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
 ## Capability
 
@@ -46,6 +46,68 @@ Path, account role, feature gates, target ownership, and billing permissions can
 | --- | --- | --- | --- |
 | `aopId` | string | No |   |
 | `ops` | object or object or object or object or object or object&#91;&#93; | Yes |  minItems: 1 |
+
+### configureOverview.ops item — op: add
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `op` | "add" | Yes |   |
+| `item` | object | Yes |   |
+
+### configureOverview.ops item — op: add.item
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `key` | string | Yes |   |
+| `kind` | "field" · "doc" · "contacts" | Yes |   |
+| `fieldId` | string | No |   |
+| `fieldType` | "cedar" · "custom" | No |   |
+| `docPath` | string | No |   |
+| `title` | string | No |   |
+| `section` | string | No |   |
+| `render` | "scalar" · "markdown" | No |   |
+| `displayOrder` | number | Yes |   |
+| `ownerAgentId` | string | No |   |
+| `visibleWhen` | any | No |   |
+
+### configureOverview.ops item — op: remove
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `op` | "remove" | Yes |   |
+| `key` | string | Yes |   |
+
+### configureOverview.ops item — op: setVisibleWhen
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `op` | "setVisibleWhen" | Yes |   |
+| `key` | string | Yes |   |
+| `visibleWhen` | any or null | No |   |
+
+### configureOverview.ops item — op: setRender
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `op` | "setRender" | Yes |   |
+| `key` | string | Yes |   |
+| `render` | "scalar" · "markdown" | Yes |   |
+
+### configureOverview.ops item — op: setOwner
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `op` | "setOwner" | Yes |   |
+| `key` | string | Yes |   |
+| `ownerAgentId` | string or null | Yes |   |
+
+### configureOverview.ops item — op: reorder
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `op` | "reorder" | Yes |   |
+| `key` | string | Yes |   |
+| `displayOrder` | number | Yes |   |
 
 ### createCanvas
 

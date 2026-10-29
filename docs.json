@@ -29,6 +29,7 @@
             "group": "Get started",
             "pages": [
               "index",
+              "getting-started/modules",
               "getting-started/quickstart",
               "getting-started/calling-tools",
               "getting-started/permissions",
@@ -45,7 +46,7 @@
             ]
           },
           {
-            "group": "Signals",
+            "group": "Signals and websites",
             "pages": [
               "signals/overview",
               "signals/watchers",
@@ -62,23 +63,80 @@
             ]
           },
           {
-            "group": "Automation",
+            "group": "Email",
             "pages": [
-              "automation/queueing",
-              "automation/playbooks"
+              "modules/email",
+              "email/search-and-attachments",
+              "email/drafts-and-delivery",
+              "email/tracking"
             ]
           },
           {
-            "group": "Workspace modules",
+            "group": "CRM and pipeline",
             "pages": [
               "modules/crm",
-              "modules/email",
-              "modules/tasks-calendar",
+              "crm/search-and-evidence",
+              "crm/records-and-repair",
+              "crm/field-history",
+              "crm/metrics"
+            ]
+          },
+          {
+            "group": "Intelligence and coaching",
+            "pages": [
+              "intelligence/deal-analysis",
+              "intelligence/coaching"
+            ]
+          },
+          {
+            "group": "Knowledge and collateral",
+            "pages": [
+              "knowledge/overview",
+              "knowledge/collateral",
+              "knowledge/templates"
+            ]
+          },
+          {
+            "group": "Documents and workspace",
+            "pages": [
               "modules/documents-tables",
-              "modules/research",
+              "documents/sharing",
+              "documents/tables",
+              "workspace/saved-views",
+              "workspace/preferences",
+              "workspace/tasks",
+              "modules/tasks-calendar"
+            ]
+          },
+          {
+            "group": "Automation",
+            "pages": [
+              "automation/playbooks",
+              "automation/agent-authoring",
+              "automation/batch-operations",
+              "automation/queueing"
+            ]
+          },
+          {
+            "group": "Configuration and integrations",
+            "pages": [
               "modules/configuration",
+              "configuration/fields",
+              "configuration/crm-connections",
+              "configuration/team",
+              "integrations/whatsapp",
+              "integrations/external-systems",
+              "modules/research"
+            ]
+          },
+          {
+            "group": "Operations",
+            "pages": [
               "modules/billing",
-              "modules/diagnostics"
+              "operations/billing-and-budgets",
+              "modules/diagnostics",
+              "operations/support-and-staff",
+              "operations/app-only"
             ]
           },
           {
@@ -97,6 +155,7 @@
             "group": "Overview",
             "pages": [
               "reference/index",
+              "reference/coverage",
               "reference/skills"
             ]
           },
@@ -178,6 +237,74 @@
               "reference/billing-admin",
               "reference/debug",
               "reference/send-user-feedback"
+            ]
+          },
+          {
+            "group": "Skill loading",
+            "pages": [
+              "reference/load-skill",
+              "reference/load-brain-skills"
+            ]
+          },
+          {
+            "group": "Staff tools",
+            "pages": [
+              "reference/analytics",
+              "reference/cedar-staff-debug"
+            ]
+          },
+          {
+            "group": "Cedar app only",
+            "pages": [
+              "reference/board",
+              "reference/workflow",
+              "reference/chat-context",
+              "reference/delegate",
+              "reference/external-mcp",
+              "reference/search-chat-history",
+              "reference/load-chat-history",
+              "reference/switch-chat-thread"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Skills",
+        "groups": [
+          {
+            "group": "Catalog",
+            "pages": [
+              "skills/index"
+            ]
+          },
+          {
+            "group": "Workflow skills",
+            "pages": [
+              "skills/drafting",
+              "skills/knowledge-base",
+              "skills/calendar",
+              "skills/conversation",
+              "skills/tasks",
+              "skills/multi-conversation-operations",
+              "skills/customer-support",
+              "skills/external-systems",
+              "skills/connected-systems",
+              "skills/research",
+              "skills/documents",
+              "skills/tables",
+              "skills/notifications",
+              "skills/cedar-configuration",
+              "skills/collateral",
+              "skills/coaching",
+              "skills/run-sql",
+              "skills/field-query"
+            ]
+          },
+          {
+            "group": "Cedar Brain",
+            "pages": [
+              "skills/deal-intelligence-analysis",
+              "skills/analysis-decomposition"
             ]
           }
         ]

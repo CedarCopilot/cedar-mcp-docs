@@ -1,0 +1,29 @@
+---
+title: "Cedar app capabilities and MCP boundaries"
+description: "See the additional registered app tools without confusing them with external MCP endpoints."
+---
+
+The complete inventory includes Cedar's app-only tool families. They explain capabilities visible inside Cedar that an external MCP client cannot call directly. Each corresponding reference page carries the same availability label.
+
+| App-only tool | Capability |
+| --- | --- |
+| `board` | Board-specific records, schema and lane operations |
+| `workflow` | Discover supported workflow-button operations and inspect execution-history capacity |
+| `chat-context` | Manage/attach the working context of a Cedar chat |
+| `delegate` | Cedar-native delegation and code-executor orchestration |
+| `external-mcp` | Call an authorized connected MCP server inside Cedar |
+| `search-chat-history` | Search the caller's past Cedar chats |
+| `load-chat-history` | Read a selected past chat's messages |
+| `switch-chat-thread` | Navigate the caller's Cedar screen to another chat |
+
+## What external clients can do
+
+External clients can use the exposed document, table, CRM and configuration tools to read evidence, persist artifacts and configure supported agents. They use their own chat history, orchestration, code execution and external connectors where needed.
+
+A workflow document can be authored through `document-write`. The internal `workflow` catalog and user-click execution remain their own surface; saving the document is not equivalent to running its buttons.
+
+## Separate product features
+
+Cedar also has product-specific graph/outbound interfaces and a separate HTTP input path for visitor providers such as RB2B. Their existence does not establish a generic graph, outbound-campaign or visitor-provisioning tool on external MCP. See [website signals](/signals/website) for the supported integration path.
+
+The [coverage index](/reference/coverage) includes every action and nested variant of registered tools, with staff/feature/app availability labels. That inventory is the way to check whether a capability is directly callable, requires configuration, or belongs to a different surface.

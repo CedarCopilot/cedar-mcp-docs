@@ -55,3 +55,22 @@ These are potentially paid operations. Use stable idempotency keys for retries a
 The external MCP does not authorize `web-search` or `web-fetch`, even though they are in the shared research schema. Use the calling client's own web tools. Ongoing watchers use `signals-write`; enrichment is a point-in-time lookup, not a subscription.
 
 Provider catalogs may include Crustdata, Apollo, or Moltsets. Their presence is not permission to use them under a Fiber-only manual-enrichment policy. Capability selection and provider dispatch are separate steps.
+
+## Data-service defaults and organization policy
+
+`data-settings update` changes future defaults. Read `config-read read-settings` with `sections: ["data_services"]` first for the effective values, policy origins and current version. Supply `scope` (`self` or `organization`), `expectedVersion`, and a focused `patch`. Organization changes require administrator authority; null clears an override back to inheritance.
+
+| Setting | Meaning |
+| --- | --- |
+| `personProvider`, `companyProvider` | Preferred provider for the supported future enrichment path |
+| `allowedProviders` | Provider policy allowlist |
+| `cacheMaxAgeDays` | Supported freshness policy, 1–365 days |
+| `watchDefaults` | Provider-specific defaults for future watcher setup |
+
+The `watchDefaults` branch in this schema is specifically the Crustdata watch configuration: cadence of 1–168 hours, person refresh of 1/3/7/14/30 days, result budget and selected signal types. It is not a generic setting for Fiber trackers. Fiber tracker configuration belongs in `signals-write update` and the capability response. Describing this branch does not authorize provider work or change the manual-enrichment policy above.
+
+The selectable watch signals include person title/job/headline/location changes, education/skills/certifications/honors, connection counts, and company headcount, funding rounds/milestones, investors, acquisitions, hiring, name, followers, industry, location and news. Actual provider records and runtime capabilities determine which evidence exists.
+
+Changing defaults does not activate a watcher, rewrite existing watches, buy credits or grant spending. Read the saved policy back, then separately inspect any watch the workflow intends to configure.
+
+[All data settings](/reference/data-settings) · [Watcher lifecycle](/signals/watchers) · [Billing and approvals](/operations/billing-and-budgets)

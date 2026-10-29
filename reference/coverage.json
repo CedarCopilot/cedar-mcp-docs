@@ -1,0 +1,4435 @@
+[
+  {
+    "tool": "document-read",
+    "selector": "action",
+    "value": "read",
+    "branch": "",
+    "surface": "external",
+    "scope": "docs:read",
+    "reference": "/reference/document-read"
+  },
+  {
+    "tool": "document-read",
+    "selector": "action",
+    "value": "list",
+    "branch": "",
+    "surface": "external",
+    "scope": "docs:read",
+    "reference": "/reference/document-read"
+  },
+  {
+    "tool": "document-read",
+    "selector": "action",
+    "value": "search",
+    "branch": "",
+    "surface": "external",
+    "scope": "docs:read",
+    "reference": "/reference/document-read"
+  },
+  {
+    "tool": "document-write",
+    "selector": "action",
+    "value": "write",
+    "branch": "",
+    "surface": "external",
+    "scope": "docs:read",
+    "reference": "/reference/document-write"
+  },
+  {
+    "tool": "document-write",
+    "selector": "action",
+    "value": "delete",
+    "branch": "",
+    "surface": "external",
+    "scope": "playbook:write",
+    "reference": "/reference/document-write"
+  },
+  {
+    "tool": "document-write",
+    "selector": "action",
+    "value": "restore",
+    "branch": "",
+    "surface": "external",
+    "scope": "docs:read",
+    "reference": "/reference/document-write"
+  },
+  {
+    "tool": "document-write",
+    "selector": "action",
+    "value": "move",
+    "branch": "",
+    "surface": "external",
+    "scope": "docs:read",
+    "reference": "/reference/document-write"
+  },
+  {
+    "tool": "document-write",
+    "selector": "action",
+    "value": "share",
+    "branch": "",
+    "surface": "external",
+    "scope": "docs:read",
+    "reference": "/reference/document-write"
+  },
+  {
+    "tool": "document-write",
+    "selector": "action",
+    "value": "request-file",
+    "branch": "",
+    "surface": "external",
+    "scope": "docs:read",
+    "reference": "/reference/document-write"
+  },
+  {
+    "tool": "document-write",
+    "selector": "write.type",
+    "value": "document",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/document-write"
+  },
+  {
+    "tool": "document-write",
+    "selector": "write.type",
+    "value": "workflow",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/document-write"
+  },
+  {
+    "tool": "document-write",
+    "selector": "write.type",
+    "value": "html",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/document-write"
+  },
+  {
+    "tool": "document-write",
+    "selector": "write.type",
+    "value": "agenda",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/document-write"
+  },
+  {
+    "tool": "document-write",
+    "selector": "write.type",
+    "value": "conversation_agenda",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/document-write"
+  },
+  {
+    "tool": "document-write",
+    "selector": "write.type",
+    "value": "attachment",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/document-write"
+  },
+  {
+    "tool": "document-write",
+    "selector": "write.type",
+    "value": "table",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/document-write"
+  },
+  {
+    "tool": "document-write",
+    "selector": "write.mode",
+    "value": "upsert",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/document-write"
+  },
+  {
+    "tool": "document-write",
+    "selector": "write.mode",
+    "value": "append",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/document-write"
+  },
+  {
+    "tool": "document-write",
+    "selector": "write.mode",
+    "value": "patch",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/document-write"
+  },
+  {
+    "tool": "table",
+    "selector": "action",
+    "value": "read",
+    "branch": "",
+    "surface": "external",
+    "scope": "docs:read",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "action",
+    "value": "create",
+    "branch": "",
+    "surface": "external",
+    "scope": "docs:read",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "action",
+    "value": "add_columns",
+    "branch": "",
+    "surface": "external",
+    "scope": "docs:read",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "action",
+    "value": "add_rows",
+    "branch": "",
+    "surface": "external",
+    "scope": "docs:read",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "action",
+    "value": "set",
+    "branch": "",
+    "surface": "external",
+    "scope": "docs:read",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "action",
+    "value": "clear",
+    "branch": "",
+    "surface": "external",
+    "scope": "docs:read",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "action",
+    "value": "delete_rows",
+    "branch": "",
+    "surface": "external",
+    "scope": "docs:read",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "action",
+    "value": "import",
+    "branch": "",
+    "surface": "external",
+    "scope": "docs:read",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "action",
+    "value": "fill",
+    "branch": "",
+    "surface": "external",
+    "scope": "docs:read",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "action",
+    "value": "bindings",
+    "branch": "",
+    "surface": "external",
+    "scope": "docs:read",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "action",
+    "value": "update_columns",
+    "branch": "",
+    "surface": "external",
+    "scope": "docs:read",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "action",
+    "value": "remove_columns",
+    "branch": "",
+    "surface": "external",
+    "scope": "docs:read",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "action",
+    "value": "reorder_columns",
+    "branch": "",
+    "surface": "external",
+    "scope": "docs:read",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "action",
+    "value": "update_view",
+    "branch": "",
+    "surface": "external",
+    "scope": "docs:read",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "action",
+    "value": "move_row",
+    "branch": "",
+    "surface": "external",
+    "scope": "docs:read",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "action",
+    "value": "insert_section",
+    "branch": "",
+    "surface": "external",
+    "scope": "docs:read",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "action",
+    "value": "export",
+    "branch": "",
+    "surface": "external",
+    "scope": "docs:read",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "create.schema.columns[].type",
+    "value": "text",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "create.schema.columns[].type",
+    "value": "long_text",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "create.schema.columns[].type",
+    "value": "number",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "create.schema.columns[].type",
+    "value": "currency",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "create.schema.columns[].type",
+    "value": "percent",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "create.schema.columns[].type",
+    "value": "date",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "create.schema.columns[].type",
+    "value": "checkbox",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "create.schema.columns[].type",
+    "value": "select",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "create.schema.columns[].type",
+    "value": "multi_select",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "create.schema.columns[].type",
+    "value": "url",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "create.schema.columns[].type",
+    "value": "email",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "create.schema.columns[].type",
+    "value": "output",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "create.schema.columns[].type",
+    "value": "conversation",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "create.schema.columns[].type",
+    "value": "task",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "create.schema.columns[].type",
+    "value": "draft",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "create.schema.columns[].type",
+    "value": "doc",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "create.schema.columns[].type",
+    "value": "person",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "create.schema.columns[].type",
+    "value": "company",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "add_columns.columns[].type",
+    "value": "text",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "add_columns.columns[].type",
+    "value": "long_text",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "add_columns.columns[].type",
+    "value": "number",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "add_columns.columns[].type",
+    "value": "currency",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "add_columns.columns[].type",
+    "value": "percent",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "add_columns.columns[].type",
+    "value": "date",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "add_columns.columns[].type",
+    "value": "checkbox",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "add_columns.columns[].type",
+    "value": "select",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "add_columns.columns[].type",
+    "value": "multi_select",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "add_columns.columns[].type",
+    "value": "url",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "add_columns.columns[].type",
+    "value": "email",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "add_columns.columns[].type",
+    "value": "output",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "add_columns.columns[].type",
+    "value": "conversation",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "add_columns.columns[].type",
+    "value": "task",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "add_columns.columns[].type",
+    "value": "draft",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "add_columns.columns[].type",
+    "value": "doc",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "add_columns.columns[].type",
+    "value": "person",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "add_columns.columns[].type",
+    "value": "company",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "update_columns.columns[].patch.type",
+    "value": "text",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "update_columns.columns[].patch.type",
+    "value": "long_text",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "update_columns.columns[].patch.type",
+    "value": "number",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "update_columns.columns[].patch.type",
+    "value": "currency",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "update_columns.columns[].patch.type",
+    "value": "percent",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "update_columns.columns[].patch.type",
+    "value": "date",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "update_columns.columns[].patch.type",
+    "value": "checkbox",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "update_columns.columns[].patch.type",
+    "value": "select",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "update_columns.columns[].patch.type",
+    "value": "multi_select",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "update_columns.columns[].patch.type",
+    "value": "url",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "update_columns.columns[].patch.type",
+    "value": "email",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "update_columns.columns[].patch.type",
+    "value": "output",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "update_columns.columns[].patch.type",
+    "value": "conversation",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "update_columns.columns[].patch.type",
+    "value": "task",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "update_columns.columns[].patch.type",
+    "value": "draft",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "update_columns.columns[].patch.type",
+    "value": "doc",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "update_columns.columns[].patch.type",
+    "value": "person",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "table",
+    "selector": "update_columns.columns[].patch.type",
+    "value": "company",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/table"
+  },
+  {
+    "tool": "config-read",
+    "selector": "action",
+    "value": "read-playbook",
+    "branch": "",
+    "surface": "external",
+    "scope": "docs:read",
+    "reference": "/reference/config-read"
+  },
+  {
+    "tool": "config-read",
+    "selector": "action",
+    "value": "read-settings",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/config-read"
+  },
+  {
+    "tool": "config-read",
+    "selector": "action",
+    "value": "list-fields",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/config-read"
+  },
+  {
+    "tool": "config-read",
+    "selector": "action",
+    "value": "list-org-members",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/config-read"
+  },
+  {
+    "tool": "config-read",
+    "selector": "action",
+    "value": "find-bot-slack-channels",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/config-read"
+  },
+  {
+    "tool": "config-read",
+    "selector": "readPlaybook.mode",
+    "value": "list",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/config-read"
+  },
+  {
+    "tool": "config-read",
+    "selector": "readPlaybook.mode",
+    "value": "load_full",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/config-read"
+  },
+  {
+    "tool": "config-read",
+    "selector": "readPlaybook.mode",
+    "value": "load_sections",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/config-read"
+  },
+  {
+    "tool": "config-write",
+    "selector": "action",
+    "value": "reassign-aop",
+    "branch": "",
+    "surface": "external",
+    "scope": "playbook:write",
+    "reference": "/reference/config-write"
+  },
+  {
+    "tool": "config-write",
+    "selector": "action",
+    "value": "create-field",
+    "branch": "",
+    "surface": "external",
+    "scope": "playbook:write",
+    "reference": "/reference/config-write"
+  },
+  {
+    "tool": "config-write",
+    "selector": "action",
+    "value": "update-field",
+    "branch": "",
+    "surface": "external",
+    "scope": "playbook:write",
+    "reference": "/reference/config-write"
+  },
+  {
+    "tool": "config-write",
+    "selector": "action",
+    "value": "delete-field",
+    "branch": "",
+    "surface": "external",
+    "scope": "playbook:write",
+    "reference": "/reference/config-write"
+  },
+  {
+    "tool": "config-write",
+    "selector": "action",
+    "value": "link-mapping",
+    "branch": "",
+    "surface": "external",
+    "scope": "playbook:write",
+    "reference": "/reference/config-write"
+  },
+  {
+    "tool": "config-write",
+    "selector": "action",
+    "value": "unlink-mapping",
+    "branch": "",
+    "surface": "external",
+    "scope": "playbook:write",
+    "reference": "/reference/config-write"
+  },
+  {
+    "tool": "config-write",
+    "selector": "action",
+    "value": "add-field-option",
+    "branch": "",
+    "surface": "external",
+    "scope": "playbook:write",
+    "reference": "/reference/config-write"
+  },
+  {
+    "tool": "config-write",
+    "selector": "action",
+    "value": "update-field-option",
+    "branch": "",
+    "surface": "external",
+    "scope": "playbook:write",
+    "reference": "/reference/config-write"
+  },
+  {
+    "tool": "config-write",
+    "selector": "action",
+    "value": "remove-field-option",
+    "branch": "",
+    "surface": "external",
+    "scope": "playbook:write",
+    "reference": "/reference/config-write"
+  },
+  {
+    "tool": "config-write",
+    "selector": "action",
+    "value": "set-stage-criteria",
+    "branch": "",
+    "surface": "external",
+    "scope": "playbook:write",
+    "reference": "/reference/config-write"
+  },
+  {
+    "tool": "config-write",
+    "selector": "createField.type",
+    "value": "text",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/config-write"
+  },
+  {
+    "tool": "config-write",
+    "selector": "createField.type",
+    "value": "number",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/config-write"
+  },
+  {
+    "tool": "config-write",
+    "selector": "createField.type",
+    "value": "date",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/config-write"
+  },
+  {
+    "tool": "config-write",
+    "selector": "createField.type",
+    "value": "boolean",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/config-write"
+  },
+  {
+    "tool": "config-write",
+    "selector": "createField.type",
+    "value": "select",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/config-write"
+  },
+  {
+    "tool": "config-write",
+    "selector": "createField.type",
+    "value": "currency",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/config-write"
+  },
+  {
+    "tool": "config-write",
+    "selector": "createField.type",
+    "value": "url",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/config-write"
+  },
+  {
+    "tool": "config-write",
+    "selector": "createField.type",
+    "value": "email",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/config-write"
+  },
+  {
+    "tool": "config-write",
+    "selector": "createField.type",
+    "value": "phone",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/config-write"
+  },
+  {
+    "tool": "config-write",
+    "selector": "createField.type",
+    "value": "list",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/config-write"
+  },
+  {
+    "tool": "config-write",
+    "selector": "createField.type",
+    "value": "fraction",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/config-write"
+  },
+  {
+    "tool": "config-write",
+    "selector": "createField.type",
+    "value": "json",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/config-write"
+  },
+  {
+    "tool": "config-write",
+    "selector": "createField.type",
+    "value": "people",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/config-write"
+  },
+  {
+    "tool": "config-write",
+    "selector": "createField.type",
+    "value": "summarized_history",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/config-write"
+  },
+  {
+    "tool": "config-write",
+    "selector": "createField.type",
+    "value": "deal_brief",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/config-write"
+  },
+  {
+    "tool": "config-write",
+    "selector": "linkMapping.resolutions[].action",
+    "value": "remap-to",
+    "branch": "linkMapping.resolutions[].action=remap-to",
+    "surface": "external",
+    "reference": "/reference/config-write"
+  },
+  {
+    "tool": "config-write",
+    "selector": "linkMapping.resolutions[].action",
+    "value": "keep-legacy",
+    "branch": "linkMapping.resolutions[].action=keep-legacy",
+    "surface": "external",
+    "reference": "/reference/config-write"
+  },
+  {
+    "tool": "config-write",
+    "selector": "removeFieldOption.resolution.action",
+    "value": "remap-to",
+    "branch": "removeFieldOption.resolution.action=remap-to",
+    "surface": "external",
+    "reference": "/reference/config-write"
+  },
+  {
+    "tool": "config-write",
+    "selector": "removeFieldOption.resolution.action",
+    "value": "keep-legacy",
+    "branch": "removeFieldOption.resolution.action=keep-legacy",
+    "surface": "external",
+    "reference": "/reference/config-write"
+  },
+  {
+    "tool": "connection-write",
+    "selector": "change.type",
+    "value": "update_crm_field_mappings",
+    "branch": "change.type=update_crm_field_mappings",
+    "surface": "external",
+    "reference": "/reference/connection-write"
+  },
+  {
+    "tool": "connection-write",
+    "selector": "change.op",
+    "value": "add",
+    "branch": "change.type=update_crm_field_mappings",
+    "surface": "external",
+    "reference": "/reference/connection-write"
+  },
+  {
+    "tool": "connection-write",
+    "selector": "change.op",
+    "value": "update",
+    "branch": "change.type=update_crm_field_mappings",
+    "surface": "external",
+    "reference": "/reference/connection-write"
+  },
+  {
+    "tool": "connection-write",
+    "selector": "change.op",
+    "value": "remove",
+    "branch": "change.type=update_crm_field_mappings",
+    "surface": "external",
+    "reference": "/reference/connection-write"
+  },
+  {
+    "tool": "connection-write",
+    "selector": "change.type",
+    "value": "manage_playbook_webhook",
+    "branch": "change.type=manage_playbook_webhook",
+    "surface": "external",
+    "reference": "/reference/connection-write"
+  },
+  {
+    "tool": "connection-write",
+    "selector": "change.op",
+    "value": "create",
+    "branch": "change.type=manage_playbook_webhook",
+    "surface": "external",
+    "reference": "/reference/connection-write"
+  },
+  {
+    "tool": "connection-write",
+    "selector": "change.op",
+    "value": "enable",
+    "branch": "change.type=manage_playbook_webhook",
+    "surface": "external",
+    "reference": "/reference/connection-write"
+  },
+  {
+    "tool": "connection-write",
+    "selector": "change.op",
+    "value": "disable",
+    "branch": "change.type=manage_playbook_webhook",
+    "surface": "external",
+    "reference": "/reference/connection-write"
+  },
+  {
+    "tool": "connection-write",
+    "selector": "change.op",
+    "value": "list",
+    "branch": "change.type=manage_playbook_webhook",
+    "surface": "external",
+    "reference": "/reference/connection-write"
+  },
+  {
+    "tool": "connection-write",
+    "selector": "change.op",
+    "value": "test",
+    "branch": "change.type=manage_playbook_webhook",
+    "surface": "external",
+    "reference": "/reference/connection-write"
+  },
+  {
+    "tool": "connection-write",
+    "selector": "change.op",
+    "value": "delete",
+    "branch": "change.type=manage_playbook_webhook",
+    "surface": "external",
+    "reference": "/reference/connection-write"
+  },
+  {
+    "tool": "connection-write",
+    "selector": "change.type",
+    "value": "update_slack_sync_config",
+    "branch": "change.type=update_slack_sync_config",
+    "surface": "external",
+    "reference": "/reference/connection-write"
+  },
+  {
+    "tool": "connection-write",
+    "selector": "change.type",
+    "value": "update_crm_settings",
+    "branch": "change.type=update_crm_settings",
+    "surface": "external",
+    "reference": "/reference/connection-write"
+  },
+  {
+    "tool": "connection-write",
+    "selector": "change.stageRequiredFieldsOp.op",
+    "value": "set",
+    "branch": "change.type=update_crm_settings",
+    "surface": "external",
+    "reference": "/reference/connection-write"
+  },
+  {
+    "tool": "connection-write",
+    "selector": "change.stageRequiredFieldsOp.op",
+    "value": "remove",
+    "branch": "change.type=update_crm_settings",
+    "surface": "external",
+    "reference": "/reference/connection-write"
+  },
+  {
+    "tool": "connection-write",
+    "selector": "change.type",
+    "value": "update_connection_instructions",
+    "branch": "change.type=update_connection_instructions",
+    "surface": "external",
+    "reference": "/reference/connection-write"
+  },
+  {
+    "tool": "connection-write",
+    "selector": "change.type",
+    "value": "disconnect_linkedin_seat",
+    "branch": "change.type=disconnect_linkedin_seat",
+    "surface": "external",
+    "reference": "/reference/connection-write"
+  },
+  {
+    "tool": "connection-write",
+    "selector": "change.type",
+    "value": "disconnect_whatsapp_account",
+    "branch": "change.type=disconnect_whatsapp_account",
+    "surface": "external",
+    "reference": "/reference/connection-write"
+  },
+  {
+    "tool": "connection-write",
+    "selector": "change.type",
+    "value": "update_whatsapp_sync_config",
+    "branch": "change.type=update_whatsapp_sync_config",
+    "surface": "external",
+    "reference": "/reference/connection-write"
+  },
+  {
+    "tool": "connection-write",
+    "selector": "change.type",
+    "value": "resolve_channel_link_proposal",
+    "branch": "change.type=resolve_channel_link_proposal",
+    "surface": "external",
+    "reference": "/reference/connection-write"
+  },
+  {
+    "tool": "connection-write",
+    "selector": "change.op",
+    "value": "resolve",
+    "branch": "change.type=resolve_channel_link_proposal",
+    "surface": "external",
+    "reference": "/reference/connection-write"
+  },
+  {
+    "tool": "connection-write",
+    "selector": "change.op",
+    "value": "sweep",
+    "branch": "change.type=resolve_channel_link_proposal",
+    "surface": "external",
+    "reference": "/reference/connection-write"
+  },
+  {
+    "tool": "connection-write",
+    "selector": "change.channel",
+    "value": "slack",
+    "branch": "change.type=resolve_channel_link_proposal",
+    "surface": "external",
+    "reference": "/reference/connection-write"
+  },
+  {
+    "tool": "connection-write",
+    "selector": "change.channel",
+    "value": "linkedin",
+    "branch": "change.type=resolve_channel_link_proposal",
+    "surface": "external",
+    "reference": "/reference/connection-write"
+  },
+  {
+    "tool": "connection-write",
+    "selector": "change.channel",
+    "value": "whatsapp",
+    "branch": "change.type=resolve_channel_link_proposal",
+    "surface": "external",
+    "reference": "/reference/connection-write"
+  },
+  {
+    "tool": "aop-write",
+    "selector": "action",
+    "value": "create-aop",
+    "branch": "",
+    "surface": "external",
+    "scope": "playbook:write",
+    "reference": "/reference/aop-write"
+  },
+  {
+    "tool": "aop-write",
+    "selector": "action",
+    "value": "update-selection-procedure",
+    "branch": "",
+    "surface": "external",
+    "scope": "playbook:write",
+    "reference": "/reference/aop-write"
+  },
+  {
+    "tool": "aop-write",
+    "selector": "action",
+    "value": "update-custom-assignment-instruction",
+    "branch": "",
+    "surface": "external",
+    "scope": "playbook:write",
+    "reference": "/reference/aop-write"
+  },
+  {
+    "tool": "data-settings",
+    "selector": "action",
+    "value": "update",
+    "branch": "",
+    "surface": "external",
+    "scope": "playbook:write",
+    "reference": "/reference/data-settings"
+  },
+  {
+    "tool": "config-propagate",
+    "selector": "action",
+    "value": "propagate-field",
+    "branch": "",
+    "surface": "external",
+    "scope": "playbook:write",
+    "reference": "/reference/config-propagate"
+  },
+  {
+    "tool": "config-propagate",
+    "selector": "action",
+    "value": "propagate-mapping",
+    "branch": "",
+    "surface": "external",
+    "scope": "playbook:write",
+    "reference": "/reference/config-propagate"
+  },
+  {
+    "tool": "workspace-write",
+    "selector": "change.type",
+    "value": "update_user_settings",
+    "branch": "change.type=update_user_settings",
+    "surface": "external",
+    "reference": "/reference/workspace-write"
+  },
+  {
+    "tool": "workspace-write",
+    "selector": "change.type",
+    "value": "update_inbox_settings",
+    "branch": "change.type=update_inbox_settings",
+    "surface": "external",
+    "reference": "/reference/workspace-write"
+  },
+  {
+    "tool": "workspace-write",
+    "selector": "change.type",
+    "value": "manage_inbox",
+    "branch": "change.type=manage_inbox",
+    "surface": "external",
+    "reference": "/reference/workspace-write"
+  },
+  {
+    "tool": "workspace-write",
+    "selector": "change.op",
+    "value": "create",
+    "branch": "change.type=manage_inbox",
+    "surface": "external",
+    "reference": "/reference/workspace-write"
+  },
+  {
+    "tool": "workspace-write",
+    "selector": "change.op",
+    "value": "update",
+    "branch": "change.type=manage_inbox",
+    "surface": "external",
+    "reference": "/reference/workspace-write"
+  },
+  {
+    "tool": "workspace-write",
+    "selector": "change.op",
+    "value": "delete",
+    "branch": "change.type=manage_inbox",
+    "surface": "external",
+    "reference": "/reference/workspace-write"
+  },
+  {
+    "tool": "workspace-write",
+    "selector": "change.op",
+    "value": "reorder",
+    "branch": "change.type=manage_inbox",
+    "surface": "external",
+    "reference": "/reference/workspace-write"
+  },
+  {
+    "tool": "workspace-write",
+    "selector": "change.type",
+    "value": "manage_task_group",
+    "branch": "change.type=manage_task_group",
+    "surface": "external",
+    "reference": "/reference/workspace-write"
+  },
+  {
+    "tool": "workspace-write",
+    "selector": "change.op",
+    "value": "create",
+    "branch": "change.type=manage_task_group",
+    "surface": "external",
+    "reference": "/reference/workspace-write"
+  },
+  {
+    "tool": "workspace-write",
+    "selector": "change.op",
+    "value": "update",
+    "branch": "change.type=manage_task_group",
+    "surface": "external",
+    "reference": "/reference/workspace-write"
+  },
+  {
+    "tool": "workspace-write",
+    "selector": "change.op",
+    "value": "delete",
+    "branch": "change.type=manage_task_group",
+    "surface": "external",
+    "reference": "/reference/workspace-write"
+  },
+  {
+    "tool": "workspace-write",
+    "selector": "change.op",
+    "value": "reorder",
+    "branch": "change.type=manage_task_group",
+    "surface": "external",
+    "reference": "/reference/workspace-write"
+  },
+  {
+    "tool": "workspace-write",
+    "selector": "change.overduePolicy.mode",
+    "value": "nag",
+    "branch": "change.type=manage_task_group",
+    "surface": "external",
+    "reference": "/reference/workspace-write"
+  },
+  {
+    "tool": "workspace-write",
+    "selector": "change.overduePolicy.mode",
+    "value": "auto-complete",
+    "branch": "change.type=manage_task_group",
+    "surface": "external",
+    "reference": "/reference/workspace-write"
+  },
+  {
+    "tool": "workspace-write",
+    "selector": "change.overduePolicy.mode",
+    "value": "ignore",
+    "branch": "change.type=manage_task_group",
+    "surface": "external",
+    "reference": "/reference/workspace-write"
+  },
+  {
+    "tool": "workspace-write",
+    "selector": "change.type",
+    "value": "update_webhook_export_config",
+    "branch": "change.type=update_webhook_export_config",
+    "surface": "external",
+    "reference": "/reference/workspace-write"
+  },
+  {
+    "tool": "systems-write",
+    "selector": "change.type",
+    "value": "manage_mcp_connection",
+    "branch": "change.type=manage_mcp_connection",
+    "surface": "external",
+    "reference": "/reference/systems-write"
+  },
+  {
+    "tool": "systems-write",
+    "selector": "change.op",
+    "value": "create",
+    "branch": "change.type=manage_mcp_connection",
+    "surface": "external",
+    "reference": "/reference/systems-write"
+  },
+  {
+    "tool": "systems-write",
+    "selector": "change.op",
+    "value": "delete",
+    "branch": "change.type=manage_mcp_connection",
+    "surface": "external",
+    "reference": "/reference/systems-write"
+  },
+  {
+    "tool": "systems-write",
+    "selector": "change.type",
+    "value": "update_mcp_connection_settings",
+    "branch": "change.type=update_mcp_connection_settings",
+    "surface": "external",
+    "reference": "/reference/systems-write"
+  },
+  {
+    "tool": "debug",
+    "selector": "action",
+    "value": "diagnose-conversation",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/debug"
+  },
+  {
+    "tool": "debug",
+    "selector": "action",
+    "value": "recent-executions",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/debug"
+  },
+  {
+    "tool": "debug",
+    "selector": "action",
+    "value": "execution-detail",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/debug"
+  },
+  {
+    "tool": "debug",
+    "selector": "action",
+    "value": "tool-call-detail",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/debug"
+  },
+  {
+    "tool": "debug",
+    "selector": "action",
+    "value": "health-report",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/debug"
+  },
+  {
+    "tool": "debug",
+    "selector": "action",
+    "value": "create-monitor",
+    "branch": "",
+    "surface": "external",
+    "scope": "internal",
+    "reference": "/reference/debug"
+  },
+  {
+    "tool": "debug",
+    "selector": "action",
+    "value": "test-run",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/debug"
+  },
+  {
+    "tool": "analytics",
+    "selector": "action",
+    "value": "attribution-rate",
+    "branch": "",
+    "surface": "staff-only",
+    "scope": "internal",
+    "reference": "/reference/analytics"
+  },
+  {
+    "tool": "analytics",
+    "selector": "action",
+    "value": "attribution-by-category",
+    "branch": "",
+    "surface": "staff-only",
+    "scope": "internal",
+    "reference": "/reference/analytics"
+  },
+  {
+    "tool": "analytics",
+    "selector": "action",
+    "value": "similarity-distribution",
+    "branch": "",
+    "surface": "staff-only",
+    "scope": "internal",
+    "reference": "/reference/analytics"
+  },
+  {
+    "tool": "analytics",
+    "selector": "action",
+    "value": "user-tiers",
+    "branch": "",
+    "surface": "staff-only",
+    "scope": "internal",
+    "reference": "/reference/analytics"
+  },
+  {
+    "tool": "analytics",
+    "selector": "action",
+    "value": "overview",
+    "branch": "",
+    "surface": "staff-only",
+    "scope": "internal",
+    "reference": "/reference/analytics"
+  },
+  {
+    "tool": "analytics",
+    "selector": "action",
+    "value": "monthly-growth",
+    "branch": "",
+    "surface": "staff-only",
+    "scope": "internal",
+    "reference": "/reference/analytics"
+  },
+  {
+    "tool": "conversation-read",
+    "selector": "action",
+    "value": "get",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/conversation-read"
+  },
+  {
+    "tool": "conversation-read",
+    "selector": "action",
+    "value": "find",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/conversation-read"
+  },
+  {
+    "tool": "conversation-read",
+    "selector": "action",
+    "value": "search-semantic",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/conversation-read"
+  },
+  {
+    "tool": "conversation-read",
+    "selector": "action",
+    "value": "search-external-crm-deals",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/conversation-read"
+  },
+  {
+    "tool": "conversation-read",
+    "selector": "action",
+    "value": "timeline",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/conversation-read"
+  },
+  {
+    "tool": "conversation-read",
+    "selector": "action",
+    "value": "field-evolution",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/conversation-read"
+  },
+  {
+    "tool": "conversation-read",
+    "selector": "action",
+    "value": "value-as-of",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/conversation-read"
+  },
+  {
+    "tool": "conversation-read",
+    "selector": "action",
+    "value": "describe-field",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/conversation-read"
+  },
+  {
+    "tool": "conversation-read",
+    "selector": "action",
+    "value": "raw-content",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/conversation-read"
+  },
+  {
+    "tool": "conversation-read",
+    "selector": "action",
+    "value": "search",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/conversation-read"
+  },
+  {
+    "tool": "conversation-write",
+    "selector": "action",
+    "value": "create",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/conversation-write"
+  },
+  {
+    "tool": "conversation-write",
+    "selector": "action",
+    "value": "update-fields",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/conversation-write"
+  },
+  {
+    "tool": "conversation-write",
+    "selector": "action",
+    "value": "create-event",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/conversation-write"
+  },
+  {
+    "tool": "conversation-write",
+    "selector": "action",
+    "value": "mutate",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/conversation-write"
+  },
+  {
+    "tool": "conversation-write",
+    "selector": "action",
+    "value": "reassign-ownership",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/conversation-write"
+  },
+  {
+    "tool": "conversation-write",
+    "selector": "action",
+    "value": "link-external-crm-deal",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/conversation-write"
+  },
+  {
+    "tool": "conversation-write",
+    "selector": "action",
+    "value": "sync-gmail-thread",
+    "branch": "",
+    "surface": "external",
+    "scope": "email:read",
+    "reference": "/reference/conversation-write"
+  },
+  {
+    "tool": "conversation-write",
+    "selector": "updateFields.fields[].mode",
+    "value": "replace",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/conversation-write"
+  },
+  {
+    "tool": "conversation-write",
+    "selector": "updateFields.fields[].mode",
+    "value": "patch",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/conversation-write"
+  },
+  {
+    "tool": "conversation-write",
+    "selector": "updateFields.fields[].mode",
+    "value": "upsert",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/conversation-write"
+  },
+  {
+    "tool": "conversation-write",
+    "selector": "updateFields.fields[].mode",
+    "value": "append",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/conversation-write"
+  },
+  {
+    "tool": "conversation-write",
+    "selector": "updateFields.fields[].mode",
+    "value": "update",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/conversation-write"
+  },
+  {
+    "tool": "conversation-write",
+    "selector": "mutate.mutation.operation",
+    "value": "move_event",
+    "branch": "mutate.mutation.operation=move_event",
+    "surface": "external",
+    "reference": "/reference/conversation-write"
+  },
+  {
+    "tool": "conversation-write",
+    "selector": "mutate.mutation.operation",
+    "value": "reassign_aop",
+    "branch": "mutate.mutation.operation=reassign_aop",
+    "surface": "external",
+    "reference": "/reference/conversation-write"
+  },
+  {
+    "tool": "conversation-write",
+    "selector": "mutate.mutation.operation",
+    "value": "refresh_conversation",
+    "branch": "mutate.mutation.operation=refresh_conversation",
+    "surface": "external",
+    "reference": "/reference/conversation-write"
+  },
+  {
+    "tool": "conversation-write",
+    "selector": "mutate.mutation.operation",
+    "value": "refresh_fields",
+    "branch": "mutate.mutation.operation=refresh_fields",
+    "surface": "external",
+    "reference": "/reference/conversation-write"
+  },
+  {
+    "tool": "conversation-write",
+    "selector": "mutate.mutation.operation",
+    "value": "clear_working_memory",
+    "branch": "mutate.mutation.operation=clear_working_memory",
+    "surface": "external",
+    "reference": "/reference/conversation-write"
+  },
+  {
+    "tool": "conversation-write",
+    "selector": "mutate.mutation.operation",
+    "value": "merge_conversations",
+    "branch": "mutate.mutation.operation=merge_conversations",
+    "surface": "external",
+    "reference": "/reference/conversation-write"
+  },
+  {
+    "tool": "conversation-write",
+    "selector": "mutate.mutation.operation",
+    "value": "merge_companies",
+    "branch": "mutate.mutation.operation=merge_companies",
+    "surface": "external",
+    "reference": "/reference/conversation-write"
+  },
+  {
+    "tool": "conversation-write",
+    "selector": "mutate.mutation.operation",
+    "value": "fix_misassignment",
+    "branch": "mutate.mutation.operation=fix_misassignment",
+    "surface": "external",
+    "reference": "/reference/conversation-write"
+  },
+  {
+    "tool": "conversation-write",
+    "selector": "mutate.mutation.operation",
+    "value": "assign_aop_by_selection",
+    "branch": "mutate.mutation.operation=assign_aop_by_selection",
+    "surface": "external",
+    "reference": "/reference/conversation-write"
+  },
+  {
+    "tool": "conversation-write",
+    "selector": "mutate.mutation.operation",
+    "value": "rename_conversation",
+    "branch": "mutate.mutation.operation=rename_conversation",
+    "surface": "external",
+    "reference": "/reference/conversation-write"
+  },
+  {
+    "tool": "slack-read",
+    "selector": "action",
+    "value": "search-live",
+    "branch": "",
+    "surface": "external",
+    "scope": "slack:read",
+    "reference": "/reference/slack-read"
+  },
+  {
+    "tool": "slack-read",
+    "selector": "action",
+    "value": "read-thread",
+    "branch": "",
+    "surface": "external",
+    "scope": "slack:read",
+    "reference": "/reference/slack-read"
+  },
+  {
+    "tool": "slack-read",
+    "selector": "action",
+    "value": "read-file",
+    "branch": "",
+    "surface": "external",
+    "scope": "slack:read",
+    "reference": "/reference/slack-read"
+  },
+  {
+    "tool": "slack-write",
+    "selector": "action",
+    "value": "sync-thread",
+    "branch": "",
+    "surface": "external",
+    "scope": "slack:read",
+    "reference": "/reference/slack-write"
+  },
+  {
+    "tool": "conversation-analytics",
+    "selector": "action",
+    "value": "compute-metric",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/conversation-analytics"
+  },
+  {
+    "tool": "conversation-analytics",
+    "selector": "action",
+    "value": "compute-metric-batch",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/conversation-analytics"
+  },
+  {
+    "tool": "conversation-analytics",
+    "selector": "action",
+    "value": "describe-metrics",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/conversation-analytics"
+  },
+  {
+    "tool": "taxonomy-fields",
+    "selector": "action",
+    "value": "list",
+    "branch": "",
+    "surface": "feature-gated",
+    "scope": "brain:read",
+    "reference": "/reference/taxonomy-fields"
+  },
+  {
+    "tool": "taxonomy-fields",
+    "selector": "action",
+    "value": "get",
+    "branch": "",
+    "surface": "feature-gated",
+    "scope": "brain:read",
+    "reference": "/reference/taxonomy-fields"
+  },
+  {
+    "tool": "task",
+    "selector": "action",
+    "value": "list",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/task"
+  },
+  {
+    "tool": "task",
+    "selector": "action",
+    "value": "applyApproval",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/task"
+  },
+  {
+    "tool": "task",
+    "selector": "action",
+    "value": "create",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/task"
+  },
+  {
+    "tool": "task",
+    "selector": "action",
+    "value": "update",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/task"
+  },
+  {
+    "tool": "task",
+    "selector": "action",
+    "value": "cancel",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/task"
+  },
+  {
+    "tool": "task",
+    "selector": "action",
+    "value": "assignmentOptions",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/task"
+  },
+  {
+    "tool": "task",
+    "selector": "action",
+    "value": "reassign",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/task"
+  },
+  {
+    "tool": "task",
+    "selector": "action",
+    "value": "dealList",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/task"
+  },
+  {
+    "tool": "task",
+    "selector": "action",
+    "value": "creationOptions",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/task"
+  },
+  {
+    "tool": "task",
+    "selector": "action",
+    "value": "createAssigned",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/task"
+  },
+  {
+    "tool": "task",
+    "selector": "action",
+    "value": "complete",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/task"
+  },
+  {
+    "tool": "task",
+    "selector": "action",
+    "value": "delete",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/task"
+  },
+  {
+    "tool": "task",
+    "selector": "action",
+    "value": "start",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/task"
+  },
+  {
+    "tool": "task",
+    "selector": "action",
+    "value": "updateDueDate",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/task"
+  },
+  {
+    "tool": "mail",
+    "selector": "action",
+    "value": "fetch-attachments",
+    "branch": "",
+    "surface": "external",
+    "scope": "email:read",
+    "reference": "/reference/mail"
+  },
+  {
+    "tool": "mail",
+    "selector": "action",
+    "value": "list-sent",
+    "branch": "",
+    "surface": "external",
+    "scope": "email:read",
+    "reference": "/reference/mail"
+  },
+  {
+    "tool": "mail",
+    "selector": "action",
+    "value": "find",
+    "branch": "",
+    "surface": "external",
+    "scope": "email:read",
+    "reference": "/reference/mail"
+  },
+  {
+    "tool": "mail",
+    "selector": "action",
+    "value": "search-live",
+    "branch": "",
+    "surface": "external",
+    "scope": "email:read",
+    "reference": "/reference/mail"
+  },
+  {
+    "tool": "mail",
+    "selector": "action",
+    "value": "read-thread",
+    "branch": "",
+    "surface": "external",
+    "scope": "email:read",
+    "reference": "/reference/mail"
+  },
+  {
+    "tool": "email-tracking",
+    "selector": "action",
+    "value": "list",
+    "branch": "",
+    "surface": "external",
+    "scope": "email:read",
+    "reference": "/reference/email-tracking"
+  },
+  {
+    "tool": "email-tracking",
+    "selector": "action",
+    "value": "get",
+    "branch": "",
+    "surface": "external",
+    "scope": "email:read",
+    "reference": "/reference/email-tracking"
+  },
+  {
+    "tool": "meetings",
+    "selector": "action",
+    "value": "find",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/meetings"
+  },
+  {
+    "tool": "meetings",
+    "selector": "action",
+    "value": "sync",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/meetings"
+  },
+  {
+    "tool": "meetings",
+    "selector": "action",
+    "value": "capabilities",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/meetings"
+  },
+  {
+    "tool": "calendar",
+    "selector": "action",
+    "value": "list-events",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/calendar"
+  },
+  {
+    "tool": "calendar",
+    "selector": "action",
+    "value": "get-availability",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/calendar"
+  },
+  {
+    "tool": "calendar",
+    "selector": "action",
+    "value": "modify-event",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/calendar"
+  },
+  {
+    "tool": "calendar",
+    "selector": "modifyEvent.operation",
+    "value": "create",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/calendar"
+  },
+  {
+    "tool": "calendar",
+    "selector": "modifyEvent.operation",
+    "value": "update",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/calendar"
+  },
+  {
+    "tool": "calendar",
+    "selector": "modifyEvent.operation",
+    "value": "delete",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/calendar"
+  },
+  {
+    "tool": "notify",
+    "selector": "action",
+    "value": "send",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/notify"
+  },
+  {
+    "tool": "notify",
+    "selector": "action",
+    "value": "list-slack-channels",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/notify"
+  },
+  {
+    "tool": "notify",
+    "selector": "send.channel",
+    "value": "email",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/notify"
+  },
+  {
+    "tool": "notify",
+    "selector": "send.channel",
+    "value": "slack",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/notify"
+  },
+  {
+    "tool": "notify",
+    "selector": "send.channel",
+    "value": "imessage",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/notify"
+  },
+  {
+    "tool": "notify",
+    "selector": "send.channel",
+    "value": "whatsapp",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/notify"
+  },
+  {
+    "tool": "draft-comms",
+    "selector": "action",
+    "value": "draft-email",
+    "branch": "",
+    "surface": "external",
+    "scope": "email:draft",
+    "reference": "/reference/draft-comms"
+  },
+  {
+    "tool": "draft-comms",
+    "selector": "action",
+    "value": "draft-slack-message",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/draft-comms"
+  },
+  {
+    "tool": "draft-comms",
+    "selector": "action",
+    "value": "draft-linkedin-message",
+    "branch": "",
+    "surface": "external",
+    "scope": "linkedin:read",
+    "reference": "/reference/draft-comms"
+  },
+  {
+    "tool": "draft-comms",
+    "selector": "action",
+    "value": "show-draft",
+    "branch": "",
+    "surface": "external",
+    "scope": "email:read",
+    "reference": "/reference/draft-comms"
+  },
+  {
+    "tool": "schedule-send",
+    "selector": "channel",
+    "value": "email",
+    "branch": "",
+    "surface": "external",
+    "scope": "email:send",
+    "reference": "/reference/schedule-send"
+  },
+  {
+    "tool": "schedule-send",
+    "selector": "channel",
+    "value": "linkedin",
+    "branch": "",
+    "surface": "external",
+    "scope": "linkedin:write",
+    "reference": "/reference/schedule-send"
+  },
+  {
+    "tool": "schedule-send",
+    "selector": "channel",
+    "value": "slack",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/schedule-send"
+  },
+  {
+    "tool": "send-email",
+    "selector": "action",
+    "value": "prepare",
+    "branch": "",
+    "surface": "external",
+    "scope": "email:send",
+    "reference": "/reference/send-email"
+  },
+  {
+    "tool": "send-email",
+    "selector": "action",
+    "value": "send",
+    "branch": "",
+    "surface": "external",
+    "scope": "email:send",
+    "reference": "/reference/send-email"
+  },
+  {
+    "tool": "send-email",
+    "selector": "action",
+    "value": "status",
+    "branch": "",
+    "surface": "external",
+    "scope": "email:send",
+    "reference": "/reference/send-email"
+  },
+  {
+    "tool": "ui-config",
+    "selector": "action",
+    "value": "list-canvases",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/ui-config"
+  },
+  {
+    "tool": "ui-config",
+    "selector": "action",
+    "value": "configure-overview",
+    "branch": "",
+    "surface": "external",
+    "scope": "playbook:write",
+    "reference": "/reference/ui-config"
+  },
+  {
+    "tool": "ui-config",
+    "selector": "action",
+    "value": "create-canvas",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/ui-config"
+  },
+  {
+    "tool": "ui-config",
+    "selector": "action",
+    "value": "update-canvas",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/ui-config"
+  },
+  {
+    "tool": "ui-config",
+    "selector": "action",
+    "value": "delete-canvas",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/ui-config"
+  },
+  {
+    "tool": "ui-config",
+    "selector": "configureOverview.ops[].op",
+    "value": "add",
+    "branch": "configureOverview.ops[].op=add",
+    "surface": "external",
+    "reference": "/reference/ui-config"
+  },
+  {
+    "tool": "ui-config",
+    "selector": "configureOverview.ops[].op",
+    "value": "remove",
+    "branch": "configureOverview.ops[].op=remove",
+    "surface": "external",
+    "reference": "/reference/ui-config"
+  },
+  {
+    "tool": "ui-config",
+    "selector": "configureOverview.ops[].op",
+    "value": "setVisibleWhen",
+    "branch": "configureOverview.ops[].op=setVisibleWhen",
+    "surface": "external",
+    "reference": "/reference/ui-config"
+  },
+  {
+    "tool": "ui-config",
+    "selector": "configureOverview.ops[].op",
+    "value": "setRender",
+    "branch": "configureOverview.ops[].op=setRender",
+    "surface": "external",
+    "reference": "/reference/ui-config"
+  },
+  {
+    "tool": "ui-config",
+    "selector": "configureOverview.ops[].op",
+    "value": "setOwner",
+    "branch": "configureOverview.ops[].op=setOwner",
+    "surface": "external",
+    "reference": "/reference/ui-config"
+  },
+  {
+    "tool": "ui-config",
+    "selector": "configureOverview.ops[].op",
+    "value": "reorder",
+    "branch": "configureOverview.ops[].op=reorder",
+    "surface": "external",
+    "reference": "/reference/ui-config"
+  },
+  {
+    "tool": "ui-config",
+    "selector": "createCanvas.type",
+    "value": "conversationCanvas",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/ui-config"
+  },
+  {
+    "tool": "ui-config",
+    "selector": "createCanvas.type",
+    "value": "kanbanConversation",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/ui-config"
+  },
+  {
+    "tool": "ui-config",
+    "selector": "createCanvas.type",
+    "value": "cardList",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/ui-config"
+  },
+  {
+    "tool": "ui-config",
+    "selector": "createCanvas.type",
+    "value": "table",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/ui-config"
+  },
+  {
+    "tool": "ui-config",
+    "selector": "createCanvas.type",
+    "value": "report",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/ui-config"
+  },
+  {
+    "tool": "ui-config",
+    "selector": "createCanvas.type",
+    "value": "statistics",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/ui-config"
+  },
+  {
+    "tool": "ui-config",
+    "selector": "createCanvas.type",
+    "value": "tasks",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/ui-config"
+  },
+  {
+    "tool": "ui-config",
+    "selector": "createCanvas.type",
+    "value": "agenda",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/ui-config"
+  },
+  {
+    "tool": "ui-config",
+    "selector": "createCanvas.type",
+    "value": "calendar",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/ui-config"
+  },
+  {
+    "tool": "ui-config",
+    "selector": "updateCanvas.type",
+    "value": "conversationCanvas",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/ui-config"
+  },
+  {
+    "tool": "ui-config",
+    "selector": "updateCanvas.type",
+    "value": "kanbanConversation",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/ui-config"
+  },
+  {
+    "tool": "ui-config",
+    "selector": "updateCanvas.type",
+    "value": "cardList",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/ui-config"
+  },
+  {
+    "tool": "ui-config",
+    "selector": "updateCanvas.type",
+    "value": "table",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/ui-config"
+  },
+  {
+    "tool": "ui-config",
+    "selector": "updateCanvas.type",
+    "value": "report",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/ui-config"
+  },
+  {
+    "tool": "ui-config",
+    "selector": "updateCanvas.type",
+    "value": "statistics",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/ui-config"
+  },
+  {
+    "tool": "ui-config",
+    "selector": "updateCanvas.type",
+    "value": "tasks",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/ui-config"
+  },
+  {
+    "tool": "ui-config",
+    "selector": "updateCanvas.type",
+    "value": "agenda",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/ui-config"
+  },
+  {
+    "tool": "ui-config",
+    "selector": "updateCanvas.type",
+    "value": "calendar",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/ui-config"
+  },
+  {
+    "tool": "research",
+    "selector": "action",
+    "value": "capabilities",
+    "branch": "",
+    "surface": "external",
+    "scope": "crm:read",
+    "reference": "/reference/research"
+  },
+  {
+    "tool": "research",
+    "selector": "action",
+    "value": "choose-enrichment",
+    "branch": "",
+    "surface": "external",
+    "scope": "enrichment:write",
+    "reference": "/reference/research"
+  },
+  {
+    "tool": "research",
+    "selector": "action",
+    "value": "enrich-company",
+    "branch": "",
+    "surface": "external",
+    "scope": "enrichment:write",
+    "reference": "/reference/research"
+  },
+  {
+    "tool": "research",
+    "selector": "action",
+    "value": "enrich-person",
+    "branch": "",
+    "surface": "external",
+    "scope": "enrichment:write",
+    "reference": "/reference/research"
+  },
+  {
+    "tool": "research",
+    "selector": "action",
+    "value": "web-search",
+    "branch": "",
+    "surface": "external",
+    "scope": "in-app",
+    "reference": "/reference/research"
+  },
+  {
+    "tool": "research",
+    "selector": "action",
+    "value": "web-fetch",
+    "branch": "",
+    "surface": "external",
+    "scope": "in-app",
+    "reference": "/reference/research"
+  },
+  {
+    "tool": "signals-read",
+    "selector": "action",
+    "value": "get",
+    "branch": "",
+    "surface": "external",
+    "scope": "signals:read",
+    "reference": "/reference/signals-read"
+  },
+  {
+    "tool": "signals-read",
+    "selector": "action",
+    "value": "capabilities",
+    "branch": "",
+    "surface": "external",
+    "scope": "signals:read",
+    "reference": "/reference/signals-read"
+  },
+  {
+    "tool": "signals-read",
+    "selector": "action",
+    "value": "admin-inventory",
+    "branch": "",
+    "surface": "external",
+    "scope": "signals:read",
+    "reference": "/reference/signals-read"
+  },
+  {
+    "tool": "signals-read",
+    "selector": "action",
+    "value": "get-internal",
+    "branch": "",
+    "surface": "external",
+    "scope": "signals:read",
+    "reference": "/reference/signals-read"
+  },
+  {
+    "tool": "signals-read",
+    "selector": "action",
+    "value": "list-internal",
+    "branch": "",
+    "surface": "external",
+    "scope": "signals:read",
+    "reference": "/reference/signals-read"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "action",
+    "value": "apply-extraction",
+    "branch": "",
+    "surface": "external",
+    "scope": "signals:write",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "action",
+    "value": "mutate-internal",
+    "branch": "",
+    "surface": "external",
+    "scope": "signals:write",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "action",
+    "value": "activate",
+    "branch": "",
+    "surface": "external",
+    "scope": "signals:write",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "action",
+    "value": "update",
+    "branch": "",
+    "surface": "external",
+    "scope": "signals:write",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "action",
+    "value": "set-state",
+    "branch": "",
+    "surface": "external",
+    "scope": "signals:write",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "action",
+    "value": "resolve-identity",
+    "branch": "",
+    "surface": "external",
+    "scope": "signals:write",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "action",
+    "value": "execute-action",
+    "branch": "",
+    "surface": "external",
+    "scope": "email:draft",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "action",
+    "value": "mark-read",
+    "branch": "",
+    "surface": "external",
+    "scope": "signals:write",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "internalMutation.operation",
+    "value": "snooze",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "internalMutation.operation",
+    "value": "dismiss",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "internalMutation.operation",
+    "value": "resolve",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "internalMutation.operation",
+    "value": "reopen",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "internalMutation.operation",
+    "value": "append-note",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "internalMutation.operation",
+    "value": "deactivate",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "internalMutation.operation",
+    "value": "hold-reconciliation",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "internalMutation.operation",
+    "value": "clear-reconciliation",
+    "branch": "",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.type",
+    "value": "=",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.type",
+    "value": "!=",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.type",
+    "value": ">",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.type",
+    "value": "<",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.type",
+    "value": "=>",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.type",
+    "value": "=<",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.type",
+    "value": "in",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.type",
+    "value": "not_in",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.type",
+    "value": "(.)",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.type",
+    "value": "(!)",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.type",
+    "value": "[.]",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.type",
+    "value": "not_contains",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.op",
+    "value": "and",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.op",
+    "value": "or",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].type",
+    "value": "=",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].type",
+    "value": "!=",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].type",
+    "value": ">",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].type",
+    "value": "<",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].type",
+    "value": "=>",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].type",
+    "value": "=<",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].type",
+    "value": "in",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].type",
+    "value": "not_in",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].type",
+    "value": "(.)",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].type",
+    "value": "(!)",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].type",
+    "value": "[.]",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].type",
+    "value": "not_contains",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].op",
+    "value": "and",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].op",
+    "value": "or",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].type",
+    "value": "=",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].type",
+    "value": "!=",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].type",
+    "value": ">",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].type",
+    "value": "<",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].type",
+    "value": "=>",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].type",
+    "value": "=<",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].type",
+    "value": "in",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].type",
+    "value": "not_in",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].type",
+    "value": "(.)",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].type",
+    "value": "(!)",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].type",
+    "value": "[.]",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].type",
+    "value": "not_contains",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].op",
+    "value": "and",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].op",
+    "value": "or",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].conditions[].type",
+    "value": "=",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].conditions[].type",
+    "value": "!=",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].conditions[].type",
+    "value": ">",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].conditions[].type",
+    "value": "<",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].conditions[].type",
+    "value": "=>",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].conditions[].type",
+    "value": "=<",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].conditions[].type",
+    "value": "in",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].conditions[].type",
+    "value": "not_in",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].conditions[].type",
+    "value": "(.)",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].conditions[].type",
+    "value": "(!)",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].conditions[].type",
+    "value": "[.]",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].conditions[].type",
+    "value": "not_contains",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].conditions[].op",
+    "value": "and",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].conditions[].op",
+    "value": "or",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type",
+    "value": "=",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type",
+    "value": "!=",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type",
+    "value": ">",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type",
+    "value": "<",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type",
+    "value": "=>",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type",
+    "value": "=<",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type",
+    "value": "in",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type",
+    "value": "not_in",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type",
+    "value": "(.)",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type",
+    "value": "(!)",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type",
+    "value": "[.]",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type",
+    "value": "not_contains",
+    "branch": "update.additionalWatches[].kind=discovery",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].track.type",
+    "value": "changed",
+    "branch": "update.additionalWatches[].kind=entity",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].track.type",
+    "value": "added",
+    "branch": "update.additionalWatches[].kind=entity",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].track.op",
+    "value": "and",
+    "branch": "update.additionalWatches[].kind=entity",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].track.op",
+    "value": "or",
+    "branch": "update.additionalWatches[].kind=entity",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].track.conditions[].type",
+    "value": "changed",
+    "branch": "update.additionalWatches[].kind=entity",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].track.conditions[].type",
+    "value": "added",
+    "branch": "update.additionalWatches[].kind=entity",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].track.conditions[].op",
+    "value": "and",
+    "branch": "update.additionalWatches[].kind=entity",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].track.conditions[].op",
+    "value": "or",
+    "branch": "update.additionalWatches[].kind=entity",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].track.conditions[].conditions[].type",
+    "value": "changed",
+    "branch": "update.additionalWatches[].kind=entity",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].track.conditions[].conditions[].type",
+    "value": "added",
+    "branch": "update.additionalWatches[].kind=entity",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].track.conditions[].conditions[].op",
+    "value": "and",
+    "branch": "update.additionalWatches[].kind=entity",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].track.conditions[].conditions[].op",
+    "value": "or",
+    "branch": "update.additionalWatches[].kind=entity",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].track.conditions[].conditions[].conditions[].type",
+    "value": "changed",
+    "branch": "update.additionalWatches[].kind=entity",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.additionalWatches[].track.conditions[].conditions[].conditions[].type",
+    "value": "added",
+    "branch": "update.additionalWatches[].kind=entity",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.fiberTrackers[].rules[].type",
+    "value": "person_got_promoted",
+    "branch": "update.fiberTrackers[].rules[].entityType=person",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.fiberTrackers[].rules[].type",
+    "value": "person_got_demoted",
+    "branch": "update.fiberTrackers[].rules[].entityType=person",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.fiberTrackers[].rules[].type",
+    "value": "person_posted",
+    "branch": "update.fiberTrackers[].rules[].entityType=person",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.fiberTrackers[].rules[].type",
+    "value": "company_posted",
+    "branch": "update.fiberTrackers[].rules[].entityType=company",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.fiberTrackers[].rules[].type",
+    "value": "technology_added",
+    "branch": "update.fiberTrackers[].rules[].entityType=company",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.fiberTrackers[].rules[].type",
+    "value": "new_office_location",
+    "branch": "update.fiberTrackers[].rules[].entityType=company",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.fiberTrackers[].rules[].type",
+    "value": "recent_layoffs",
+    "branch": "update.fiberTrackers[].rules[].entityType=company",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.fiberTrackers[].rules[].type",
+    "value": "department_size_threshold",
+    "branch": "update.fiberTrackers[].rules[].entityType=company",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.fiberTrackers[].rules[].type",
+    "value": "recently_hired_with_title",
+    "branch": "update.fiberTrackers[].rules[].entityType=company",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.fiberTrackers[].rules[].type",
+    "value": "job_posting_in_function",
+    "branch": "update.fiberTrackers[].rules[].entityType=company",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.fiberTrackers[].rules[].type",
+    "value": "job_posting_with_keyword",
+    "branch": "update.fiberTrackers[].rules[].entityType=company",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "signals-write",
+    "selector": "update.fiberTrackers[].rules[].type",
+    "value": "headcount_growth_percent",
+    "branch": "update.fiberTrackers[].rules[].entityType=company",
+    "surface": "external",
+    "reference": "/reference/signals-write"
+  },
+  {
+    "tool": "billing-read",
+    "selector": "action",
+    "value": "workflow-approvals",
+    "branch": "",
+    "surface": "external",
+    "scope": "billing:read",
+    "reference": "/reference/billing-read"
+  },
+  {
+    "tool": "billing-read",
+    "selector": "action",
+    "value": "accounts",
+    "branch": "",
+    "surface": "external",
+    "scope": "billing:read",
+    "reference": "/reference/billing-read"
+  },
+  {
+    "tool": "billing-read",
+    "selector": "action",
+    "value": "catalog",
+    "branch": "",
+    "surface": "external",
+    "scope": "billing:read",
+    "reference": "/reference/billing-read"
+  },
+  {
+    "tool": "billing-read",
+    "selector": "action",
+    "value": "wallet",
+    "branch": "",
+    "surface": "external",
+    "scope": "billing:read",
+    "reference": "/reference/billing-read"
+  },
+  {
+    "tool": "billing-read",
+    "selector": "action",
+    "value": "usage",
+    "branch": "",
+    "surface": "external",
+    "scope": "billing:read",
+    "reference": "/reference/billing-read"
+  },
+  {
+    "tool": "billing-read",
+    "selector": "action",
+    "value": "activity",
+    "branch": "",
+    "surface": "external",
+    "scope": "billing:read",
+    "reference": "/reference/billing-read"
+  },
+  {
+    "tool": "billing-read",
+    "selector": "action",
+    "value": "limits",
+    "branch": "",
+    "surface": "external",
+    "scope": "billing:read",
+    "reference": "/reference/billing-read"
+  },
+  {
+    "tool": "billing-read",
+    "selector": "action",
+    "value": "alerts",
+    "branch": "",
+    "surface": "external",
+    "scope": "billing:read",
+    "reference": "/reference/billing-read"
+  },
+  {
+    "tool": "billing-read",
+    "selector": "action",
+    "value": "grants",
+    "branch": "",
+    "surface": "external",
+    "scope": "billing:read",
+    "reference": "/reference/billing-read"
+  },
+  {
+    "tool": "billing-read",
+    "selector": "action",
+    "value": "deliveries",
+    "branch": "",
+    "surface": "external",
+    "scope": "billing:read",
+    "reference": "/reference/billing-read"
+  },
+  {
+    "tool": "billing-read",
+    "selector": "action",
+    "value": "commercial",
+    "branch": "",
+    "surface": "external",
+    "scope": "billing:read",
+    "reference": "/reference/billing-read"
+  },
+  {
+    "tool": "billing-read",
+    "selector": "action",
+    "value": "postpaid",
+    "branch": "",
+    "surface": "external",
+    "scope": "billing:read",
+    "reference": "/reference/billing-read"
+  },
+  {
+    "tool": "billing-read",
+    "selector": "action",
+    "value": "members",
+    "branch": "",
+    "surface": "external",
+    "scope": "billing:read",
+    "reference": "/reference/billing-read"
+  },
+  {
+    "tool": "billing-read",
+    "selector": "action",
+    "value": "preference",
+    "branch": "",
+    "surface": "external",
+    "scope": "billing:read",
+    "reference": "/reference/billing-read"
+  },
+  {
+    "tool": "usage-observations-read",
+    "selector": "action",
+    "value": "producers",
+    "branch": "",
+    "surface": "external",
+    "scope": "billing:read",
+    "reference": "/reference/usage-observations-read"
+  },
+  {
+    "tool": "usage-observations-read",
+    "selector": "action",
+    "value": "list",
+    "branch": "",
+    "surface": "external",
+    "scope": "billing:read",
+    "reference": "/reference/usage-observations-read"
+  },
+  {
+    "tool": "billing-write",
+    "selector": "action",
+    "value": "ensure-account",
+    "branch": "",
+    "surface": "external",
+    "scope": "billing:write",
+    "reference": "/reference/billing-write"
+  },
+  {
+    "tool": "billing-write",
+    "selector": "action",
+    "value": "save-limit",
+    "branch": "",
+    "surface": "external",
+    "scope": "billing:write",
+    "reference": "/reference/billing-write"
+  },
+  {
+    "tool": "billing-write",
+    "selector": "action",
+    "value": "read-alert",
+    "branch": "",
+    "surface": "external",
+    "scope": "billing:write",
+    "reference": "/reference/billing-write"
+  },
+  {
+    "tool": "billing-write",
+    "selector": "action",
+    "value": "reconcile",
+    "branch": "",
+    "surface": "external",
+    "scope": "billing:write",
+    "reference": "/reference/billing-write"
+  },
+  {
+    "tool": "billing-write",
+    "selector": "action",
+    "value": "retry-delivery",
+    "branch": "",
+    "surface": "external",
+    "scope": "billing:write",
+    "reference": "/reference/billing-write"
+  },
+  {
+    "tool": "billing-write",
+    "selector": "action",
+    "value": "checkout",
+    "branch": "",
+    "surface": "external",
+    "scope": "billing:write",
+    "reference": "/reference/billing-write"
+  },
+  {
+    "tool": "billing-write",
+    "selector": "action",
+    "value": "portal",
+    "branch": "",
+    "surface": "external",
+    "scope": "billing:write",
+    "reference": "/reference/billing-write"
+  },
+  {
+    "tool": "billing-write",
+    "selector": "action",
+    "value": "finance-link",
+    "branch": "",
+    "surface": "external",
+    "scope": "billing:write",
+    "reference": "/reference/billing-write"
+  },
+  {
+    "tool": "billing-write",
+    "selector": "action",
+    "value": "write-grant",
+    "branch": "",
+    "surface": "external",
+    "scope": "billing:write",
+    "reference": "/reference/billing-write"
+  },
+  {
+    "tool": "billing-write",
+    "selector": "action",
+    "value": "revoke-grant",
+    "branch": "",
+    "surface": "external",
+    "scope": "billing:write",
+    "reference": "/reference/billing-write"
+  },
+  {
+    "tool": "billing-write",
+    "selector": "action",
+    "value": "request-import",
+    "branch": "",
+    "surface": "external",
+    "scope": "billing:write",
+    "reference": "/reference/billing-write"
+  },
+  {
+    "tool": "billing-write",
+    "selector": "action",
+    "value": "configure-postpaid",
+    "branch": "",
+    "surface": "external",
+    "scope": "billing:write",
+    "reference": "/reference/billing-write"
+  },
+  {
+    "tool": "billing-write",
+    "selector": "action",
+    "value": "reconcile-postpaid",
+    "branch": "",
+    "surface": "external",
+    "scope": "billing:write",
+    "reference": "/reference/billing-write"
+  },
+  {
+    "tool": "billing-admin",
+    "selector": "action",
+    "value": "inventory",
+    "branch": "",
+    "surface": "staff-only",
+    "scope": "billing:read",
+    "reference": "/reference/billing-admin"
+  },
+  {
+    "tool": "billing-admin",
+    "selector": "action",
+    "value": "preview-import",
+    "branch": "",
+    "surface": "staff-only",
+    "scope": "billing:read",
+    "reference": "/reference/billing-admin"
+  },
+  {
+    "tool": "billing-admin",
+    "selector": "action",
+    "value": "verify-import",
+    "branch": "",
+    "surface": "staff-only",
+    "scope": "billing:write",
+    "reference": "/reference/billing-admin"
+  },
+  {
+    "tool": "billing-admin",
+    "selector": "action",
+    "value": "reconcile-subscription",
+    "branch": "",
+    "surface": "staff-only",
+    "scope": "billing:write",
+    "reference": "/reference/billing-admin"
+  },
+  {
+    "tool": "billing-admin",
+    "selector": "action",
+    "value": "save-offer",
+    "branch": "",
+    "surface": "staff-only",
+    "scope": "billing:write",
+    "reference": "/reference/billing-admin"
+  },
+  {
+    "tool": "billing-admin",
+    "selector": "action",
+    "value": "save-catalog",
+    "branch": "",
+    "surface": "staff-only",
+    "scope": "billing:write",
+    "reference": "/reference/billing-admin"
+  },
+  {
+    "tool": "billing-admin",
+    "selector": "action",
+    "value": "save-allowance",
+    "branch": "",
+    "surface": "staff-only",
+    "scope": "billing:write",
+    "reference": "/reference/billing-admin"
+  },
+  {
+    "tool": "billing-admin",
+    "selector": "action",
+    "value": "payment-events",
+    "branch": "",
+    "surface": "staff-only",
+    "scope": "billing:read",
+    "reference": "/reference/billing-admin"
+  },
+  {
+    "tool": "billing-admin",
+    "selector": "action",
+    "value": "retry-payment",
+    "branch": "",
+    "surface": "staff-only",
+    "scope": "billing:write",
+    "reference": "/reference/billing-admin"
+  },
+  {
+    "tool": "billing-admin",
+    "selector": "action",
+    "value": "process-postpaid",
+    "branch": "",
+    "surface": "staff-only",
+    "scope": "billing:write",
+    "reference": "/reference/billing-admin"
+  },
+  {
+    "tool": "billing-admin",
+    "selector": "action",
+    "value": "postpaid",
+    "branch": "",
+    "surface": "staff-only",
+    "scope": "billing:read",
+    "reference": "/reference/billing-admin"
+  },
+  {
+    "tool": "billing-admin",
+    "selector": "action",
+    "value": "configure-postpaid",
+    "branch": "",
+    "surface": "staff-only",
+    "scope": "billing:write",
+    "reference": "/reference/billing-admin"
+  },
+  {
+    "tool": "billing-admin",
+    "selector": "action",
+    "value": "correct-usage",
+    "branch": "",
+    "surface": "staff-only",
+    "scope": "billing:write",
+    "reference": "/reference/billing-admin"
+  },
+  {
+    "tool": "billing-admin",
+    "selector": "action",
+    "value": "organization-monthly-limits",
+    "branch": "",
+    "surface": "staff-only",
+    "scope": "billing:write",
+    "reference": "/reference/billing-admin"
+  },
+  {
+    "tool": "billing-admin",
+    "selector": "action",
+    "value": "organization-accounts",
+    "branch": "",
+    "surface": "staff-only",
+    "scope": "billing:read",
+    "reference": "/reference/billing-admin"
+  },
+  {
+    "tool": "billing-admin",
+    "selector": "action",
+    "value": "provision-organization-accounts",
+    "branch": "",
+    "surface": "staff-only",
+    "scope": "billing:write",
+    "reference": "/reference/billing-admin"
+  },
+  {
+    "tool": "billing-admin",
+    "selector": "offer.type",
+    "value": "topup",
+    "branch": "",
+    "surface": "staff-only",
+    "reference": "/reference/billing-admin"
+  },
+  {
+    "tool": "billing-admin",
+    "selector": "offer.type",
+    "value": "subscription",
+    "branch": "",
+    "surface": "staff-only",
+    "reference": "/reference/billing-admin"
+  },
+  {
+    "tool": "linkedin-read",
+    "selector": "action",
+    "value": "list-seats",
+    "branch": "",
+    "surface": "external",
+    "scope": "linkedin:read",
+    "reference": "/reference/linkedin-read"
+  },
+  {
+    "tool": "linkedin-read",
+    "selector": "action",
+    "value": "view-profile",
+    "branch": "",
+    "surface": "external",
+    "scope": "linkedin:read",
+    "reference": "/reference/linkedin-read"
+  },
+  {
+    "tool": "linkedin-read",
+    "selector": "action",
+    "value": "list-connections",
+    "branch": "",
+    "surface": "external",
+    "scope": "linkedin:read",
+    "reference": "/reference/linkedin-read"
+  },
+  {
+    "tool": "linkedin-read",
+    "selector": "action",
+    "value": "list-connections-page",
+    "branch": "",
+    "surface": "external",
+    "scope": "linkedin:read",
+    "reference": "/reference/linkedin-read"
+  },
+  {
+    "tool": "linkedin-read",
+    "selector": "action",
+    "value": "list-own-posts",
+    "branch": "",
+    "surface": "external",
+    "scope": "linkedin:read",
+    "reference": "/reference/linkedin-read"
+  },
+  {
+    "tool": "linkedin-read",
+    "selector": "action",
+    "value": "list-post-reactions",
+    "branch": "",
+    "surface": "external",
+    "scope": "linkedin:read",
+    "reference": "/reference/linkedin-read"
+  },
+  {
+    "tool": "linkedin-read",
+    "selector": "action",
+    "value": "profile-viewers",
+    "branch": "",
+    "surface": "external",
+    "scope": "linkedin:read",
+    "reference": "/reference/linkedin-read"
+  },
+  {
+    "tool": "linkedin-read",
+    "selector": "action",
+    "value": "post-engagement",
+    "branch": "",
+    "surface": "external",
+    "scope": "linkedin:read",
+    "reference": "/reference/linkedin-read"
+  },
+  {
+    "tool": "linkedin-read",
+    "selector": "action",
+    "value": "new-connections",
+    "branch": "",
+    "surface": "external",
+    "scope": "linkedin:read",
+    "reference": "/reference/linkedin-read"
+  },
+  {
+    "tool": "linkedin-read",
+    "selector": "action",
+    "value": "list-chats",
+    "branch": "",
+    "surface": "external",
+    "scope": "linkedin:read",
+    "reference": "/reference/linkedin-read"
+  },
+  {
+    "tool": "linkedin-read",
+    "selector": "action",
+    "value": "read-chat",
+    "branch": "",
+    "surface": "external",
+    "scope": "linkedin:read",
+    "reference": "/reference/linkedin-read"
+  },
+  {
+    "tool": "linkedin-read",
+    "selector": "action",
+    "value": "find-chat",
+    "branch": "",
+    "surface": "external",
+    "scope": "linkedin:read",
+    "reference": "/reference/linkedin-read"
+  },
+  {
+    "tool": "linkedin-read",
+    "selector": "action",
+    "value": "search",
+    "branch": "",
+    "surface": "external",
+    "scope": "linkedin:read",
+    "reference": "/reference/linkedin-read"
+  },
+  {
+    "tool": "linkedin-read",
+    "selector": "action",
+    "value": "search-parameters",
+    "branch": "",
+    "surface": "external",
+    "scope": "linkedin:read",
+    "reference": "/reference/linkedin-read"
+  },
+  {
+    "tool": "linkedin-read",
+    "selector": "action",
+    "value": "connections-page",
+    "branch": "",
+    "surface": "external",
+    "scope": "linkedin:read",
+    "reference": "/reference/linkedin-read"
+  },
+  {
+    "tool": "linkedin-read",
+    "selector": "action",
+    "value": "post-page",
+    "branch": "",
+    "surface": "external",
+    "scope": "linkedin:read",
+    "reference": "/reference/linkedin-read"
+  },
+  {
+    "tool": "linkedin-read",
+    "selector": "action",
+    "value": "profiles",
+    "branch": "",
+    "surface": "external",
+    "scope": "linkedin:read",
+    "reference": "/reference/linkedin-read"
+  },
+  {
+    "tool": "linkedin-read",
+    "selector": "action",
+    "value": "companies",
+    "branch": "",
+    "surface": "external",
+    "scope": "linkedin:read",
+    "reference": "/reference/linkedin-read"
+  },
+  {
+    "tool": "linkedin-read",
+    "selector": "action",
+    "value": "screen-prospects",
+    "branch": "",
+    "surface": "external",
+    "scope": "linkedin:read",
+    "reference": "/reference/linkedin-read"
+  },
+  {
+    "tool": "linkedin-read",
+    "selector": "action",
+    "value": "outreach-status",
+    "branch": "",
+    "surface": "external",
+    "scope": "linkedin:read",
+    "reference": "/reference/linkedin-read"
+  },
+  {
+    "tool": "linkedin-write",
+    "selector": "action",
+    "value": "send-message",
+    "branch": "",
+    "surface": "external",
+    "scope": "linkedin:write",
+    "reference": "/reference/linkedin-write"
+  },
+  {
+    "tool": "linkedin-write",
+    "selector": "action",
+    "value": "send-invitation",
+    "branch": "",
+    "surface": "external",
+    "scope": "linkedin:write",
+    "reference": "/reference/linkedin-write"
+  },
+  {
+    "tool": "linkedin-write",
+    "selector": "action",
+    "value": "send-inmail",
+    "branch": "",
+    "surface": "external",
+    "scope": "linkedin:write",
+    "reference": "/reference/linkedin-write"
+  },
+  {
+    "tool": "linkedin-write",
+    "selector": "action",
+    "value": "sync-chat",
+    "branch": "",
+    "surface": "external",
+    "scope": "linkedin:read",
+    "reference": "/reference/linkedin-write"
+  },
+  {
+    "tool": "board",
+    "selector": "action",
+    "value": "list_boards",
+    "branch": "",
+    "surface": "in-app-only",
+    "scope": "in-app",
+    "reference": "/reference/board"
+  },
+  {
+    "tool": "board",
+    "selector": "action",
+    "value": "list_templates",
+    "branch": "",
+    "surface": "in-app-only",
+    "scope": "in-app",
+    "reference": "/reference/board"
+  },
+  {
+    "tool": "board",
+    "selector": "action",
+    "value": "read",
+    "branch": "",
+    "surface": "in-app-only",
+    "scope": "in-app",
+    "reference": "/reference/board"
+  },
+  {
+    "tool": "board",
+    "selector": "action",
+    "value": "create_board",
+    "branch": "",
+    "surface": "in-app-only",
+    "scope": "in-app",
+    "reference": "/reference/board"
+  },
+  {
+    "tool": "board",
+    "selector": "action",
+    "value": "get_schema",
+    "branch": "",
+    "surface": "in-app-only",
+    "scope": "in-app",
+    "reference": "/reference/board"
+  },
+  {
+    "tool": "board",
+    "selector": "action",
+    "value": "set_schema",
+    "branch": "",
+    "surface": "in-app-only",
+    "scope": "in-app",
+    "reference": "/reference/board"
+  },
+  {
+    "tool": "board",
+    "selector": "action",
+    "value": "add_fields",
+    "branch": "",
+    "surface": "in-app-only",
+    "scope": "in-app",
+    "reference": "/reference/board"
+  },
+  {
+    "tool": "board",
+    "selector": "action",
+    "value": "set_view",
+    "branch": "",
+    "surface": "in-app-only",
+    "scope": "in-app",
+    "reference": "/reference/board"
+  },
+  {
+    "tool": "board",
+    "selector": "action",
+    "value": "set_board_meta",
+    "branch": "",
+    "surface": "in-app-only",
+    "scope": "in-app",
+    "reference": "/reference/board"
+  },
+  {
+    "tool": "board",
+    "selector": "action",
+    "value": "add_card",
+    "branch": "",
+    "surface": "in-app-only",
+    "scope": "in-app",
+    "reference": "/reference/board"
+  },
+  {
+    "tool": "board",
+    "selector": "action",
+    "value": "set",
+    "branch": "",
+    "surface": "in-app-only",
+    "scope": "in-app",
+    "reference": "/reference/board"
+  },
+  {
+    "tool": "board",
+    "selector": "action",
+    "value": "move",
+    "branch": "",
+    "surface": "in-app-only",
+    "scope": "in-app",
+    "reference": "/reference/board"
+  },
+  {
+    "tool": "board",
+    "selector": "action",
+    "value": "comment",
+    "branch": "",
+    "surface": "in-app-only",
+    "scope": "in-app",
+    "reference": "/reference/board"
+  },
+  {
+    "tool": "board",
+    "selector": "action",
+    "value": "cards",
+    "branch": "",
+    "surface": "in-app-only",
+    "scope": "in-app",
+    "reference": "/reference/board"
+  },
+  {
+    "tool": "board",
+    "selector": "action",
+    "value": "archive",
+    "branch": "",
+    "surface": "in-app-only",
+    "scope": "in-app",
+    "reference": "/reference/board"
+  },
+  {
+    "tool": "board",
+    "selector": "action",
+    "value": "list_triggers",
+    "branch": "",
+    "surface": "in-app-only",
+    "scope": "in-app",
+    "reference": "/reference/board"
+  },
+  {
+    "tool": "workflow",
+    "selector": "action",
+    "value": "list_operations",
+    "branch": "",
+    "surface": "in-app-only",
+    "scope": "in-app",
+    "reference": "/reference/workflow"
+  },
+  {
+    "tool": "workflow",
+    "selector": "action",
+    "value": "inspect_capacity",
+    "branch": "",
+    "surface": "in-app-only",
+    "scope": "in-app",
+    "reference": "/reference/workflow"
+  },
+  {
+    "tool": "chat-context",
+    "selector": "action",
+    "value": "manage",
+    "branch": "",
+    "surface": "in-app-only",
+    "scope": "in-app",
+    "reference": "/reference/chat-context"
+  },
+  {
+    "tool": "chat-context",
+    "selector": "action",
+    "value": "resolve",
+    "branch": "",
+    "surface": "in-app-only",
+    "scope": "in-app",
+    "reference": "/reference/chat-context"
+  },
+  {
+    "tool": "delegate",
+    "selector": "action",
+    "value": "subagent",
+    "branch": "",
+    "surface": "in-app-only",
+    "scope": "in-app",
+    "reference": "/reference/delegate"
+  },
+  {
+    "tool": "delegate",
+    "selector": "action",
+    "value": "code",
+    "branch": "",
+    "surface": "in-app-only",
+    "scope": "in-app",
+    "reference": "/reference/delegate"
+  },
+  {
+    "tool": "delegate",
+    "selector": "subagent.type",
+    "value": "orchestrator",
+    "branch": "",
+    "surface": "in-app-only",
+    "reference": "/reference/delegate"
+  },
+  {
+    "tool": "delegate",
+    "selector": "subagent.type",
+    "value": "analyzer",
+    "branch": "",
+    "surface": "in-app-only",
+    "reference": "/reference/delegate"
+  },
+  {
+    "tool": "external-mcp",
+    "selector": "action",
+    "value": "call",
+    "branch": "",
+    "surface": "in-app-only",
+    "scope": "in-app",
+    "reference": "/reference/external-mcp"
+  }
+]

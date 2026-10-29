@@ -1,0 +1,258 @@
+---
+title: "chat-context"
+description: "Parameters, scopes, and response schema for chat-context."
+---
+
+Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+
+<Warning>This tool is registered only inside Cedar. External MCP clients cannot call it. Its contract is included to document the complete module boundary.</Warning>
+
+## Capability
+
+Manage this chat thread's context set — the items (conversations, email/slack threads, files, deals) the thread is working with, and its primary conversation.  ACTIONS: - manage: attach/detach items and repoint the primary in one call. Pass manage: &#123; add?: &#91;&#123;kind,id,label?&#125;&#93;, remove?: &#91;&#123;kind,id&#125;&#93;, setPrimary?: &#123;id,name?&#125;, reasoning &#125;. Adding is an upsert by (kind,id). Call this when the user redirects to a different conversation, when you attach a newly-created file, or when you resolve an entity by a KNOWN id. - resolve: turn a name the user said ("the Numeral deal", "pull up Acme") into the thread's PRIMARY conversation in one step — searches by name, picks the best match, attaches it. Pass resolve: &#123; query, reasoning &#125;. Only kind="conversation" is supported; for a known id of another kind, use action: "manage".  Each action takes its params in a same-named object — omit every params object except the one matching your chosen action.
+
+## Operations and scopes
+
+| Action | Baseline scope |
+| --- | --- |
+| `manage` | `in-app` — unavailable externally |
+| `resolve` | `in-app` — unavailable externally |
+
+Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Parameters
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `action` | "manage" · "resolve" | Yes | Which operation to perform — pass its matching params object below (action: "manage" pairs with manage: &#123;...&#125;; action: "resolve" pairs with resolve: &#123;...&#125;).  |
+| `manage` | object | No |   |
+| `resolve` | object | No |   |
+
+### manage
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `add` | object&#91;&#93; | No | Items to attach (upsert by kind+id)  |
+| `remove` | object&#91;&#93; | No | Items to detach  |
+| `setPrimary` | object | No | Make a conversation the thread primary — provide its conversationId (+ optional name)  |
+| `reasoning` | string | Yes | Why you are changing the context — what the thread is now about.  |
+
+### manage.add item
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `kind` | "conversation" · "email_thread" · "slack_thread" · "linkedin_chat" · "whatsapp_chat" · "file" · "task" | Yes |   |
+| `id` | string | Yes | Ref id: conversationId &#124; crmEmailThreadId &#124; slackThreadTs &#124; documentId  |
+| `label` | string | No | Display name for the badge/side-panel  |
+
+### manage.remove item
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `kind` | "conversation" · "email_thread" · "slack_thread" · "linkedin_chat" · "whatsapp_chat" · "file" · "task" | Yes |   |
+| `id` | string | Yes |   |
+
+### manage.setPrimary
+
+Make a conversation the thread primary — provide its conversationId (+ optional name)
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `id` | string | Yes |   |
+| `name` | string | No |   |
+
+### resolve
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `query` | string | Yes | The name/phrase to resolve, e.g. "Numeral" or "the Acme deal".  |
+| `kind` | "conversation" · "email_thread" · "slack_thread" · "linkedin_chat" · "whatsapp_chat" · "file" · "task" | No | Entity kind to resolve. Only "conversation" is supported today. default: "conversation" |
+| `reasoning` | string | Yes | Why you are attaching this — what the thread is now about.  |
+
+## Full input schema
+
+[Download the input schema](/reference/schemas/chat-context.input.json). Nested objects, variants, and constraints are preserved in full. Runtime refinements and ownership checks still apply.
+
+<Accordion title="Input JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "manage",
+        "resolve"
+      ],
+      "description": "Which operation to perform — pass its matching params object below (action: \"manage\" pairs with manage: {...}; action: \"resolve\" pairs with resolve: {...})."
+    },
+    "manage": {
+      "type": "object",
+      "properties": {
+        "add": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "conversation",
+                  "email_thread",
+                  "slack_thread",
+                  "linkedin_chat",
+                  "whatsapp_chat",
+                  "file",
+                  "task"
+                ]
+              },
+              "id": {
+                "type": "string",
+                "description": "Ref id: conversationId | crmEmailThreadId | slackThreadTs | documentId"
+              },
+              "label": {
+                "type": "string",
+                "description": "Display name for the badge/side-panel"
+              }
+            },
+            "required": [
+              "kind",
+              "id"
+            ],
+            "additionalProperties": false
+          },
+          "description": "Items to attach (upsert by kind+id)"
+        },
+        "remove": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "$ref": "#/properties/manage/properties/add/items/properties/kind"
+              },
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind",
+              "id"
+            ],
+            "additionalProperties": false
+          },
+          "description": "Items to detach"
+        },
+        "setPrimary": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id"
+          ],
+          "additionalProperties": false,
+          "description": "Make a conversation the thread primary — provide its conversationId (+ optional name)"
+        },
+        "reasoning": {
+          "type": "string",
+          "description": "Why you are changing the context — what the thread is now about."
+        }
+      },
+      "required": [
+        "reasoning"
+      ],
+      "additionalProperties": false
+    },
+    "resolve": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "The name/phrase to resolve, e.g. \"Numeral\" or \"the Acme deal\"."
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "conversation",
+            "email_thread",
+            "slack_thread",
+            "linkedin_chat",
+            "whatsapp_chat",
+            "file",
+            "task"
+          ],
+          "default": "conversation",
+          "description": "Entity kind to resolve. Only \"conversation\" is supported today."
+        },
+        "reasoning": {
+          "type": "string",
+          "description": "Why you are attaching this — what the thread is now about."
+        }
+      },
+      "required": [
+        "query",
+        "reasoning"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "action"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+## Response
+
+Inspect `isError` on the MCP result and `success` / `errorMessage` in the action result. Optional response branches are populated only for the relevant action. Some results include additional provider or operation-specific data.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `success` | boolean | Yes |   |
+| `errorMessage` | string | No |   |
+| `manage` | object | No |   |
+| `resolve` | object | No |   |
+
+<Accordion title="Output JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "manage": {
+      "type": "object",
+      "additionalProperties": {}
+    },
+    "resolve": {
+      "type": "object",
+      "additionalProperties": {}
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+[Download the output schema](/reference/schemas/chat-context.output.json).

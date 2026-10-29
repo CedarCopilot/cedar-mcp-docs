@@ -1,0 +1,28 @@
+---
+title: "field-query"
+description: "Workflow capabilities and resources for the field-query skill."
+---
+
+Discover, select, and query CRM field data (crm_conversation_field_values) for one or many conversations, then present results as a table when they warrant one. Covers competitor mentions, current provider/vendor, contract or renewal details, close/renewal dates or other deal timing, objections, pain points, and any other extracted or custom field — for a single deal ('did Acme mention X') or the whole pipeline ('which deals mentioned X', 'deals closing this week'). Load this BEFORE run-sql, conversation's find action, or conversation-read ever touch crm_conversation_field_values, even when the question also sounds like a plain listing/filter question or the right field seems obvious — filtering on a value still requires knowing which field_id holds it for this org, and a short question is not evidence the concept lives in only one field.
+
+## Load the module
+
+Call `load-skill` with:
+
+```json
+{
+  "name": "field-query"
+}
+```
+
+Read the returned instructions in full. Account-specific playbook context is assembled at load time; this static reference does not publish it.
+
+## Resources
+
+This skill has no separately registered named resources. Its primary instructions contain the workflow.
+
+## Tools and surface compatibility
+
+Use the canonical family tools in your connection’s `tools/list`. Skill source may still mention older granular names. The source dependencies below describe implementation composition; they are **not additional external MCP registrations**. The [complete capability index](/reference/coverage) records callable family/action contracts.
+
+This is an instruction/reasoning module with no standalone tool dependencies. Use the relevant CRM, document, or reporting tools for evidence and output.

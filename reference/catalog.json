@@ -1,5 +1,5 @@
 {
-  "note": "External family schemas before per-session grants and role checks. in-app/internal actions in mixed families remain unavailable. No customer data.",
+  "note": "All registered external families and helpers, plus explicitly labeled in-app-only families. Session grants, role checks and feature gates still apply. No customer data or dynamic skill content.",
   "tools": [
     {
       "name": "document-read",
@@ -437,6 +437,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "Read Cedar docs",
         "annotations": {
@@ -855,6 +857,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "Create, edit, delete, restore, move, or share a Cedar doc",
         "annotations": {
@@ -2401,6 +2405,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "Manage Cedar tables",
         "annotations": {
@@ -4375,6 +4381,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "Read Cedar configuration",
         "annotations": {
@@ -5728,6 +5736,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "Update Cedar configuration",
         "annotations": {
@@ -6456,6 +6466,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "Update a connected integration",
         "annotations": {
@@ -6686,6 +6698,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "Create or update an AOP/playbook",
         "annotations": {
@@ -7231,6 +7245,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "Update data provider defaults",
         "annotations": {
@@ -7478,6 +7494,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "Push config to org reps",
         "annotations": {
@@ -8018,6 +8036,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "Update workspace settings",
         "annotations": {
@@ -8174,6 +8194,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "Manage MCP server connections",
         "annotations": {
@@ -9570,6 +9592,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "Diagnose & debug a Cedar account",
         "annotations": {
@@ -9638,6 +9662,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "Run a SQL query (SELECT only)",
         "annotations": {
@@ -9648,6 +9674,802 @@
       },
       "defaultScope": "crm:read",
       "actionScopes": {}
+    },
+    {
+      "name": "analytics",
+      "title": "Cedar staff analytics reports",
+      "description": "INTERNAL/STAFF-TIER ONLY — rejects any caller that is not Cedar staff (see this tool's top-of-file comment for why the check lives here and not only on the wrapped tRPC procedures). Org-wide draft-analytics and growth reporting. ACTIONS: (1) attribution-rate — of a user's (or all users') actual outbound emails, what fraction originated from a Cedar draft. Optionally scoped to one userId and/or one aopName. (2) attribution-by-category — draft volume/send-rate/avg-similarity broken down by email category, for one AOP (defaults to \"Deals\"). (3) similarity-distribution — histogram of word-count-similarity scores across sent drafts, for one AOP (defaults to \"Deals\"). (4) user-tiers — segments all active users into cold/low/high attribution tiers for one AOP (defaults to \"Deals\"). (5) overview — per-user draft totals/send-rate for ALL users at once; startDate/endDate/aopName are all optional (defaults: startDate 5 days ago, endDate unbounded). (6) monthly-growth — North Star email-attribution rate (with numerator/denominator broken out) plus PostHog engagement (DAU/WAU/MAU/stickiness) and per-user attribution spread, hardcoded to the \"Deals\" AOP. Its attribution count has a documented dedup imprecision (thread + 5-minute bucket, not message_id) — see this action's schema description. Each action takes its params in a same-named object (e.g. action: \"attribution-rate\" pairs with an attributionRate: {...} object) — omit every params object except the one matching your chosen action.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "attribution-rate",
+              "attribution-by-category",
+              "similarity-distribution",
+              "user-tiers",
+              "overview",
+              "monthly-growth"
+            ],
+            "description": "Which operation to perform — pass its matching params object below (e.g. action: \"attribution-rate\" pairs with attributionRate: {...})."
+          },
+          "attributionRate": {
+            "type": "object",
+            "properties": {
+              "startDate": {
+                "type": "string",
+                "description": "ISO date/datetime — start of the range (inclusive)."
+              },
+              "endDate": {
+                "type": "string",
+                "description": "ISO date/datetime — end of the range (inclusive)."
+              },
+              "userId": {
+                "type": "string",
+                "description": "Restrict to one user. Omit for the org-wide breakdown (all users)."
+              },
+              "aopName": {
+                "type": "string",
+                "description": "Restrict to one AOP by name (e.g. \"Deals\"). Omit for all AOPs."
+              }
+            },
+            "required": [
+              "startDate",
+              "endDate"
+            ],
+            "additionalProperties": false
+          },
+          "attributionByCategory": {
+            "type": "object",
+            "properties": {
+              "startDate": {
+                "type": "string",
+                "description": "ISO date/datetime — start of the range (inclusive)."
+              },
+              "endDate": {
+                "type": "string",
+                "description": "ISO date/datetime — end of the range (inclusive)."
+              },
+              "aopName": {
+                "type": "string",
+                "description": "AOP to scope to. Defaults to \"Deals\" if omitted."
+              }
+            },
+            "required": [
+              "startDate",
+              "endDate"
+            ],
+            "additionalProperties": false
+          },
+          "similarityDistribution": {
+            "type": "object",
+            "properties": {
+              "startDate": {
+                "type": "string",
+                "description": "ISO date/datetime — start of the range (inclusive)."
+              },
+              "endDate": {
+                "type": "string",
+                "description": "ISO date/datetime — end of the range (inclusive)."
+              },
+              "aopName": {
+                "type": "string",
+                "description": "AOP to scope to. Defaults to \"Deals\" if omitted."
+              }
+            },
+            "required": [
+              "startDate",
+              "endDate"
+            ],
+            "additionalProperties": false
+          },
+          "userTiers": {
+            "type": "object",
+            "properties": {
+              "startDate": {
+                "type": "string",
+                "description": "ISO date/datetime — start of the range (inclusive)."
+              },
+              "endDate": {
+                "type": "string",
+                "description": "ISO date/datetime — end of the range (inclusive)."
+              },
+              "aopName": {
+                "type": "string",
+                "description": "AOP to scope to. Defaults to \"Deals\" if omitted."
+              }
+            },
+            "required": [
+              "startDate",
+              "endDate"
+            ],
+            "additionalProperties": false
+          },
+          "overview": {
+            "type": "object",
+            "properties": {
+              "startDate": {
+                "type": "string",
+                "description": "ISO date/datetime — start of the range. Defaults to 5 days ago if omitted."
+              },
+              "endDate": {
+                "type": "string",
+                "description": "ISO date/datetime — end of the range. Defaults to unbounded (no upper limit) if omitted."
+              },
+              "aopName": {
+                "type": "string",
+                "description": "Restrict to one AOP by name. Omit for all AOPs."
+              }
+            },
+            "additionalProperties": false
+          },
+          "monthlyGrowth": {
+            "type": "object",
+            "properties": {
+              "startDate": {
+                "type": "string",
+                "description": "ISO date/datetime — start of the range (inclusive)."
+              },
+              "endDate": {
+                "type": "string",
+                "description": "ISO date/datetime — end of the range (inclusive). Data-quality note: the North Star attribution count dedups sent drafts by thread + a 5-minute time bucket, not by message_id — a documented, accepted imprecision (see services/analytics/monthly-growth-report.ts), not a bug to fix here."
+              }
+            },
+            "required": [
+              "startDate",
+              "endDate"
+            ],
+            "additionalProperties": false
+          },
+          "user_request_summary": {
+            "type": "string",
+            "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+          },
+          "is_new_request": {
+            "type": "boolean",
+            "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+          }
+        },
+        "required": [
+          "action",
+          "user_request_summary",
+          "is_new_request"
+        ],
+        "additionalProperties": true,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "attributionRate": {
+            "type": "object",
+            "properties": {
+              "users": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "userId": {
+                      "type": "string"
+                    },
+                    "userName": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "userEmail": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "totalSent": {
+                      "type": "number"
+                    },
+                    "sentFromCedarDraft": {
+                      "type": "number"
+                    },
+                    "attributionRate": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "userId",
+                    "userName",
+                    "userEmail",
+                    "totalSent",
+                    "sentFromCedarDraft",
+                    "attributionRate"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "overall": {
+                "type": "object",
+                "properties": {
+                  "totalSent": {
+                    "type": "number"
+                  },
+                  "sentFromCedarDraft": {
+                    "type": "number"
+                  },
+                  "attributionRate": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "totalSent",
+                  "sentFromCedarDraft",
+                  "attributionRate"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "users",
+              "overall"
+            ],
+            "additionalProperties": false
+          },
+          "attributionByCategory": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "category": {
+                  "type": "string"
+                },
+                "total": {
+                  "type": "number"
+                },
+                "sent": {
+                  "type": "number"
+                },
+                "sendRate": {
+                  "type": "number"
+                },
+                "avgSimilarity": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "category",
+                "total",
+                "sent",
+                "sendRate",
+                "avgSimilarity"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "similarityDistribution": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "bucket": {
+                  "type": "string"
+                },
+                "count": {
+                  "type": "number"
+                },
+                "pct": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "bucket",
+                "count",
+                "pct"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "userTiers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "userId": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "email": {
+                  "type": "string"
+                },
+                "tier": {
+                  "type": "string",
+                  "enum": [
+                    "cold",
+                    "low",
+                    "high"
+                  ]
+                },
+                "totalDrafts": {
+                  "type": "number"
+                },
+                "sentDrafts": {
+                  "type": "number"
+                },
+                "sendRate": {
+                  "type": "number"
+                },
+                "totalSent": {
+                  "type": "number"
+                },
+                "sentFromCedar": {
+                  "type": "number"
+                },
+                "attributionRatePct": {
+                  "type": "number"
+                },
+                "avgSimilarity": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "userId",
+                "name",
+                "email",
+                "tier",
+                "totalDrafts",
+                "sentDrafts",
+                "sendRate",
+                "totalSent",
+                "sentFromCedar",
+                "attributionRatePct",
+                "avgSimilarity"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "overview": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "userId": {
+                  "type": "string"
+                },
+                "userName": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "userEmail": {
+                  "type": "string"
+                },
+                "userStatus": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "totalDrafts": {
+                  "type": "number"
+                },
+                "sentDrafts": {
+                  "type": "number"
+                },
+                "notSentDrafts": {
+                  "type": "number"
+                },
+                "sendRate": {
+                  "type": "number"
+                },
+                "avgSimilarity": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "avgWordCountMatch": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "userId",
+                "userName",
+                "userEmail",
+                "userStatus",
+                "totalDrafts",
+                "sentDrafts",
+                "notSentDrafts",
+                "sendRate",
+                "avgSimilarity",
+                "avgWordCountMatch"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "monthlyGrowth": {
+            "type": "object",
+            "properties": {
+              "dateRange": {
+                "type": "object",
+                "properties": {
+                  "startDate": {
+                    "type": "string"
+                  },
+                  "endDate": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "startDate",
+                  "endDate"
+                ],
+                "additionalProperties": false
+              },
+              "engagementDateRange": {
+                "type": "object",
+                "properties": {
+                  "startDate": {
+                    "type": "string"
+                  },
+                  "endDate": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "startDate",
+                  "endDate"
+                ],
+                "additionalProperties": false
+              },
+              "eligibleUserCount": {
+                "type": "number"
+              },
+              "posthogConfigured": {
+                "type": "boolean"
+              },
+              "northStar": {
+                "type": "object",
+                "properties": {
+                  "attributionRatePct": {
+                    "type": "number"
+                  },
+                  "attributedEmails": {
+                    "type": "number"
+                  },
+                  "totalSentEmails": {
+                    "type": "number"
+                  },
+                  "avgWordMatchPct": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "byCategory": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "category": {
+                          "type": "string"
+                        },
+                        "attributedCount": {
+                          "type": "number"
+                        },
+                        "avgWordMatchPct": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "category",
+                        "attributedCount",
+                        "avgWordMatchPct"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "attributionRatePct",
+                  "attributedEmails",
+                  "totalSentEmails",
+                  "avgWordMatchPct",
+                  "byCategory"
+                ],
+                "additionalProperties": false
+              },
+              "engagement": {
+                "type": "object",
+                "properties": {
+                  "mau": {
+                    "type": "number"
+                  },
+                  "avgDau": {
+                    "type": "number"
+                  },
+                  "avgWau": {
+                    "type": "number"
+                  },
+                  "stickinessPct": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "mau",
+                  "avgDau",
+                  "avgWau",
+                  "stickinessPct"
+                ],
+                "additionalProperties": false
+              },
+              "userSpread": {
+                "type": "object",
+                "properties": {
+                  "users": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "userId": {
+                          "type": "string"
+                        },
+                        "userName": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "userEmail": {
+                          "type": "string"
+                        },
+                        "attributedCount": {
+                          "type": "number"
+                        },
+                        "warmOutboundCount": {
+                          "type": "number"
+                        },
+                        "attributionRatePct": {
+                          "type": "number"
+                        },
+                        "avgWordMatchPct": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "bucket": {
+                          "type": "string",
+                          "enum": [
+                            "power",
+                            "mid",
+                            "cold"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "userId",
+                        "userName",
+                        "userEmail",
+                        "attributedCount",
+                        "warmOutboundCount",
+                        "attributionRatePct",
+                        "avgWordMatchPct",
+                        "bucket"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "medianRatePct": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "highest": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "userId": {
+                            "type": "string"
+                          },
+                          "userName": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "userEmail": {
+                            "type": "string"
+                          },
+                          "attributedCount": {
+                            "type": "number"
+                          },
+                          "warmOutboundCount": {
+                            "type": "number"
+                          },
+                          "attributionRatePct": {
+                            "type": "number"
+                          },
+                          "avgWordMatchPct": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "bucket": {
+                            "type": "string",
+                            "enum": [
+                              "power",
+                              "mid",
+                              "cold"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "userId",
+                          "userName",
+                          "userEmail",
+                          "attributedCount",
+                          "warmOutboundCount",
+                          "attributionRatePct",
+                          "avgWordMatchPct",
+                          "bucket"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "lowest": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "userId": {
+                            "type": "string"
+                          },
+                          "userName": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "userEmail": {
+                            "type": "string"
+                          },
+                          "attributedCount": {
+                            "type": "number"
+                          },
+                          "warmOutboundCount": {
+                            "type": "number"
+                          },
+                          "attributionRatePct": {
+                            "type": "number"
+                          },
+                          "avgWordMatchPct": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "bucket": {
+                            "type": "string",
+                            "enum": [
+                              "power",
+                              "mid",
+                              "cold"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "userId",
+                          "userName",
+                          "userEmail",
+                          "attributedCount",
+                          "warmOutboundCount",
+                          "attributionRatePct",
+                          "avgWordMatchPct",
+                          "bucket"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "bucketCounts": {
+                    "type": "object",
+                    "properties": {
+                      "power": {
+                        "type": "number"
+                      },
+                      "mid": {
+                        "type": "number"
+                      },
+                      "cold": {
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "power",
+                      "mid",
+                      "cold"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "users",
+                  "medianRatePct",
+                  "highest",
+                  "lowest",
+                  "bucketCounts"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "dateRange",
+              "engagementDateRange",
+              "eligibleUserCount",
+              "posthogConfigured",
+              "northStar",
+              "engagement",
+              "userSpread"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "title": "Cedar staff analytics reports",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "surface": "staff-only",
+      "kind": "family",
+      "metadata": {
+        "title": "Cedar staff analytics reports",
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "openWorldHint": true
+        }
+      },
+      "actionScopes": {
+        "attribution-rate": "internal",
+        "attribution-by-category": "internal",
+        "similarity-distribution": "internal",
+        "user-tiers": "internal",
+        "overview": "internal",
+        "monthly-growth": "internal"
+      }
     },
     {
       "name": "conversation-read",
@@ -11240,6 +12062,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "Read CRM conversations",
         "annotations": {
@@ -12845,6 +13669,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "Update CRM conversations",
         "annotations": {
@@ -13181,6 +14007,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "Read live Slack",
         "annotations": {
@@ -13294,6 +14122,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "Sync a Slack thread to a deal",
         "annotations": {
@@ -13922,6 +14752,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "CRM conversation analytics",
         "annotations": {
@@ -14008,6 +14840,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "feature-gated",
+      "kind": "family",
       "metadata": {
         "title": "Read taxonomy field definitions",
         "annotations": {
@@ -15031,6 +15865,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "Manage tasks",
         "annotations": {
@@ -15890,6 +16726,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "Read email",
         "annotations": {
@@ -16349,6 +17187,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "Read email tracking",
         "annotations": {
@@ -16756,6 +17596,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "Read & sync meetings",
         "annotations": {
@@ -17198,6 +18040,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "View & modify calendar events",
         "annotations": {
@@ -17561,6 +18405,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "Send a notification",
         "annotations": {
@@ -18070,6 +18916,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "Draft or show an email, Slack, or LinkedIn message",
         "annotations": {
@@ -18283,6 +19131,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "Schedule a message — ask permission",
         "annotations": {
@@ -18494,6 +19344,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "Send a saved email — ask permission",
         "annotations": {
@@ -19138,6 +19990,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "Configure Cedar UI canvases",
         "annotations": {
@@ -19778,6 +20632,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "Enrich a person or company",
         "annotations": {
@@ -21977,6 +22833,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "Read deal signals and watchers",
         "annotations": {
@@ -25326,6 +26184,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "Activate or configure deal signals",
         "annotations": {
@@ -25475,6 +26335,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "Read credits and usage",
         "annotations": {
@@ -25603,6 +26465,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "Inspect your shadow usage observations",
         "annotations": {
@@ -25675,6 +26539,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "Retry an existing shadow observation",
         "annotations": {
@@ -26100,6 +26966,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "Manage billing and spending limits",
         "annotations": {
@@ -26649,6 +27517,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "staff-only",
+      "kind": "family",
       "metadata": {
         "title": "Administer approved billing contracts",
         "annotations": {
@@ -27865,6 +28735,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "Read LinkedIn connections, posts, reactions and chats",
         "annotations": {
@@ -28117,6 +28989,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "Send LinkedIn messages — ask permission",
         "annotations": {
@@ -28218,6 +29092,8 @@
       "execution": {
         "taskSupport": "forbidden"
       },
+      "surface": "external",
+      "kind": "family",
       "metadata": {
         "title": "Send feedback to Cedar",
         "annotations": {
@@ -28228,6 +29104,1753 @@
       },
       "defaultScope": "crm:read",
       "actionScopes": {}
+    },
+    {
+      "name": "board",
+      "title": "Manage Cedar boards",
+      "description": "A kanban whose CARDS are documents — a path, a share link, a `[[doc: id]]` address. The board is a FILE and knows nothing about what it is for. A card is a title, a description and a flat bag of `fields`; the board's `fields[]` declares which keys exist and their types.\n\nCOLUMNS ARE A VIEW, never a card property. `view.groupByField` names the field whose VALUES are the columns: point it at `status` and columns are statuses, at `owner` and the SAME cards regroup — no card changed. `move` writes that field. Empty draws under `__ungrouped__` unless the field sets a `default`.\n\nACTIONS\n list_boards · read · get_schema · list_templates — what exists · a board + cards · its schema · starting schemas.\n create_board — from a list_templates id, or empty (a placeholder axis your `fields` replace).\n set_schema — THE HEADLINE VERB: fields, view, `triggers`, anything under `meta`. MERGES; replace:true wipes. add_fields/set_view/set_board_meta edit narrowly.\n list_triggers — what fires this board and what it fires on a move. Authored via set_schema `triggers`.\n add_card · set · move · comment · archive — file · edit (fields MERGE) · column/order · append · delete.\n cards — search every board (omit `board`) or one: by column, field value, substring.\n\nSET GLYPHS WHEN YOU CREATE THE BOARD. A select field may carry `optionIcons`, one per value, e.g. {backlog:\"circle-dashed\",done:\"circle-check\"}. Names: circle-dashed circle circle-dot circle-check circle-x circle-slash inbox play pause eye clock flag alert. Unknown names draw nothing.\n\nTHE SCHEMA IS YOURS AND OPEN. Invent fields, a view, triggers, a `meta` block — unknown keys survive verbatim, an unknown `type` (e.g. \"sentiment\") is kept and drawn as text. Refused only: a reserved key of the wrong SHAPE, or >64KB.\n\nADOPTION: a card naming an undeclared field ADDS it — check `adopted`.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "list_boards",
+              "list_templates",
+              "read",
+              "create_board",
+              "get_schema",
+              "set_schema",
+              "add_fields",
+              "set_view",
+              "set_board_meta",
+              "add_card",
+              "set",
+              "move",
+              "comment",
+              "cards",
+              "archive",
+              "list_triggers"
+            ],
+            "description": "Which verb to run."
+          },
+          "board": {
+            "type": "string",
+            "description": "Board name, path, or id. Required for every verb except list_boards, set, move, comment."
+          },
+          "card": {
+            "type": "string",
+            "description": "Card path or id. Required for set, move, comment."
+          },
+          "create_board": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "template": {
+                "type": "string",
+                "description": "A list_templates id. The starting schema; `schema` merges over it."
+              },
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "visibility": {
+                    "type": "string"
+                  },
+                  "cardTitleHint": {
+                    "type": "string"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "label": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string"
+                        },
+                        "default": {
+                          "type": "string",
+                          "description": "Value a card gets for this field when `add_card` omits the key — e.g. \"backlog\" on `status`, so a card filed with no status IS a Backlog card on disk rather than landing ungrouped. Most useful on the field `view.groupByField` points at."
+                        }
+                      },
+                      "additionalProperties": true
+                    }
+                  },
+                  "view": {
+                    "type": "object",
+                    "properties": {
+                      "groupByField": {
+                        "type": "string",
+                        "description": "The field whose VALUES are the columns. Repointing it regroups the same cards."
+                      },
+                      "cardFields": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "Fields to show on the card face."
+                      },
+                      "columnOrder": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "hiddenColumns": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "additionalProperties": true
+                  },
+                  "meta": {
+                    "type": "object",
+                    "additionalProperties": {}
+                  }
+                },
+                "additionalProperties": true
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "additionalProperties": false
+          },
+          "set_schema": {
+            "type": "object",
+            "properties": {
+              "schema": {
+                "$ref": "#/properties/create_board/properties/schema"
+              },
+              "replace": {
+                "type": "boolean",
+                "description": "Destructive whole-schema overwrite. Default merges."
+              }
+            },
+            "required": [
+              "schema"
+            ],
+            "additionalProperties": false
+          },
+          "add_fields": {
+            "type": "object",
+            "properties": {
+              "fields": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/properties/create_board/properties/schema/properties/fields/items"
+                },
+                "minItems": 1
+              }
+            },
+            "required": [
+              "fields"
+            ],
+            "additionalProperties": false
+          },
+          "set_view": {
+            "$ref": "#/properties/create_board/properties/schema/properties/view"
+          },
+          "set_board_meta": {
+            "type": "object",
+            "properties": {
+              "meta": {
+                "type": "object",
+                "additionalProperties": {}
+              },
+              "replace": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "meta"
+            ],
+            "additionalProperties": false
+          },
+          "add_card": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "fields": {
+                "type": "object",
+                "additionalProperties": {},
+                "description": "The card's whole data bag, including the field the view groups by."
+              },
+              "visibility": {
+                "type": "string",
+                "enum": [
+                  "private",
+                  "team"
+                ]
+              }
+            },
+            "required": [
+              "title"
+            ],
+            "additionalProperties": false
+          },
+          "set": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "fields": {
+                "type": "object",
+                "additionalProperties": {}
+              },
+              "replaceFields": {
+                "type": "boolean"
+              },
+              "visibility": {
+                "type": "string",
+                "enum": [
+                  "private",
+                  "team"
+                ]
+              }
+            },
+            "additionalProperties": false
+          },
+          "move": {
+            "type": "object",
+            "properties": {
+              "column": {
+                "type": "string",
+                "description": "A VALUE of view.groupByField. Landing here writes it."
+              },
+              "before": {
+                "type": "string",
+                "description": "Card to land immediately above."
+              },
+              "after": {
+                "type": "string",
+                "description": "Card to land immediately below."
+              }
+            },
+            "additionalProperties": false
+          },
+          "comment": {
+            "type": "object",
+            "properties": {
+              "body": {
+                "type": "string"
+              },
+              "author": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "body"
+            ],
+            "additionalProperties": false
+          },
+          "read": {
+            "type": "object",
+            "properties": {
+              "column": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "cards": {
+            "type": "object",
+            "properties": {
+              "column": {
+                "type": "string",
+                "description": "One value of this board's groupByField."
+              },
+              "fields": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "description": "Exact match on any field value."
+              },
+              "query": {
+                "type": "string",
+                "description": "Case-insensitive substring over title and description."
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "action": {
+            "type": "string"
+          },
+          "errorMessage": {
+            "type": "string"
+          },
+          "adopted": {
+            "type": "object",
+            "properties": {
+              "fields": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "fields"
+            ],
+            "additionalProperties": false
+          },
+          "result": {}
+        },
+        "required": [
+          "success",
+          "action"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "title": "Manage Cedar boards",
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "surface": "in-app-only",
+      "kind": "family",
+      "metadata": {
+        "title": "Manage Cedar boards",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": true,
+          "openWorldHint": true
+        }
+      },
+      "actionScopes": {
+        "list_boards": "in-app",
+        "list_templates": "in-app",
+        "read": "in-app",
+        "create_board": "in-app",
+        "get_schema": "in-app",
+        "set_schema": "in-app",
+        "add_fields": "in-app",
+        "set_view": "in-app",
+        "set_board_meta": "in-app",
+        "add_card": "in-app",
+        "set": "in-app",
+        "move": "in-app",
+        "comment": "in-app",
+        "cards": "in-app",
+        "archive": "in-app",
+        "list_triggers": "in-app"
+      }
+    },
+    {
+      "name": "workflow",
+      "title": "workflow",
+      "description": "Discover mutation operations for workflow document buttons. Use these existing input schemas unchanged. Author workflow documents with document-write.write and fenced workflow rows. No operation runs until the user clicks. inspect_capacity reads an authorized document’s remaining execution-history capacity; a full document needs a manually configured successor, never automatic pruning. agent_prompt and add_to_chat_context are also supported button ops.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "list_operations",
+              "inspect_capacity"
+            ]
+          },
+          "documentId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "operations": {
+            "type": "array",
+            "items": {}
+          },
+          "capacity": {
+            "type": "object",
+            "properties": {
+              "limit": {
+                "type": "number"
+              },
+              "used": {
+                "type": "number"
+              },
+              "remaining": {
+                "type": "number"
+              },
+              "requiresNewDocument": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "limit",
+              "used",
+              "remaining",
+              "requiresNewDocument"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "success",
+          "operations"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "title": "workflow"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "surface": "in-app-only",
+      "kind": "family",
+      "actionScopes": {
+        "list_operations": "in-app",
+        "inspect_capacity": "in-app"
+      }
+    },
+    {
+      "name": "chat-context",
+      "title": "chat-context",
+      "description": "Manage this chat thread's context set — the items (conversations, email/slack threads, files, deals) the thread is working with, and its primary conversation.\n\nACTIONS:\n- manage: attach/detach items and repoint the primary in one call. Pass manage: { add?: [{kind,id,label?}], remove?: [{kind,id}], setPrimary?: {id,name?}, reasoning }. Adding is an upsert by (kind,id). Call this when the user redirects to a different conversation, when you attach a newly-created file, or when you resolve an entity by a KNOWN id.\n- resolve: turn a name the user said (\"the Numeral deal\", \"pull up Acme\") into the thread's PRIMARY conversation in one step — searches by name, picks the best match, attaches it. Pass resolve: { query, reasoning }. Only kind=\"conversation\" is supported; for a known id of another kind, use action: \"manage\".\n\nEach action takes its params in a same-named object — omit every params object except the one matching your chosen action.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "manage",
+              "resolve"
+            ],
+            "description": "Which operation to perform — pass its matching params object below (action: \"manage\" pairs with manage: {...}; action: \"resolve\" pairs with resolve: {...})."
+          },
+          "manage": {
+            "type": "object",
+            "properties": {
+              "add": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "conversation",
+                        "email_thread",
+                        "slack_thread",
+                        "linkedin_chat",
+                        "whatsapp_chat",
+                        "file",
+                        "task"
+                      ]
+                    },
+                    "id": {
+                      "type": "string",
+                      "description": "Ref id: conversationId | crmEmailThreadId | slackThreadTs | documentId"
+                    },
+                    "label": {
+                      "type": "string",
+                      "description": "Display name for the badge/side-panel"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "id"
+                  ],
+                  "additionalProperties": false
+                },
+                "description": "Items to attach (upsert by kind+id)"
+              },
+              "remove": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "$ref": "#/properties/manage/properties/add/items/properties/kind"
+                    },
+                    "id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "id"
+                  ],
+                  "additionalProperties": false
+                },
+                "description": "Items to detach"
+              },
+              "setPrimary": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "additionalProperties": false,
+                "description": "Make a conversation the thread primary — provide its conversationId (+ optional name)"
+              },
+              "reasoning": {
+                "type": "string",
+                "description": "Why you are changing the context — what the thread is now about."
+              }
+            },
+            "required": [
+              "reasoning"
+            ],
+            "additionalProperties": false
+          },
+          "resolve": {
+            "type": "object",
+            "properties": {
+              "query": {
+                "type": "string",
+                "description": "The name/phrase to resolve, e.g. \"Numeral\" or \"the Acme deal\"."
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "conversation",
+                  "email_thread",
+                  "slack_thread",
+                  "linkedin_chat",
+                  "whatsapp_chat",
+                  "file",
+                  "task"
+                ],
+                "default": "conversation",
+                "description": "Entity kind to resolve. Only \"conversation\" is supported today."
+              },
+              "reasoning": {
+                "type": "string",
+                "description": "Why you are attaching this — what the thread is now about."
+              }
+            },
+            "required": [
+              "query",
+              "reasoning"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "errorMessage": {
+            "type": "string"
+          },
+          "manage": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "resolve": {
+            "type": "object",
+            "additionalProperties": {}
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "title": "chat-context"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "surface": "in-app-only",
+      "kind": "family",
+      "actionScopes": {
+        "manage": "in-app",
+        "resolve": "in-app"
+      }
+    },
+    {
+      "name": "delegate",
+      "title": "delegate",
+      "description": "Creating/changing a CRM deal or conversation? FIRST read the effective crm-updater path from the agent directory (document-read), or use injected <crm_write_rules>, before searching email. Fallback only: #subagents/crm-updater.md. Delegate a self-contained task to a child execution. Two kinds:\n\nACTIONS:\n- subagent: hand off to a Cedar subagent. Pass subagent: { type, task, ... }.\n  - type=\"orchestrator\" — Cedar-native WRITES only (drafts, field updates, tasks) across 1+ conversations. NOT for code/HTML/JSON artifacts or external systems (Google Drive/Docs, HubSpot, Salesforce, Slack API, curl) — use action: \"code\" for those.\n  - type=\"analyzer\" — READ-ONLY research over Cedar conversation content (emails, meetings, notes) with citations. Cannot write or call external systems.\n- code: hand off to a short-lived Claude Code session with Bash / WebSearch / WebFetch / Read / Write / Edit / Glob / Grep. Pass code: { task, ... }. Use for ALL external API calls, code execution, file generation, and web research. Describe the business goal, not the implementation.\n\nEach action takes its params in a same-named object — omit every params object except the one matching your chosen action.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "subagent",
+              "code"
+            ],
+            "description": "Which delegation to perform — pass its matching params object below (action: \"subagent\" pairs with subagent: {...}; action: \"code\" pairs with code: {...})."
+          },
+          "subagent": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "orchestrator",
+                  "analyzer"
+                ],
+                "description": "Type of subagent"
+              },
+              "agentId": {
+                "type": "string",
+                "description": "Optional aop_agents row ID. When provided, creates a tracked sub-execution row and attributes tool calls to that named pipeline agent."
+              },
+              "task": {
+                "type": "string",
+                "description": "Detailed task description for subagent. For analyzer type, provide a general/high-level task description for what information you need and the analyzer subagent will handle it"
+              },
+              "conversationId": {
+                "type": "string",
+                "description": "Optional conversationId to associate reasoning with (enables per-row reasoning display in canvas). For analyzer type, this scopes the analysis to a specific conversation."
+              },
+              "originalQuestion": {
+                "type": "string",
+                "description": "For analyzer type: The exact question the user asked, verbatim. Provides context for answer generation."
+              },
+              "skillToLoad": {
+                "type": "string",
+                "enum": [
+                  "drafting",
+                  "knowledge-base",
+                  "calendar",
+                  "conversation",
+                  "tasks",
+                  "multi-conversation-operations",
+                  "customer-support",
+                  "external-systems",
+                  "connected-systems",
+                  "research",
+                  "documents",
+                  "tables",
+                  "notifications",
+                  "cedar-configuration",
+                  "collateral",
+                  "wiki-extraction",
+                  "coaching",
+                  "run-sql",
+                  "field-query",
+                  "deal-intelligence-analysis",
+                  "analysis-decomposition",
+                  "daily-agenda",
+                  "aop-selection",
+                  "domain-identification",
+                  "event-summarization",
+                  "conversation-action-management",
+                  "conversation-inspection"
+                ],
+                "description": "Optional skill to pre-load in subagent (includes both chat and execution skills). Not typically needed for analyzer type."
+              },
+              "resourceToLoad": {
+                "type": "string",
+                "description": "Optional resource within skill to load (e.g., \"bant\", \"saya\" for coaching)"
+              },
+              "context": {
+                "type": "object",
+                "additionalProperties": {},
+                "description": "Optional additional context"
+              },
+              "streamToMainChat": {
+                "type": "boolean",
+                "default": false,
+                "description": "Whether to stream answer chunks as raw text in the main chat (like the main agent talking). Set to false when spawning multiple subagents in parallel. If you are calling this tool more than once, ALWAYS set this to false."
+              },
+              "isInternalResearch": {
+                "type": "boolean",
+                "default": false,
+                "description": "Set to true when spawning an analyzer subagent for internal research (e.g., as part of drafting). When true, the analysis results will NOT be surfaced to the user in the canvas review UI."
+              }
+            },
+            "required": [
+              "type",
+              "task"
+            ],
+            "additionalProperties": false
+          },
+          "code": {
+            "type": "object",
+            "properties": {
+              "task": {
+                "type": "string",
+                "description": "Natural language description of what to do. Be specific: include URLs, file paths, API endpoints, expected output format, etc. The executor has full Bash + filesystem access and can write scripts, call APIs, and search the web."
+              },
+              "context_data": {
+                "type": "string",
+                "description": "Additional context to inject into the executor prompt — e.g. API tokens, JSON payloads, file contents, or any structured data the executor needs. Use this instead of embedding large strings in the task description."
+              },
+              "allowed_tools": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Override the default allowed tool set. Defaults to [\"Bash\", \"WebSearch\", \"WebFetch\", \"Read\", \"Write\", \"Edit\", \"Glob\", \"Grep\"]. Restrict this if the task only needs a subset (e.g. [\"Bash\"] for pure shell work)."
+              },
+              "working_directory": {
+                "type": "string",
+                "description": "Working directory for the executor session. Defaults to /tmp. Use this to scope file operations to a specific project or scratch space."
+              },
+              "drive_access": {
+                "type": "string",
+                "enum": [
+                  "read",
+                  "collateral-write"
+                ],
+                "description": "Google Workspace access level for this run. Defaults to 'read' — the executor may list, read and export Drive files but cannot create or modify anything. Pass 'collateral-write' ONLY when the task is to author a new Google Doc, Sheet or Slides deck (e.g. collateral creation); it additionally allows create/copy/batchUpdate. Deleting a Drive file, emptying the trash and any sharing/permissions change are blocked in BOTH modes and cannot be enabled."
+              }
+            },
+            "required": [
+              "task"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "errorMessage": {
+            "type": "string"
+          },
+          "subagent": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "code": {
+            "type": "object",
+            "additionalProperties": {}
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "title": "delegate"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "surface": "in-app-only",
+      "kind": "family",
+      "actionScopes": {
+        "subagent": "in-app",
+        "code": "in-app"
+      }
+    },
+    {
+      "name": "external-mcp",
+      "title": "external-mcp",
+      "description": "Call a tool on one of the user's connected external MCP servers (Notion, Linear, custom integrations, …). Load the `external-systems` skill first — it lists which connections exist and which tools each exposes. Actions: \"call\".",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "call"
+            ],
+            "description": "Which operation to perform — pass its matching params object below."
+          },
+          "call": {
+            "type": "object",
+            "properties": {
+              "connectionName": {
+                "type": "string",
+                "description": "The name of the MCP connection as shown in the loaded skill instructions"
+              },
+              "toolName": {
+                "type": "string",
+                "description": "The MCP tool to call as listed under the connection in the loaded skill instructions"
+              },
+              "arguments": {
+                "type": "object",
+                "additionalProperties": {},
+                "description": "Arguments to pass to the MCP tool — check the tool description for required fields"
+              }
+            },
+            "required": [
+              "connectionName",
+              "toolName",
+              "arguments"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "errorMessage": {
+            "type": "string"
+          },
+          "call": {
+            "type": "object",
+            "additionalProperties": {}
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "title": "external-mcp"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "surface": "in-app-only",
+      "kind": "family",
+      "actionScopes": {
+        "call": "in-app"
+      }
+    },
+    {
+      "name": "search-chat-history",
+      "title": "search-chat-history",
+      "description": "Search the user's own past chat threads by title AND message content — use this when the user asks about a previous conversation (\"which chat did I...\", \"find that chat where...\", \"what did we discuss about...\") that isn't the one you're currently in.\n\nPass { query, limit? }. Returns matching threads ordered by most recently active, each with a snippet of the matching message when the match wasn't in the thread's title. Pass a result's threadId to load-chat-history to read its content into your own context, or to switch-chat-thread to move the user's screen into it.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 200,
+            "description": "Text to search for in past chat titles and messages."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "description": "Max threads to return. Default 20."
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "threadId": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "updatedAt": {
+                  "type": "string"
+                },
+                "matchedIn": {
+                  "type": "string",
+                  "enum": [
+                    "title",
+                    "message"
+                  ]
+                },
+                "snippet": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "threadId",
+                "name",
+                "updatedAt",
+                "matchedIn"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "success",
+          "message"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "title": "search-chat-history"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "surface": "in-app-only",
+      "kind": "family",
+      "defaultScope": "in-app",
+      "actionScopes": {}
+    },
+    {
+      "name": "load-chat-history",
+      "title": "load-chat-history",
+      "description": "Load a past chat thread's own message history — use after search-chat-history finds the thread you want, when the user wants to pick that conversation back up rather than just being told it exists.\n\nPass { threadId, limit? }. Returns the thread's messages (including prior tool calls/results) as a formatted transcript for you to read and continue from. This does NOT switch the user's screen to that thread — it only gives you the content for this turn, so tell the user what you found/did if it matters that they see it.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "threadId": {
+            "type": "string",
+            "description": "The id of the past chat thread to load, from a search-chat-history result."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "description": "Max messages to load, most-recent-first cutoff. Default 60."
+          }
+        },
+        "required": [
+          "threadId"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "threadName": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "history": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "success",
+          "message"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "title": "load-chat-history"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "surface": "in-app-only",
+      "kind": "family",
+      "defaultScope": "in-app",
+      "actionScopes": {}
+    },
+    {
+      "name": "switch-chat-thread",
+      "title": "switch-chat-thread",
+      "description": "Switch the user's active chat to one of their own past threads — use when the user wants to actually go back to / resume / open a past conversation, not just be told about it or have you reason over it (that's load-chat-history).\n\nPass { threadId }. The user's screen navigates to that thread; you do not get its content back from this tool. Call it last in your turn — anything you say after this won't be visible until the user switches back.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "threadId": {
+            "type": "string",
+            "description": "The id of the past chat thread to switch the user into, from a search-chat-history result."
+          }
+        },
+        "required": [
+          "threadId"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "threadName": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "success",
+          "message"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "title": "switch-chat-thread"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "surface": "in-app-only",
+      "kind": "family",
+      "defaultScope": "in-app",
+      "actionScopes": {}
+    },
+    {
+      "name": "load-skill",
+      "title": "Load a Cedar skill",
+      "description": "Load a Cedar skill's full instructions by name. When your task matches a skill below — including whenever another tool's own description tells you to load one first — you MUST call this tool for that skill before using any tool in its domain. The one-liners below are only for picking WHICH skill applies — they do not replace loading it. If your client saves this tool's response to a file instead of showing it inline, you MUST read that file in full before acting. Call with no `name` for the full catalog. Available skills:\n<available_skills>\n- drafting: Draft or rewrite sales emails, Slack messag…\n- knowledge-base: Access the user's Knowledge Base text entri…\n- calendar: View existing calendar events or propose ne…\n- conversation: Find/filter CRM conversations, update conve… [resources: opportunity-creation]\n- tasks: Everything task-related: creating, updating…\n- multi-conversation-operations: Required before batch operations across 3+…\n- customer-support: Report a problem to the Cedar team when the…\n- external-systems: Connect to and interact with external, non-…\n- connected-systems: Guidance for interacting with a user's exte…\n- research: Read your LinkedIn network and post reactor…\n- documents: Read, write, and search Cedar Docs — persis… [resources: agenda-format]\n- tables: Build and drive a Cedar TABLE — a row-addre…\n- notifications: Send notifications to the user via Slack DM…\n- cedar-configuration: The foundational skill for anything related… [+15 resources]\n- collateral: Create any sales collateral — pitch decks,… [+14 resources]\n- coaching: Sales methodology frameworks — BANT, SAYA (… [+5 resources]\n- run-sql: Full column and join reference for the run-…\n- field-query: Discover, select, and query CRM field data…\n</available_skills>\n\nWhen your task matches a skill, use the load-skill tool to read its full instructions before proceeding.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Skill name — see the tool description for available names. Omit to get the full catalog with complete (non-truncated) descriptions, if the short one-liners in the tool description aren't enough to decide which skill you need."
+          },
+          "resource": {
+            "type": "string",
+            "description": "Optional sub-resource within the skill, if it has one."
+          },
+          "user_request_summary": {
+            "type": "string",
+            "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+          },
+          "is_new_request": {
+            "type": "boolean",
+            "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+          }
+        },
+        "required": [
+          "user_request_summary",
+          "is_new_request"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "title": "Load a Cedar skill",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "surface": "external",
+      "kind": "helper",
+      "defaultScope": "authenticated",
+      "actionScopes": {}
+    },
+    {
+      "name": "load-brain-skills",
+      "title": "Load a Cedar brain skill",
+      "description": "Load a Cedar deal-intelligence \"brain\" skill's full instructions by name. These are the reasoning/analysis skills for deep pipeline questions — how deals are won/lost, cross-deal patterns, rep coaching from real calls, objection/competitor analysis. When your task is such an analysis, you MUST call this tool for the matching skill before proceeding. The one-liners below are only for picking WHICH skill applies — they do not replace loading it. If your client saves this tool's response to a file instead of showing it inline, you MUST read that file in full before acting. Call with no `name` for the full catalog. Available brain skills:\n<available_skills>\n- deal-intelligence-analysis: Analyze a customer's deals to uncover non-o… [+8 resources]\n- analysis-decomposition: Turn a high-level sales-coaching / diagnost… [+4 resources]\n</available_skills>\n\nWhen your task matches a skill, use the load-skill tool to read its full instructions before proceeding.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Brain skill name — see the tool description for available names. Omit to get the full catalog with complete descriptions."
+          },
+          "resource": {
+            "type": "string",
+            "description": "Optional sub-resource within the skill, if it has one."
+          },
+          "user_request_summary": {
+            "type": "string",
+            "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+          },
+          "is_new_request": {
+            "type": "boolean",
+            "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+          }
+        },
+        "required": [
+          "user_request_summary",
+          "is_new_request"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "title": "Load a Cedar brain skill",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "surface": "feature-gated",
+      "kind": "helper",
+      "defaultScope": "brain:read",
+      "actionScopes": {}
+    },
+    {
+      "name": "cedar-staff-debug",
+      "title": "Start or end a staff debug session",
+      "description": "Cedar staff only. Start or end a debug session that lets you see Cedar exactly as a specific user does, for observability and troubleshooting. While active, tools read and act on that user's account so you can diagnose their setup, executions, and data — and nothing is saved to their history. Call with `email` or `userId` to start; call with `clear:true` to end. It auto-ends after 30 min of inactivity, and every reply reminds you whose account you are debugging.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "description": "Cedar user id of the user to debug as."
+          },
+          "email": {
+            "type": "string",
+            "description": "Email of the user to debug as (unique) — use this when you don't have their user id."
+          },
+          "clear": {
+            "type": "boolean",
+            "description": "Set true to end the debug session and return to your own account."
+          },
+          "user_request_summary": {
+            "type": "string",
+            "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+          },
+          "is_new_request": {
+            "type": "boolean",
+            "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+          }
+        },
+        "required": [
+          "user_request_summary",
+          "is_new_request"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "title": "Start or end a staff debug session",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "surface": "staff-only",
+      "kind": "helper",
+      "defaultScope": "internal",
+      "actionScopes": {}
     }
+  ],
+  "skills": [
+    {
+      "name": "drafting",
+      "description": "Draft or rewrite sales emails, Slack messages, and LinkedIn replies that sound genuinely human and conversational — follow-ups, meeting recaps, outreach, pre-meeting agendas, post-demo summaries, or any prospect/client communication, over email, Slack, or LinkedIn. Use when the user asks to draft, write, rewrite, or improve any email, Slack, or LinkedIn message. Ensures drafts match the user's authentic voice using their AOP style guide and examples. Includes email, Slack, and LinkedIn guidance in one load.",
+      "loader": "load-skill",
+      "resources": [],
+      "toolDependencies": [
+        "fetch-conversation",
+        "fetch-email-attachments",
+        "save-draft",
+        "show-draft",
+        "save-slack-draft",
+        "save-linkedin-draft",
+        "schedule-send",
+        "send-email",
+        "list-linkedin-chats",
+        "read-linkedin-chat",
+        "create-task",
+        "list-documents",
+        "search-documents",
+        "read-document",
+        "call-mcp-tool",
+        "find-emails",
+        "spawn-subagent",
+        "list-calendar-events",
+        "get-calendar-availability"
+      ]
+    },
+    {
+      "name": "knowledge-base",
+      "description": "Access the user's Knowledge Base text entries, uploaded KB documents, and any connected external MCP knowledge bases (e.g. product docs, support docs). Use when you need specific reference information: links, product details, pricing, competitor info, or documentation. For creating/updating/deleting KB entries, use the cedar-configuration skill instead.",
+      "loader": "load-skill",
+      "resources": [],
+      "toolDependencies": [
+        "write-document",
+        "read-document",
+        "list-documents",
+        "search-documents",
+        "call-mcp-tool"
+      ]
+    },
+    {
+      "name": "calendar",
+      "description": "View existing calendar events or propose new calendar events for meetings. Use when the user asks about their calendar (e.g., \"what's on my calendar today?\", \"when is my meeting with Jon?\") or when scheduling meetings, creating calendar invites, or proposing meeting times.",
+      "loader": "load-skill",
+      "resources": [],
+      "toolDependencies": [
+        "fetch-conversation",
+        "list-calendar-events",
+        "modify-calendar-event",
+        "get-calendar-availability"
+      ]
+    },
+    {
+      "name": "conversation",
+      "description": "Find/filter CRM conversations, update conversation fields, create new conversations, log events, and reassign ownership. Filtering: analyzes natural language requests, suggests filter configurations, and executes queries to find matching conversations — streams filter suggestions to the frontend for user approval. Load when the user says ''show me'', ''find'', ''filter'', or asks about deals by status, date, priority, or company — e.g. ''show stalled deals'', ''find my Acme conversation'', ''which deals are in negotiation''. Updating: extracts information from communications and updates CRM conversation fields with clean, digestible, high-confidence content that respects temporal context and AOP governance; also creates new deals/conversations, logs meetings/calls/events, and reassigns conversation ownership. For creating a new opportunity in the connected external CRM (not a new Cedar conversation), see this skill''s opportunity-creation resource. For finding and linking an EXISTING external-CRM deal to a conversation, see ''Two different things are called \"CRM\"'' below. Also covers pulling a message in from the user''s LIVE Gmail, Slack, or LinkedIn when they say it belongs to a deal but it isn''t on the timeline — ''there was an email for this conversation from X'', ''we discussed this in Slack'', ''that LinkedIn thread isn''t showing up here'' — finding it in the channel, disambiguating with the user, and attaching it to the conversation; see ''Pulling a missing message in from Gmail, Slack, or LinkedIn'' below.",
+      "loader": "load-skill",
+      "resources": [
+        {
+          "name": "opportunity-creation",
+          "title": "Opportunity Creation",
+          "description": "Create a new opportunity in the connected external CRM. Looks up the linked account and contact, then creates the opportunity following the user's configured naming and field conventions."
+        }
+      ],
+      "toolDependencies": [
+        "signals-read",
+        "signals-write",
+        "conversation-analytics",
+        "fetch-conversation",
+        "find-crm-conversations",
+        "list-my-canvases",
+        "fetch-email-attachments",
+        "search-live-emails",
+        "read-live-email-thread",
+        "sync-gmail-thread",
+        "search-live-slack",
+        "read-live-slack-thread",
+        "sync-slack-thread",
+        "list-linkedin-chats",
+        "find-linkedin-chat",
+        "read-linkedin-chat",
+        "sync-linkedin-chat",
+        "find-meetings",
+        "sync-meeting",
+        "meeting-capabilities",
+        "update-conversation-fields",
+        "reassign-conversation-ownership",
+        "list-documents",
+        "search-documents",
+        "read-document",
+        "create-conversation-event",
+        "create-conversation",
+        "link-crm-deal"
+      ]
+    },
+    {
+      "name": "tasks",
+      "description": "Everything task-related: creating, updating, and canceling personal and sales-conversation tasks; surfacing and ranking follow-ups for today (use when user asks \"who do I need to follow up with?\"). Covers dedup, due dates, batching, and pipeline hints. The automated morning run lives in the separate `daily-agenda` skill.",
+      "loader": "load-skill",
+      "resources": [],
+      "toolDependencies": [
+        "fetch-conversation",
+        "find-crm-conversations",
+        "create-task",
+        "update-task",
+        "apply-task-approval",
+        "cancel-task",
+        "list-tasks",
+        "get-task-assignment-options",
+        "reassign-task"
+      ]
+    },
+    {
+      "name": "multi-conversation-operations",
+      "description": "Required before batch operations across 3+ conversations — drafting emails for many deals, updating fields in bulk, or any task that processes multiple conversations individually. Provides concurrency limits and correct patterns.",
+      "loader": "load-skill",
+      "resources": [],
+      "toolDependencies": [
+        "spawn-subagent",
+        "load-skill"
+      ]
+    },
+    {
+      "name": "customer-support",
+      "description": "Report a problem to the Cedar team when the user sends the reserved phrase \"flag this\" — a signal that something went wrong or was unexpected. Call send-user-feedback immediately with a full debug snapshot: the current working context conversation (id, name), a summary of the recent chat messages in this thread, what action was last taken or what the agent last said, and any relevant state. The goal is to give the Cedar team enough context to reproduce or understand the issue.",
+      "loader": "load-skill",
+      "resources": [],
+      "toolDependencies": [
+        "send-user-feedback"
+      ]
+    },
+    {
+      "name": "external-systems",
+      "description": "Connect to and interact with external, non-Cedar systems. Three paths: MCP-connected integrations (Notion, outreach trackers, custom tools) via call-mcp-tool; Cedar-integrated providers (Google, Salesforce, HubSpot, Slack, Stripe); and credentials the user stored themselves (Xero, Microsoft Graph, an internal API). The last two both go through get-provider-credentials, then an HTTP caller (run-code-executor in the background, native Bash in chat). Load when the user wants to read from or write to any external system.",
+      "loader": "load-skill",
+      "resources": [],
+      "toolDependencies": [
+        "call-mcp-tool",
+        "get-provider-credentials",
+        "run-code-executor"
+      ]
+    },
+    {
+      "name": "connected-systems",
+      "description": "Guidance for interacting with a user's external systems (HubSpot, Salesforce, Attio, Notion, custom tools, etc.) from a Claude session connected to Cedar. Load when the user asks you to read from or write to any system outside Cedar itself. Tells you which systems the user has connected in Cedar and what to do if you don't already have a working tool for the one they need.",
+      "loader": "load-skill",
+      "resources": [],
+      "toolDependencies": []
+    },
+    {
+      "name": "research",
+      "description": "Read your LinkedIn network and post reactors; look up external information about people and companies — structured profiles (LinkedIn, headcount, funding) via configured enrichment providers (Crustdata by default for rich research), real-time web/news search, and full page content fetching.",
+      "loader": "load-skill",
+      "resources": [],
+      "toolDependencies": [
+        "choose-enrichment",
+        "signals-read",
+        "signals-write",
+        "data-settings",
+        "enrich-person",
+        "enrich-company",
+        "web-search",
+        "web-fetch",
+        "linkedin-read"
+      ]
+    },
+    {
+      "name": "documents",
+      "description": "Read, write, and search Cedar Docs — persistent agent memory for deal intelligence, research, working memory/task canvases, and meeting prep. Also load for complex multi-step tasks or when the user says \"remember this\".",
+      "loader": "load-skill",
+      "resources": [
+        {
+          "name": "agenda-format",
+          "title": "agenda-format",
+          "description": "Markdown grammar for writing to the user daily agenda doc. Load before any write-document call targeting user/agendas/. The parser is strict — follow the format exactly and preserve user-added tasks."
+        }
+      ],
+      "toolDependencies": [
+        "workflow",
+        "write-document",
+        "read-document",
+        "search-documents",
+        "list-documents",
+        "map-documents",
+        "move-file",
+        "board",
+        "table",
+        "graph"
+      ]
+    },
+    {
+      "name": "tables",
+      "description": "Build and drive a Cedar TABLE — a row-addressed spreadsheet an agent fills. Load before reading or writing ANY table document, and whenever a task has N independent units of work: designing the columns and their fill instructions with the user, binding columns to live Cedar data (`conversation.stage`, `conversation.fields.<key>`), sourcing rows from a query or an import, and fanning out one agent per row to fill them in parallel.",
+      "loader": "load-skill",
+      "resources": [],
+      "toolDependencies": [
+        "table",
+        "read-document",
+        "list-documents"
+      ]
+    },
+    {
+      "name": "notifications",
+      "description": "Send notifications to the user via Slack DM, Slack channel, iMessage, or WhatsApp. Use when the automation needs to deliver a message or report.",
+      "loader": "load-skill",
+      "resources": [],
+      "toolDependencies": [
+        "list-slack-channels",
+        "notify-user"
+      ]
+    },
+    {
+      "name": "cedar-configuration",
+      "description": "The foundational skill for anything related to CONFIGURING, DEBUGGING, or UNDERSTANDING Cedar — its data, or its outputs. Load it at the START of almost any task, before other skills or tools. Covers: how executions/runs work, integrations & sync (why something did or didn't sync or happen), ownership and participant semantics, playbooks/AOPs and how their trigger blocks run, the Knowledge Base, company background, CRM field mappings and conversation fields, draft analytics, and where agent output (drafts, field updates, tasks, summaries) goes. It is Cedar's CONFIGURATION surface (the PLAYBOOK.md document is the primary control — read it to understand behavior, edit it to change behavior; playbook design/optimization, org vs. user split, IGNORE rules, full account design/redesign) AND its DATA-REPAIR surface (fixing a broken conversation, merging/moving/de-duplicating deals, reassigning AOPs, reproducing a missing draft or task). Use it for anything that requires understanding or changing how Cedar behaves or what it produced — and as baseline system context even when merely reading Cedar's data.",
+      "loader": "load-skill",
+      "resources": [
+        {
+          "name": "choosing-a-trigger",
+          "title": "Choosing a Trigger",
+          "description": "Load when deciding WHEN a rule should run, or when a rule fires too often — first, when timing is the unknown; when whether it is POSSIBLE is the unknown, check that first (agent-capabilities, limits-and-escalation). Covers the trigger ladder, gates that bind only in playbook prose, conditions no event can observe, and dedup. NOT for a live agent that is not firing — see diagnose-and-repair."
+        },
+        {
+          "name": "building-an-agent",
+          "title": "Building an Agent",
+          "description": "Load when ready to WRITE a subagent, after when-it-runs is settled: routing by capability, sizing a rule before arming it, proving every call before it is persisted, upsert-vs-patch, wiring the ref last. NOT for deciding when it runs (choosing-a-trigger), what an existing agent is allowed to do (agent-capabilities), or XML syntax (playbook-anatomy)."
+        },
+        {
+          "name": "agent-capabilities",
+          "title": "Agent Capabilities",
+          "description": "Load first for \"why can't Cedar/an agent do X?\", including CRM deal creation, before assuming a Cedar-wide limit. Check system-agent allowlists versus custom-agent connection scopes. Also load before assigning work to an existing agent. NOT for authoring (building-an-agent); confirmed Cedar-wide limits go to limits-and-escalation."
+        },
+        {
+          "name": "external-writes",
+          "title": "External Writes",
+          "description": "Load before creating an OBJECT in a connected system (a HubSpot or Salesforce task, note or record, a Slack channel, an API call) or before blocking Cedar from writing to certain CRM deals (dealWriteGuard). Covers native tools vs MCP vs credentials. NOT for a Cedar field that syncs to a CRM property (fields-and-values); NOT for Cedar's own tasks, drafts or Slack output (surfaces-and-delivery)."
+        },
+        {
+          "name": "surfaces-and-delivery",
+          "title": "Surfaces & Delivery",
+          "description": "Load for Cedar output destinations: Slack, drafts, docs, buttons, tasks and Execute handoffs. Also first for human input before drafting (\"let me paste notes in\"): end the run, collect input, then start another. Confirm destination support before scope-and-sharing. NOT for external CRM objects (external-writes) or legal field/task values (fields-and-values)."
+        },
+        {
+          "name": "scope-and-sharing",
+          "title": "Scope & Sharing",
+          "description": "Load when a rule might apply to more than the requester — even if they did not say so — and before copying one to another: it fails silently if it references collateral, a field, or a CRM mapping that exists only at the original scope. Covers org vs user, admin cross-user edits, inheritance. Decides WHETHER something is shared, after surfaces-and-delivery confirms the agent can hold it."
+        },
+        {
+          "name": "voice-and-preferences",
+          "title": "Voice & Preferences",
+          "description": "Load when a user states a standing rule about HOW Cedar should write or behave — tone, a sign-off, phrases to avoid, \"always/never/from now on\", \"remember that\". Covers where a durable preference persists beyond the conversation. NOT for composing one message now (no resource); NOT for reference content like pricing or a deck (knowledge-and-collateral); NOT for draft metrics (draft-analytics)."
+        },
+        {
+          "name": "knowledge-and-collateral",
+          "title": "Knowledge & Collateral",
+          "description": "Load to persist durable reference facts — pricing, product specs, links, decks — or company positioning in company background. Covers KB retrieval, scope, and wiring explicitly requested automatic use. Reference facts alone need no behavior rule. NOT for behavior/tone directives (voice-and-preferences); NOT for field option lists (fields-and-values)."
+        },
+        {
+          "name": "fields-and-values",
+          "title": "Fields & Values",
+          "description": "Load before creating, mapping, or approval-gating a Cedar conversation field, or when a VALUE must come from a fixed list — task types, task channels, statuses, stages, retired values. Owns which values are legal. NOT for creating an object in an external CRM (external-writes); NOT for button operations or where output is delivered (surfaces-and-delivery)."
+        },
+        {
+          "name": "using-and-configuring-extracted-fields",
+          "title": "Using & Configuring Extracted Fields",
+          "description": "Load before referencing ANY field by name in a new or edited agent — org-vs-user scope, whether it's actually kept current (`live`), other write gates (ownership, edit-forbidden, approval), who can change what, and aggregating a field across reps. NOT for creating, mapping, or approval-gating a field (fields-and-values)."
+        },
+        {
+          "name": "limits-and-escalation",
+          "title": "Limits & Escalation",
+          "description": "Load for confirmed Cedar-wide limits or a CRM rejecting a supported write. Covers 30-minute runs, no mid-run input, event veto or cron state, and no playbook-rule propagation; field/mapping propagation exists. First check agent-capabilities for \"why can't Cedar/an agent do X?\"; design human-input handoffs in surfaces-and-delivery before escalating."
+        },
+        {
+          "name": "diagnose-and-repair",
+          "title": "Diagnose & Repair",
+          "description": "Load for anything that ALREADY happened and went wrong: a missing draft, email or deal, a field that did not update, output that should not exist, an agent that is live but never fired, \"why did/didn't Cedar do X\". Owns reading executions, sync symptom-to-cause, the repair spine and the fix primitives. NOT for designing a rule that does not exist yet (choosing-a-trigger)."
+        },
+        {
+          "name": "playbook-anatomy",
+          "title": "Playbook Anatomy",
+          "description": "Load for playbook XML syntax, trigger/ref placement, subagent frontmatter, path shortcuts (#chat-agent reads/writes personal chat instructions without an AOP), manifests and document writes. WHAT a rule should say: choosing-a-trigger, scope-and-sharing, voice-and-preferences, fields-and-values. NOT for running a handed playbook — see playbook-execution."
+        },
+        {
+          "name": "playbook-execution",
+          "title": "Playbook Execution",
+          "description": "Load when handed a <playbook_section> or <full_playbook_fallback> block in your prompt, or asked to run or test a playbook for a user. Covers reading and acting on <trigger> blocks, @ tokens and subagent refs at RUNTIME — executing a playbook, not changing one. NOT for editing: what a change should say lives in building-an-agent, its syntax in playbook-anatomy."
+        },
+        {
+          "name": "draft-analytics",
+          "title": "Draft Analytics",
+          "description": "Load when asked how a user actually edits or accepts drafts: acceptance rate, what changed between drafted and sent, or pulling real sent emails as style examples. Covers the analytics_draft_actions table, its status values and similarity scores. This MEASURES drafting that already happened. NOT for changing how drafts get written — see voice-and-preferences."
+        }
+      ],
+      "toolDependencies": [
+        "billing-read",
+        "usage-observations-read",
+        "usage-observations-retry",
+        "billing-write",
+        "billing-admin",
+        "data-settings",
+        "read-document",
+        "write-document",
+        "list-documents",
+        "read-connection-settings",
+        "get-recent-executions",
+        "get-sent-emails",
+        "diagnose-conversation",
+        "apply-config-change",
+        "execute-conversation-mutation",
+        "send-user-feedback"
+      ]
+    },
+    {
+      "name": "collateral",
+      "description": "Create any sales collateral — pitch decks, one-pagers, battle cards, case studies, ROI docs, executive briefs, competitive matrices, business cases, and mutual action plans. Use when the user asks to build, fill, or auto-generate any piece of sales or marketing content. Searches KB and Drive for existing examples to use as templates; builds from scratch with style exploration when none exist. Orchestrates format selection, content sourcing, style discovery, template building, and agent creation, supporting interactive design mode or direct execution.",
+      "loader": "load-skill",
+      "resources": [
+        {
+          "name": "template-builder",
+          "title": "Template Builder",
+          "description": "Build a reusable collateral template from multiple existing examples. Loaded when the user has existing examples and wants to create a template. Analyzes examples together, diffs variable vs. fixed content, and produces a placeholder-annotated template ready for agent automation."
+        },
+        {
+          "name": "format-routing",
+          "title": "Format Routing",
+          "description": "Format routing document for the collateral orchestrator. Loaded to determine which format sub-skill to load. Each format sub-skill owns all rendering rules for its output type."
+        },
+        {
+          "name": "format-html",
+          "title": "Format: HTML",
+          "description": "HTML rendering rules for the collateral system. Loaded when the output format is HTML. Covers style discovery (3 mood-based previews), viewport rules, content density limits, and generation requirements."
+        },
+        {
+          "name": "format-markdown",
+          "title": "Format: Markdown",
+          "description": "Markdown rendering rules for the collateral system. Loaded when the output format is Markdown. Covers tonal style discovery (3 opening samples), structural rules, and Cedar Doc delivery."
+        },
+        {
+          "name": "format-google-slides",
+          "title": "Format: Google Slides",
+          "description": "Google Slides rendering rules for the collateral system. Loaded when the output format is Google Slides. Covers Drive-based template sourcing, placeholder mechanics via gws CLI, style discovery, and delivery."
+        },
+        {
+          "name": "format-google-docs",
+          "title": "Format: Google Docs",
+          "description": "Google Docs rendering rules for the collateral system. Loaded when the output format is Google Docs. Covers placeholder mechanics via gws CLI, tonal style discovery, and delivery."
+        },
+        {
+          "name": "type-pitch-deck",
+          "title": "Type: Sales Deck",
+          "description": "Create a sales deck for advancing a specific B2B deal — giving a champion something to share, enabling mid-cycle conversations, or supporting a demo. Uses Raskin Narrative Arc for enterprise, Before-After-Bridge for SMB."
+        },
+        {
+          "name": "type-one-pager",
+          "title": "Type: One-Pager",
+          "description": "Create a one-page sales leave-behind designed for internal shareability — the buyer forwards it to stakeholders who never met you."
+        },
+        {
+          "name": "type-battle-card",
+          "title": "Type: Battle Card",
+          "description": "Create a competitive battle card — a single-screen, scannable reference reps use mid-call to handle objections and navigate competitive comparisons. One card per competitor."
+        },
+        {
+          "name": "type-case-study",
+          "title": "Type: Case Study",
+          "description": "Write a customer case study that frames the decision story — not a victory parade. Includes the friction, alternatives considered, and internal objections overcome, not just the results."
+        },
+        {
+          "name": "type-executive-brief",
+          "title": "Type: Executive Brief",
+          "description": "Write a bottom-line-up-front executive brief for a decision-maker. Recommendation first, three supporting points, one clear ask with a deadline. One page max."
+        },
+        {
+          "name": "type-competitive-matrix",
+          "title": "Type: Competitive Matrix",
+          "description": "Create a competitive comparison artifact — feature matrix, positioning map, pricing comparison, or win/loss analysis. Choose the format for the decision being made, not as a default template."
+        },
+        {
+          "name": "type-business-case",
+          "title": "Type: Business Case",
+          "description": "Build a quantified business case with ROI math, payback period, and benefit categories. Present before the demo to anchor the discussion to business outcomes, not features."
+        },
+        {
+          "name": "type-mutual-action-plan",
+          "title": "Type: Mutual Action Plan",
+          "description": "Create a mutual action plan (MAP) — a co-created milestone document showing both sides' commitments from now through post-implementation. Co-creation is the mechanism; pre-filled plans sent as homework get ignored."
+        }
+      ],
+      "toolDependencies": [
+        "web-search",
+        "search-documents",
+        "read-document",
+        "list-documents",
+        "write-document",
+        "move-file",
+        "share-document",
+        "notify-user"
+      ]
+    },
+    {
+      "name": "coaching",
+      "description": "Sales methodology frameworks — BANT, SAYA (Sell As You Are), MEDDPICC, the rep onboarding coaching-report structure, and the per-stage sales process-doc template. Load when the AOP specifies a sales methodology (SAYA, BANT, MEDDPICC, etc.), when giving methodology-grounded deal feedback or call reviews, when building a rep onboarding coaching report, or when you need the authoritative structure for a per-stage sales process doc.",
+      "loader": "load-skill",
+      "resources": [
+        {
+          "name": "bant",
+          "title": "bant",
+          "description": "BANT sales qualification methodology"
+        },
+        {
+          "name": "saya",
+          "title": "saya",
+          "description": "SAYA (Sell As You Are) discovery framework"
+        },
+        {
+          "name": "meddpicc",
+          "title": "meddpicc",
+          "description": "MEDDPICC enterprise sales qualification framework"
+        },
+        {
+          "name": "coaching-report",
+          "title": "coaching-report",
+          "description": "How to construct a rep onboarding coaching report from extracted call intelligence"
+        },
+        {
+          "name": "process-doc-template",
+          "title": "process-doc-template",
+          "description": "Authoritative structure for per-stage sales process docs (playbooks/process/rep-{userId})."
+        }
+      ],
+      "toolDependencies": []
+    },
+    {
+      "name": "run-sql",
+      "description": "Full column and join reference for the run-sql tool's CRM database tables. Load before writing any run-sql query beyond the simplest single-table lookup — the tool's own description only lists table/column names, not what each column means, its example values, or how tables join to each other.",
+      "loader": "load-skill",
+      "resources": [],
+      "toolDependencies": [
+        "run-sql"
+      ]
+    },
+    {
+      "name": "field-query",
+      "description": "Discover, select, and query CRM field data (crm_conversation_field_values) for one or many conversations, then present results as a table when they warrant one. Covers competitor mentions, current provider/vendor, contract or renewal details, close/renewal dates or other deal timing, objections, pain points, and any other extracted or custom field — for a single deal ('did Acme mention X') or the whole pipeline ('which deals mentioned X', 'deals closing this week'). Load this BEFORE run-sql, conversation's find action, or conversation-read ever touch crm_conversation_field_values, even when the question also sounds like a plain listing/filter question or the right field seems obvious — filtering on a value still requires knowing which field_id holds it for this org, and a short question is not evidence the concept lives in only one field.",
+      "loader": "load-skill",
+      "resources": [],
+      "toolDependencies": []
+    },
+    {
+      "name": "deal-intelligence-analysis",
+      "description": "Analyze a customer's deals to uncover non-obvious, grounded sales insight from the extracted sub-event taxonomy — compare deals/reps, trace how a field (MEDDPICC, objections, next steps, discovery questions…) evolved, find what behaviors correlate with wins, and prove every claim against verbatim source. Load when the user asks *why* deals are won or lost, wants cross-deal patterns, rep coaching from real calls, objection / competitor / pricing analysis, cadence or timing analysis, or any question about what's actually happening across their pipeline that needs evidence, not vibes. Runs a hypothesis→proof loop over the Cedar MCP reasoning tools (conversation-read, conversation-analytics, document, run-sql); every number carries a sample size and drill-back, every qualitative claim carries a verbatim span.",
+      "loader": "load-brain-skills",
+      "resources": [
+        {
+          "name": "tool-catalog",
+          "title": "tool-catalog",
+          "description": "Each reasoning tool/action: when to reach for it, its inputs, and how outputs point back."
+        },
+        {
+          "name": "filter-cube",
+          "title": "filter-cube",
+          "description": "The shared TimelineFilter cube — every dimension, with example masks."
+        },
+        {
+          "name": "field-map",
+          "title": "field-map",
+          "description": "The taxonomy fields by role (behavior/state/signal) + a question→field mapping."
+        },
+        {
+          "name": "selecting-deals",
+          "title": "selecting-deals",
+          "description": "Pick representative (not cherry-picked) deals — sampleIds-driven / stratified — + draw the selection timeline for approval."
+        },
+        {
+          "name": "metrics",
+          "title": "metrics",
+          "description": "The compute-metric catalog (metrics × groupBy) + the agent-supplied outcome-mapping recipe."
+        },
+        {
+          "name": "escalation",
+          "title": "escalation",
+          "description": "The \"no field can answer this\" runbook: author → seed → dry-run → full → reason."
+        },
+        {
+          "name": "examples",
+          "title": "examples",
+          "description": "Fully worked end-to-end analyses, each ending in a grounded assertion."
+        },
+        {
+          "name": "visuals",
+          "title": "visuals",
+          "description": "How to pick the best visual per claim, plus the \"every title explains itself\" rule — per-title ELI5 popovers instead of explanatory prose blocks."
+        }
+      ],
+      "toolDependencies": []
+    },
+    {
+      "name": "analysis-decomposition",
+      "description": "Turn a high-level sales-coaching / diagnostic THEME (\\\"how are reps running discovery?\\\", \\\"how are we multithreading?\\\") into a personalized tree of sharp, grounded-but-creative sub-questions (lines of inquiry) that deal-intelligence-analysis can then chase over the extracted taxonomy. Use to PLAN an analysis for a specific org — informed by their actual seeded fields, their methodology, and prior conversations with them — before running it, or to build a proactive insight agenda. It is the front of the plan → analyze → critique pipeline.",
+      "loader": "load-brain-skills",
+      "resources": [
+        {
+          "name": "lenses",
+          "title": "lenses",
+          "description": "The decomposition lenses — the angles a theme is broken down along."
+        },
+        {
+          "name": "procedure",
+          "title": "procedure",
+          "description": "Step-by-step: theme → clusters → leaf lines-of-inquiry, with the two escalations."
+        },
+        {
+          "name": "theme-catalog",
+          "title": "theme-catalog",
+          "description": "Seed catalog of themes + their leaf questions across the full extraction taxonomy."
+        },
+        {
+          "name": "required-inputs",
+          "title": "required-inputs",
+          "description": "Info we cannot learn from data (quota/targets/won-lost mapping/…) — surfaced as a Required Inputs ask."
+        }
+      ],
+      "toolDependencies": []
+    }
+  ],
+  "unresolvedSkillNames": [
+    "wiki-extraction"
   ]
 }

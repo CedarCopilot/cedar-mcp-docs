@@ -1,0 +1,126 @@
+---
+title: "external-mcp"
+description: "Parameters, scopes, and response schema for external-mcp."
+---
+
+Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+
+<Warning>This tool is registered only inside Cedar. External MCP clients cannot call it. Its contract is included to document the complete module boundary.</Warning>
+
+## Capability
+
+Call a tool on one of the user's connected external MCP servers (Notion, Linear, custom integrations, …). Load the `external-systems` skill first — it lists which connections exist and which tools each exposes. Actions: "call".
+
+## Operations and scopes
+
+| Action | Baseline scope |
+| --- | --- |
+| `call` | `in-app` — unavailable externally |
+
+Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Parameters
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `action` | "call" | Yes | Which operation to perform — pass its matching params object below.  |
+| `call` | object | No |   |
+
+### call
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `connectionName` | string | Yes | The name of the MCP connection as shown in the loaded skill instructions  |
+| `toolName` | string | Yes | The MCP tool to call as listed under the connection in the loaded skill instructions  |
+| `arguments` | object | Yes | Arguments to pass to the MCP tool — check the tool description for required fields  |
+
+## Full input schema
+
+[Download the input schema](/reference/schemas/external-mcp.input.json). Nested objects, variants, and constraints are preserved in full. Runtime refinements and ownership checks still apply.
+
+<Accordion title="Input JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "call"
+      ],
+      "description": "Which operation to perform — pass its matching params object below."
+    },
+    "call": {
+      "type": "object",
+      "properties": {
+        "connectionName": {
+          "type": "string",
+          "description": "The name of the MCP connection as shown in the loaded skill instructions"
+        },
+        "toolName": {
+          "type": "string",
+          "description": "The MCP tool to call as listed under the connection in the loaded skill instructions"
+        },
+        "arguments": {
+          "type": "object",
+          "additionalProperties": {},
+          "description": "Arguments to pass to the MCP tool — check the tool description for required fields"
+        }
+      },
+      "required": [
+        "connectionName",
+        "toolName",
+        "arguments"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "action"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+## Response
+
+Inspect `isError` on the MCP result and `success` / `errorMessage` in the action result. Optional response branches are populated only for the relevant action. Some results include additional provider or operation-specific data.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `success` | boolean | Yes |   |
+| `errorMessage` | string | No |   |
+| `call` | object | No |   |
+
+<Accordion title="Output JSON Schema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "call": {
+      "type": "object",
+      "additionalProperties": {}
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+</Accordion>
+
+[Download the output schema](/reference/schemas/external-mcp.output.json).

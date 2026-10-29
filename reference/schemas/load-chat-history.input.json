@@ -1,0 +1,20 @@
+{
+  "type": "object",
+  "properties": {
+    "threadId": {
+      "type": "string",
+      "description": "The id of the past chat thread to load, from a search-chat-history result."
+    },
+    "limit": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 100,
+      "description": "Max messages to load, most-recent-first cutoff. Default 60."
+    }
+  },
+  "required": [
+    "threadId"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

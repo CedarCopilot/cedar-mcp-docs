@@ -1,0 +1,37 @@
+---
+title: "Drafts, reviewed sends and scheduled delivery"
+description: "Understand each state from prepared content to an actual delivered message."
+---
+
+Cedar separates drafting, reviewing, sending and scheduling. Use the state returned by each operation rather than describing all four as “sent.”
+
+| Operation | Result |
+| --- | --- |
+| `draft-comms draft-email` | A prepared email draft |
+| `draft-comms draft-slack-message` | A prepared Slack message |
+| `draft-comms draft-linkedin-message` | A prepared LinkedIn message |
+| `draft-comms show-draft` | An existing draft for review |
+| `send-email prepare` | The current reviewed-send snapshot and hash |
+| `send-email send` | A send attempt tied to the reviewed snapshot |
+| `send-email status` | The recorded send state |
+| `schedule-send` | A persisted future email, Slack or LinkedIn send |
+
+## Preserve the reviewed message
+
+Read the current draft, call `prepare`, and use the exact returned snapshot hash for `send`. Do not synthesize a hash or reuse an old one after changing recipients, subject, body or other reviewed content. The send contract guards the message the user approved.
+
+If the send result is uncertain, inspect `status` before repeating the request. Avoid translating a transport error into an automatic duplicate send.
+
+## Draft with the correct context
+
+Load `drafting` and the account's effective style instructions. Read the actual conversation and relevant source events. An email reply should answer the real inbound message; a Slack draft should target the intended channel/thread; a LinkedIn draft should use the correct connected seat and recipient context.
+
+A draft can be associated with follow-up work without completing that work. Creating a task, saving a draft, and sending a message have separate results.
+
+## Schedule deliberately
+
+`schedule-send` accepts a future ISO timestamp and a supported channel payload. LinkedIn scheduling covers DMs, not invitations or InMail. Existing saved schedules are visible in Cedar's Scheduled surface, with cancellation through its supported app flow.
+
+See [queueing](/automation/queueing) for promotion, retries and LinkedIn cap deferrals. Explicitly space outreach; queueing is not a promise that an arbitrary burst will be converted into a safe campaign.
+
+[Draft contract](/reference/draft-comms) · [Reviewed email sends](/reference/send-email) · [Scheduling](/reference/schedule-send)

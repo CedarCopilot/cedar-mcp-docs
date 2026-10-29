@@ -1,0 +1,30 @@
+---
+title: "Sales coaching and qualification"
+description: "Apply BANT, SAYA, MEDDPICC and evidence-based coaching reports."
+---
+
+The `coaching` skill supplies sales frameworks and report structures. It has no standalone execution tools: the agent combines the instructions with conversation evidence, metrics and documents.
+
+| Resource | Purpose |
+| --- | --- |
+| `bant` | Budget, authority, need and timeline qualification |
+| `saya` | Sell As You Are discovery framework |
+| `meddpicc` | Enterprise qualification framework |
+| `coaching-report` | A rep onboarding report grounded in extracted call intelligence |
+| `process-doc-template` | The structure for per-stage sales process documents |
+
+Load the relevant resource through `load-skill`. The skill can include the account's selected coaching framework, so inspect the returned instructions before choosing a methodology.
+
+## Ground the analysis
+
+Use `conversation-read` to find the relevant deal and events. Search can locate a passage, but read the complete named call/email before concluding what happened across that event. For historical judgments, use field history and raw evidence rather than assuming today's field value existed at the time.
+
+Where Cedar Brain is enabled, `taxonomy-fields` and `conversation-read describe-field` expose the extracted evidence vocabulary. The `judged_strength` metric can aggregate strength over a selected taxonomy field family; it does not turn a small or missing sample into a reliable assessment.
+
+## Turn findings into useful output
+
+Separate an observed behavior, supporting evidence, its effect on the deal, and a concrete next practice. Save the report to a Cedar document. A coaching report is analysis; it does not change the team's sales process or a rep's agent instructions by itself.
+
+For process changes, inspect the effective playbook and use its `editMap` write targets. `config-write set-stage-criteria` changes a shared stage's entry/exit criteria, so it is not the correct destination for a personal coaching note.
+
+[Coaching resources](/skills/coaching) · [Deal intelligence](/intelligence/deal-analysis) · [Fields and stage rubrics](/configuration/fields)

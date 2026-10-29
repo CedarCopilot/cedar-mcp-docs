@@ -1,0 +1,33 @@
+---
+title: "Saved views and strategic overviews"
+description: "Create reusable pipeline, table, report, task and calendar views."
+---
+
+`ui-config` exposes saved canvases and AOP strategic-overview configuration. A view organizes existing data; it does not create new deals or run an outbound campaign.
+
+| Action | Purpose |
+| --- | --- |
+| `list-canvases` | Discover existing saved/pinned views |
+| `create-canvas` | Create a supported caller-owned view |
+| `update-canvas` | Change an existing authorized view |
+| `delete-canvas` | Remove an authorized saved view |
+| `configure-overview` | Configure fields/documents in an AOP strategic overview |
+
+Supported canvas types include `conversationCanvas`, `kanbanConversation`, `cardList`, `table`, `report`, `statistics`, `tasks`, `agenda` and `calendar`. Use the matching configuration shape from the reference; a valid type name alone does not define the data/filter settings.
+
+## Read before replacing
+
+List current canvases, inspect their IDs/configuration and preserve settings that should remain. An update can replace a configuration object, so an additive request should not accidentally remove existing filters or layout.
+
+Use the intended AOP and supported field IDs for an overview. Field visibility and view configuration do not change a field's extraction rules or external CRM mapping.
+
+## Common workflows
+
+- A pipeline view filtered to a chosen rep, stage or account cohort.
+- A report/statistics view backed by the relevant reporting configuration.
+- A saved table or task view for a recurring operating review.
+- A strategic overview that brings selected fields and documents into a deal workflow.
+
+Read the saved view back after editing. Use the [analytics tool](/crm/metrics) to compute a metric when the task requires a number; changing a view is not evidence that a calculation ran.
+
+[Complete UI configuration contract](/reference/ui-config)

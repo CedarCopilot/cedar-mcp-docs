@@ -3,7 +3,7 @@ title: "draft-comms"
 description: "Parameters, scopes, and response schema for draft-comms."
 ---
 
-Generated from Cedar's external registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
 ## Capability
 
@@ -78,6 +78,13 @@ Path, account role, feature gates, target ownership, and billing permissions can
 | Parameter | Type | Required | Details |
 | --- | --- | --- | --- |
 | `drafts` | object&#91;&#93; | Yes | The existing drafts to display (1 to 20). minItems: 1; maxItems: 20 |
+
+### showDraft.drafts item
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `draftId` | string | No | The provider draft id, exactly as returned by the tool that listed or saved it. minLength: 1 |
+| `threadId` | string | No | The thread the draft belongs to. Alone, shows every draft in that thread. With draftId, safely resolves a single current draft if the stored id is gone. minLength: 1 |
 
 ## Full input schema
 

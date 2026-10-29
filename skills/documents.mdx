@@ -1,0 +1,48 @@
+---
+title: "documents"
+description: "Workflow capabilities and resources for the documents skill."
+---
+
+Read, write, and search Cedar Docs — persistent agent memory for deal intelligence, research, working memory/task canvases, and meeting prep. Also load for complex multi-step tasks or when the user says "remember this".
+
+## Load the module
+
+Call `load-skill` with:
+
+```json
+{
+  "name": "documents"
+}
+```
+
+Read the returned instructions in full. Account-specific playbook context is assembled at load time; this static reference does not publish it.
+
+## Resources
+
+Each resource is independently loadable using the same skill name and its exact resource key.
+
+### agenda-format
+
+Markdown grammar for writing to the user daily agenda doc. Load before any write-document call targeting user/agendas/. The parser is strict — follow the format exactly and preserve user-added tasks.
+
+```json
+{
+  "name": "documents",
+  "resource": "agenda-format"
+}
+```
+
+## Tools and surface compatibility
+
+Use the canonical family tools in your connection’s `tools/list`. Skill source may still mention older granular names. The source dependencies below describe implementation composition; they are **not additional external MCP registrations**. The [complete capability index](/reference/coverage) records callable family/action contracts.
+
+- `workflow`
+- `write-document`
+- `read-document`
+- `search-documents`
+- `list-documents`
+- `map-documents`
+- `move-file`
+- `board`
+- `table`
+- `graph`

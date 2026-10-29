@@ -3,7 +3,7 @@ title: "document-write"
 description: "Parameters, scopes, and response schema for document-write."
 ---
 
-Generated from Cedar's external registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
 <Note>A write on a playbook or agenda path requires playbook:write. Ordinary document writes use docs:read plus the role and document authorization checks.</Note>
 
@@ -52,6 +52,15 @@ Path, account role, feature gates, target ownership, and billing permissions can
 | `metadata` | object | No | Optional structured metadata (e.g. related conversation IDs, task IDs).  |
 | `sourceEmailAttachment` | object | No | When set, fetches the file bytes from Gmail and uploads them to S3 as a confirmed KB upload. Use path="#kb/&lt;name&gt;" and type="attachment". The returned document ID can be passed in the attachments field of draft-email.  |
 | `targetUserId` | string | No | Org owner/admin only: the org member whose documents to operate on instead of your own (e.g. to read or edit their playbook). Omit to operate on your own documents.  |
+
+### write.sourceEmailAttachment
+
+When set, fetches the file bytes from Gmail and uploads them to S3 as a confirmed KB upload. Use path="#kb/&lt;name&gt;" and type="attachment". The returned document ID can be passed in the attachments field of draft-email.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `messageId` | string | Yes | Gmail message ID of the email containing the attachment.  |
+| `attachmentId` | string | No | Specific attachment ID. Omit to use the first attachment on the message.  |
 
 ### delete
 

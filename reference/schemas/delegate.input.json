@@ -1,0 +1,140 @@
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "subagent",
+        "code"
+      ],
+      "description": "Which delegation to perform — pass its matching params object below (action: \"subagent\" pairs with subagent: {...}; action: \"code\" pairs with code: {...})."
+    },
+    "subagent": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "orchestrator",
+            "analyzer"
+          ],
+          "description": "Type of subagent"
+        },
+        "agentId": {
+          "type": "string",
+          "description": "Optional aop_agents row ID. When provided, creates a tracked sub-execution row and attributes tool calls to that named pipeline agent."
+        },
+        "task": {
+          "type": "string",
+          "description": "Detailed task description for subagent. For analyzer type, provide a general/high-level task description for what information you need and the analyzer subagent will handle it"
+        },
+        "conversationId": {
+          "type": "string",
+          "description": "Optional conversationId to associate reasoning with (enables per-row reasoning display in canvas). For analyzer type, this scopes the analysis to a specific conversation."
+        },
+        "originalQuestion": {
+          "type": "string",
+          "description": "For analyzer type: The exact question the user asked, verbatim. Provides context for answer generation."
+        },
+        "skillToLoad": {
+          "type": "string",
+          "enum": [
+            "drafting",
+            "knowledge-base",
+            "calendar",
+            "conversation",
+            "tasks",
+            "multi-conversation-operations",
+            "customer-support",
+            "external-systems",
+            "connected-systems",
+            "research",
+            "documents",
+            "tables",
+            "notifications",
+            "cedar-configuration",
+            "collateral",
+            "wiki-extraction",
+            "coaching",
+            "run-sql",
+            "field-query",
+            "deal-intelligence-analysis",
+            "analysis-decomposition",
+            "daily-agenda",
+            "aop-selection",
+            "domain-identification",
+            "event-summarization",
+            "conversation-action-management",
+            "conversation-inspection"
+          ],
+          "description": "Optional skill to pre-load in subagent (includes both chat and execution skills). Not typically needed for analyzer type."
+        },
+        "resourceToLoad": {
+          "type": "string",
+          "description": "Optional resource within skill to load (e.g., \"bant\", \"saya\" for coaching)"
+        },
+        "context": {
+          "type": "object",
+          "additionalProperties": {},
+          "description": "Optional additional context"
+        },
+        "streamToMainChat": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to stream answer chunks as raw text in the main chat (like the main agent talking). Set to false when spawning multiple subagents in parallel. If you are calling this tool more than once, ALWAYS set this to false."
+        },
+        "isInternalResearch": {
+          "type": "boolean",
+          "default": false,
+          "description": "Set to true when spawning an analyzer subagent for internal research (e.g., as part of drafting). When true, the analysis results will NOT be surfaced to the user in the canvas review UI."
+        }
+      },
+      "required": [
+        "type",
+        "task"
+      ],
+      "additionalProperties": false
+    },
+    "code": {
+      "type": "object",
+      "properties": {
+        "task": {
+          "type": "string",
+          "description": "Natural language description of what to do. Be specific: include URLs, file paths, API endpoints, expected output format, etc. The executor has full Bash + filesystem access and can write scripts, call APIs, and search the web."
+        },
+        "context_data": {
+          "type": "string",
+          "description": "Additional context to inject into the executor prompt — e.g. API tokens, JSON payloads, file contents, or any structured data the executor needs. Use this instead of embedding large strings in the task description."
+        },
+        "allowed_tools": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Override the default allowed tool set. Defaults to [\"Bash\", \"WebSearch\", \"WebFetch\", \"Read\", \"Write\", \"Edit\", \"Glob\", \"Grep\"]. Restrict this if the task only needs a subset (e.g. [\"Bash\"] for pure shell work)."
+        },
+        "working_directory": {
+          "type": "string",
+          "description": "Working directory for the executor session. Defaults to /tmp. Use this to scope file operations to a specific project or scratch space."
+        },
+        "drive_access": {
+          "type": "string",
+          "enum": [
+            "read",
+            "collateral-write"
+          ],
+          "description": "Google Workspace access level for this run. Defaults to 'read' — the executor may list, read and export Drive files but cannot create or modify anything. Pass 'collateral-write' ONLY when the task is to author a new Google Doc, Sheet or Slides deck (e.g. collateral creation); it additionally allows create/copy/batchUpdate. Deleting a Drive file, emptying the trash and any sharing/permissions change are blocked in BOTH modes and cannot be enabled."
+        }
+      },
+      "required": [
+        "task"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "action"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

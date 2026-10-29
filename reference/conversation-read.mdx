@@ -3,7 +3,7 @@ title: "conversation-read"
 description: "Parameters, scopes, and response schema for conversation-read."
 ---
 
-Generated from Cedar's external registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
 ## Capability
 
@@ -67,6 +67,52 @@ Path, account role, feature gates, target ownership, and billing permissions can
 | `limit` | number | No | Maximum number of results to return. Default 20, max 50. minimum: 1; maximum: 50 |
 | `extraFields` | string&#91;&#93; | No | &#91;flexible_query mode&#93; Additional fields to include in each result beyond the defaults. Standard fields (camelCase columns from crmConversations): "nextSteps", "statusOverview", "important", "lastEmailAt", "lastUpdatedAt", "updatedAt", "conversationScope" — returned as top-level keys on each result. Custom fields: pass "wm_&lt;fieldKey&gt;" (the ids shown in &lt;available_columns&gt;) to get their current values, returned under each result's `customFields` object keyed by fieldKey. Unknown standard field names are silently ignored; list-type custom fields are not returned inline (they accumulate per-event).  |
 
+### find.filters item
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `field` | "id" · "name" · "status" · "priority" · "dealValue" · "nextSteps" · "lastContactedAt" · "lastInboundAt" · "lastOutboundEmailAt" · "lastMeetingAt" · "nextStepDate" · "createdAt" · "updatedAt" · "aopId" · "important" · "ownerId" · "aopName" · "primaryCompanyName" · "primaryCompanyDomain" · "crmSynced" · "hasFutureCalendar" or string | Yes | The field to filter on: a standard field (see the enum) OR a custom field as "wm_&lt;fieldKey&gt;" (the ids in &lt;available_columns&gt;) — custom fields match on their current value with eq/neq/like/ilike/in/notIn/isNull/isNotNull, or gt/gte/lt/lte on date-shaped values.  |
+| `operator` | "eq" · "neq" · "gt" · "gte" · "lt" · "lte" · "like" · "ilike" · "in" · "notIn" · "isNull" · "isNotNull" | Yes | The comparison operator  |
+| `value` | string or number or boolean or string&#91;&#93; or number&#91;&#93; or null | No | The value to compare against. Not needed for isNull/isNotNull operators. For ilike, use % as wildcard (e.g., "%corgi%" for contains).  |
+
+### find.eventFilter
+
+Optional event filter — filter by event types (include/exclude) or by event count (e.g. conversations with more than 5 emails via count).
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `types` | object | No |   |
+| `date` | string | No | Reference date as ISO YYYY-MM-DD. Today is 2026-10-29 - compute from this.  |
+| `dateTo` | string | No | Upper bound date for range operator as ISO YYYY-MM-DD.  |
+| `dateOperator` | "before" · "after" · "on" · "range" | No |   |
+| `count` | object | No | Filter by event count (e.g., conversations with more than 5 emails)  |
+
+### find.eventFilter.types
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `include` | string&#91;&#93; | No |   |
+| `exclude` | string&#91;&#93; | No |   |
+
+### find.eventFilter.count
+
+Filter by event count (e.g., conversations with more than 5 emails)
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `eventType` | string | Yes | Event type to count (email, email_inbound, email_outbound, meeting, etc.)  |
+| `operator` | "gt" · "gte" · "lt" · "lte" · "eq" | Yes | Comparison operator  |
+| `value` | number | Yes | Count threshold  |
+
+### find.orderBy
+
+Optional sorting. Defaults to lastContactedAt desc.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `field` | "id" · "name" · "status" · "priority" · "dealValue" · "nextSteps" · "lastContactedAt" · "lastInboundAt" · "lastOutboundEmailAt" · "lastMeetingAt" · "nextStepDate" · "createdAt" · "updatedAt" · "aopId" · "important" · "ownerId" · "aopName" · "primaryCompanyName" · "primaryCompanyDomain" · "crmSynced" · "hasFutureCalendar" | Yes |   |
+| `direction` | "asc" · "desc" | Yes |   |
+
 ### searchSemantic
 
 | Parameter | Type | Required | Details |
@@ -76,7 +122,26 @@ Path, account role, feature gates, target ownership, and billing permissions can
 | `topK` | number | No | Number of results to retrieve (max 30) default: 15; minimum: 1; maximum: 30 |
 | `searchType` | "vector" · "fts" | No | Search method. "vector" = semantic similarity (default), for meaning. "fts" = exact keyword match (BM25), for a literal string — an order number, a URL, a name, or "Attachments" to find emails with attachments. Vectors blur exact tokens; use fts when the answer IS the string. default: "vector" |
 
+### searchSemantic.filters
+
+Filters to apply to the search
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `conversationId` | string | No |   |
+| `eventId` | string | No |   |
+| `eventType` | "email" · "meeting" · "slack" · "external_crm" | No |   |
+| `aopId` | string | No |   |
+| `dateFrom` | string | No | ISO 8601 date string (e.g., "2026-02-17T00:00:00Z")  |
+| `dateTo` | string | No | ISO 8601 date string (e.g., "2026-02-23T23:59:59Z")  |
+| `threadId` | string | No | Gmail/Outlook thread ID (for email events)  |
+| `isSignificant` | boolean | No | Filter by significance flag  |
+| `direction` | "inbound" · "outbound" | No | Filter by email/meeting direction  |
+| `emailClassification` | string | No | Filter by email classification (e.g. follow-up, initial-outreach, post-meeting, pre-meeting, reactivation, question, response, objection)  |
+
 ### searchExternalCrmDeals
+
+Operates on the user's connected EXTERNAL CRM (Salesforce/HubSpot/Attio/Copper) — NOT Cedar's own conversation records (that's `find`). If it's unclear whether the user means "search Cedar's deals" or "search our Salesforce/HubSpot", ask before calling either.
 
 | Parameter | Type | Required | Details |
 | --- | --- | --- | --- |
@@ -84,6 +149,8 @@ Path, account role, feature gates, target ownership, and billing permissions can
 | `keyword` | string | Yes | Search text — deal/opportunity name, company name, etc. maxLength: 200 |
 
 ### timeline
+
+Read one time-ordered stream across events + both taxonomy planes for one or more deals, filtered by any combination of the cube. Masks: raw spine = kinds:&#91;"event"&#93;; one field = fieldIds:&#91;"…"&#93;; cross-deal = N conversationIds. Large results → the doc sink.
 
 | Parameter | Type | Required | Details |
 | --- | --- | --- | --- |
@@ -109,7 +176,23 @@ Path, account role, feature gates, target ownership, and billing permissions can
 | `current` | boolean | No |   |
 | `maxInline` | integer | No | Return inline only up to this many entries; above it the full timeline is written to the doc sink and a handle is returned. Default 200. minimum: 1 |
 
+### timeline.strength
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `min` | number | No |   |
+| `max` | number | No |   |
+
+### timeline.completeness
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `min` | number | No |   |
+| `max` | number | No |   |
+
 ### fieldEvolution
+
+One field's change/occurrence series over time, grouped by deal (the "how did X evolve" curve).
 
 | Parameter | Type | Required | Details |
 | --- | --- | --- | --- |
@@ -134,7 +217,23 @@ Path, account role, feature gates, target ownership, and billing permissions can
 | `fieldId` | string | Yes | The single field whose change/occurrence series to trace over time.  |
 | `maxInline` | integer | No |  minimum: 1 |
 
+### fieldEvolution.strength
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `min` | number | No |   |
+| `max` | number | No |   |
+
+### fieldEvolution.completeness
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `min` | number | No |   |
+| `max` | number | No |   |
+
 ### valueAsOf
+
+A versioned field's value + scores at a given instant (latest change ≤ the resolved cutoff).
 
 | Parameter | Type | Required | Details |
 | --- | --- | --- | --- |
@@ -142,7 +241,19 @@ Path, account role, feature gates, target ownership, and billing permissions can
 | `fieldId` | string | Yes | The versioned field to resolve.  |
 | `at` | object | Yes | Exactly one of stage &#124; date &#124; eventId — the point in time to resolve the value at.  |
 
+### valueAsOf.at
+
+Exactly one of stage &#124; date &#124; eventId — the point in time to resolve the value at.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `stage` | string | No | End of this stage.  |
+| `date` | string | No | ISO 8601 instant.  |
+| `eventId` | string | No | As of this event's occurredAt.  |
+
 ### describeField
+
+Learn a field's filterable surface (plane, whether it carries strength/completeness, its vocab, and payload keys + observed values) before building a precise mask.
 
 | Parameter | Type | Required | Details |
 | --- | --- | --- | --- |
@@ -150,11 +261,15 @@ Path, account role, feature gates, target ownership, and billing permissions can
 
 ### rawContent
 
+Resolve a deal's RAW verbatim events (full transcripts / email bodies / Slack) into a doc-sink buffer with greppable "=== STAGE: &lt;stage&gt; (evt_&lt;id&gt; @ &lt;ISO&gt;) &#91;word_base: N&#93; ===" section markers, then return only a handle + access instructions. Word offsets in the buffer are global; each marker's word_base + an atom's `position` gives the atom's global offset for a #words read. Read it via read-document (supports #lines/&#123;a&#125;-&#123;b&#125; and #words/&#123;a&#125;-&#123;b&#125; windowed reads) and search-documents (regex).
+
 | Parameter | Type | Required | Details |
 | --- | --- | --- | --- |
 | `conversationId` | string | Yes | The deal whose RAW verbatim event content to resolve.  |
 
 ### search
+
+Semantic search over the extracted taxonomy atoms — discover relevant moments/deals. Hits point back (fieldValueId / conversationId / sourceEventId) so you can hop to `timeline` (shape) and raw-content (prove). Large sets → the doc sink.
 
 | Parameter | Type | Required | Details |
 | --- | --- | --- | --- |
@@ -162,6 +277,47 @@ Path, account role, feature gates, target ownership, and billing permissions can
 | `filter` | object | No | The SAME filter cube as `timeline`, applied to the semantic candidates. Only the cheap-to-combine dimensions filter natively (fieldId, conversationIds, stage, rep, sourceEventId, occurredAt range, strength/completeness range, current, payload membership); other dimensions post-filter via the pointer.  |
 | `topK` | integer | No | Max candidates to return. Default 15. minimum: 1; maximum: 100 |
 | `maxInline` | integer | No |  minimum: 1 |
+
+### search.filter
+
+The SAME filter cube as `timeline`, applied to the semantic candidates. Only the cheap-to-combine dimensions filter natively (fieldId, conversationIds, stage, rep, sourceEventId, occurredAt range, strength/completeness range, current, payload membership); other dimensions post-filter via the pointer.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `conversationIds` | string&#91;&#93; | No |  minItems: 1 |
+| `fieldIds` | string&#91;&#93; | No |   |
+| `kinds` | "event" · "instance" · "judgment"&#91;&#93; | No |   |
+| `eventIds` | string&#91;&#93; | No |   |
+| `eventTypes` | string&#91;&#93; | No |   |
+| `emailClassifications` | string&#91;&#93; | No |   |
+| `stages` | string&#91;&#93; | No |   |
+| `from` | string | No |   |
+| `to` | string | No |   |
+| `reps` | string&#91;&#93; | No |   |
+| `values` | string&#91;&#93; | No |   |
+| `valueContains` | string | No |   |
+| `strength` | object | No |   |
+| `completeness` | object | No |   |
+| `hasStrength` | boolean | No |   |
+| `hasCompleteness` | boolean | No |   |
+| `payload` | object | No |   |
+| `hasResponseSpan` | boolean | No |   |
+| `hasReason` | boolean | No |   |
+| `current` | boolean | No |   |
+
+### search.filter.strength
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `min` | number | No |   |
+| `max` | number | No |   |
+
+### search.filter.completeness
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `min` | number | No |   |
+| `max` | number | No |   |
 
 ## Full input schema
 

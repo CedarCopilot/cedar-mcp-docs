@@ -1,0 +1,74 @@
+---
+title: "analysis-decomposition"
+description: "Workflow capabilities and resources for the analysis-decomposition skill."
+---
+
+Turn a high-level sales-coaching / diagnostic THEME (\"how are reps running discovery?\", \"how are we multithreading?\") into a personalized tree of sharp, grounded-but-creative sub-questions (lines of inquiry) that deal-intelligence-analysis can then chase over the extracted taxonomy. Use to PLAN an analysis for a specific org — informed by their actual seeded fields, their methodology, and prior conversations with them — before running it, or to build a proactive insight agenda. It is the front of the plan → analyze → critique pipeline.
+
+## Load the module
+
+Call `load-brain-skills` with:
+
+```json
+{
+  "name": "analysis-decomposition"
+}
+```
+
+Read the returned instructions in full. Account-specific playbook context is assembled at load time; this static reference does not publish it.
+
+<Note>Requires Cedar Brain and the brain:read scope.</Note>
+
+## Resources
+
+Each resource is independently loadable using the same skill name and its exact resource key.
+
+### lenses
+
+The decomposition lenses — the angles a theme is broken down along.
+
+```json
+{
+  "name": "analysis-decomposition",
+  "resource": "lenses"
+}
+```
+
+### procedure
+
+Step-by-step: theme → clusters → leaf lines-of-inquiry, with the two escalations.
+
+```json
+{
+  "name": "analysis-decomposition",
+  "resource": "procedure"
+}
+```
+
+### theme-catalog
+
+Seed catalog of themes + their leaf questions across the full extraction taxonomy.
+
+```json
+{
+  "name": "analysis-decomposition",
+  "resource": "theme-catalog"
+}
+```
+
+### required-inputs
+
+Info we cannot learn from data (quota/targets/won-lost mapping/…) — surfaced as a Required Inputs ask.
+
+```json
+{
+  "name": "analysis-decomposition",
+  "resource": "required-inputs"
+}
+```
+
+## Tools and surface compatibility
+
+Use the canonical family tools in your connection’s `tools/list`. Skill source may still mention older granular names. The source dependencies below describe implementation composition; they are **not additional external MCP registrations**. The [complete capability index](/reference/coverage) records callable family/action contracts.
+
+This is an instruction/reasoning module with no standalone tool dependencies. Use the relevant CRM, document, or reporting tools for evidence and output.

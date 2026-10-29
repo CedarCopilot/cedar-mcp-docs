@@ -1,0 +1,35 @@
+---
+title: "Field discovery and historical values"
+description: "Discover the right fields and distinguish current values, versions, and extracted evidence."
+---
+
+Load `field-query` before querying CRM field storage. A label displayed in Cedar is not necessarily the field ID or SQL shape you should query. Definitions, current values, history and extracted sub-event taxonomy answer different questions.
+
+## Discover before filtering
+
+`config-read list-fields` returns an AOP's built-in/custom field definitions, options and mappings, including its linked organization fields. For extracted taxonomy definitions, use the gated `taxonomy-fields list/get`. `conversation-read describe-field` explains the field's evidence plane, available scores, vocabulary, payload keys and observed values.
+
+```json
+{ "action": "describe-field", "describeField": { "fieldId": "replace-with-a-discovered-field-id" } }
+```
+
+The placeholder is deliberately not a guessed production taxonomy key. Use discovery to obtain the actual ID.
+
+## Ask the historical question precisely
+
+| Question | Operation |
+| --- | --- |
+| What is the field now? | Read the current conversation/field values |
+| When did it change? | `field-evolution` |
+| What did we know at the end of a stage? | `value-as-of` with `at.stage` |
+| What was its value on a date? | `value-as-of` with `at.date` |
+| What was known at a particular event? | `value-as-of` with `at.eventId` |
+| Which evidence supports the judgment? | `timeline`, then source event/raw-content reads |
+
+Provide exactly one historical cutoff in `value-as-of`. A current strong qualification score does not prove the same fact was established before an earlier meeting.
+
+## Score and vocabulary discipline
+
+Strength and completeness are separate dimensions where supported. Unknown/null is not equivalent to a poor score. A payload filter must use keys the field actually defines. Use canonical option values, preserving labels for display.
+
+For custom aggregations, load `run-sql` as well as `field-query`; use the allowed joins and required organization predicates. Raw SQL here remains read-only. [Metrics](/crm/metrics) are preferable when the dedicated tool already defines the calculation.

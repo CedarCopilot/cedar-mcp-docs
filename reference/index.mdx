@@ -1,11 +1,11 @@
 ---
 title: "Tool catalog"
-description: "The complete external MCP surface, grouped by module."
+description: "Every registered tool, grouped by module and availability."
 ---
 
-Cedar exposes 40 family tools in this source snapshot, plus `load-skill` and the gated `load-brain-skills`. Each family groups related operations under an `action` or `channel`. Available tools vary by scopes, organization role, and feature flags.
+This inventory covers **44 external registrations** (including staff and feature-gated tools), **8 Cedar-app-only tools**, and **20 registered skills**. Customer connections receive only the tools their scopes, role, and features permit.
 
-The reference records advertised schemas, including explicitly labeled restricted actions. It does not promise that every advertised operation is authorized. [Download the complete family catalog](/reference/catalog.json).
+Every action and nested configuration variant is indexed in the [capability coverage index](/reference/coverage). Every skill and resource is listed in the [skill catalog](/skills/index). [Download the complete catalog](/reference/catalog.json).
 
 ## LinkedIn
 
@@ -71,10 +71,27 @@ The reference records advertised schemas, including explicitly labeled restricte
 - [`debug`](/reference/debug)
 - [`send-user-feedback`](/reference/send-user-feedback)
 
-## Skills
+## Skill loading
 
-- [`load-skill` and `load-brain-skills`](/reference/skills)
+- [`load-skill`](/reference/load-skill)
+- [`load-brain-skills`](/reference/load-brain-skills)
+
+## Staff tools
+
+- [`analytics`](/reference/analytics)
+- [`cedar-staff-debug`](/reference/cedar-staff-debug)
+
+## Cedar app only
+
+- [`board`](/reference/board)
+- [`workflow`](/reference/workflow)
+- [`chat-context`](/reference/chat-context)
+- [`delegate`](/reference/delegate)
+- [`external-mcp`](/reference/external-mcp)
+- [`search-chat-history`](/reference/search-chat-history)
+- [`load-chat-history`](/reference/load-chat-history)
+- [`switch-chat-thread`](/reference/switch-chat-thread)
 
 ## Surface boundaries
 
-Boards, graphs, general code execution, Cedar subagent spawning, outbound flow creation, and HeyReach campaign management are not registered external MCP families. Some have Cedar app or separate API surfaces; see [capability boundaries](/getting-started/capability-boundaries).
+App-only operations are documented in their own group with explicit availability warnings. Graphs, outbound flow creation and HeyReach campaign management do not become external MCP operations merely because related Cedar features exist. See [capability boundaries](/getting-started/capability-boundaries).

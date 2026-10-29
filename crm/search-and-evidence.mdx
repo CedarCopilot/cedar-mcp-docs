@@ -1,0 +1,41 @@
+---
+title: "Find deals and read complete evidence"
+description: "Choose between structured filters, semantic search, live CRM search, and raw events."
+---
+
+`conversation-read` covers Cedar's stored deal records and evidence. Its ten actions serve distinct questions; searching one source does not silently search every connected system.
+
+| Action | Result and intended use |
+| --- | --- |
+| `find` | Structured filtering over Cedar conversations, including custom fields |
+| `get` | A known conversation, timeline and optional expanded event |
+| `search-semantic` | Relevant event passages using semantic or keyword search |
+| `search-external-crm-deals` | Live deal/opportunity search in the connected CRM |
+| `timeline` | A filtered chronological evidence stream across selected deals |
+| `field-evolution` | One field's series over time |
+| `value-as-of` | A versioned value at a stage/date/event |
+| `describe-field` | Field vocabulary, score and payload semantics |
+| `raw-content` | Full verbatim events in a document buffer |
+| `search` | Semantic search over extracted taxonomy atoms |
+
+## Structured filtering
+
+`find.filters` combines conditions with AND. Use standard columns such as status, owner, company domain, last contact and deal value, or discover custom field keys and address them as `wm_<fieldKey>`. Operators include equality, range comparisons, membership, null checks and wildcard matching. Ask for additional columns with `extraFields` when the result needs more than the default projection.
+
+For “find Acme's deal”:
+
+```json
+{ "action": "find", "find": { "filters": [{ "field": "primaryCompanyDomain", "operator": "eq", "value": "example.com" }] } }
+```
+
+## Search is a locator
+
+`search-semantic` supports `vector` and `fts`, event/date/direction filters and up to 30 results. It returns a ranked slice. For “what happened in this call?”, resolve the event ID, then read the whole event using `get.expandEventId` before writing a complete summary.
+
+Use `get.write_to_file` or `raw-content` for large evidence sets and read the returned document buffer in windows. Preserve the returned access instructions; a buffer handle is not itself the content.
+
+## Search the external CRM explicitly
+
+Discover the connection with `config-read read-settings`. `search-external-crm-deals` accepts HubSpot, Salesforce, Attio and Copper provider IDs and a keyword. This does not create, modify or link a deal. Association is a separate [conversation-write operation](/crm/records-and-repair).
+
+[Full conversation-read contract](/reference/conversation-read)

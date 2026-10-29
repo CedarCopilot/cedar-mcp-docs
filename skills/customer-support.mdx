@@ -1,0 +1,28 @@
+---
+title: "customer-support"
+description: "Workflow capabilities and resources for the customer-support skill."
+---
+
+Report a problem to the Cedar team when the user sends the reserved phrase "flag this" — a signal that something went wrong or was unexpected. Call send-user-feedback immediately with a full debug snapshot: the current working context conversation (id, name), a summary of the recent chat messages in this thread, what action was last taken or what the agent last said, and any relevant state. The goal is to give the Cedar team enough context to reproduce or understand the issue.
+
+## Load the module
+
+Call `load-skill` with:
+
+```json
+{
+  "name": "customer-support"
+}
+```
+
+Read the returned instructions in full. Account-specific playbook context is assembled at load time; this static reference does not publish it.
+
+## Resources
+
+This skill has no separately registered named resources. Its primary instructions contain the workflow.
+
+## Tools and surface compatibility
+
+Use the canonical family tools in your connection’s `tools/list`. Skill source may still mention older granular names. The source dependencies below describe implementation composition; they are **not additional external MCP registrations**. The [complete capability index](/reference/coverage) records callable family/action contracts.
+
+- `send-user-feedback`

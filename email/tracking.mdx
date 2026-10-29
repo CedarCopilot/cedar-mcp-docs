@@ -1,0 +1,27 @@
+---
+title: "Email opens and clicks"
+description: "Inspect observed tracking evidence and its connection to actual sent mail."
+---
+
+`email-tracking list` finds tracked emails and `get` retrieves one tracked email's details. Related summaries can also appear on email events returned by `conversation-read get`.
+
+Tracking records are observations associated with mail. An observed open/click is not proof of a buyer's intent or a particular human's identity, and no observation is not proof the message was unread. Use the exact timestamps, counts and event details returned by the tool.
+
+`list` supports pagination and filters for a Gmail thread or authorized Cedar conversation. `get` returns the tracking ID and classified events. `openCount`/`clickCount` represent likely human activity; raw counts also include image proxies and automation. The intended recipient address is not verified reader identity, especially after forwarding. IP/device metadata does not identify a person.
+
+## Investigation sequence
+
+1. Identify the sent message or relevant deal email.
+2. Find the corresponding tracking record with `list`.
+3. Read its detail with `get` when the question requires individual observations.
+4. Compare it with the actual replies, meetings and deal evidence before recommending follow-up.
+
+Keep message identity and tracking identity separate; use the IDs returned by the relevant operation. Verify sending through sent-mail history or `send-email status`, not by the existence of a draft.
+
+## Use tracking in a workflow
+
+Tracking can help prioritize a human review or add context to a draft. It does not itself authorize outbound contact. Combine it with response history and an explicit follow-up task, then use the reviewed draft/send flow when the user wants a message sent.
+
+The current external tool is a read surface. It does not expose arbitrary creation of tracking pixels, tracking-domain administration or editing historical observations.
+
+[Tracking parameters and responses](/reference/email-tracking) · [Email workflow](/email/drafts-and-delivery)

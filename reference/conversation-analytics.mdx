@@ -3,7 +3,7 @@ title: "conversation-analytics"
 description: "Parameters, scopes, and response schema for conversation-analytics."
 ---
 
-Generated from Cedar's external registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
 ## Capability
 
@@ -32,6 +32,8 @@ Path, account role, feature gates, target ownership, and billing permissions can
 
 ### computeMetric
 
+Compute an analytics metric over the taxonomy atoms/events, grouped + filtered. Returns rows with value + n + sampleIds — zero client-side math.
+
 | Parameter | Type | Required | Details |
 | --- | --- | --- | --- |
 | `metric` | "crm_won_amount" · "crm_open_due_amount" · "response_time" · "followup_time" · "post_meeting_time" · "reply_rate" · "event_count" · "time_between_stages" · "stage_funnel" · "win_rate" · "aop_conversion" · "deals_dropped" · "quiet_gap" · "gave_up_count" · "hygiene" · "contacts_reached" · "open_deal_age" · "stalled_deal_revenue" · "total_pipeline" · "won_pipeline" · "avg_acv" · "judged_strength" | Yes | The analytics metric to compute server-side (never tally rows yourself).  |
@@ -43,13 +45,181 @@ Path, account role, feature gates, target ownership, and billing permissions can
 | `crmReporting` | object | No | Required for live crm_won_amount/crm_open_due_amount: close-date window timezone, e.g. America/Los_Angeles. One filter.reps user and explicit from/to date bounds required.  |
 | `perDeal` | "latest" · "max" | No | Deprecated and ignored. It only ever applied to the atom metrics, which moved to run-sql (per-deal normalization is a GROUP BY there, in whatever shape the question needs). Accepted so an existing caller does not fail validation.  |
 
+### computeMetric.filter
+
+The shared filter cube scoping which atoms/events/deals are aggregated. Omit conversationIds → org-wide.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `conversationIds` | string&#91;&#93; | No |  minItems: 1 |
+| `fieldIds` | string&#91;&#93; | No |   |
+| `kinds` | "event" · "instance" · "judgment"&#91;&#93; | No |   |
+| `eventIds` | string&#91;&#93; | No |   |
+| `eventTypes` | string&#91;&#93; | No |   |
+| `emailClassifications` | string&#91;&#93; | No |   |
+| `stages` | string&#91;&#93; | No |   |
+| `from` | string | No |   |
+| `to` | string | No |   |
+| `reps` | string&#91;&#93; | No |   |
+| `values` | string&#91;&#93; | No |   |
+| `valueContains` | string | No |   |
+| `strength` | object | No |   |
+| `completeness` | object | No |   |
+| `hasStrength` | boolean | No |   |
+| `hasCompleteness` | boolean | No |   |
+| `payload` | object | No |   |
+| `hasResponseSpan` | boolean | No |   |
+| `hasReason` | boolean | No |   |
+| `current` | boolean | No |   |
+| `crmLinkedOnly` | boolean | No | Scope to deals with a real linked CRM record, not just a matched account. Use for any metric presented as a real number — CRM-unlinked deals skew the result.  |
+
+### computeMetric.filter.strength
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `min` | number | No |   |
+| `max` | number | No |   |
+
+### computeMetric.filter.completeness
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `min` | number | No |   |
+| `max` | number | No |   |
+
+### computeMetric.outcome
+
+Agent-supplied won/lost status values — REQUIRED for win_rate, total_pipeline, and any metric scoped to the open pipeline (deals_dropped, quiet_gap, hygiene, contacts_reached, open_deal_age, stalled_deal_revenue, followup_time), and for groupBy:"outcome" (Cedar infers no terminal status). Get the vocab from describe-field on the status field.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `won` | string&#91;&#93; | Yes |   |
+| `lost` | string&#91;&#93; | Yes |   |
+
+### computeMetric.crmStages
+
+Optional CRM stage values per bucket. With it, an org-wide ungrouped win_rate/won_pipeline/avg_acv/total_pipeline is read live from the CRM (row source:"crm_live"); else from Cedar.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `won` | string&#91;&#93; | No |   |
+| `lost` | string&#91;&#93; | No |   |
+| `open` | string&#91;&#93; | No |   |
+
+### computeMetric.crmReporting
+
+Required for live crm_won_amount/crm_open_due_amount: close-date window timezone, e.g. America/Los_Angeles. One filter.reps user and explicit from/to date bounds required.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `timezone` | string | Yes |   |
+
 ### computeMetricBatch
+
+Run many compute-metric calls in one request, each isolated: one item failing never fails the rest.
 
 | Parameter | Type | Required | Details |
 | --- | --- | --- | --- |
 | `items` | object&#91;&#93; | Yes | Up to 50 compute-metric calls in one batch — each item is exactly compute-metric's own params, plus its own `id` (must be unique within the batch). minItems: 1; maxItems: 50 |
 
+### computeMetricBatch.items item
+
+Compute an analytics metric over the taxonomy atoms/events, grouped + filtered. Returns rows with value + n + sampleIds — zero client-side math.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `metric` | "crm_won_amount" · "crm_open_due_amount" · "response_time" · "followup_time" · "post_meeting_time" · "reply_rate" · "event_count" · "time_between_stages" · "stage_funnel" · "win_rate" · "aop_conversion" · "deals_dropped" · "quiet_gap" · "gave_up_count" · "hygiene" · "contacts_reached" · "open_deal_age" · "stalled_deal_revenue" · "total_pipeline" · "won_pipeline" · "avg_acv" · "judged_strength" | Yes | The analytics metric to compute server-side (never tally rows yourself).  |
+| `target` | string | No | Metric-specific: a fieldId, eventType, a payload key (distribution), "stageA-&gt;stageB" (time_between_stages), a day-threshold override for deals_dropped/quiet_gap/gave_up_count (default 10, the org quiet-gap threshold), a comma-separated subset of company,contact,deal_value,next_step for hygiene (default: all four), or — for judged_strength, REQUIRED — a taxonomy field-id family glob (e.g. "coaching.discovery.*", "coaching.followup.rs*").  |
+| `groupBy` | string | No | Group by: rep&#124;stage&#124;field&#124;deal&#124;event_type&#124;email_classification&#124;outcome&#124;month&#124;payload:&lt;key&gt;. Omit → one "all" row.  |
+| `filter` | object | Yes | The shared filter cube scoping which atoms/events/deals are aggregated. Omit conversationIds → org-wide.  |
+| `outcome` | object | No | Agent-supplied won/lost status values — REQUIRED for win_rate, total_pipeline, and any metric scoped to the open pipeline (deals_dropped, quiet_gap, hygiene, contacts_reached, open_deal_age, stalled_deal_revenue, followup_time), and for groupBy:"outcome" (Cedar infers no terminal status). Get the vocab from describe-field on the status field.  |
+| `crmStages` | object | No | Optional CRM stage values per bucket. With it, an org-wide ungrouped win_rate/won_pipeline/avg_acv/total_pipeline is read live from the CRM (row source:"crm_live"); else from Cedar.  |
+| `crmReporting` | object | No | Required for live crm_won_amount/crm_open_due_amount: close-date window timezone, e.g. America/Los_Angeles. One filter.reps user and explicit from/to date bounds required.  |
+| `perDeal` | "latest" · "max" | No | Deprecated and ignored. It only ever applied to the atom metrics, which moved to run-sql (per-deal normalization is a GROUP BY there, in whatever shape the question needs). Accepted so an existing caller does not fail validation.  |
+| `id` | string | Yes | Caller-supplied id so this item's result maps back to its own tab/window unambiguously — never by array position.  |
+| `trend` | object | No | Expand this item into `count` consecutive week/month windows ending now, oldest first (ids "&lt;id&gt;#1".."&lt;id&gt;#N", each result carries its window). Omit filter.from/to with it.  |
+
+### computeMetricBatch.items item.filter
+
+The shared filter cube scoping which atoms/events/deals are aggregated. Omit conversationIds → org-wide.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `conversationIds` | string&#91;&#93; | No |  minItems: 1 |
+| `fieldIds` | string&#91;&#93; | No |   |
+| `kinds` | "event" · "instance" · "judgment"&#91;&#93; | No |   |
+| `eventIds` | string&#91;&#93; | No |   |
+| `eventTypes` | string&#91;&#93; | No |   |
+| `emailClassifications` | string&#91;&#93; | No |   |
+| `stages` | string&#91;&#93; | No |   |
+| `from` | string | No |   |
+| `to` | string | No |   |
+| `reps` | string&#91;&#93; | No |   |
+| `values` | string&#91;&#93; | No |   |
+| `valueContains` | string | No |   |
+| `strength` | object | No |   |
+| `completeness` | object | No |   |
+| `hasStrength` | boolean | No |   |
+| `hasCompleteness` | boolean | No |   |
+| `payload` | object | No |   |
+| `hasResponseSpan` | boolean | No |   |
+| `hasReason` | boolean | No |   |
+| `current` | boolean | No |   |
+| `crmLinkedOnly` | boolean | No | Scope to deals with a real linked CRM record, not just a matched account. Use for any metric presented as a real number — CRM-unlinked deals skew the result.  |
+
+### computeMetricBatch.items item.filter.strength
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `min` | number | No |   |
+| `max` | number | No |   |
+
+### computeMetricBatch.items item.filter.completeness
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `min` | number | No |   |
+| `max` | number | No |   |
+
+### computeMetricBatch.items item.outcome
+
+Agent-supplied won/lost status values — REQUIRED for win_rate, total_pipeline, and any metric scoped to the open pipeline (deals_dropped, quiet_gap, hygiene, contacts_reached, open_deal_age, stalled_deal_revenue, followup_time), and for groupBy:"outcome" (Cedar infers no terminal status). Get the vocab from describe-field on the status field.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `won` | string&#91;&#93; | Yes |   |
+| `lost` | string&#91;&#93; | Yes |   |
+
+### computeMetricBatch.items item.crmStages
+
+Optional CRM stage values per bucket. With it, an org-wide ungrouped win_rate/won_pipeline/avg_acv/total_pipeline is read live from the CRM (row source:"crm_live"); else from Cedar.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `won` | string&#91;&#93; | No |   |
+| `lost` | string&#91;&#93; | No |   |
+| `open` | string&#91;&#93; | No |   |
+
+### computeMetricBatch.items item.crmReporting
+
+Required for live crm_won_amount/crm_open_due_amount: close-date window timezone, e.g. America/Los_Angeles. One filter.reps user and explicit from/to date bounds required.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `timezone` | string | Yes |   |
+
+### computeMetricBatch.items item.trend
+
+Expand this item into `count` consecutive week/month windows ending now, oldest first (ids "&lt;id&gt;#1".."&lt;id&gt;#N", each result carries its window). Omit filter.from/to with it.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `size` | "week" · "month" | Yes |   |
+| `count` | integer | Yes |  minimum: 1; maximum: 50 |
+
 ### describeMetrics
+
+List the computable metrics × groupBy dimensions (the analytics catalog).
 
 | Parameter | Type | Required | Details |
 | --- | --- | --- | --- |

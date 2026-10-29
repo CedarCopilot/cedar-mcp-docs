@@ -1,0 +1,604 @@
+{
+  "type": "object",
+  "properties": {
+    "attributionRate": {
+      "type": "object",
+      "properties": {
+        "users": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "userId": {
+                "type": "string"
+              },
+              "userName": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "userEmail": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "totalSent": {
+                "type": "number"
+              },
+              "sentFromCedarDraft": {
+                "type": "number"
+              },
+              "attributionRate": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "userId",
+              "userName",
+              "userEmail",
+              "totalSent",
+              "sentFromCedarDraft",
+              "attributionRate"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "overall": {
+          "type": "object",
+          "properties": {
+            "totalSent": {
+              "type": "number"
+            },
+            "sentFromCedarDraft": {
+              "type": "number"
+            },
+            "attributionRate": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "totalSent",
+            "sentFromCedarDraft",
+            "attributionRate"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "users",
+        "overall"
+      ],
+      "additionalProperties": false
+    },
+    "attributionByCategory": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string"
+          },
+          "total": {
+            "type": "number"
+          },
+          "sent": {
+            "type": "number"
+          },
+          "sendRate": {
+            "type": "number"
+          },
+          "avgSimilarity": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "category",
+          "total",
+          "sent",
+          "sendRate",
+          "avgSimilarity"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "similarityDistribution": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "bucket": {
+            "type": "string"
+          },
+          "count": {
+            "type": "number"
+          },
+          "pct": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "bucket",
+          "count",
+          "pct"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "userTiers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "email": {
+            "type": "string"
+          },
+          "tier": {
+            "type": "string",
+            "enum": [
+              "cold",
+              "low",
+              "high"
+            ]
+          },
+          "totalDrafts": {
+            "type": "number"
+          },
+          "sentDrafts": {
+            "type": "number"
+          },
+          "sendRate": {
+            "type": "number"
+          },
+          "totalSent": {
+            "type": "number"
+          },
+          "sentFromCedar": {
+            "type": "number"
+          },
+          "attributionRatePct": {
+            "type": "number"
+          },
+          "avgSimilarity": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "userId",
+          "name",
+          "email",
+          "tier",
+          "totalDrafts",
+          "sentDrafts",
+          "sendRate",
+          "totalSent",
+          "sentFromCedar",
+          "attributionRatePct",
+          "avgSimilarity"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "overview": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "userName": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "userEmail": {
+            "type": "string"
+          },
+          "userStatus": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "totalDrafts": {
+            "type": "number"
+          },
+          "sentDrafts": {
+            "type": "number"
+          },
+          "notSentDrafts": {
+            "type": "number"
+          },
+          "sendRate": {
+            "type": "number"
+          },
+          "avgSimilarity": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "avgWordCountMatch": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "userId",
+          "userName",
+          "userEmail",
+          "userStatus",
+          "totalDrafts",
+          "sentDrafts",
+          "notSentDrafts",
+          "sendRate",
+          "avgSimilarity",
+          "avgWordCountMatch"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "monthlyGrowth": {
+      "type": "object",
+      "properties": {
+        "dateRange": {
+          "type": "object",
+          "properties": {
+            "startDate": {
+              "type": "string"
+            },
+            "endDate": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "startDate",
+            "endDate"
+          ],
+          "additionalProperties": false
+        },
+        "engagementDateRange": {
+          "type": "object",
+          "properties": {
+            "startDate": {
+              "type": "string"
+            },
+            "endDate": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "startDate",
+            "endDate"
+          ],
+          "additionalProperties": false
+        },
+        "eligibleUserCount": {
+          "type": "number"
+        },
+        "posthogConfigured": {
+          "type": "boolean"
+        },
+        "northStar": {
+          "type": "object",
+          "properties": {
+            "attributionRatePct": {
+              "type": "number"
+            },
+            "attributedEmails": {
+              "type": "number"
+            },
+            "totalSentEmails": {
+              "type": "number"
+            },
+            "avgWordMatchPct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "byCategory": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "category": {
+                    "type": "string"
+                  },
+                  "attributedCount": {
+                    "type": "number"
+                  },
+                  "avgWordMatchPct": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "category",
+                  "attributedCount",
+                  "avgWordMatchPct"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "attributionRatePct",
+            "attributedEmails",
+            "totalSentEmails",
+            "avgWordMatchPct",
+            "byCategory"
+          ],
+          "additionalProperties": false
+        },
+        "engagement": {
+          "type": "object",
+          "properties": {
+            "mau": {
+              "type": "number"
+            },
+            "avgDau": {
+              "type": "number"
+            },
+            "avgWau": {
+              "type": "number"
+            },
+            "stickinessPct": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "mau",
+            "avgDau",
+            "avgWau",
+            "stickinessPct"
+          ],
+          "additionalProperties": false
+        },
+        "userSpread": {
+          "type": "object",
+          "properties": {
+            "users": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "userId": {
+                    "type": "string"
+                  },
+                  "userName": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "userEmail": {
+                    "type": "string"
+                  },
+                  "attributedCount": {
+                    "type": "number"
+                  },
+                  "warmOutboundCount": {
+                    "type": "number"
+                  },
+                  "attributionRatePct": {
+                    "type": "number"
+                  },
+                  "avgWordMatchPct": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "bucket": {
+                    "type": "string",
+                    "enum": [
+                      "power",
+                      "mid",
+                      "cold"
+                    ]
+                  }
+                },
+                "required": [
+                  "userId",
+                  "userName",
+                  "userEmail",
+                  "attributedCount",
+                  "warmOutboundCount",
+                  "attributionRatePct",
+                  "avgWordMatchPct",
+                  "bucket"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "medianRatePct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "highest": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "userId": {
+                      "type": "string"
+                    },
+                    "userName": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "userEmail": {
+                      "type": "string"
+                    },
+                    "attributedCount": {
+                      "type": "number"
+                    },
+                    "warmOutboundCount": {
+                      "type": "number"
+                    },
+                    "attributionRatePct": {
+                      "type": "number"
+                    },
+                    "avgWordMatchPct": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "bucket": {
+                      "type": "string",
+                      "enum": [
+                        "power",
+                        "mid",
+                        "cold"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "userId",
+                    "userName",
+                    "userEmail",
+                    "attributedCount",
+                    "warmOutboundCount",
+                    "attributionRatePct",
+                    "avgWordMatchPct",
+                    "bucket"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "lowest": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "userId": {
+                      "type": "string"
+                    },
+                    "userName": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "userEmail": {
+                      "type": "string"
+                    },
+                    "attributedCount": {
+                      "type": "number"
+                    },
+                    "warmOutboundCount": {
+                      "type": "number"
+                    },
+                    "attributionRatePct": {
+                      "type": "number"
+                    },
+                    "avgWordMatchPct": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "bucket": {
+                      "type": "string",
+                      "enum": [
+                        "power",
+                        "mid",
+                        "cold"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "userId",
+                    "userName",
+                    "userEmail",
+                    "attributedCount",
+                    "warmOutboundCount",
+                    "attributionRatePct",
+                    "avgWordMatchPct",
+                    "bucket"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "bucketCounts": {
+              "type": "object",
+              "properties": {
+                "power": {
+                  "type": "number"
+                },
+                "mid": {
+                  "type": "number"
+                },
+                "cold": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "power",
+                "mid",
+                "cold"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "users",
+            "medianRatePct",
+            "highest",
+            "lowest",
+            "bucketCounts"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "dateRange",
+        "engagementDateRange",
+        "eligibleUserCount",
+        "posthogConfigured",
+        "northStar",
+        "engagement",
+        "userSpread"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

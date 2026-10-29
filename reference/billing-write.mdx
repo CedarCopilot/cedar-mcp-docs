@@ -3,7 +3,7 @@ title: "billing-write"
 description: "Parameters, scopes, and response schema for billing-write."
 ---
 
-Generated from Cedar's external registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
 ## Capability
 
@@ -83,6 +83,40 @@ Path, account role, feature gates, target ownership, and billing permissions can
 | `lowBalanceMicrocredits` | string or null | No |  default: null |
 | `delivery` | "in_app" · "email"&#91;&#93; | No |  default: &#91;"in_app"&#93;; minItems: 1; maxItems: 2 |
 | `recipientUserIds` | string&#91;&#93; | Yes |  minItems: 1; maxItems: 20 |
+
+### policy.scope — kind: account
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `kind` | "account" | Yes |   |
+
+### policy.scope — kind: member
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `kind` | "member" | Yes |   |
+| `memberUserId` | string | Yes |  minLength: 1 |
+
+### policy.scope — kind: meter
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `kind` | "meter" | Yes |   |
+| `meterKey` | string | Yes |  minLength: 1; maxLength: 128 |
+
+### policy.scope — kind: feature
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `kind` | "feature" | Yes |   |
+| `featureKey` | string | Yes |  minLength: 1; maxLength: 128 |
+
+### policy.scope — kind: features
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `kind` | "features" | Yes |   |
+| `featureKeys` | string&#91;&#93; | Yes |  minItems: 1; maxItems: 100 |
 
 ### grant
 

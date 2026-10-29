@@ -1,0 +1,189 @@
+---
+title: "collateral"
+description: "Workflow capabilities and resources for the collateral skill."
+---
+
+Create any sales collateral — pitch decks, one-pagers, battle cards, case studies, ROI docs, executive briefs, competitive matrices, business cases, and mutual action plans. Use when the user asks to build, fill, or auto-generate any piece of sales or marketing content. Searches KB and Drive for existing examples to use as templates; builds from scratch with style exploration when none exist. Orchestrates format selection, content sourcing, style discovery, template building, and agent creation, supporting interactive design mode or direct execution.
+
+## Load the module
+
+Call `load-skill` with:
+
+```json
+{
+  "name": "collateral"
+}
+```
+
+Read the returned instructions in full. Account-specific playbook context is assembled at load time; this static reference does not publish it.
+
+## Resources
+
+Each resource is independently loadable using the same skill name and its exact resource key.
+
+### template-builder
+
+Build a reusable collateral template from multiple existing examples. Loaded when the user has existing examples and wants to create a template. Analyzes examples together, diffs variable vs. fixed content, and produces a placeholder-annotated template ready for agent automation.
+
+```json
+{
+  "name": "collateral",
+  "resource": "template-builder"
+}
+```
+
+### format-routing
+
+Format routing document for the collateral orchestrator. Loaded to determine which format sub-skill to load. Each format sub-skill owns all rendering rules for its output type.
+
+```json
+{
+  "name": "collateral",
+  "resource": "format-routing"
+}
+```
+
+### format-html
+
+HTML rendering rules for the collateral system. Loaded when the output format is HTML. Covers style discovery (3 mood-based previews), viewport rules, content density limits, and generation requirements.
+
+```json
+{
+  "name": "collateral",
+  "resource": "format-html"
+}
+```
+
+### format-markdown
+
+Markdown rendering rules for the collateral system. Loaded when the output format is Markdown. Covers tonal style discovery (3 opening samples), structural rules, and Cedar Doc delivery.
+
+```json
+{
+  "name": "collateral",
+  "resource": "format-markdown"
+}
+```
+
+### format-google-slides
+
+Google Slides rendering rules for the collateral system. Loaded when the output format is Google Slides. Covers Drive-based template sourcing, placeholder mechanics via gws CLI, style discovery, and delivery.
+
+```json
+{
+  "name": "collateral",
+  "resource": "format-google-slides"
+}
+```
+
+### format-google-docs
+
+Google Docs rendering rules for the collateral system. Loaded when the output format is Google Docs. Covers placeholder mechanics via gws CLI, tonal style discovery, and delivery.
+
+```json
+{
+  "name": "collateral",
+  "resource": "format-google-docs"
+}
+```
+
+### type-pitch-deck
+
+Create a sales deck for advancing a specific B2B deal — giving a champion something to share, enabling mid-cycle conversations, or supporting a demo. Uses Raskin Narrative Arc for enterprise, Before-After-Bridge for SMB.
+
+```json
+{
+  "name": "collateral",
+  "resource": "type-pitch-deck"
+}
+```
+
+### type-one-pager
+
+Create a one-page sales leave-behind designed for internal shareability — the buyer forwards it to stakeholders who never met you.
+
+```json
+{
+  "name": "collateral",
+  "resource": "type-one-pager"
+}
+```
+
+### type-battle-card
+
+Create a competitive battle card — a single-screen, scannable reference reps use mid-call to handle objections and navigate competitive comparisons. One card per competitor.
+
+```json
+{
+  "name": "collateral",
+  "resource": "type-battle-card"
+}
+```
+
+### type-case-study
+
+Write a customer case study that frames the decision story — not a victory parade. Includes the friction, alternatives considered, and internal objections overcome, not just the results.
+
+```json
+{
+  "name": "collateral",
+  "resource": "type-case-study"
+}
+```
+
+### type-executive-brief
+
+Write a bottom-line-up-front executive brief for a decision-maker. Recommendation first, three supporting points, one clear ask with a deadline. One page max.
+
+```json
+{
+  "name": "collateral",
+  "resource": "type-executive-brief"
+}
+```
+
+### type-competitive-matrix
+
+Create a competitive comparison artifact — feature matrix, positioning map, pricing comparison, or win/loss analysis. Choose the format for the decision being made, not as a default template.
+
+```json
+{
+  "name": "collateral",
+  "resource": "type-competitive-matrix"
+}
+```
+
+### type-business-case
+
+Build a quantified business case with ROI math, payback period, and benefit categories. Present before the demo to anchor the discussion to business outcomes, not features.
+
+```json
+{
+  "name": "collateral",
+  "resource": "type-business-case"
+}
+```
+
+### type-mutual-action-plan
+
+Create a mutual action plan (MAP) — a co-created milestone document showing both sides' commitments from now through post-implementation. Co-creation is the mechanism; pre-filled plans sent as homework get ignored.
+
+```json
+{
+  "name": "collateral",
+  "resource": "type-mutual-action-plan"
+}
+```
+
+## Tools and surface compatibility
+
+Use the canonical family tools in your connection’s `tools/list`. Skill source may still mention older granular names. The source dependencies below describe implementation composition; they are **not additional external MCP registrations**. The [complete capability index](/reference/coverage) records callable family/action contracts.
+
+- `web-search`
+- `search-documents`
+- `read-document`
+- `list-documents`
+- `write-document`
+- `move-file`
+- `share-document`
+- `notify-user`

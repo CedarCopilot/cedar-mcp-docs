@@ -1,0 +1,14 @@
+{
+  "type": "object",
+  "properties": {
+    "threadId": {
+      "type": "string",
+      "description": "The id of the past chat thread to switch the user into, from a search-chat-history result."
+    }
+  },
+  "required": [
+    "threadId"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

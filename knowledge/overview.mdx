@@ -1,0 +1,32 @@
+---
+title: "Knowledge base and company context"
+description: "Retrieve product knowledge, uploaded files, reference facts, and account context."
+---
+
+Cedar can give an external agent reusable company knowledge as well as deal-specific evidence. Load the `knowledge-base` skill to understand retrieval, and `cedar-configuration` when changing what Cedar knows or how it uses that knowledge.
+
+## The context layers
+
+| Layer | Purpose | How to access it |
+| --- | --- | --- |
+| Company background and SOP | Positioning and standing organization instructions | Read the effective playbook and its referenced resources |
+| Knowledge base | Pricing, product facts, links, collateral, uploaded documents | `document-read` list/search/read using the resolved KB paths |
+| Conversation evidence | Email, Slack, meetings, LinkedIn and other ingested deal context | `conversation-read` |
+| Working documents | Research, analysis, handoffs, notes, reports | `document-read` and `document-write` |
+| Connected external knowledge | Knowledge held in another connected system | Discover the integration, then use the caller's authorized connector |
+
+The `#kb` convention resolves to organization knowledge. Discover the actual paths and permissions through the loaded skill and document listing. A personal note and an organization-wide knowledge edit have different audiences.
+
+## Search, then read the evidence
+
+Use `document-read search` for a known phrase or topic, `list` to inventory candidate files, and `read` to inspect the full result. A search miss does not prove an uploaded file lacks the information: some files have no extracted searchable text and need whole-file reading. Inspect extraction/read-mode metadata and use the returned file link where supported.
+
+Some skill text names legacy granular operations such as `grep-kb` or `read-kb-document`. Those names are not separately registered external tools. Use the canonical document families from your session's `tools/list`; do not assume the skill grants a generic `call-mcp-tool` bridge.
+
+## Save facts and configure behavior separately
+
+Persist durable reference material through the supported document paths. Read first, update the authoritative entry, and verify the saved result. Use company background for enduring company context and KB entries for specific reference material.
+
+Saving a pricing sheet makes it retrievable. To use it automatically in a future workflow, the relevant agent or playbook must reference it and contain the intended rule. Shared content and the rule that consumes it need compatible scope. An organization-wide document referenced only from one rep's playbook does not configure the whole team.
+
+[Knowledge-base skill](/skills/knowledge-base) · [Document tools](/reference/document-read) · [Knowledge and collateral resource](/skills/cedar-configuration#knowledge-and-collateral)

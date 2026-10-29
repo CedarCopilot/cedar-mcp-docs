@@ -1,0 +1,32 @@
+---
+title: "Connected systems and external MCP servers"
+description: "Discover integrations, configure MCP connections and understand the external-client boundary."
+---
+
+Cedar can hold connections to CRMs, communication providers and external MCP servers. The `connected-systems` skill explains the external-client workflow; `external-systems` includes broader in-app guidance and must be read with the surface boundary in mind.
+
+## Discover configuration
+
+`config-read read-settings` reports reachable integration metadata, connection IDs, instructions and supported human connection links. Credential availability metadata is not a secret value and does not authorize extracting credentials.
+
+```json
+{ "action": "read-settings", "readSettings": { "sections": ["connections"] } }
+```
+
+Use a Cedar-native family for an operation it actually exposes. For an external operation outside that surface, use the external client's own authorized connector. A Cedar connection does not automatically become a generic credential tunnel for another agent.
+
+## Configure an MCP connection
+
+`systems-write` supports `manage_mcp_connection` for a URL-based create/delete and `update_mcp_connection_settings` for supported instructions/background access settings. User and organization scope have different authorization; a user-scoped connection can shadow an organization entry of the same name.
+
+The external schema removes raw credential storage and static Authorization-header configuration. Complete secret-bearing connection setup through the supported app flow.
+
+## Call-through inside Cedar
+
+Cedar's internal `external-mcp` family dispatches to connected MCP servers. It is an app-only tool, documented in the reference so the module is visible, but unavailable to ordinary external MCP clients. The same distinction applies to the internal `delegate` executor.
+
+## External object writes
+
+Creating a CRM task, note, opportunity or Slack channel may require an external provider connector rather than a Cedar conversation mutation. Load `cedar-configuration` with `external-writes`, verify which API owns the object, and read back the provider result. Linking an existing external deal to Cedar remains a supported `conversation-write` action.
+
+[System configuration](/reference/systems-write) · [Connected-systems skill](/skills/connected-systems) · [App-only bridge](/reference/external-mcp)

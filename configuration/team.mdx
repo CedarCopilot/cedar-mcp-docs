@@ -1,0 +1,34 @@
+---
+title: "Organization scope and propagation"
+description: "Inspect member configuration, compare divergence, and apply authorized team changes."
+---
+
+Cedar has user-specific and organization-level configuration. Load `cedar-configuration` with `scope-and-sharing` before a rule or reference is meant to apply to multiple people.
+
+## Discover the actual owners
+
+`config-read list-org-members` returns the caller's organization directory and supports name/email search. Use these returned user IDs for authorized cross-user work.
+
+`read-playbook` returns both relevant user and organization playbooks and an `editMap` of referenced resources/subagents and write targets. Use the indicated target instead of guessing user versus organization paths.
+
+```json
+{ "action": "list-org-members", "listOrgMembers": {} }
+```
+
+## Compare fields across reps
+
+`config-read list-fields` supports `targetUserIds` and rollups. The special `"org"` target means reps on the same AOP type linked to that organization AOP, not every person in the company regardless of playbook. Viewing another rep's configuration requires the corresponding organization authority.
+
+Rollups distinguish uniform, diverging and missing fields relative to the organization default. That comparison is a useful first step before propagation.
+
+## Propagate deliberately
+
+`config-propagate` exposes `propagate-field` and `propagate-mapping`. Read the source and destination state and supply the intended targets. Diverging configuration is protected; an explicit force path can produce target-specific approval proposals.
+
+Check each target's outcome. A created proposal is not an applied change, and one successful rep does not mean every rep was updated. Re-read the resulting rollup/mappings to verify parity.
+
+## Shared content and shared behavior
+
+An organization KB document plus a rule in one user's playbook is not a team rollout. A shared rule that references a private resource is also incomplete. Match the scope of content, fields, CRM mappings and consuming rules.
+
+[Propagation contract](/reference/config-propagate) · [Configuration reads](/reference/config-read)

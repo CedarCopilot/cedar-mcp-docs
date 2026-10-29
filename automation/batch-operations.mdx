@@ -1,0 +1,26 @@
+---
+title: "Batch work across deals and rows"
+description: "Keep large jobs scoped, reviewable and attributable to individual targets."
+---
+
+The `multi-conversation-operations` skill applies before batch work across three or more conversations. It provides the planning and execution discipline for a request such as “review these deals and prepare follow-ups.”
+
+## Establish the work set
+
+Resolve the actual conversation IDs, filters and inclusion criteria. Present or persist the selected set when the work is large or consequential. Keep each record's evidence and output separate; one deal's contacts or instructions must not leak into another deal's result.
+
+The requested outcome determines the required authority. Batch reading, preparing drafts, assigning tasks, updating fields and sending messages are distinct operations. A request to analyze a pipeline is not authorization to send to every contact.
+
+## Use the correct executor
+
+The external MCP surface has no general Cedar subagent-spawn or code-execution tool. An external client may use its own available orchestration, preserving the current connection's scopes. Cedar table `fill` returns row briefs for delegated work on this surface; it does not secretly launch more privileged row agents.
+
+Where a tool offers a batch operation, follow its own limits and result identifiers. `conversation-analytics compute-metric-batch` supports up to 50 items; live CRM metrics should still run sequentially because provider rate limits apply.
+
+## Track outcomes
+
+Keep an item-level record of target, operation, result, pending approval, failure and retry decision. Retry only the failed safe step. For uncertain sends or provider outcomes, inspect state before resubmitting. A completed batch should make partial failures visible.
+
+Save durable results in documents/tables and use notifications to point to the result when the workflow calls for it. Apply outbound spacing and the documented governor behavior rather than launching an immediate send burst.
+
+[Batch skill](/skills/multi-conversation-operations) · [Tables](/documents/tables) · [Queueing](/automation/queueing)

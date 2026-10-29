@@ -1,0 +1,41 @@
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "call"
+      ],
+      "description": "Which operation to perform — pass its matching params object below."
+    },
+    "call": {
+      "type": "object",
+      "properties": {
+        "connectionName": {
+          "type": "string",
+          "description": "The name of the MCP connection as shown in the loaded skill instructions"
+        },
+        "toolName": {
+          "type": "string",
+          "description": "The MCP tool to call as listed under the connection in the loaded skill instructions"
+        },
+        "arguments": {
+          "type": "object",
+          "additionalProperties": {},
+          "description": "Arguments to pass to the MCP tool — check the tool description for required fields"
+        }
+      },
+      "required": [
+        "connectionName",
+        "toolName",
+        "arguments"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "action"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

@@ -1,0 +1,37 @@
+---
+title: "Tables, row operations and data exchange"
+description: "Work with persistent structured data using stable rows, schemas, views and imports."
+---
+
+Cedar tables are row-addressed documents. Load `tables` before editing them. Use `table` for partial changes instead of replacing the whole document body.
+
+## Every table operation
+
+| Operation | Purpose |
+| --- | --- |
+| `read` | Read projected, filtered and sorted table data |
+| `create` | Create a new table, including supported query-backed creation |
+| `add_columns`, `update_columns`, `remove_columns`, `reorder_columns` | Manage the declared schema and column presentation |
+| `add_rows`, `delete_rows`, `move_row` | Manage stable rows and their placement |
+| `set`, `clear` | Edit individual or multiple cells |
+| `insert_section` | Add a section heading |
+| `update_view` | Change view filtering/sorting or supported view settings |
+| `bindings` | Inspect/configure supported CRM column bindings |
+| `import`, `export` | Exchange CSV/XLSX data |
+| `fill` | Prepare/execute supported row-work orchestration for the current surface |
+
+## Stable identity and concurrency
+
+Address a cell as `rowId.columnKey`. Use the current revision for ordinal/A1 operations and operations such as `move_row` that require `ifRevision`. A visible row position can change under sorting; it is not durable identity. Respect subrow/section restrictions and the read-only status of bound CRM columns.
+
+Bulk operations use the tool's documented line-oriented encodings. The reference expands every nested object, so check the exact encoding and parameter shape before constructing a large edit.
+
+## Import and export
+
+Import supports supported uploaded CSV/XLSX sources and column mappings. `updateInPlace` can merge a workbook using `_id`; preserve that identity column when round-tripping existing rows. Export returns base64 file bytes with the export metadata. Decode those bytes into a user-facing file rather than displaying the raw payload in chat.
+
+## External row work
+
+External `fill` returns delegated row briefs (`mode: "delegate"`) for the calling agent to handle with its own tools. It does not grant access to Cedar's internal agent executor. Follow the returned confirmation and batching requirements, keep results tied to row IDs, and explicitly use Fiber for manual company/person enrichment.
+
+[Complete table contract](/reference/table) · [Table skill](/skills/tables)

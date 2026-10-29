@@ -1,0 +1,83 @@
+---
+title: "coaching"
+description: "Workflow capabilities and resources for the coaching skill."
+---
+
+Sales methodology frameworks — BANT, SAYA (Sell As You Are), MEDDPICC, the rep onboarding coaching-report structure, and the per-stage sales process-doc template. Load when the AOP specifies a sales methodology (SAYA, BANT, MEDDPICC, etc.), when giving methodology-grounded deal feedback or call reviews, when building a rep onboarding coaching report, or when you need the authoritative structure for a per-stage sales process doc.
+
+## Load the module
+
+Call `load-skill` with:
+
+```json
+{
+  "name": "coaching"
+}
+```
+
+Read the returned instructions in full. Account-specific playbook context is assembled at load time; this static reference does not publish it.
+
+## Resources
+
+Each resource is independently loadable using the same skill name and its exact resource key.
+
+### bant
+
+BANT sales qualification methodology
+
+```json
+{
+  "name": "coaching",
+  "resource": "bant"
+}
+```
+
+### saya
+
+SAYA (Sell As You Are) discovery framework
+
+```json
+{
+  "name": "coaching",
+  "resource": "saya"
+}
+```
+
+### meddpicc
+
+MEDDPICC enterprise sales qualification framework
+
+```json
+{
+  "name": "coaching",
+  "resource": "meddpicc"
+}
+```
+
+### coaching-report
+
+How to construct a rep onboarding coaching report from extracted call intelligence
+
+```json
+{
+  "name": "coaching",
+  "resource": "coaching-report"
+}
+```
+
+### process-doc-template
+
+Authoritative structure for per-stage sales process docs (playbooks/process/rep-&#123;userId&#125;).
+
+```json
+{
+  "name": "coaching",
+  "resource": "process-doc-template"
+}
+```
+
+## Tools and surface compatibility
+
+Use the canonical family tools in your connection’s `tools/list`. Skill source may still mention older granular names. The source dependencies below describe implementation composition; they are **not additional external MCP registrations**. The [complete capability index](/reference/coverage) records callable family/action contracts.
+
+This is an instruction/reasoning module with no standalone tool dependencies. Use the relevant CRM, document, or reporting tools for evidence and output.

@@ -3,7 +3,7 @@ title: "table"
 description: "Parameters, scopes, and response schema for table."
 ---
 
-Generated from Cedar's external registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
 <Note>Writes on playbook or agenda paths require playbook:write. External fill returns delegated row briefs; it does not launch Cedar row agents.</Note>
 
@@ -71,6 +71,15 @@ Path, account role, feature gates, target ownership, and billing permissions can
 | `offset` | integer | No | 0-based row offset for the next page. minimum: 0 |
 | `orderBy` | object | No | Order the page by one column, the way its TYPE orders — currency numerically, a date by the instant, a select by its declared option order, `_status` by the fan-out lifecycle. Empty cells are always last. Applied after `where` and before paging, so `orderBy` + `limit` is a real top-N. Ordinal and A1 addressing still resolve against DOCUMENT order, so write back by _id.  |
 
+### read.orderBy
+
+Order the page by one column, the way its TYPE orders — currency numerically, a date by the instant, a select by its declared option order, `_status` by the fan-out lifecycle. Empty cells are always last. Applied after `where` and before paging, so `orderBy` + `limit` is a real top-N. Ordinal and A1 addressing still resolve against DOCUMENT order, so write back by _id.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `columnKey` | string | Yes | A declared column key, or `_status`.  |
+| `direction` | "asc" · "desc" | No | Default asc.  |
+
 ### create
 
 | Parameter | Type | Required | Details |
@@ -80,6 +89,126 @@ Path, account role, feature gates, target ownership, and billing permissions can
 | `from` | object | No | Materialize rows from a real query instead of transcribing them. USE THIS whenever the row set comes from Cedar data — "every deal closing this quarter", "all my customers".  |
 | `description` | string | No | Short summary shown in document listings. maxLength: 200 |
 
+### create.schema
+
+The table schema. Columns are always declared and always headed — there are no anonymous columns.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `viewFilter` | object | No | Persistent view filter; descendants inherit visibility unless matchDescendants is true. Does not delete records.  |
+| `subrowColumns` | object&#91;&#93; | No | Independent child-row layout. Declare these keys in columns, optionally hidden there; labels and widths can differ from parent rows. maxItems: 64 |
+| `columns` | object&#91;&#93; | Yes | Ordered column list. At least one. minItems: 1 |
+| `titleColumn` | string | No | Column key that labels a row. Defaults to the first column. `set` refuses to create a row unless this column is assigned in the same call.  |
+| `purpose` | string | No | Why the table exists. Shown as a subtitle and fed to filling agents.  |
+
+### create.schema.viewFilter
+
+Persistent view filter; descendants inherit visibility unless matchDescendants is true. Does not delete records.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `columnKey` | string | Yes |  minLength: 1 |
+| `operator` | "equals" · "not_equals" · "contains" · "not_contains" · "is_empty" · "not_empty" | Yes |   |
+| `value` | string | Yes |   |
+| `enabled` | boolean | No |   |
+| `matchDescendants` | boolean | No |   |
+| `conditions` | object&#91;&#93; | No |   |
+
+### create.schema.viewFilter.conditions item
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `columnKey` | string | Yes |  minLength: 1 |
+| `operator` | "equals" · "not_equals" · "contains" · "not_contains" · "is_empty" · "not_empty" | Yes |   |
+| `value` | string | Yes |   |
+
+### create.schema.subrowColumns item
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `key` | string | Yes |  minLength: 1 |
+| `label` | string | No |   |
+| `width` | number | No |  minimum: 80; maximum: 1200 |
+
+### create.schema.columns item
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `width` | number or null | No |   |
+| `wrap` | "wrap" · "max-lines" · "overflow" | No |   |
+| `hidden` | boolean | No | Hide from parent rows; still available in subrowColumns.  |
+| `label` | string | Yes | Required, non-empty, unique. The rendered header, e.g. "Next step date". minLength: 1 |
+| `key` | string | No | Stable lower-snake handle used in every `set` line (`r_07.next_step`). Minted from the label when omitted, and IMMUTABLE afterwards — renaming a column changes only its label.  |
+| `type` | "text" · "long_text" · "number" · "currency" · "percent" · "date" · "checkbox" · "select" · "multi_select" · "url" · "email" · "output" · "conversation" · "task" · "draft" · "doc" · "person" · "company" | No | Cell type; defaults to text. conversation/task/draft/doc/person/company hold a `&#91;&#91;type: id&#93;&#93;` reference token and render as a live chip.  |
+| `description` | string | No | One-line human description, shown on header hover.  |
+| `fillInstruction` | string | No | How to derive this cell. This is the column's real payload for a fan-out — each row-scoped subagent is handed the fillInstruction of every column it owns.  |
+| `required` | boolean | No | Cells must be non-empty before a row counts as done.  |
+| `binding` | string | No | Derive this cell instead of writing it. `&lt;refColumnKey&gt;.&lt;field&gt;` reads through THAT column's reference cell (`deal.stage`, `their_company.domain`, `deal.fields.&lt;fieldKey&gt;`) and errors per row if the cell holds another kind of reference; `&lt;entity&gt;.&lt;field&gt;` is shorthand for the row's first ref of that entity, which is only unambiguous while there is one. Recomputed rather than edited, and READ-ONLY — never `set` a bound column or hand one to `fill`. Call `bindings` for every path this table can use.  |
+| `options` | string&#91;&#93; | No | select / multi_select only. ORDER MATTERS: the declared order is the order the picker lists them in AND the order the column sorts by, so declare them along whatever progression the column measures (earliest → latest, worst → best, coldest → warmest), not in the order they occurred to you.  |
+| `currency` | string | No | currency only. ISO 4217, e.g. "USD".  |
+| `outputKind` | "slack" · "email" · "file" · "linkedin" · "whatsapp" · "calendar" | No | output only. Which artifact this column produces — a column that declares none cannot be filled.  |
+| `format` | string | No | date only. date-fns format; defaults to yyyy-MM-dd.  |
+
+### create.from
+
+Materialize rows from a real query instead of transcribing them. USE THIS whenever the row set comes from Cedar data — "every deal closing this quarter", "all my customers".
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `source` | "conversations" · "tasks" · "people" · "companies" · "documents" | Yes | Where rows come from. `conversations` and `tasks` are supported.  |
+| `filter` | object | No | Same filter surface as find-crm-conversations — not a second query language.  |
+| `limit` | integer | No |  maximum: 2500; exclusiveMinimum: 0 |
+| `intoColumn` | string | No | Column that receives the &#91;&#91;&lt;source&gt;: id&#93;&#93; ref. Defaults to the first reference column.  |
+
+### create.from.filter
+
+Same filter surface as find-crm-conversations — not a second query language.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `filters` | object&#91;&#93; | No |   |
+| `eventFilter` | object | No |   |
+| `orderBy` | object | No |   |
+
+### create.from.filter.filters item
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `field` | string | Yes |  minLength: 1 |
+| `operator` | string | Yes |  minLength: 1 |
+| `value` | string or number or boolean or string&#91;&#93; or number&#91;&#93; or null | No |   |
+
+### create.from.filter.eventFilter
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `count` | object | No |   |
+| `types` | object | No |   |
+| `date` | string | No |   |
+| `dateOperator` | "before" · "after" · "on" | No |   |
+
+### create.from.filter.eventFilter.count
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `eventType` | string | Yes |   |
+| `operator` | "gt" · "gte" · "lt" · "lte" · "eq" | Yes |   |
+| `value` | number | Yes |   |
+
+### create.from.filter.eventFilter.types
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `include` | string&#91;&#93; | No |   |
+| `exclude` | string&#91;&#93; | No |   |
+
+### create.from.filter.orderBy
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `field` | string | Yes |   |
+| `direction` | "asc" · "desc" | Yes |   |
+
 ### add_columns
 
 | Parameter | Type | Required | Details |
@@ -87,12 +216,56 @@ Path, account role, feature gates, target ownership, and billing permissions can
 | `columns` | object&#91;&#93; | Yes |  minItems: 1 |
 | `after` | string | No | Insert after this column key. Omit to append.  |
 
+### add_columns.columns item
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `width` | number or null | No |   |
+| `wrap` | "wrap" · "max-lines" · "overflow" | No |   |
+| `hidden` | boolean | No | Hide from parent rows; still available in subrowColumns.  |
+| `label` | string | Yes | Required, non-empty, unique. The rendered header, e.g. "Next step date". minLength: 1 |
+| `key` | string | No | Stable lower-snake handle used in every `set` line (`r_07.next_step`). Minted from the label when omitted, and IMMUTABLE afterwards — renaming a column changes only its label.  |
+| `type` | "text" · "long_text" · "number" · "currency" · "percent" · "date" · "checkbox" · "select" · "multi_select" · "url" · "email" · "output" · "conversation" · "task" · "draft" · "doc" · "person" · "company" | No | Cell type; defaults to text. conversation/task/draft/doc/person/company hold a `&#91;&#91;type: id&#93;&#93;` reference token and render as a live chip.  |
+| `description` | string | No | One-line human description, shown on header hover.  |
+| `fillInstruction` | string | No | How to derive this cell. This is the column's real payload for a fan-out — each row-scoped subagent is handed the fillInstruction of every column it owns.  |
+| `required` | boolean | No | Cells must be non-empty before a row counts as done.  |
+| `binding` | string | No | Derive this cell instead of writing it. `&lt;refColumnKey&gt;.&lt;field&gt;` reads through THAT column's reference cell (`deal.stage`, `their_company.domain`, `deal.fields.&lt;fieldKey&gt;`) and errors per row if the cell holds another kind of reference; `&lt;entity&gt;.&lt;field&gt;` is shorthand for the row's first ref of that entity, which is only unambiguous while there is one. Recomputed rather than edited, and READ-ONLY — never `set` a bound column or hand one to `fill`. Call `bindings` for every path this table can use.  |
+| `options` | string&#91;&#93; | No | select / multi_select only. ORDER MATTERS: the declared order is the order the picker lists them in AND the order the column sorts by, so declare them along whatever progression the column measures (earliest → latest, worst → best, coldest → warmest), not in the order they occurred to you.  |
+| `currency` | string | No | currency only. ISO 4217, e.g. "USD".  |
+| `outputKind` | "slack" · "email" · "file" · "linkedin" · "whatsapp" · "calendar" | No | output only. Which artifact this column produces — a column that declares none cannot be filled.  |
+| `format` | string | No | date only. date-fns format; defaults to yyyy-MM-dd.  |
+
 ### update_columns
 
 | Parameter | Type | Required | Details |
 | --- | --- | --- | --- |
 | `columns` | object&#91;&#93; | Yes |  minItems: 1 |
 | `ifRevision` | integer | No | Revision from read; rejects concurrent schema edits. minimum: 0 |
+
+### update_columns.columns item
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `key` | string | Yes |  minLength: 1 |
+| `patch` | object | Yes |   |
+
+### update_columns.columns item.patch
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `label` | string | No | Required, non-empty, unique. The rendered header, e.g. "Next step date". minLength: 1 |
+| `type` | "text" · "long_text" · "number" · "currency" · "percent" · "date" · "checkbox" · "select" · "multi_select" · "url" · "email" · "output" · "conversation" · "task" · "draft" · "doc" · "person" · "company" | No | Cell type; defaults to text. conversation/task/draft/doc/person/company hold a `&#91;&#91;type: id&#93;&#93;` reference token and render as a live chip.  |
+| `description` | string or null | No |   |
+| `fillInstruction` | string or null | No |   |
+| `required` | boolean or null | No |   |
+| `binding` | string or null | No |   |
+| `options` | string&#91;&#93; or null | No |   |
+| `currency` | string or null | No |   |
+| `outputKind` | "slack" · "email" · "file" · "linkedin" · "whatsapp" · "calendar" or null | No |   |
+| `format` | string or null | No |   |
+| `width` | number or null | No |   |
+| `wrap` | "wrap" · "max-lines" · "overflow" or null | No |   |
+| `hidden` | boolean or null | No |   |
 
 ### remove_columns
 
@@ -118,6 +291,42 @@ Path, account role, feature gates, target ownership, and billing permissions can
 | `viewFilter` | object or null | No |   |
 | `sort` | object or null | No |   |
 | `ifRevision` | integer | No | Revision from read; rejects concurrent schema edits. minimum: 0 |
+
+### update_view.subrowColumns — variant 1 item
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `key` | string | Yes |  minLength: 1 |
+| `label` | string | No |   |
+| `width` | number | No |  minimum: 80; maximum: 1200 |
+
+### update_view.viewFilter — variant 1
+
+Persistent view filter; descendants inherit visibility unless matchDescendants is true. Does not delete records.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `columnKey` | string | Yes |  minLength: 1 |
+| `operator` | "equals" · "not_equals" · "contains" · "not_contains" · "is_empty" · "not_empty" | Yes |   |
+| `value` | string | Yes |   |
+| `enabled` | boolean | No |   |
+| `matchDescendants` | boolean | No |   |
+| `conditions` | object&#91;&#93; | No |   |
+
+### update_view.viewFilter — variant 1.conditions item
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `columnKey` | string | Yes |  minLength: 1 |
+| `operator` | "equals" · "not_equals" · "contains" · "not_contains" · "is_empty" · "not_empty" | Yes |   |
+| `value` | string | Yes |   |
+
+### update_view.sort — variant 1
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `columnKey` | string | Yes |  minLength: 1 |
+| `direction` | "asc" · "desc" | Yes |   |
 
 ### move_row
 

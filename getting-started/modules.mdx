@@ -1,0 +1,42 @@
+---
+title: "All modules and capabilities"
+description: "Find every MCP workflow, registered tool, skill and specialized resource."
+---
+
+Use this directory to start from the job you want to do. The [complete capability index](/reference/coverage) enumerates every action, nested change variant, channel and mode; the [skill catalog](/skills/index) covers every registered skill and its resources.
+
+| Module | Capabilities | Detailed guide |
+| --- | --- | --- |
+| LinkedIn | Seats, profiles, connections, posts, reactions, viewers, engagement, search, screening, chat, DMs, invitations, InMail, ingestion | [LinkedIn](/linkedin/overview) |
+| Signals | Person/company watchers, identity resolution, lifecycle, signal actions, internal extraction and reconciliation | [Signals](/signals/overview) |
+| Website events | Visitor-provider integration, form/webhook triggers, externally supplied page-change events | [Your website](/signals/website) |
+| Slack | Live search, threads/files, ingestion, channel watches, filtered triggers, alerts and digests | [Slack](/slack/overview) |
+| Email | Structured/live search, attachments, sent-draft analysis, drafting, reviewed sends, scheduling, observed tracking | [Email](/email/search-and-attachments) |
+| CRM | Deal search, fields, events, ownership, associations, ingestion and structural repairs | [CRM records](/crm/records-and-repair) |
+| Historical evidence | Taxonomy discovery, event timelines, field evolution, as-of values and raw source buffers | [Field history](/crm/field-history) |
+| Analytics | Cadence, funnel, hygiene, revenue, live CRM amounts, trends and custom read-only SQL | [Metrics](/crm/metrics) |
+| Deal intelligence | Question decomposition, cohorts, themes, evidence and cross-deal analysis | [Cedar Brain](/intelligence/deal-analysis) |
+| Coaching | BANT, SAYA, MEDDPICC, coaching reports and stage process structures | [Coaching](/intelligence/coaching) |
+| Knowledge | Company context, KB retrieval, uploads, reference facts and persistent handoffs | [Knowledge base](/knowledge/overview) |
+| Collateral | Decks, one-pagers, battle cards, case studies, executive briefs, matrices, business cases and action plans | [Collateral](/knowledge/collateral) |
+| Templates and files | Template extraction, imported reference content and supported Google file handoffs | [Templates](/knowledge/templates) |
+| Documents | Read/search/list, focused writes, move/share/revoke, deletion and restoration | [Documents](/documents/sharing) |
+| Tables | Typed schemas, row/cell edits, views, bindings, sections, imports/exports and row work | [Tables](/documents/tables) |
+| Tasks | Personal/shared work, recommendations, assignments, approvals, preparation and completion | [Tasks](/workspace/tasks) |
+| Meetings and calendar | Recorder capability discovery, meeting search/sync, availability and event mutation | [Meetings/calendar](/modules/tasks-calendar) |
+| Workspace | Saved views, strategic overviews, inboxes, LinkedIn navigation, task groups and preferences | [Workspace settings](/workspace/preferences) |
+| Agents and playbooks | Agent authoring, trigger wiring, routing, persistent rules and batch workflows | [Agent authoring](/automation/agent-authoring) |
+| Fields and mappings | Custom fields, options, CRM reconciliation, governance and stage rubrics | [Field configuration](/configuration/fields) |
+| Connected systems | CRM sync/push, write controls, MCP server configuration and provider boundaries | [Integrations](/integrations/external-systems) |
+| WhatsApp and channel linking | Sync consent, disconnects, ambiguous channel resolution and linking sweeps | [WhatsApp](/integrations/whatsapp) |
+| Organization administration | Members, inherited configuration, rollups and field/mapping propagation | [Team scope](/configuration/team) |
+| Data services | Enrichment selection, provider capabilities, account defaults and future policy | [Research](/modules/research) |
+| Billing | Accounts, wallets, limits, grants, approvals, finance links and delivery recovery | [Billing](/operations/billing-and-budgets) |
+| Diagnostics/support | Execution traces, conversation health, test runs, feedback and staff operations | [Support](/operations/support-and-staff) |
+| Additional app surfaces | Boards, workflow buttons, delegation, connected-MCP dispatch and chat history | [App-only capabilities](/operations/app-only) |
+
+## What “available” means
+
+The registry contains 44 external registrations, including staff-only and feature-gated tools, plus 8 documented app-only tool families. Ordinary customer sessions receive a subset determined by scope, role and feature access. Billing administration also has staff checks inside its handler.
+
+Skills add workflow knowledge, not new API authority. All 20 registered skills and 48 named resources are documented. A stale name in a type declaration or skill example is not counted as a callable tool. Use the runtime `tools/list` and skill catalog for the connection you are building against.

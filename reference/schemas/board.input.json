@@ -1,0 +1,293 @@
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "list_boards",
+        "list_templates",
+        "read",
+        "create_board",
+        "get_schema",
+        "set_schema",
+        "add_fields",
+        "set_view",
+        "set_board_meta",
+        "add_card",
+        "set",
+        "move",
+        "comment",
+        "cards",
+        "archive",
+        "list_triggers"
+      ],
+      "description": "Which verb to run."
+    },
+    "board": {
+      "type": "string",
+      "description": "Board name, path, or id. Required for every verb except list_boards, set, move, comment."
+    },
+    "card": {
+      "type": "string",
+      "description": "Card path or id. Required for set, move, comment."
+    },
+    "create_board": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "template": {
+          "type": "string",
+          "description": "A list_templates id. The starting schema; `schema` merges over it."
+        },
+        "schema": {
+          "type": "object",
+          "properties": {
+            "visibility": {
+              "type": "string"
+            },
+            "cardTitleHint": {
+              "type": "string"
+            },
+            "fields": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string"
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "default": {
+                    "type": "string",
+                    "description": "Value a card gets for this field when `add_card` omits the key — e.g. \"backlog\" on `status`, so a card filed with no status IS a Backlog card on disk rather than landing ungrouped. Most useful on the field `view.groupByField` points at."
+                  }
+                },
+                "additionalProperties": true
+              }
+            },
+            "view": {
+              "type": "object",
+              "properties": {
+                "groupByField": {
+                  "type": "string",
+                  "description": "The field whose VALUES are the columns. Repointing it regroups the same cards."
+                },
+                "cardFields": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Fields to show on the card face."
+                },
+                "columnOrder": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "hiddenColumns": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "additionalProperties": true
+            },
+            "meta": {
+              "type": "object",
+              "additionalProperties": {}
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "set_schema": {
+      "type": "object",
+      "properties": {
+        "schema": {
+          "$ref": "#/properties/create_board/properties/schema"
+        },
+        "replace": {
+          "type": "boolean",
+          "description": "Destructive whole-schema overwrite. Default merges."
+        }
+      },
+      "required": [
+        "schema"
+      ],
+      "additionalProperties": false
+    },
+    "add_fields": {
+      "type": "object",
+      "properties": {
+        "fields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/properties/create_board/properties/schema/properties/fields/items"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "fields"
+      ],
+      "additionalProperties": false
+    },
+    "set_view": {
+      "$ref": "#/properties/create_board/properties/schema/properties/view"
+    },
+    "set_board_meta": {
+      "type": "object",
+      "properties": {
+        "meta": {
+          "type": "object",
+          "additionalProperties": {}
+        },
+        "replace": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "meta"
+      ],
+      "additionalProperties": false
+    },
+    "add_card": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "fields": {
+          "type": "object",
+          "additionalProperties": {},
+          "description": "The card's whole data bag, including the field the view groups by."
+        },
+        "visibility": {
+          "type": "string",
+          "enum": [
+            "private",
+            "team"
+          ]
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "additionalProperties": false
+    },
+    "set": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "fields": {
+          "type": "object",
+          "additionalProperties": {}
+        },
+        "replaceFields": {
+          "type": "boolean"
+        },
+        "visibility": {
+          "type": "string",
+          "enum": [
+            "private",
+            "team"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "move": {
+      "type": "object",
+      "properties": {
+        "column": {
+          "type": "string",
+          "description": "A VALUE of view.groupByField. Landing here writes it."
+        },
+        "before": {
+          "type": "string",
+          "description": "Card to land immediately above."
+        },
+        "after": {
+          "type": "string",
+          "description": "Card to land immediately below."
+        }
+      },
+      "additionalProperties": false
+    },
+    "comment": {
+      "type": "object",
+      "properties": {
+        "body": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "additionalProperties": false
+    },
+    "read": {
+      "type": "object",
+      "properties": {
+        "column": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "cards": {
+      "type": "object",
+      "properties": {
+        "column": {
+          "type": "string",
+          "description": "One value of this board's groupByField."
+        },
+        "fields": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Exact match on any field value."
+        },
+        "query": {
+          "type": "string",
+          "description": "Case-insensitive substring over title and description."
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "action"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

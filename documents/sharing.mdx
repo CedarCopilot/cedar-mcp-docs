@@ -1,0 +1,32 @@
+---
+title: "Documents, sharing and recovery"
+description: "Create durable files, make focused edits, share results, and recover deleted documents."
+---
+
+`document-read` supports `read`, `list` and `search`. `document-write` supports `write`, `delete`, `restore`, `move`, `share` and `request-file`. Load `documents` to resolve paths and conventions in the account.
+
+## Write modes and document types
+
+| Mode | Effect |
+| --- | --- |
+| `upsert` | Create or replace the complete document |
+| `append` | Add content to the existing document |
+| `patch` | Replace a unique localized fragment after reading the current content |
+
+The write surface accepts ordinary documents, workflows, HTML, agendas, conversation agendas, attachments and tables. Use the dedicated table family for row/cell edits. Read before replacing shared or agent-owned documents, and check the returned result instead of assuming a proposal was already applied.
+
+## Read large content
+
+Source buffers can provide line/word window conventions such as `#lines/...` and `#words/...`. Use the returned access instructions and document search to navigate a long transcript or report. Search results identify relevant portions; they are not always the complete source.
+
+## Share and recover
+
+Use `share` for the intended audience and its supported revocation behavior. A public share link changes who can access the artifact; choose it deliberately. `move` changes document organization. `delete` and `restore` follow the service's permissions and recovery rules; the documented restore window is 30 days.
+
+A normal document write requires document authorization. Playbook/agenda paths can require `playbook:write` in addition to ordinary document scope. Resource ownership and the effective playbook `editMap` determine the correct write target for behavior changes.
+
+## Handoffs between agents
+
+A stable folder or document can be the handoff: one workflow writes results, another reads them. Store the consuming reference in the relevant agent instructions. A note in one chat does not configure that persistent relationship.
+
+[Read schema](/reference/document-read) · [Write/share schema](/reference/document-write) · [Knowledge base](/knowledge/overview)

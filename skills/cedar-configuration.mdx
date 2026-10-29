@@ -1,0 +1,208 @@
+---
+title: "cedar-configuration"
+description: "Workflow capabilities and resources for the cedar-configuration skill."
+---
+
+The foundational skill for anything related to CONFIGURING, DEBUGGING, or UNDERSTANDING Cedar — its data, or its outputs. Load it at the START of almost any task, before other skills or tools. Covers: how executions/runs work, integrations &amp; sync (why something did or didn't sync or happen), ownership and participant semantics, playbooks/AOPs and how their trigger blocks run, the Knowledge Base, company background, CRM field mappings and conversation fields, draft analytics, and where agent output (drafts, field updates, tasks, summaries) goes. It is Cedar's CONFIGURATION surface (the PLAYBOOK.md document is the primary control — read it to understand behavior, edit it to change behavior; playbook design/optimization, org vs. user split, IGNORE rules, full account design/redesign) AND its DATA-REPAIR surface (fixing a broken conversation, merging/moving/de-duplicating deals, reassigning AOPs, reproducing a missing draft or task). Use it for anything that requires understanding or changing how Cedar behaves or what it produced — and as baseline system context even when merely reading Cedar's data.
+
+## Load the module
+
+Call `load-skill` with:
+
+```json
+{
+  "name": "cedar-configuration"
+}
+```
+
+Read the returned instructions in full. Account-specific playbook context is assembled at load time; this static reference does not publish it.
+
+## Resources
+
+Each resource is independently loadable using the same skill name and its exact resource key.
+
+### choosing-a-trigger
+
+Load when deciding WHEN a rule should run, or when a rule fires too often — first, when timing is the unknown; when whether it is POSSIBLE is the unknown, check that first (agent-capabilities, limits-and-escalation). Covers the trigger ladder, gates that bind only in playbook prose, conditions no event can observe, and dedup. NOT for a live agent that is not firing — see diagnose-and-repair.
+
+```json
+{
+  "name": "cedar-configuration",
+  "resource": "choosing-a-trigger"
+}
+```
+
+### building-an-agent
+
+Load when ready to WRITE a subagent, after when-it-runs is settled: routing by capability, sizing a rule before arming it, proving every call before it is persisted, upsert-vs-patch, wiring the ref last. NOT for deciding when it runs (choosing-a-trigger), what an existing agent is allowed to do (agent-capabilities), or XML syntax (playbook-anatomy).
+
+```json
+{
+  "name": "cedar-configuration",
+  "resource": "building-an-agent"
+}
+```
+
+### agent-capabilities
+
+Load first for "why can't Cedar/an agent do X?", including CRM deal creation, before assuming a Cedar-wide limit. Check system-agent allowlists versus custom-agent connection scopes. Also load before assigning work to an existing agent. NOT for authoring (building-an-agent); confirmed Cedar-wide limits go to limits-and-escalation.
+
+```json
+{
+  "name": "cedar-configuration",
+  "resource": "agent-capabilities"
+}
+```
+
+### external-writes
+
+Load before creating an OBJECT in a connected system (a HubSpot or Salesforce task, note or record, a Slack channel, an API call) or before blocking Cedar from writing to certain CRM deals (dealWriteGuard). Covers native tools vs MCP vs credentials. NOT for a Cedar field that syncs to a CRM property (fields-and-values); NOT for Cedar's own tasks, drafts or Slack output (surfaces-and-delivery).
+
+```json
+{
+  "name": "cedar-configuration",
+  "resource": "external-writes"
+}
+```
+
+### surfaces-and-delivery
+
+Load for Cedar output destinations: Slack, drafts, docs, buttons, tasks and Execute handoffs. Also first for human input before drafting ("let me paste notes in"): end the run, collect input, then start another. Confirm destination support before scope-and-sharing. NOT for external CRM objects (external-writes) or legal field/task values (fields-and-values).
+
+```json
+{
+  "name": "cedar-configuration",
+  "resource": "surfaces-and-delivery"
+}
+```
+
+### scope-and-sharing
+
+Load when a rule might apply to more than the requester — even if they did not say so — and before copying one to another: it fails silently if it references collateral, a field, or a CRM mapping that exists only at the original scope. Covers org vs user, admin cross-user edits, inheritance. Decides WHETHER something is shared, after surfaces-and-delivery confirms the agent can hold it.
+
+```json
+{
+  "name": "cedar-configuration",
+  "resource": "scope-and-sharing"
+}
+```
+
+### voice-and-preferences
+
+Load when a user states a standing rule about HOW Cedar should write or behave — tone, a sign-off, phrases to avoid, "always/never/from now on", "remember that". Covers where a durable preference persists beyond the conversation. NOT for composing one message now (no resource); NOT for reference content like pricing or a deck (knowledge-and-collateral); NOT for draft metrics (draft-analytics).
+
+```json
+{
+  "name": "cedar-configuration",
+  "resource": "voice-and-preferences"
+}
+```
+
+### knowledge-and-collateral
+
+Load to persist durable reference facts — pricing, product specs, links, decks — or company positioning in company background. Covers KB retrieval, scope, and wiring explicitly requested automatic use. Reference facts alone need no behavior rule. NOT for behavior/tone directives (voice-and-preferences); NOT for field option lists (fields-and-values).
+
+```json
+{
+  "name": "cedar-configuration",
+  "resource": "knowledge-and-collateral"
+}
+```
+
+### fields-and-values
+
+Load before creating, mapping, or approval-gating a Cedar conversation field, or when a VALUE must come from a fixed list — task types, task channels, statuses, stages, retired values. Owns which values are legal. NOT for creating an object in an external CRM (external-writes); NOT for button operations or where output is delivered (surfaces-and-delivery).
+
+```json
+{
+  "name": "cedar-configuration",
+  "resource": "fields-and-values"
+}
+```
+
+### using-and-configuring-extracted-fields
+
+Load before referencing ANY field by name in a new or edited agent — org-vs-user scope, whether it's actually kept current (`live`), other write gates (ownership, edit-forbidden, approval), who can change what, and aggregating a field across reps. NOT for creating, mapping, or approval-gating a field (fields-and-values).
+
+```json
+{
+  "name": "cedar-configuration",
+  "resource": "using-and-configuring-extracted-fields"
+}
+```
+
+### limits-and-escalation
+
+Load for confirmed Cedar-wide limits or a CRM rejecting a supported write. Covers 30-minute runs, no mid-run input, event veto or cron state, and no playbook-rule propagation; field/mapping propagation exists. First check agent-capabilities for "why can't Cedar/an agent do X?"; design human-input handoffs in surfaces-and-delivery before escalating.
+
+```json
+{
+  "name": "cedar-configuration",
+  "resource": "limits-and-escalation"
+}
+```
+
+### diagnose-and-repair
+
+Load for anything that ALREADY happened and went wrong: a missing draft, email or deal, a field that did not update, output that should not exist, an agent that is live but never fired, "why did/didn't Cedar do X". Owns reading executions, sync symptom-to-cause, the repair spine and the fix primitives. NOT for designing a rule that does not exist yet (choosing-a-trigger).
+
+```json
+{
+  "name": "cedar-configuration",
+  "resource": "diagnose-and-repair"
+}
+```
+
+### playbook-anatomy
+
+Load for playbook XML syntax, trigger/ref placement, subagent frontmatter, path shortcuts (#chat-agent reads/writes personal chat instructions without an AOP), manifests and document writes. WHAT a rule should say: choosing-a-trigger, scope-and-sharing, voice-and-preferences, fields-and-values. NOT for running a handed playbook — see playbook-execution.
+
+```json
+{
+  "name": "cedar-configuration",
+  "resource": "playbook-anatomy"
+}
+```
+
+### playbook-execution
+
+Load when handed a &lt;playbook_section&gt; or &lt;full_playbook_fallback&gt; block in your prompt, or asked to run or test a playbook for a user. Covers reading and acting on &lt;trigger&gt; blocks, @ tokens and subagent refs at RUNTIME — executing a playbook, not changing one. NOT for editing: what a change should say lives in building-an-agent, its syntax in playbook-anatomy.
+
+```json
+{
+  "name": "cedar-configuration",
+  "resource": "playbook-execution"
+}
+```
+
+### draft-analytics
+
+Load when asked how a user actually edits or accepts drafts: acceptance rate, what changed between drafted and sent, or pulling real sent emails as style examples. Covers the analytics_draft_actions table, its status values and similarity scores. This MEASURES drafting that already happened. NOT for changing how drafts get written — see voice-and-preferences.
+
+```json
+{
+  "name": "cedar-configuration",
+  "resource": "draft-analytics"
+}
+```
+
+## Tools and surface compatibility
+
+Use the canonical family tools in your connection’s `tools/list`. Skill source may still mention older granular names. The source dependencies below describe implementation composition; they are **not additional external MCP registrations**. The [complete capability index](/reference/coverage) records callable family/action contracts.
+
+- `billing-read`
+- `usage-observations-read`
+- `usage-observations-retry`
+- `billing-write`
+- `billing-admin`
+- `data-settings`
+- `read-document`
+- `write-document`
+- `list-documents`
+- `read-connection-settings`
+- `get-recent-executions`
+- `get-sent-emails`
+- `diagnose-conversation`
+- `apply-config-change`
+- `execute-conversation-mutation`
+- `send-user-feedback`

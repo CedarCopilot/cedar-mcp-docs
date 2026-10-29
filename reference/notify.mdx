@@ -3,7 +3,7 @@ title: "notify"
 description: "Parameters, scopes, and response schema for notify."
 ---
 
-Generated from Cedar's external registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
 ## Capability
 
@@ -36,6 +36,116 @@ Path, account role, feature gates, target ownership, and billing permissions can
 | `channel` | "email" · "slack" · "imessage" · "whatsapp" | No | Deliver on a specific channel instead of the user's default. Leave UNSET almost always — the user picks where their notifications land. Set it (e.g. "email") only when the message argues for a channel, such as a long written report the user wants in their inbox. Not a retry mechanism: a failed send already falls back to email on its own.  |
 | `slack` | object | No | Slack-specific options. Only applied when the user has Slack configured.  |
 | `imessage` | object | No | iMessage-specific options. Only applied when the user has iMessage configured.  |
+
+### send.slack
+
+Slack-specific options. Only applied when the user has Slack configured.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `buttons` | object or object&#91;&#93; | No | Block Kit buttons (Slack only). 1-3 word labels.  |
+| `reactions` | object&#91;&#93; | No | Reaction definitions stored for dispatch. isDefault=true auto-adds the emoji.  |
+| `threadTs` | string | No | Send as a thread reply under this message ts  |
+| `channelId` | string | No | Send to a specific Slack channel instead of the user DM. Use list-slack-channels to discover valid IDs.  |
+| `threadReplies` | object&#91;&#93; | No | Additional messages sent as thread replies under the parent message, each with its own buttons — e.g. one reply per grouped item in a digest. Max 10.  |
+
+### send.slack.buttons item — kind: action
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `kind` | "action" | Yes |   |
+| `label` | string | Yes | 1-3 words max. E.g. "Draft", "Done", "Snooze"  |
+| `emoji` | string | No |   |
+| `style` | "primary" · "danger" · "default" | No |  default: "default" |
+| `op` | string | Yes | Operation key from the registry, e.g. cancel_task, snooze_task, agent_prompt  |
+| `args` | object | Yes |   |
+| `confirm` | object | No | Native Slack confirmation dialog shown before the click fires — required for any irreversible op (e.g. send_email_draft).  |
+
+### send.slack.buttons item — kind: action.confirm
+
+Native Slack confirmation dialog shown before the click fires — required for any irreversible op (e.g. send_email_draft).
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `title` | string | Yes |   |
+| `text` | string | Yes |   |
+| `confirm` | string | Yes |   |
+| `deny` | string | Yes |   |
+| `style` | "primary" · "danger" | No |   |
+
+### send.slack.buttons item — kind: link
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `kind` | "link" | Yes |   |
+| `label` | string | Yes | 1-3 words max. E.g. "Open", "View in Cedar"  |
+| `emoji` | string | No |   |
+| `url` | string | Yes |  format: "uri" |
+
+### send.slack.reactions item
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `emoji` | string | Yes | Slack shortcode e.g. white_check_mark  |
+| `op` | string | Yes |   |
+| `args` | object | Yes |   |
+| `isDefault` | boolean | Yes | Cedar auto-adds this emoji to the message so the user sees it immediately  |
+
+### send.slack.threadReplies item
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `text` | string | Yes |   |
+| `buttons` | object or object&#91;&#93; | No |   |
+
+### send.slack.threadReplies item.buttons item — kind: action
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `kind` | "action" | Yes |   |
+| `label` | string | Yes | 1-3 words max. E.g. "Draft", "Done", "Snooze"  |
+| `emoji` | string | No |   |
+| `style` | "primary" · "danger" · "default" | No |  default: "default" |
+| `op` | string | Yes | Operation key from the registry, e.g. cancel_task, snooze_task, agent_prompt  |
+| `args` | object | Yes |   |
+| `confirm` | object | No | Native Slack confirmation dialog shown before the click fires — required for any irreversible op (e.g. send_email_draft).  |
+
+### send.slack.threadReplies item.buttons item — kind: action.confirm
+
+Native Slack confirmation dialog shown before the click fires — required for any irreversible op (e.g. send_email_draft).
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `title` | string | Yes |   |
+| `text` | string | Yes |   |
+| `confirm` | string | Yes |   |
+| `deny` | string | Yes |   |
+| `style` | "primary" · "danger" | No |   |
+
+### send.slack.threadReplies item.buttons item — kind: link
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `kind` | "link" | Yes |   |
+| `label` | string | Yes | 1-3 words max. E.g. "Open", "View in Cedar"  |
+| `emoji` | string | No |   |
+| `url` | string | Yes |  format: "uri" |
+
+### send.imessage
+
+iMessage-specific options. Only applied when the user has iMessage configured.
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `tapbacks` | object&#91;&#93; | No | Tapback definitions stored per message for dispatch when the user reacts  |
+
+### send.imessage.tapbacks item
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `emoji` | "thumbsup" · "thumbsdown" · "heart" · "haha" · "exclamation" · "question" | Yes |   |
+| `op` | string | Yes |   |
+| `args` | object | Yes |   |
 
 ### listSlackChannels
 

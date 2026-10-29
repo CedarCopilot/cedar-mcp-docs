@@ -1,0 +1,31 @@
+{
+  "type": "object",
+  "properties": {
+    "userId": {
+      "type": "string",
+      "description": "Cedar user id of the user to debug as."
+    },
+    "email": {
+      "type": "string",
+      "description": "Email of the user to debug as (unique) — use this when you don't have their user id."
+    },
+    "clear": {
+      "type": "boolean",
+      "description": "Set true to end the debug session and return to your own account."
+    },
+    "user_request_summary": {
+      "type": "string",
+      "description": "One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does."
+    },
+    "is_new_request": {
+      "type": "boolean",
+      "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    }
+  },
+  "required": [
+    "user_request_summary",
+    "is_new_request"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

@@ -1,0 +1,41 @@
+---
+title: "Maintain records, ownership and associations"
+description: "Create and update conversations, ingest evidence, and repair structural problems."
+---
+
+The `conversation-write` family includes normal record updates and explicit repair operations. Load `conversation` for field changes and `cedar-configuration` for diagnosis or structural repair. Resolve the intended records before changing them.
+
+| Action | What it does |
+| --- | --- |
+| `create` | Create a Cedar conversation |
+| `update-fields` | Update supported conversation field values |
+| `create-event` | Log a supported event against a conversation |
+| `reassign-ownership` | Transfer deal ownership through the authorized service |
+| `link-external-crm-deal` | Associate a Cedar conversation with an existing CRM deal |
+| `sync-gmail-thread` | Ingest a known Gmail thread into a conversation |
+| `mutate` | Perform one of the structural operations below |
+
+Creating a Cedar conversation does not create a Salesforce/HubSpot opportunity. To create an external object, use the external client's authorized CRM connector, then link the existing result back to Cedar where appropriate.
+
+## Structural operations
+
+| `mutate.mutation.operation` | Purpose |
+| --- | --- |
+| `move_event` | Move evidence to the correct conversation |
+| `reassign_aop` | Change which playbook owns the conversation |
+| `refresh_conversation` | Reprocess supported conversation context |
+| `refresh_fields` | Refresh supported extracted/working fields |
+| `clear_working_memory` | Remove existing working-memory state |
+| `merge_conversations` | Consolidate duplicate conversations |
+| `merge_companies` | Consolidate duplicate companies |
+| `fix_misassignment` | Repair an incorrectly assigned record |
+| `assign_aop_by_selection` | Re-evaluate playbook selection |
+| `rename_conversation` | Change the conversation's display name |
+
+The [reference](/reference/conversation-write) expands every variant into its own parameter table. These operations are not interchangeable: a rename does not repair evidence ownership, and clearing memory is not a harmless refresh.
+
+## Check the result at the right layer
+
+Read back the conversation after a field or association change. For an ingest/refresh, inspect the execution if processing is asynchronous. A proposal means the operation awaits its approval path; a linked CRM ID means an association exists, not that every Cedar field has been pushed to the provider.
+
+For multi-deal work, first apply the [batch workflow](/automation/batch-operations) so each target and outcome remains traceable.

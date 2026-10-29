@@ -3,7 +3,7 @@ title: "schedule-send"
 description: "Parameters, scopes, and response schema for schedule-send."
 ---
 
-Generated from Cedar's external registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
 ## Capability
 
@@ -45,9 +45,21 @@ Path, account role, feature gates, target ownership, and billing permissions can
 | `subject` | string | Yes |   |
 | `threadId` | string | No |   |
 
-### linkedin
+### linkedin — variant 1
 
-See the JSON schema below for this union or value.
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `unipileAccountId` | string | Yes |  minLength: 1 |
+| `chatId` | string | Yes |  minLength: 1 |
+| `attendeeProviderId` | any | No |   |
+
+### linkedin — variant 2
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `unipileAccountId` | string | Yes |  minLength: 1 |
+| `attendeeProviderId` | string | Yes |  minLength: 1 |
+| `chatId` | any | No |   |
 
 ### slack
 
