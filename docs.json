@@ -46,15 +46,27 @@
           },
           {
             "group": "Signals",
-            "pages": ["signals/overview", "signals/watchers", "signals/website", "signals/internal"]
+            "pages": [
+              "signals/overview",
+              "signals/watchers",
+              "signals/website",
+              "signals/internal"
+            ]
           },
           {
             "group": "Slack",
-            "pages": ["slack/overview", "slack/watch-channels", "slack/notifications"]
+            "pages": [
+              "slack/overview",
+              "slack/watch-channels",
+              "slack/notifications"
+            ]
           },
           {
             "group": "Automation",
-            "pages": ["automation/queueing", "automation/playbooks"]
+            "pages": [
+              "automation/queueing",
+              "automation/playbooks"
+            ]
           },
           {
             "group": "Workspace modules",
@@ -71,7 +83,10 @@
           },
           {
             "group": "GTM recipes",
-            "pages": ["recipes/gtm-engineer", "recipes/website-to-outreach"]
+            "pages": [
+              "recipes/gtm-engineer",
+              "recipes/website-to-outreach"
+            ]
           }
         ]
       },
@@ -80,19 +95,32 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": ["reference/index", "reference/skills"]
+            "pages": [
+              "reference/index",
+              "reference/skills"
+            ]
           },
           {
             "group": "LinkedIn",
-            "pages": ["reference/linkedin-read", "reference/linkedin-write"]
+            "pages": [
+              "reference/linkedin-read",
+              "reference/linkedin-write"
+            ]
           },
           {
             "group": "Signals",
-            "pages": ["reference/signals-read", "reference/signals-write"]
+            "pages": [
+              "reference/signals-read",
+              "reference/signals-write"
+            ]
           },
           {
             "group": "Slack and notifications",
-            "pages": ["reference/slack-read", "reference/slack-write", "reference/notify"]
+            "pages": [
+              "reference/slack-read",
+              "reference/slack-write",
+              "reference/notify"
+            ]
           },
           {
             "group": "Email and scheduling",
