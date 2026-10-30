@@ -1,0 +1,61 @@
+---
+title: "Boards capabilities"
+description: "Complete capability map for Boards."
+---
+
+Operate board records, schemas and lanes from Cedar’s app-only tool surface.
+
+## Guides
+
+- [Boards and cards](/agent-platform/boards)
+
+## board
+
+Availability: **in-app-only**. [Parameters and responses](/reference/board).
+
+<Accordion title="Full tool behavior and constraints">
+
+A kanban whose CARDS are documents — a path, a share link, a `&#91;&#91;doc: id&#93;&#93;` address. The board is a FILE and knows nothing about what it is for. A card is a title, a description and a flat bag of `fields`; the board's `fields&#91;&#93;` declares which keys exist and their types.
+
+COLUMNS ARE A VIEW, never a card property. `view.groupByField` names the field whose VALUES are the columns: point it at `status` and columns are statuses, at `owner` and the SAME cards regroup — no card changed. `move` writes that field. Empty draws under `__ungrouped__` unless the field sets a `default`.
+
+ACTIONS
+ list_boards · read · get_schema · list_templates — what exists · a board + cards · its schema · starting schemas.
+ create_board — from a list_templates id, or empty (a placeholder axis your `fields` replace).
+ set_schema — THE HEADLINE VERB: fields, view, `triggers`, anything under `meta`. MERGES; replace:true wipes. add_fields/set_view/set_board_meta edit narrowly.
+ list_triggers — what fires this board and what it fires on a move. Authored via set_schema `triggers`.
+ add_card · set · move · comment · archive — file · edit (fields MERGE) · column/order · append · delete.
+ cards — search every board (omit `board`) or one: by column, field value, substring.
+
+SET GLYPHS WHEN YOU CREATE THE BOARD. A select field may carry `optionIcons`, one per value, e.g. &#123;backlog:"circle-dashed",done:"circle-check"&#125;. Names: circle-dashed circle circle-dot circle-check circle-x circle-slash inbox play pause eye clock flag alert. Unknown names draw nothing.
+
+THE SCHEMA IS YOURS AND OPEN. Invent fields, a view, triggers, a `meta` block — unknown keys survive verbatim, an unknown `type` (e.g. "sentiment") is kept and drawn as text. Refused only: a reserved key of the wrong SHAPE, or &gt;64KB.
+
+ADOPTION: a card naming an undeclared field ADDS it — check `adopted`.
+
+</Accordion>
+
+### Supported operations
+
+| Operation | Capability | Baseline scope |
+| --- | --- | --- |
+| `list_boards` | Discover authorized board documents. | `in-app` |
+| `list_templates` | List available starting board schemas. | `in-app` |
+| `read` | Read a board and its cards. | `in-app` |
+| `create_board` | Create a board from a template or new schema. | `in-app` |
+| `get_schema` | Inspect declared fields, view, triggers and metadata. | `in-app` |
+| `set_schema` | Merge schema changes, or explicitly replace the schema when requested. | `in-app` |
+| `add_fields` | Add field definitions without replacing unrelated board settings. | `in-app` |
+| `set_view` | Change grouping or other view settings. | `in-app` |
+| `set_board_meta` | Edit board metadata through the narrow operation. | `in-app` |
+| `add_card` | Create a document-backed card with its title, description and fields. | `in-app` |
+| `set` | Merge changes into a card's fields. | `in-app` |
+| `move` | Move a card by updating the grouping field and order. | `in-app` |
+| `comment` | Append a comment to a card. | `in-app` |
+| `cards` | Search cards in one board or across boards by column, field value or substring. | `in-app` |
+| `archive` | Archive the selected card through the board lifecycle. | `in-app` |
+| `list_triggers` | Inspect what fires the board and what its moves can trigger. | `in-app` |
+
+## Access and results
+
+Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).

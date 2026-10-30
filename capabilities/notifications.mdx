@@ -1,0 +1,42 @@
+---
+title: "Notifications capabilities"
+description: "Complete capability map for Notifications."
+---
+
+Deliver user-facing alerts and actionable notifications through the supported notification channels.
+
+## Guides
+
+- [User notifications](/channels/notifications)
+
+## notify
+
+Availability: **external**. [Parameters and responses](/reference/notify).
+
+<Accordion title="Full tool behavior and constraints">
+
+Send proactive notifications and discover Slack destinations. ACTIONS: (1) send — send a message to the user on the ONE channel they have chosen: Slack DM or channel (with structured Block Kit buttons — kind: action, link; style: primary, danger, default — reactions, and thread replies), iMessage (with tapbacks — emoji: thumbsup, thumbsdown, heart, haha, exclamation, question), email, or WhatsApp. Use for post-meeting DMs, daily agenda, alerts, and other out-of-band messages — NOT for the in-conversation reply, which uses the &lt;final_answer&gt; JSON pattern instead. Leave `channel` unset to use the user setting; set it (e.g. "email") only when the message argues for a channel — a long written report reads better in the inbox. Never use draft-comms to route a notification around a failed channel; that is for customer-facing mail. (2) list-slack-channels — list Slack channels (plus the user DM) accessible to the user. Call this before send with a slack.channelId destination to discover valid channel IDs. Each action takes its params in a same-named object (e.g. action: "send" pairs with a send: &#123;text, ...&#125; object) — omit every params object except the one matching your chosen action.
+
+</Accordion>
+
+### Supported operations
+
+| Operation | Capability | Baseline scope |
+| --- | --- | --- |
+| `send` | Send a user notification on the chosen configured channel, with supported Slack interactions or iMessage tapbacks. | `crm:read` |
+| `list-slack-channels` | Discover accessible Slack notification destinations and the user's DM. | `crm:read` |
+
+<Accordion title="All nested operations and modes (4)">
+
+| Selector | Choice | Variant |
+| --- | --- | --- |
+| `send.channel` | `email` |  |
+| `send.channel` | `slack` |  |
+| `send.channel` | `imessage` |  |
+| `send.channel` | `whatsapp` |  |
+
+</Accordion>
+
+## Access and results
+
+Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).

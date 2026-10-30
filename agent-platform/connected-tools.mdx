@@ -1,0 +1,24 @@
+---
+title: "Connected tools and MCP servers"
+description: "Configure external systems and control which agents may use them."
+---
+
+Cedar can connect to external MCP servers and let eligible in-app or automation agents use their tools. This is separate from exposing Cedar itself as an MCP server to another client.
+
+## Configure a connection
+
+Read `config-read` settings for connections before adding one. The external `systems-write` family supports creating or deleting a server connection by public URL and changing its agent instructions or background-agent access settings. User-scoped entries apply to that user; organization entries require an administrator. A user connection of the same name shadows an organization connection.
+
+Connections requiring a static authorization header and storing named credentials use Cedar's in-app connection flow. Those secret-bearing operations are not exposed through the external MCP contract.
+
+## Discover and call tools inside Cedar
+
+The app-only `external-mcp` family handles authorized connected-tool access. Load `external-systems` to discover connected servers and their tools; the dispatch contract is in the [family capability page](/capabilities/systems). Workspace connection policy limits what can be reached, and per-agent MCP grants can narrow that further to selected tools.
+
+Granting background access does not bypass the agent's scopes or the connected provider's own permissions. A successful connection also does not prove a particular tool can perform the requested action: inspect its actual schema and result.
+
+## Code and external APIs
+
+Cedar's in-app delegation surface can hand authorized external API and file work to a code executor. That is an app runtime capability, not an external MCP shell endpoint. External clients can use their own authorized connectors or execution environment for operations Cedar does not expose.
+
+[Connected-system workflows](/integrations/external-systems) · [Agent grants](/agent-platform/permissions) · [Delegation](/agent-platform/delegation)

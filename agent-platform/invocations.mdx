@@ -1,0 +1,30 @@
+---
+title: "Invocation sources"
+description: "See why an agent runs and change the correct trigger or caller."
+---
+
+Cedar can inspect the sources configured to invoke an agent. The list is derived from compiled playbook content and agent references, so it describes the rules the runtime consumes.
+
+| Source | What the platform shows |
+| --- | --- |
+| Global playbook rule | Trigger type, configuration and the instruction attached to this agent's reference |
+| Stage-specific rule | The same trigger information plus its stage |
+| Webhook or Slack source | Registration details, enabled state and available last-fired information |
+| Another agent | Declared references and observed parent executions, combined by caller |
+| Unknown block | An explicit unrecognized source instead of silently hiding the reference |
+
+Past chats and **Run now** are activity, not persistent invocation configuration. Outward API calls are not inbound trigger sources.
+
+## Add, change or remove a source
+
+The agent workspace supports adding one or multiple playbook sources, creating webhook sources and removing configured sources. Edits use the current playbook version to detect concurrent changes. Re-read the version after each saved edit rather than overwriting another edit with stale content.
+
+For external MCP, read the effective playbook, edit the authorized source document and use supported connection changes for webhook registration. Check the reference against the **document ID**, not `agent_id`.
+
+## Confirm the intended behavior
+
+Verify the saved trigger, its scope, source filters, referenced agent and output destination. Then inspect a run caused by that source. Agent-level run totals do not establish a count for each trigger; source-specific counts can be unavailable. A zero or unknown count should not be presented as proof the trigger cannot run.
+
+Cron needs an explicit timezone. Before-meeting work requires calendar data already present. Slack-channel webhooks require a matching enabled registration. A repeated condition in prose alone does not create a once-only transition trigger; use the supported field-change mechanism where appropriate.
+
+[Trigger vocabulary](/agent-platform/triggers) · [Slack channel sources](/slack/watch-channels) · [Execution history](/agent-platform/observability)

@@ -1,0 +1,34 @@
+---
+title: "Playbooks and triggers capabilities"
+description: "Complete capability map for Playbooks and triggers."
+---
+
+Configure AOP creation and routing, persist trigger rules, wire webhook or channel sources, and inspect the complete trigger vocabulary.
+
+## Guides
+
+- [Playbooks and triggers](/automation/playbooks)
+- [All trigger types](/agent-platform/triggers)
+- [Invocation sources](/agent-platform/invocations)
+
+## aop-write
+
+Availability: **external**. [Parameters and responses](/reference/aop-write).
+
+<Accordion title="Full tool behavior and constraints">
+
+For "why didn't X happen"/system-behavior questions, load-skill('cedar-configuration') first. ACTIONS: (1) create-aop — create a new AOP/playbook cloned from an existing one (field definitions, display config, and the whole PLAYBOOK.md/resources/subagents document tree). cloneFromAopId is required; there is no from-scratch path. (2) update-selection-procedure — replace an AOP's routing text in full (the text an LLM classifier reads to decide which AOP a new conversation belongs to). Already readable via config-read's read-playbook (mode: "list"). (3) update-custom-assignment-instruction — replace (or, with null, clear) an AOP's free-text override for domain/company identification on its deals, taking precedence over the model's own judgment. Each action takes its params in a same-named object (e.g. action: "create-aop" pairs with a createAop: &#123;...&#125; object) — omit the others. For custom field definitions/options and their CRM mappings use config-write. For a connected integration's own config use connection-write.
+
+</Accordion>
+
+### Supported operations
+
+| Operation | Capability | Baseline scope |
+| --- | --- | --- |
+| `create-aop` | Create an AOP from an existing source configuration. | `playbook:write` |
+| `update-selection-procedure` | Change the instructions used to select the appropriate AOP. | `playbook:write` |
+| `update-custom-assignment-instruction` | Change the supported custom conversation-assignment instruction. | `playbook:write` |
+
+## Access and results
+
+Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).

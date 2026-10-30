@@ -1,0 +1,28 @@
+---
+title: "Delegation and code execution"
+description: "Match the child execution to native mutations, evidence analysis or external-system work."
+---
+
+<Note>The `delegate` family is registered inside Cedar's chat surface. External MCP clients use their own orchestration; they cannot call it through Cedar's external endpoint.</Note>
+
+## Supported delegation modes
+
+| Mode | Intended work | Boundary |
+| --- | --- | --- |
+| `subagent`, type `orchestrator` | Cedar-native drafts, field updates and task operations across selected conversations | Not a general code or external API executor |
+| `subagent`, type `analyzer` | Read-only analysis of Cedar conversation evidence with citations | Cannot mutate records or call external systems |
+| `code` | Bounded code execution, external API work, file generation and web research | Uses the code executor's authorized environment and restrictions |
+
+Each call has one action and its matching parameter object. Supply the business task, relevant context and expected result. Reading a child execution's answer is part of completion; starting it is not proof the work succeeded.
+
+## Persistent agents versus one-off delegation
+
+A maintained agent has a saved definition, identity, grants and possible trigger sources. A delegated task is an execution of a bounded piece of work. Reuse a maintained agent's behavior when appropriate instead of copying its instructions into a second prompt that can drift.
+
+## Batch and shared-state work
+
+Split independent records into bounded work with explicit outputs and stable record IDs. Workers touching the same conversation, document or board can race; coordinate those writes in sequence. A separate worker does not bypass outbound-send rules, role restrictions or provider budgets.
+
+External table `fill` returns delegated row briefs rather than launching Cedar row agents. The external client owns that orchestration and must return results through the supported table operations.
+
+[Batch workflows](/automation/batch-operations) · [Complete delegation contract](/reference/delegate) · [Permissions](/agent-platform/permissions)

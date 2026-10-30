@@ -1,0 +1,33 @@
+---
+title: "Runs, traces and troubleshooting"
+description: "Inspect configured behavior, execution evidence and outputs before reporting success."
+---
+
+The agent workspace can show last-run information, recent run counts, outputs, associated chats and configured invocation sources. Execution history and chat history are separate views. Where a conversation is supplied, its access is checked independently of access to the agent.
+
+## Investigate a run
+
+1. Confirm the agent definition and effective playbook rule.
+2. Inspect its invocation sources and whether the expected registration is enabled.
+3. Find the relevant execution and read its status, errors and child work.
+4. Inspect the actual tool result and saved output.
+5. Check delivery separately if the result was meant to notify someone.
+
+Use the [debug family](/capabilities/diagnostics) for supported health, execution and deliberate test operations. Staff-only operations remain separately gated even when a related family is visible.
+
+## Test runs
+
+`debug test-run` runs the selected configured agent outside its normal trigger. Sends are suppressed by default; other Cedar or connected-system writes may still occur. Testing a mutation against real records requires the same care as the ordinary operation. A passing run demonstrates that path and input, not every trigger or future provider state.
+
+## Common gaps
+
+| Observation | Check |
+| --- | --- |
+| Agent exists but never runs | A valid document reference in the intended trigger, compatible scope and a real matching event |
+| Chat demonstration works, automation fails | Worker allowlists, connection scopes and the actual background execution path |
+| Agent runs but leaves no expected artifact | Output destination, file grants and the returned write result |
+| File exists but no alert arrived | Notification settings, Slack destination and delivery result |
+| A template appears installed but is inert | Provisioning failures and `triggerWired` |
+| Unexpected duplicate work | Multiple output owners, repeated triggers and idempotency policy |
+
+For support, retain run, agent and conversation IDs and the exact relevant error. Do not include tokens or private message bodies in a feedback report. [Support](/channels/support).

@@ -1,0 +1,39 @@
+---
+title: "Usage and delivery recovery capabilities"
+description: "Complete capability map for Usage and delivery recovery."
+---
+
+Inspect usage observations and retry eligible failed usage-delivery records through the guarded recovery operation.
+
+## Guides
+
+- [Usage observations and recovery](/channels/usage)
+
+## usage-observations-read
+
+Availability: **external**. [Parameters and responses](/reference/usage-observations-read).
+
+<Accordion title="Full tool behavior and constraints">
+
+Inspect configured usage producers or your own durable shadow measurements for an authorized billing account. Shows known/unknown quantity and delivery status without enabling AI charges, submitting usage, or invoking providers. Account finance users still see only their own observation summaries.
+
+</Accordion>
+
+### Supported operations
+
+| Operation | Capability | Baseline scope |
+| --- | --- | --- |
+| `producers` | Discover configured producers of durable usage observations. | `billing:read` |
+| `list` | Read the caller's shadow measurements, quantity certainty and ledger-delivery status. | `billing:read` |
+
+## usage-observations-retry
+
+Availability: **external**. [Parameters and responses](/reference/usage-observations-retry).
+
+Retry delivery of your existing blocked shadow measurement to the usage ledger. Requires current spending permission and the original grant and shadow meter version. Reuses the immutable saved receipt; cannot change amounts, create grants, charge credits, or repeat provider work.
+
+Single-call family. Baseline scope: `billing:write`.
+
+## Access and results
+
+Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).

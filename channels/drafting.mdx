@@ -1,0 +1,17 @@
+---
+title: "Drafting across channels"
+description: "Understand what an email, Slack or LinkedIn draft actually creates."
+---
+
+Drafting prepares content for review; it does not authorize an outbound send. Load the `drafting` skill to apply account voice, evidence and reply context.
+
+| Action | Result |
+| --- | --- |
+| `draft-email` | Saves a real provider draft with a pre-composed HTML body; `propose: true` instead produces a preview without persistence |
+| `draft-slack-message` | An ephemeral preview plus a Cedar task carrying the send action; Slack itself has no saved draft created by this tool |
+| `draft-linkedin-message` | A plain-text draft stored in Cedar for an existing LinkedIn chat; no CRM deal is required |
+| `show-draft` | Displays an existing draft using its real draft ID |
+
+For email attachments, discover uploaded documents and pass supported upload document IDs. Keep the intended recipients, reply thread, final body and attachment selection explicit. Categories can label why an email draft was produced, and Slack task types can classify its review task.
+
+A saved draft, preview card and completed send are distinct results. Inspect the operation response and describe the state it actually created. Use [Email](/capabilities/email), [Slack](/capabilities/slack) or [LinkedIn](/capabilities/linkedin) for authorized channel sends and [scheduling](/channels/scheduling) for a future send.

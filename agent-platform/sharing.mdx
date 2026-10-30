@@ -1,0 +1,32 @@
+---
+title: "Sharing, duplication and deletion"
+description: "Move agent behavior to the right audience while controlling memory and retained work."
+---
+
+## Personal and organization behavior
+
+The platform resolves user and organization agent definitions. A user definition with the same filename can shadow the organization version for that user. Shared behavior needs shared dependencies: an organization agent that references a private configuration file cannot become usable for teammates merely by publishing its instructions.
+
+Filing an agent into a team is an organizational relationship. It does not move its workspace files, rewrite grants or automatically convert personal memory into shared memory.
+
+## Duplicate an agent
+
+Duplication creates a new agent identity and definition. It copies no memory by default. Inspect the new agent's configuration and trigger wiring before expecting it to reproduce the original's runs. A copied instruction document is not proof of a copied automatic workflow.
+
+## Publish to the organization
+
+The app provides a publication preview showing the destination, whether an organization copy already exists, file-grant problems and the exact memory text eligible to share. Memory is shared only when its files are explicitly selected. Publication refuses grants that would point teammates at inaccessible private files.
+
+Publishing instructions and wiring organization-wide triggers are separate operations. Confirm both the effective definition and its consuming rule. Organization behavior and dependent resources should use compatible scope.
+
+## Unpublish
+
+Unpublishing removes the shared definition and associated shared-memory copies handled by publication. Existing execution records, outputs and users' retained memory are preserved. Teammates lose access to the published agent definition; preserving a past output does not keep an automation enabled.
+
+## Delete a personal agent
+
+The deletion service removes applicable playbook references before deleting the agent definition and its memory. It refuses unresolved references, organization-scoped or still-published agents, and playbook edits it cannot safely compile or verify. Existing outputs and execution history are retained.
+
+References inside another agent's authored instructions can require separate repair. The deletion result reports those relationships rather than silently rewriting another agent's prose. Use the platform lifecycle action; deleting a document alone is not equivalent to this cleanup.
+
+These lifecycle controls are provided by Cedar's app. They are not extra external MCP family names.

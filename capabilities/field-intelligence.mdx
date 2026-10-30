@@ -1,0 +1,33 @@
+---
+title: "Field intelligence capabilities"
+description: "Complete capability map for Field intelligence."
+---
+
+Discover extracted taxonomy fields and inspect field history, provenance and values as of a past event.
+
+## Guides
+
+- [Field discovery and historical values](/crm/field-history)
+
+## taxonomy-fields
+
+Availability: **feature-gated**. [Parameters and responses](/reference/taxonomy-fields).
+
+<Accordion title="Full tool behavior and constraints">
+
+The org's sub-event sales-taxonomy field DEFINITIONS — the extraction schema behind the deal-intelligence data (objections, discovery questions, pain, demo moments, MEDDPICC signals, rep tactics). These are ORG-level extraction config and deliberately do NOT appear in a deal's CRM columns, so this tool is the only way to learn they exist. CALL THIS FIRST whenever a question is about what happened INSIDE calls or emails (what objections come up, which questions reps ask, how often X is mentioned, what separates won from lost) — it tells you which fields exist, which plane each stores on, which carry strength/completeness scores, which payload keys you can group by, and the org's stage vocabulary (raw CRM stage values are opaque ids). ACTIONS: (1) list — the whole catalog, one line per field, plus stageVocabulary. (2) get — one field in full: its extraction prompt (what the extractor was actually asked for), scoring rubrics, metadata sub-fields and seeded vocabulary. Definitions only; for the extracted VALUES use run-sql, conversation-read or conversation-analytics.
+
+</Accordion>
+
+<Note>Requires brain:read and the Cedar Brain feature gate.</Note>
+
+### Supported operations
+
+| Operation | Capability | Baseline scope |
+| --- | --- | --- |
+| `list` | List the gated taxonomy field catalog for the account. | `brain:read` |
+| `get` | Inspect a selected taxonomy field's definition and evidence structure. | `brain:read` |
+
+## Access and results
+
+Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).

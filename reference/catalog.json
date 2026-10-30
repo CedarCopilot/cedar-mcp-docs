@@ -10678,7 +10678,7 @@
                   },
                   "date": {
                     "type": "string",
-                    "description": "Reference date as ISO YYYY-MM-DD. Today is 2026-10-29 - compute from this."
+                    "description": "Reference date as ISO YYYY-MM-DD. Today is 2026-10-30 - compute from this."
                   },
                   "dateTo": {
                     "type": "string",
@@ -30852,5 +30852,1427 @@
   ],
   "unresolvedSkillNames": [
     "wiki-extraction"
-  ]
+  ],
+  "agentPlatform": {
+    "note": "Static product metadata only. Agent-library provisioning and workspace controls are app features, not additional external MCP tools.",
+    "triggers": {
+      "any": {
+        "fires": "every supported event — email, meeting, Slack message, LinkedIn message, accepted LinkedIn connection, external-CRM sync (signals require explicit opt-in)",
+        "carries": [],
+        "dispatch": "orchestrator"
+      },
+      "email": {
+        "fires": "an inbound or outbound email",
+        "carries": [],
+        "dispatch": "orchestrator"
+      },
+      "meeting": {
+        "fires": "a meeting, once its transcript has landed",
+        "carries": [],
+        "dispatch": "orchestrator"
+      },
+      "slack": {
+        "fires": "a message in a linked Slack channel",
+        "carries": [],
+        "dispatch": "orchestrator"
+      },
+      "linkedin": {
+        "fires": "a LinkedIn message the counterpart sent (with any of the user's own alongside) — the user's sends alone never fire it",
+        "carries": [],
+        "dispatch": "orchestrator"
+      },
+      "linkedin_connection": {
+        "fires": "someone accepting a LinkedIn connection request the user sent",
+        "carries": [],
+        "dispatch": "orchestrator"
+      },
+      "external_crm": {
+        "fires": "a deal changing in the connected CRM (the sync, not a Cedar field write)",
+        "carries": [],
+        "dispatch": "orchestrator"
+      },
+      "signal": {
+        "fires": "an actionable CRM signal, including watcher discoveries and qualified email-open evidence",
+        "carries": [],
+        "dispatch": "direct"
+      },
+      "field-change": {
+        "fires": "a Cedar field taking a value — the only trigger that fires exactly once, when the thing becomes true",
+        "carries": [
+          "field",
+          "to-value"
+        ],
+        "dispatch": "direct"
+      },
+      "cron": {
+        "fires": "a schedule, independent of any event",
+        "carries": [
+          "schedule",
+          "timezone"
+        ],
+        "dispatch": "direct"
+      },
+      "before-meeting": {
+        "fires": "N minutes before a calendar event, if the meeting is already in the calendar data Cedar holds",
+        "carries": [
+          "minutes"
+        ],
+        "dispatch": "direct"
+      },
+      "webhook": {
+        "fires": "an external POST to the playbook webhook endpoint, or a registered Slack-channel source",
+        "carries": [
+          "id"
+        ],
+        "dispatch": "direct"
+      }
+    },
+    "systemAgents": [
+      {
+        "slug": "signals",
+        "description": "Signal agent — assesses whether a signal warrants reengagement and pings the user on Slack",
+        "seedByDefault": true,
+        "backfillExisting": true,
+        "alwaysOn": true
+      },
+      {
+        "slug": "crm-updater",
+        "description": "Updates conversation fields after each event",
+        "seedByDefault": true,
+        "backfillExisting": true,
+        "alwaysOn": true
+      },
+      {
+        "slug": "strategist",
+        "description": "Owns the strategic overview — the play, how we win, risks, on-track, and MEDDPICC",
+        "seedByDefault": false,
+        "backfillExisting": false,
+        "alwaysOn": false
+      },
+      {
+        "slug": "next-steps",
+        "description": "Manages follow-up tasks and next steps",
+        "seedByDefault": true,
+        "backfillExisting": true,
+        "alwaysOn": true
+      },
+      {
+        "slug": "meeting-prep",
+        "description": "Use this agent before every meeting, always, to prepare a brief 30-60 minutes ahead of each calendar event.",
+        "seedByDefault": true,
+        "backfillExisting": true,
+        "alwaysOn": true
+      },
+      {
+        "slug": "daily-agenda",
+        "description": "Use this agent on its cron schedule to orchestrate the morning run — triage the pipeline, clear settled tasks, dispatch a review per flagged deal, then curate the agenda.",
+        "seedByDefault": true,
+        "backfillExisting": true,
+        "alwaysOn": true
+      },
+      {
+        "slug": "pipeline-review",
+        "description": "Use this agent on its cron schedule, the evening before a recurring pipeline review, to audit and forecast the pipeline.",
+        "seedByDefault": false,
+        "backfillExisting": false,
+        "alwaysOn": false
+      },
+      {
+        "slug": "pipeline-review-prep",
+        "description": "Prepare weekly manager one-on-one briefs using verified CRM totals and per-rep research.",
+        "seedByDefault": false,
+        "backfillExisting": false,
+        "alwaysOn": false
+      },
+      {
+        "slug": "weekly-pipeline-review",
+        "description": "Prepare weekly manager one-on-one briefs using verified CRM totals and per-rep research.",
+        "seedByDefault": false,
+        "backfillExisting": false,
+        "alwaysOn": false
+      },
+      {
+        "slug": "drafter",
+        "description": "Use this agent — the designated drafter — when a deal needs something written; see the playbook for the specific trigger. Writes the one message the deal is owed.",
+        "seedByDefault": true,
+        "backfillExisting": true,
+        "alwaysOn": true
+      },
+      {
+        "slug": "coaching",
+        "description": "Scores every rep call against the org coaching rubric and rolls the week up per rep. Use this agent after a transcribed customer call, and once a week for the per-rep rollup.",
+        "seedByDefault": false,
+        "backfillExisting": false,
+        "alwaysOn": false
+      },
+      {
+        "slug": "org-chart",
+        "description": "Use this agent on every event on a deal to keep that deal's buying committee current — one node per person on the customer's side, and an edge only where something was actually said.",
+        "seedByDefault": false,
+        "backfillExisting": false,
+        "alwaysOn": false
+      },
+      {
+        "slug": "performance-report",
+        "description": "Reads coaching and drafting scores plus computed pipeline metrics and writes and delivers the weekly performance report. Fires on its own weekly cron, for one named leader.",
+        "seedByDefault": false,
+        "backfillExisting": false,
+        "alwaysOn": false
+      }
+    ],
+    "templates": [
+      {
+        "id": "next-steps",
+        "name": "Sales next steps",
+        "description": "Decides the one next step that moves the deal, and writes the tasks.",
+        "team": "your-mid-funnel",
+        "scope": "personal",
+        "system": true,
+        "systemSlugs": [
+          "next-steps"
+        ],
+        "seededByDefault": true,
+        "trigger": {
+          "type": "any",
+          "scope": "global"
+        },
+        "defaultFile": "overview",
+        "outputKind": "document",
+        "config": [
+          {
+            "relative": "config/next-step-rules",
+            "title": "Next-step rules"
+          }
+        ],
+        "additionalOutputs": []
+      },
+      {
+        "id": "meeting-prep",
+        "name": "Meeting prep",
+        "description": "Who is in the room, what happened last, what to get answered.",
+        "team": "your-mid-funnel",
+        "scope": "personal",
+        "system": true,
+        "systemSlugs": [
+          "meeting-prep"
+        ],
+        "seededByDefault": true,
+        "trigger": {
+          "type": "before_meeting",
+          "scope": "global",
+          "minutes": 60
+        },
+        "requires": "A connected meeting recorder — it briefs from email alone without one.",
+        "requiresIntegration": "meeting",
+        "defaultFile": "overview",
+        "outputKind": "document",
+        "config": [
+          {
+            "relative": "config/brief-template",
+            "title": "Brief template"
+          },
+          {
+            "relative": "config/prep-rules",
+            "title": "Prep rules"
+          }
+        ],
+        "additionalOutputs": []
+      },
+      {
+        "id": "crm-updater",
+        "name": "CRM updater",
+        "description": "Keeps stage, value, close date and fields true to the thread.",
+        "team": "your-mid-funnel",
+        "scope": "personal",
+        "system": true,
+        "systemSlugs": [
+          "crm-updater"
+        ],
+        "seededByDefault": true,
+        "trigger": {
+          "type": "any",
+          "scope": "global"
+        },
+        "defaultFile": "overview",
+        "outputKind": "document",
+        "config": [
+          {
+            "relative": "config/field-rules",
+            "title": "Field rules"
+          }
+        ],
+        "additionalOutputs": []
+      },
+      {
+        "id": "pipeline-review",
+        "name": "Pipeline review",
+        "description": "Reconciles the CRM, then writes your deal-by-deal review prep.",
+        "team": "your-mid-funnel",
+        "scope": "personal",
+        "system": true,
+        "systemSlugs": [
+          "pipeline-review"
+        ],
+        "seededByDefault": false,
+        "trigger": {
+          "type": "cron",
+          "scope": "global",
+          "schedule": "0 18 * * 1"
+        },
+        "defaultFile": "pipeline",
+        "outputKind": "table",
+        "config": [
+          {
+            "relative": "config/review-rubric",
+            "title": "Review rubric"
+          }
+        ],
+        "additionalOutputs": [
+          {
+            "relative": "review-notes",
+            "title": "Review notes"
+          }
+        ]
+      },
+      {
+        "id": "internal-signals",
+        "name": "Internal signals",
+        "description": "Maintain source-backed findings from deal events and stage changes.",
+        "team": "your-mid-funnel",
+        "scope": "personal",
+        "system": false,
+        "seededByDefault": false,
+        "trigger": {
+          "type": "any",
+          "scope": "global"
+        },
+        "defaultFile": "overview",
+        "outputKind": "document",
+        "config": [
+          {
+            "relative": "config/setup",
+            "title": "Internal signal setup"
+          }
+        ],
+        "additionalOutputs": []
+      },
+      {
+        "id": "internal-revivals",
+        "name": "Pipeline revivals",
+        "description": "Curate due persisted findings into a dedicated review table.",
+        "team": "your-mid-funnel",
+        "scope": "personal",
+        "system": false,
+        "seededByDefault": false,
+        "trigger": {
+          "type": "cron",
+          "scope": "global",
+          "schedule": "0 7 * * 1"
+        },
+        "defaultFile": "overview",
+        "outputKind": "table",
+        "config": [],
+        "additionalOutputs": []
+      },
+      {
+        "id": "internal-growth",
+        "name": "Upsell & expansion",
+        "description": "Curate due persisted findings into a dedicated review table.",
+        "team": "your-customers",
+        "scope": "personal",
+        "system": false,
+        "seededByDefault": false,
+        "trigger": {
+          "type": "cron",
+          "scope": "global",
+          "schedule": "0 7 * * 1"
+        },
+        "defaultFile": "overview",
+        "outputKind": "table",
+        "config": [],
+        "additionalOutputs": []
+      },
+      {
+        "id": "internal-churn",
+        "name": "Churn",
+        "description": "Curate due persisted findings into a dedicated review table.",
+        "team": "your-customers",
+        "scope": "personal",
+        "system": false,
+        "seededByDefault": false,
+        "trigger": {
+          "type": "cron",
+          "scope": "global",
+          "schedule": "0 7 * * 1"
+        },
+        "defaultFile": "overview",
+        "outputKind": "table",
+        "config": [],
+        "additionalOutputs": []
+      },
+      {
+        "id": "pipeline-revival",
+        "name": "Pipeline revival",
+        "description": "Every quiet deal, why it went cold, and the line that restarts it.",
+        "team": "your-mid-funnel",
+        "scope": "personal",
+        "system": false,
+        "seededByDefault": false,
+        "trigger": {
+          "type": "cron",
+          "scope": "global",
+          "schedule": "0 7 * * 2"
+        },
+        "defaultFile": "revival",
+        "outputKind": "table",
+        "config": [
+          {
+            "relative": "config/revival-rules",
+            "title": "Revival rules"
+          }
+        ],
+        "additionalOutputs": [
+          {
+            "relative": "revival-notes",
+            "title": "Revival notes"
+          }
+        ]
+      },
+      {
+        "id": "org-map",
+        "name": "Org map & multithreading",
+        "description": "Who else is in the building, who you have not met, and the path in.",
+        "team": "your-mid-funnel",
+        "scope": "personal",
+        "system": false,
+        "seededByDefault": false,
+        "trigger": {
+          "type": "event",
+          "scope": "global",
+          "eventType": "meeting.completed"
+        },
+        "requires": "A connected meeting recorder — the transcript is half the map.",
+        "requiresIntegration": "meeting",
+        "defaultFile": "org-map",
+        "outputKind": "table",
+        "config": [
+          {
+            "relative": "config/map-rules",
+            "title": "Map rules"
+          }
+        ],
+        "additionalOutputs": [
+          {
+            "relative": "org-map-notes",
+            "title": "Org map notes"
+          }
+        ]
+      },
+      {
+        "id": "coaching",
+        "name": "Coaching",
+        "description": "What you did well on each call, and the one thing to change.",
+        "team": "your-day",
+        "scope": "personal",
+        "system": true,
+        "systemSlugs": [
+          "coaching"
+        ],
+        "seededByDefault": false,
+        "trigger": {
+          "type": "event",
+          "scope": "global",
+          "eventType": "meeting.completed"
+        },
+        "requires": "A meeting recorder. The org coaching playbook wins when your team has one; otherwise the seeded rubric.",
+        "requiresIntegration": "meeting",
+        "defaultFile": "overview",
+        "outputKind": "document",
+        "config": [
+          {
+            "relative": "config/rubric",
+            "title": "Call rubric"
+          }
+        ],
+        "additionalOutputs": []
+      },
+      {
+        "id": "objection-library",
+        "name": "Objection library",
+        "description": "Every objection the team hits, and the answers that actually work.",
+        "team": "ae",
+        "scope": "team",
+        "system": false,
+        "seededByDefault": false,
+        "trigger": {
+          "type": "cron",
+          "scope": "global",
+          "schedule": "0 6 * * 4"
+        },
+        "requires": "A connected meeting recorder — most objections are said out loud, once.",
+        "requiresIntegration": "meeting",
+        "defaultFile": "objections",
+        "outputKind": "document",
+        "config": [
+          {
+            "relative": "config/objection-taxonomy",
+            "title": "Objection taxonomy"
+          }
+        ],
+        "additionalOutputs": []
+      },
+      {
+        "id": "linkedin-posts",
+        "name": "LinkedIn watch",
+        "description": "The few posts and mentions today that are worth a reply.",
+        "team": "your-top-of-funnel",
+        "scope": "personal",
+        "system": false,
+        "seededByDefault": false,
+        "trigger": {
+          "type": "cron",
+          "scope": "global",
+          "schedule": "0 8 * * 1-5"
+        },
+        "requires": "A connected LinkedIn seat (Unipile).",
+        "requiresIntegration": "linkedin",
+        "defaultFile": "mentions",
+        "outputKind": "table",
+        "config": [
+          {
+            "relative": "config/watch-rules",
+            "title": "Watch rules"
+          }
+        ],
+        "additionalOutputs": [
+          {
+            "relative": "watch-notes",
+            "title": "Watch notes"
+          }
+        ]
+      },
+      {
+        "id": "linkedin-outreach",
+        "name": "LinkedIn outreach",
+        "description": "Drafts and queues connection requests and messages. Never sends.",
+        "team": "your-top-of-funnel",
+        "scope": "personal",
+        "system": false,
+        "seededByDefault": false,
+        "trigger": {
+          "type": "cron",
+          "scope": "global",
+          "schedule": "0 9 * * 1-5"
+        },
+        "requires": "A connected LinkedIn seat (Unipile).",
+        "requiresIntegration": "linkedin",
+        "defaultFile": "queue",
+        "outputKind": "table",
+        "config": [
+          {
+            "relative": "config/outreach-playbook",
+            "title": "Outreach playbook"
+          }
+        ],
+        "additionalOutputs": [
+          {
+            "relative": "report",
+            "title": "Outreach report"
+          }
+        ]
+      },
+      {
+        "id": "call-refresh",
+        "name": "Call refresh",
+        "description": "Who they are, what changed since you booked, and the opener.",
+        "team": "your-top-of-funnel",
+        "scope": "personal",
+        "system": false,
+        "seededByDefault": false,
+        "trigger": {
+          "type": "before_meeting",
+          "scope": "global",
+          "minutes": 30
+        },
+        "requires": "A connected calendar.",
+        "defaultFile": "overview",
+        "outputKind": "document",
+        "config": [
+          {
+            "relative": "config/refresh-brief",
+            "title": "Refresh brief"
+          }
+        ],
+        "additionalOutputs": []
+      },
+      {
+        "id": "lead-scoring",
+        "name": "Lead scoring",
+        "description": "Scores each new contact against the ICP your won deals describe.",
+        "team": "top-of-funnel",
+        "scope": "team",
+        "system": false,
+        "seededByDefault": false,
+        "trigger": {
+          "type": "event",
+          "scope": "global",
+          "eventType": "contact.created"
+        },
+        "requires": "Runs without enrichment, and says so on any score it had to guess.",
+        "defaultFile": "scores",
+        "outputKind": "table",
+        "config": [
+          {
+            "relative": "config/icp",
+            "title": "ICP"
+          }
+        ],
+        "additionalOutputs": [
+          {
+            "relative": "scoring-notes",
+            "title": "Scoring notes"
+          }
+        ]
+      },
+      {
+        "id": "content",
+        "name": "Content",
+        "description": "Writes the week's posts from what customers actually said.",
+        "team": "sales-data-reporting",
+        "scope": "team",
+        "system": false,
+        "seededByDefault": false,
+        "trigger": {
+          "type": "cron",
+          "scope": "global",
+          "schedule": "0 8 * * 1"
+        },
+        "requires": "Why we win — this agent reads `why-we-win` as its source material.",
+        "requiresTemplateId": "why-we-win",
+        "defaultFile": "drafts",
+        "outputKind": "document",
+        "config": [
+          {
+            "relative": "config/voice",
+            "title": "Voice"
+          },
+          {
+            "relative": "config/sources",
+            "title": "Sources"
+          }
+        ],
+        "additionalOutputs": []
+      },
+      {
+        "id": "forecast-roll-up",
+        "name": "Forecast roll-up",
+        "description": "The team’s number, deal by deal, with what changed this week.",
+        "team": "leadership",
+        "scope": "team",
+        "system": false,
+        "seededByDefault": false,
+        "trigger": {
+          "type": "cron",
+          "scope": "global",
+          "schedule": "0 6 * * 1"
+        },
+        "requires": "A connected CRM — the roll-up reconciles the number against it.",
+        "requiresIntegration": "crm",
+        "defaultFile": "forecast",
+        "outputKind": "table",
+        "config": [
+          {
+            "relative": "config/forecast-rules",
+            "title": "Forecast rules"
+          }
+        ],
+        "additionalOutputs": [
+          {
+            "relative": "forecast-summary",
+            "title": "Forecast summary"
+          }
+        ]
+      },
+      {
+        "id": "team-coaching",
+        "name": "Team coaching",
+        "description": "Each rep’s week, what to coach, and who needs you most.",
+        "team": "leadership",
+        "scope": "team",
+        "system": false,
+        "seededByDefault": false,
+        "trigger": {
+          "type": "cron",
+          "scope": "global",
+          "schedule": "0 6 * * 5"
+        },
+        "requires": "A connected meeting recorder — the calls are what it coaches from.",
+        "requiresIntegration": "meeting",
+        "defaultFile": "coaching",
+        "outputKind": "document",
+        "config": [
+          {
+            "relative": "config/coaching-rubric",
+            "title": "Coaching rubric"
+          }
+        ],
+        "additionalOutputs": []
+      },
+      {
+        "id": "customer-feedback",
+        "name": "Product gaps",
+        "description": "The product gaps customers asked for, ranked by revenue attached.",
+        "team": "support-cs",
+        "scope": "team",
+        "system": false,
+        "seededByDefault": false,
+        "trigger": {
+          "type": "cron",
+          "scope": "global",
+          "schedule": "0 6 * * 1"
+        },
+        "defaultFile": "feedback",
+        "outputKind": "table",
+        "config": [
+          {
+            "relative": "config/gap-taxonomy",
+            "title": "Gap taxonomy"
+          }
+        ],
+        "additionalOutputs": [
+          {
+            "relative": "feedback-notes",
+            "title": "Feedback notes"
+          }
+        ]
+      },
+      {
+        "id": "dev-debug",
+        "name": "Dev & debugging",
+        "description": "Turns a bug report into a repro, a scope, and a handoff.",
+        "team": "your-customers",
+        "scope": "personal",
+        "system": false,
+        "seededByDefault": false,
+        "trigger": {
+          "type": "event",
+          "scope": "global",
+          "eventType": "email.received"
+        },
+        "requires": "Better with an issue tracker connected — it dedupes rather than duplicates.",
+        "requiresIntegration": "mcp",
+        "defaultFile": "overview",
+        "outputKind": "document",
+        "config": [
+          {
+            "relative": "config/defect-template",
+            "title": "Defect template"
+          }
+        ],
+        "additionalOutputs": []
+      },
+      {
+        "id": "why-we-win",
+        "name": "Why we win",
+        "description": "The sentences customers use when they say why they chose you.",
+        "team": "support-cs",
+        "scope": "team",
+        "system": false,
+        "seededByDefault": false,
+        "trigger": {
+          "type": "cron",
+          "scope": "global",
+          "schedule": "0 6 1 * *"
+        },
+        "defaultFile": "why-we-win",
+        "outputKind": "document",
+        "config": [
+          {
+            "relative": "config/clearance-rules",
+            "title": "Clearance rules"
+          }
+        ],
+        "additionalOutputs": []
+      },
+      {
+        "id": "release-feedback",
+        "name": "Release feedback",
+        "description": "How the last release landed, in customers’ own words.",
+        "team": "sales-data-reporting",
+        "scope": "team",
+        "system": false,
+        "seededByDefault": false,
+        "trigger": {
+          "type": "cron",
+          "scope": "global",
+          "schedule": "0 6 * * 1"
+        },
+        "defaultFile": "release-feedback",
+        "outputKind": "document",
+        "config": [
+          {
+            "relative": "config/release-log",
+            "title": "Release log"
+          }
+        ],
+        "additionalOutputs": []
+      },
+      {
+        "id": "competitor-intel",
+        "name": "Competitor intel",
+        "description": "Every competitor mention, what they claimed, and how it went.",
+        "team": "sales-data-reporting",
+        "scope": "team",
+        "system": false,
+        "seededByDefault": false,
+        "trigger": {
+          "type": "cron",
+          "scope": "global",
+          "schedule": "0 6 * * 3"
+        },
+        "requires": "A connected meeting recorder — most competitor mentions are an aside on a call.",
+        "requiresIntegration": "meeting",
+        "defaultFile": "competitors",
+        "outputKind": "table",
+        "config": [
+          {
+            "relative": "config/competitors",
+            "title": "Competitors"
+          }
+        ],
+        "additionalOutputs": [
+          {
+            "relative": "competitor-notes",
+            "title": "Competitor notes"
+          }
+        ]
+      },
+      {
+        "id": "task-checkin",
+        "name": "Afternoon check-in",
+        "description": "What moved since the morning agenda, and what is still owed today.",
+        "team": "your-day",
+        "scope": "personal",
+        "system": false,
+        "seededByDefault": false,
+        "trigger": {
+          "type": "cron",
+          "scope": "global",
+          "schedule": "0 15 * * 1-5"
+        },
+        "requires": "A connected meeting recorder — the calls section reads from email alone without one.",
+        "requiresIntegration": "meeting",
+        "defaultFile": "checkin",
+        "outputKind": "document",
+        "config": [
+          {
+            "relative": "config/checkin-rules",
+            "title": "Check-in rules"
+          }
+        ],
+        "additionalOutputs": []
+      },
+      {
+        "id": "meeting-confirmer",
+        "name": "Meeting confirmer",
+        "description": "A day-before confirmation for the meetings that get forgotten.",
+        "team": "your-day",
+        "scope": "personal",
+        "system": false,
+        "seededByDefault": false,
+        "trigger": {
+          "type": "before_meeting",
+          "scope": "global",
+          "minutes": 1440
+        },
+        "requires": "A connected calendar.",
+        "defaultFile": "confirmations",
+        "outputKind": "table",
+        "config": [
+          {
+            "relative": "config/confirmation-voice",
+            "title": "Confirmation voice"
+          },
+          {
+            "relative": "config/suppression-rules",
+            "title": "Suppression rules"
+          }
+        ],
+        "additionalOutputs": []
+      },
+      {
+        "id": "reasons-to-reach-out",
+        "name": "Reasons to reach out",
+        "description": "A dated, sourced reason to contact each quiet deal today.",
+        "team": "your-top-of-funnel",
+        "scope": "personal",
+        "system": false,
+        "seededByDefault": false,
+        "trigger": {
+          "type": "cron",
+          "scope": "global",
+          "schedule": "30 7 * * 1-5"
+        },
+        "requires": "Nothing beyond the inbox; a LinkedIn seat adds posts and job changes as signals.",
+        "defaultFile": "reasons",
+        "outputKind": "table",
+        "config": [
+          {
+            "relative": "config/signal-sources",
+            "title": "Signal sources"
+          }
+        ],
+        "additionalOutputs": []
+      },
+      {
+        "id": "outbound-email",
+        "name": "Outbound email",
+        "description": "Cold emails built on a fresh hook, drafted for your approval.",
+        "team": "your-top-of-funnel",
+        "scope": "personal",
+        "system": false,
+        "seededByDefault": false,
+        "trigger": {
+          "type": "cron",
+          "scope": "global",
+          "schedule": "0 8 * * 1-5"
+        },
+        "defaultFile": "drafts",
+        "outputKind": "table",
+        "config": [
+          {
+            "relative": "config/email-voice",
+            "title": "Email voice"
+          },
+          {
+            "relative": "config/hook-rules",
+            "title": "Hook rules"
+          }
+        ],
+        "additionalOutputs": []
+      },
+      {
+        "id": "event-outreach",
+        "name": "Event outreach",
+        "description": "Research and messages for everyone on an event’s list.",
+        "team": "your-top-of-funnel",
+        "scope": "personal",
+        "system": false,
+        "seededByDefault": false,
+        "trigger": {
+          "type": "any",
+          "scope": "global"
+        },
+        "requires": "A LinkedIn seat (Unipile) only for LinkedIn-channel rows; email rows need nothing.",
+        "defaultFile": "attendees",
+        "outputKind": "table",
+        "config": [
+          {
+            "relative": "config/event-playbook",
+            "title": "Event playbook"
+          }
+        ],
+        "additionalOutputs": []
+      },
+      {
+        "id": "meeting-recap",
+        "name": "Meeting recap",
+        "description": "After each meeting: CRM note, next steps, recap email — all drafted.",
+        "team": "your-mid-funnel",
+        "scope": "personal",
+        "system": false,
+        "seededByDefault": false,
+        "trigger": {
+          "type": "event",
+          "scope": "global",
+          "eventType": "meeting.completed"
+        },
+        "requires": "A connected meeting recorder — no transcript, no recap.",
+        "requiresIntegration": "meeting",
+        "defaultFile": "recaps",
+        "outputKind": "table",
+        "config": [
+          {
+            "relative": "config/recap-template",
+            "title": "Recap template"
+          },
+          {
+            "relative": "config/crm-note-rules",
+            "title": "CRM note rules"
+          }
+        ],
+        "additionalOutputs": [
+          {
+            "relative": "recap-notes",
+            "title": "Recap notes"
+          }
+        ]
+      },
+      {
+        "id": "deal-risk",
+        "name": "Deal risk",
+        "description": "Every Wednesday: what could stop each deal, with the evidence quoted.",
+        "team": "your-mid-funnel",
+        "scope": "personal",
+        "system": false,
+        "seededByDefault": false,
+        "trigger": {
+          "type": "cron",
+          "scope": "global",
+          "schedule": "0 7 * * 3"
+        },
+        "requires": "A connected CRM — stage, value and close date come off the CRM row.",
+        "requiresIntegration": "crm",
+        "defaultFile": "risks",
+        "outputKind": "table",
+        "config": [
+          {
+            "relative": "config/risk-rules",
+            "title": "Risk rules"
+          }
+        ],
+        "additionalOutputs": [
+          {
+            "relative": "risk-notes",
+            "title": "Risk notes"
+          }
+        ]
+      },
+      {
+        "id": "proposal-builder",
+        "name": "Proposal builder",
+        "description": "Drafts the proposal from the deal record, every number traced.",
+        "team": "your-mid-funnel",
+        "scope": "personal",
+        "system": false,
+        "seededByDefault": false,
+        "trigger": {
+          "type": "field_change",
+          "scope": "global",
+          "field": "status",
+          "toValue": "proposal"
+        },
+        "requires": "Fires on the proposal stage — name it in config; list prices in config/pricing-rules.",
+        "defaultFile": "proposals",
+        "outputKind": "table",
+        "config": [
+          {
+            "relative": "config/proposal-template",
+            "title": "Proposal template"
+          },
+          {
+            "relative": "config/pricing-rules",
+            "title": "Pricing rules"
+          }
+        ],
+        "additionalOutputs": [
+          {
+            "relative": "proposal-notes",
+            "title": "Proposal notes"
+          }
+        ]
+      },
+      {
+        "id": "contract-chaser",
+        "name": "Contract chaser",
+        "description": "Every morning: who has each contract, for how long, and today’s chase.",
+        "team": "your-mid-funnel",
+        "scope": "personal",
+        "system": false,
+        "seededByDefault": false,
+        "trigger": {
+          "type": "cron",
+          "scope": "global",
+          "schedule": "0 9 * * 1-5"
+        },
+        "requires": "Works from the email threads; a contract stage in the CRM makes the sweep exact.",
+        "defaultFile": "contracts",
+        "outputKind": "table",
+        "config": [
+          {
+            "relative": "config/chase-cadence",
+            "title": "Chase cadence"
+          }
+        ],
+        "additionalOutputs": [
+          {
+            "relative": "contract-notes",
+            "title": "Contract notes"
+          }
+        ]
+      },
+      {
+        "id": "onboarding-plan",
+        "name": "Onboarding plan",
+        "description": "Every won deal's rollout, milestone by milestone, and what is stuck.",
+        "team": "your-customers",
+        "scope": "personal",
+        "system": false,
+        "seededByDefault": false,
+        "trigger": {
+          "type": "field_change",
+          "scope": "global",
+          "field": "status",
+          "toValue": "closed_won"
+        },
+        "requires": "Fires on the won status named in config/milestones; a meeting recorder makes the after-call updates real.",
+        "requiresIntegration": "meeting",
+        "defaultFile": "onboarding",
+        "outputKind": "table",
+        "config": [
+          {
+            "relative": "config/milestones",
+            "title": "Milestones"
+          },
+          {
+            "relative": "config/checkin-voice",
+            "title": "Check-in voice"
+          }
+        ],
+        "additionalOutputs": [
+          {
+            "relative": "check-in",
+            "title": "Check-in"
+          }
+        ]
+      },
+      {
+        "id": "account-wiki",
+        "name": "Account wiki",
+        "description": "One living page per account — who, what, why, and what changed.",
+        "team": "your-customers",
+        "scope": "personal",
+        "system": false,
+        "seededByDefault": false,
+        "trigger": {
+          "type": "event",
+          "scope": "global",
+          "eventType": "meeting.completed"
+        },
+        "requires": "A connected meeting recorder — a transcript is what proposes a change.",
+        "requiresIntegration": "meeting",
+        "defaultFile": "wiki",
+        "outputKind": "document",
+        "config": [
+          {
+            "relative": "config/wiki-template",
+            "title": "Wiki template"
+          },
+          {
+            "relative": "config/approval-rules",
+            "title": "Approval rules"
+          }
+        ],
+        "additionalOutputs": []
+      },
+      {
+        "id": "investor-pipeline",
+        "name": "Investor pipeline",
+        "description": "Every fund, where it stands, what you owe them, and the next prep.",
+        "team": "yours",
+        "scope": "personal",
+        "system": false,
+        "seededByDefault": false,
+        "trigger": {
+          "type": "before_meeting",
+          "scope": "global",
+          "minutes": 60
+        },
+        "requires": "A connected calendar — and a meeting recorder for the debrief after.",
+        "requiresIntegration": "meeting",
+        "defaultFile": "investors",
+        "outputKind": "table",
+        "config": [
+          {
+            "relative": "config/fund-fit",
+            "title": "Fund fit"
+          },
+          {
+            "relative": "config/investor-voice",
+            "title": "Investor voice"
+          }
+        ],
+        "additionalOutputs": [
+          {
+            "relative": "debrief",
+            "title": "Debrief"
+          }
+        ]
+      },
+      {
+        "id": "hiring-pipeline",
+        "name": "Hiring pipeline",
+        "description": "Every candidate, where they stand, the read so far, and the next prep.",
+        "team": "yours",
+        "scope": "personal",
+        "system": false,
+        "seededByDefault": false,
+        "trigger": {
+          "type": "before_meeting",
+          "scope": "global",
+          "minutes": 60
+        },
+        "requires": "A connected calendar — and a meeting recorder for the interviewers’ read.",
+        "requiresIntegration": "meeting",
+        "defaultFile": "candidates",
+        "outputKind": "table",
+        "config": [
+          {
+            "relative": "config/roles",
+            "title": "Roles"
+          },
+          {
+            "relative": "config/interview-rubric",
+            "title": "Interview rubric"
+          }
+        ],
+        "additionalOutputs": [
+          {
+            "relative": "debrief",
+            "title": "Debrief"
+          }
+        ]
+      },
+      {
+        "id": "inbound-lead-research",
+        "name": "Inbound lead research",
+        "description": "Researches each new inbound lead and grades it: sql, mql, or no.",
+        "team": "top-of-funnel",
+        "scope": "team",
+        "system": false,
+        "seededByDefault": false,
+        "trigger": {
+          "type": "event",
+          "scope": "global",
+          "eventType": "contact.created"
+        },
+        "requires": "Runs from the contact alone; enrichment makes the firm gate sharper.",
+        "defaultFile": "inbound",
+        "outputKind": "table",
+        "config": [
+          {
+            "relative": "config/firm-gate",
+            "title": "Firm gate"
+          },
+          {
+            "relative": "config/three-tests",
+            "title": "Three tests"
+          }
+        ],
+        "additionalOutputs": []
+      },
+      {
+        "id": "revival-call-list",
+        "name": "Revival call list",
+        "description": "Who said \"not now\" with a date, and is due now — as a monthly queue.",
+        "team": "top-of-funnel",
+        "scope": "team",
+        "system": false,
+        "seededByDefault": false,
+        "trigger": {
+          "type": "cron",
+          "scope": "global",
+          "schedule": "0 7 1 * *"
+        },
+        "requires": "Closed-lost deals with a note on why — the promise is in the note.",
+        "defaultFile": "call-list",
+        "outputKind": "table",
+        "config": [
+          {
+            "relative": "config/revival-rules",
+            "title": "Revival rules"
+          }
+        ],
+        "additionalOutputs": []
+      },
+      {
+        "id": "lost-deal-debrief",
+        "name": "Lost deal debrief",
+        "description": "Every closed-lost deal: the reason, their words, and the pattern.",
+        "team": "leadership",
+        "scope": "team",
+        "system": false,
+        "seededByDefault": false,
+        "trigger": {
+          "type": "field_change",
+          "scope": "global",
+          "field": "status",
+          "toValue": "closed_lost"
+        },
+        "requires": "A closed-lost stage the CRM or the rep actually sets — name it in config.",
+        "defaultFile": "debriefs",
+        "outputKind": "table",
+        "config": [
+          {
+            "relative": "config/loss-reasons",
+            "title": "Loss reasons"
+          }
+        ],
+        "additionalOutputs": [
+          {
+            "relative": "debrief-notes",
+            "title": "Debrief notes"
+          }
+        ]
+      },
+      {
+        "id": "deal-alerts",
+        "name": "Deal alerts",
+        "description": "Posts the deal events the room asked for, once each, and nothing else.",
+        "team": "leadership",
+        "scope": "team",
+        "system": false,
+        "seededByDefault": false,
+        "trigger": {
+          "type": "any",
+          "scope": "global"
+        },
+        "requires": "A connected Slack — every alert is a message there.",
+        "requiresIntegration": "slack",
+        "defaultFile": "alerts",
+        "outputKind": "table",
+        "config": [
+          {
+            "relative": "config/channel-map",
+            "title": "Channel map"
+          }
+        ],
+        "additionalOutputs": []
+      },
+      {
+        "id": "incumbent-campaigns",
+        "name": "Incumbent campaigns",
+        "description": "Every deal you did not win, by the provider they stayed on and why.",
+        "team": "sales-data-reporting",
+        "scope": "team",
+        "system": false,
+        "seededByDefault": false,
+        "trigger": {
+          "type": "cron",
+          "scope": "global",
+          "schedule": "0 7 1 * *"
+        },
+        "requires": "A deal field that names the incumbent — the list is segmented on it.",
+        "defaultFile": "incumbents",
+        "outputKind": "table",
+        "config": [
+          {
+            "relative": "config/segments",
+            "title": "Segments"
+          }
+        ],
+        "additionalOutputs": [
+          {
+            "relative": "segment-report",
+            "title": "Segment report"
+          }
+        ]
+      },
+      {
+        "id": "org-chart",
+        "name": "Org chart",
+        "description": "Keeps one deal’s buying committee current.",
+        "team": "your-mid-funnel",
+        "scope": "personal",
+        "system": true,
+        "systemSlugs": [
+          "org-chart"
+        ],
+        "seededByDefault": false,
+        "trigger": {
+          "type": "any",
+          "scope": "global"
+        },
+        "defaultFile": "overview",
+        "outputKind": "document",
+        "config": [
+          {
+            "relative": "config/roles",
+            "title": "Roles"
+          }
+        ],
+        "additionalOutputs": []
+      },
+      {
+        "id": "strategist",
+        "name": "Strategist",
+        "description": "Decides which conversations need work at all.",
+        "team": "your-mid-funnel",
+        "scope": "personal",
+        "system": true,
+        "systemSlugs": [
+          "strategist"
+        ],
+        "seededByDefault": false,
+        "trigger": {
+          "type": "any",
+          "scope": "global"
+        },
+        "defaultFile": "overview",
+        "outputKind": "document",
+        "config": [
+          {
+            "relative": "config/on-track-rubric",
+            "title": "On-track rubric"
+          }
+        ],
+        "additionalOutputs": []
+      },
+      {
+        "id": "drafter",
+        "name": "Drafter",
+        "description": "Writes the drafts that are waiting in your inbox each morning.",
+        "team": "your-day",
+        "scope": "personal",
+        "system": true,
+        "systemSlugs": [
+          "drafter"
+        ],
+        "seededByDefault": true,
+        "trigger": {
+          "type": "any",
+          "scope": "global"
+        },
+        "defaultFile": "overview",
+        "outputKind": "document",
+        "config": [
+          {
+            "relative": "config/voice",
+            "title": "Voice"
+          },
+          {
+            "relative": "config/skip-rules",
+            "title": "Skip rules"
+          }
+        ],
+        "additionalOutputs": []
+      },
+      {
+        "id": "daily-agenda",
+        "name": "Daily agenda",
+        "description": "Builds the morning agenda from everything that needs you today.",
+        "team": "your-day",
+        "scope": "personal",
+        "system": true,
+        "systemSlugs": [
+          "daily-agenda"
+        ],
+        "seededByDefault": true,
+        "trigger": {
+          "type": "cron",
+          "scope": "global",
+          "schedule": "0 7 * * 1-5"
+        },
+        "defaultFile": "overview",
+        "outputKind": "document",
+        "config": [
+          {
+            "relative": "config/agenda-rules",
+            "title": "Agenda rules"
+          }
+        ],
+        "additionalOutputs": []
+      }
+    ]
+  }
 }

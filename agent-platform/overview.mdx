@@ -1,0 +1,31 @@
+---
+title: "Agent platform"
+description: "Build, configure and operate persistent Cedar agents alongside external MCP clients."
+---
+
+Cedar's agent platform combines persistent instructions, connected data, triggers, permissions, execution history and durable outputs. MCP exposes the supported tools for reading evidence, creating artifacts and configuring automation. Cedar's app adds the agent library, workspace controls, interactive delegation and workflow buttons.
+
+## Platform capabilities
+
+| Area | What you can do | Where to start |
+| --- | --- | --- |
+| Agent library | Inspect every template, prerequisites, starting triggers and workspace files | [Library](/agent-platform/library) |
+| Agent lifecycle | Create, customize, test and wire agents; inspect active configuration | [Lifecycle](/agent-platform/lifecycle) |
+| Playbooks | Define account-wide and stage-specific rules and reference agent documents | [Playbooks](/automation/playbooks) |
+| Triggers | React to email, meetings, Slack, LinkedIn, CRM changes, signals, field changes, schedules and webhooks | [All trigger types](/agent-platform/triggers) |
+| Files and memory | Maintain configuration, learned corrections, outputs and archives | [Files and memory](/agent-platform/files-memory) |
+| Permissions | Restrict tool actions, recorders, files, boards, graphs and connected MCP tools | [Permissions](/agent-platform/permissions) |
+| Team sharing | Duplicate, publish, inspect shared memory and remove agents | [Sharing](/agent-platform/sharing) |
+| Workflow buttons | Put explicit user actions into documents | [Workflows](/agent-platform/workflows) |
+| Delegation | Split bounded native work, evidence analysis and code execution | [Delegation](/agent-platform/delegation) |
+| Execution | Inspect configured invocation sources, run history, errors and resulting artifacts | [Observability](/agent-platform/observability) |
+
+## Choose the right surface
+
+An external MCP client can call its advertised tools, edit authorized documents and configuration, and let Cedar execute persisted rules. It cannot call Cedar-only `delegate`, `board`, `workflow`, `chat-context`, history or connected-MCP dispatch tools. The app's agent management routes are product controls, not an additional external `agent` family.
+
+Interactive chat can propose mutations or hand work to child executors. Background agents run with their own instructions and grants; availability in chat does not establish availability in a background worker. Customer outbound sends and schedules require the explicit user-directed path described in [message scheduling](/channels/scheduling).
+
+## Configure a useful agent
+
+Start with the business outcome and where its result belongs. Choose an existing system agent or library template where it already owns that outcome. Read current account instructions, prepare its configuration and output destination, check its grants, test its actual execution, then wire the intended trigger. A saved agent, an enabled trigger, a successful run and a delivered result are separate states to verify.

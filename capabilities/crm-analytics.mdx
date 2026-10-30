@@ -1,0 +1,32 @@
+---
+title: "CRM analytics capabilities"
+description: "Complete capability map for CRM analytics."
+---
+
+Measure pipeline activity, cadence, revenue, hygiene and trends using the supported metrics and filters.
+
+## Guides
+
+- [Pipeline, cadence and outcome metrics](/crm/metrics)
+
+## conversation-analytics
+
+Availability: **external**. [Parameters and responses](/reference/conversation-analytics).
+
+<Accordion title="Full tool behavior and constraints">
+
+Compute cadence, funnel and pipeline metrics server-side; never tally rows yourself. Use describe-metrics for the metric/groupBy catalog, reducers, units and requirements. ACTIONS: compute-metric with computeMetric:&#123;metric,filter,...&#125;; compute-metric-batch with computeMetricBatch:&#123;items:&#91;&#123;id,metric,filter,...&#125;&#93;&#125; (up to 50 isolated items); describe-metrics. The shared filter cube supports conversationIds, reps, stages and date bounds; omitted conversationIds means org-wide. Rows include value,n,sampleIds; ordinary n:0 becomes null. Live-only crm_won_amount/crm_open_due_amount require filter.reps:&#91;one Cedar user ID&#93;, explicit from/to date bounds and crmReporting:&#123;timezone:IANA zone&#125;. They use provider close dates and mapped amounts, never fall back to Cedar, and separate currencies. Results include verifiedAt and crmDeals with exact Cedar conversation IDs when linked. Verified empty windows return 0; missing amounts return null with knownAmountSubtotal and missingAmountCount. Call live metrics sequentially to respect CRM rate limits. Cedar win_rate/deals_dropped/quiet_gap/hygiene/won_pipeline/avg_acv and groupBy:outcome require outcome:&#123;won,lost&#125;; inspect conversation-read describe-field for status vocabulary. Cedar does not infer terminal status. judged_strength averages taxonomy atom strength for a target field-family glob such as coaching.discovery.*. Other taxonomy counts/distributions and payload aggregations use run-sql; discover available fields with taxonomy-fields.
+
+</Accordion>
+
+### Supported operations
+
+| Operation | Capability | Baseline scope |
+| --- | --- | --- |
+| `compute-metric` | Compute one supported pipeline, cadence, hygiene, revenue or evidence metric. | `crm:read` |
+| `compute-metric-batch` | Compute several supported metric requests in one call. | `crm:read` |
+| `describe-metrics` | Discover supported metric definitions and their inputs before choosing an analysis. | `crm:read` |
+
+## Access and results
+
+Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).

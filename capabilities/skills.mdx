@@ -1,0 +1,58 @@
+---
+title: "Skill loading capabilities"
+description: "Complete capability map for Skill loading."
+---
+
+Load account-aware operating instructions and the gated Brain skill catalog without changing API authority.
+
+## Guides
+
+- [Skill-loading tools](/reference/skills)
+
+## load-skill
+
+Availability: **external**. [Parameters and responses](/reference/load-skill).
+
+Load a Cedar skill's full instructions by name. When your task matches a skill below — including whenever another tool's own description tells you to load one first — you MUST call this tool for that skill before using any tool in its domain. The one-liners below are only for picking WHICH skill applies — they do not replace loading it. If your client saves this tool's response to a file instead of showing it inline, you MUST read that file in full before acting. Call with no `name` for the full catalog. Available skills:
+&lt;available_skills&gt;
+- drafting: Draft or rewrite sales emails, Slack messag…
+- knowledge-base: Access the user's Knowledge Base text entri…
+- calendar: View existing calendar events or propose ne…
+- conversation: Find/filter CRM conversations, update conve… &#91;resources: opportunity-creation&#93;
+- tasks: Everything task-related: creating, updating…
+- multi-conversation-operations: Required before batch operations across 3+…
+- customer-support: Report a problem to the Cedar team when the…
+- external-systems: Connect to and interact with external, non-…
+- connected-systems: Guidance for interacting with a user's exte…
+- research: Read your LinkedIn network and post reactor…
+- documents: Read, write, and search Cedar Docs — persis… &#91;resources: agenda-format&#93;
+- tables: Build and drive a Cedar TABLE — a row-addre…
+- notifications: Send notifications to the user via Slack DM…
+- cedar-configuration: The foundational skill for anything related… &#91;+15 resources&#93;
+- collateral: Create any sales collateral — pitch decks,… &#91;+14 resources&#93;
+- coaching: Sales methodology frameworks — BANT, SAYA (… &#91;+5 resources&#93;
+- run-sql: Full column and join reference for the run-…
+- field-query: Discover, select, and query CRM field data…
+&lt;/available_skills&gt;
+
+When your task matches a skill, use the load-skill tool to read its full instructions before proceeding.
+
+Single-call family. Baseline scope: `authenticated`.
+
+## load-brain-skills
+
+Availability: **feature-gated**. [Parameters and responses](/reference/load-brain-skills).
+
+Load a Cedar deal-intelligence "brain" skill's full instructions by name. These are the reasoning/analysis skills for deep pipeline questions — how deals are won/lost, cross-deal patterns, rep coaching from real calls, objection/competitor analysis. When your task is such an analysis, you MUST call this tool for the matching skill before proceeding. The one-liners below are only for picking WHICH skill applies — they do not replace loading it. If your client saves this tool's response to a file instead of showing it inline, you MUST read that file in full before acting. Call with no `name` for the full catalog. Available brain skills:
+&lt;available_skills&gt;
+- deal-intelligence-analysis: Analyze a customer's deals to uncover non-o… &#91;+8 resources&#93;
+- analysis-decomposition: Turn a high-level sales-coaching / diagnost… &#91;+4 resources&#93;
+&lt;/available_skills&gt;
+
+When your task matches a skill, use the load-skill tool to read its full instructions before proceeding.
+
+Single-call family. Baseline scope: `brain:read`.
+
+## Access and results
+
+Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).

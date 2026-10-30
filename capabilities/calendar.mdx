@@ -1,0 +1,42 @@
+---
+title: "Calendar capabilities"
+description: "Complete capability map for Calendar."
+---
+
+Inspect availability and event details, and create, update or delete calendar events with the connected account.
+
+## Guides
+
+- [Calendar and availability](/channels/calendar)
+
+## calendar
+
+Availability: **external**. [Parameters and responses](/reference/calendar).
+
+<Accordion title="Full tool behavior and constraints">
+
+Work with the user's Google Calendar. ACTIONS: (1) list-events — fetch events in a time range, enriched with linked CRM conversation info. (2) get-availability — check busy periods across the user's calendars before proposing meeting times. (3) modify-event — CREATE, UPDATE, or DELETE a calendar event (pick via the operation param: "create" needs summary/startDateTime/endDateTime/attendees; "update" needs eventId + the fields to change; "delete" needs eventId). Pass `recurrence` (RFC 5545 RRULE strings) to send a repeating invite. Before rescheduling or editing an existing event, check `canModifyForEveryone` from list-events — when it is false the user does NOT own the event and cannot move it for the other guests; modify-event will refuse the change, and you must offer to ask the organizer or propose times instead. In the in-app chat, modify-event streams a proposal card for the user to approve. On every other surface (external MCP, bots, automations) it applies the change immediately (creating/updating/deleting the real event and notifying attendees) — the calling client is the approval layer. Each action takes its params in a same-named object (e.g. action: "modify-event" pairs with a modifyEvent: &#123;...&#125; object) — omit every params object except the one matching your chosen action.
+
+</Accordion>
+
+### Supported operations
+
+| Operation | Capability | Baseline scope |
+| --- | --- | --- |
+| `list-events` | Read calendar events in a time range with available CRM context and modification rights. | `crm:read` |
+| `get-availability` | Check busy periods across the user's calendars. | `crm:read` |
+| `modify-event` | Create, update or delete real calendar events; external MCP applies immediately and can notify attendees. | `crm:read` |
+
+<Accordion title="All nested operations and modes (3)">
+
+| Selector | Choice | Variant |
+| --- | --- | --- |
+| `modifyEvent.operation` | `create` |  |
+| `modifyEvent.operation` | `update` |  |
+| `modifyEvent.operation` | `delete` |  |
+
+</Accordion>
+
+## Access and results
+
+Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).

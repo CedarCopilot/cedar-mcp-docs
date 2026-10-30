@@ -1,0 +1,31 @@
+---
+title: "Organization administration capabilities"
+description: "Complete capability map for Organization administration."
+---
+
+Inspect team scope and propagate supported configuration changes with explicit ownership and inheritance boundaries.
+
+## Guides
+
+- [Organization scope and propagation](/configuration/team)
+
+## config-propagate
+
+Availability: **external**. [Parameters and responses](/reference/config-propagate).
+
+<Accordion title="Full tool behavior and constraints">
+
+ORG-ADMIN ONLY. Push one field definition or CRM mapping out to many reps at once, instead of repeating config-write/connection-write once per rep. Call config-read list-fields with targetUserIds:"org", rollup:true first to see who's uniform/diverging/missing. ACTIONS: (1) propagate-field — copies an ORG AOP's custom field definition (type/options/description/governance) onto targeted reps' own AOPs. Reps missing the field get it created; reps already matching it are a no-op; reps whose copy DIVERGES are refused (with the diff) unless force:true, which instead proposes an approval-gated overwrite — one card per rep, never a blanket accept. (2) propagate-mapping — copies one CRM field mapping from a source connection onto each target's OWN connection for the same provider (never the source's connectionId). Pass sourceAopId to propagate a Lead/Partner mapping instead of the default Deal one — the object is resolved from that AOP's own bound object, never a raw object name. Same missing/uniform/diverging-needs-force semantics; a select/list-type target field gets real CRM-introspected option reconciliation, same as connection-write. For a single rep's field or mapping use config-write/connection-write instead.
+
+</Accordion>
+
+### Supported operations
+
+| Operation | Capability | Baseline scope |
+| --- | --- | --- |
+| `propagate-field` | Copy an organization field definition to selected reps; report differences and gate forced overwrites. | `playbook:write` |
+| `propagate-mapping` | Copy a CRM mapping onto each target's own provider connection with option reconciliation. | `playbook:write` |
+
+## Access and results
+
+Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).

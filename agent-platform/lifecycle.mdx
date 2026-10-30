@@ -1,0 +1,36 @@
+---
+title: "Create and manage agents"
+description: "Agent definitions, template installation, focused edits and deliberate activation."
+---
+
+## Create from the library or a blank agent
+
+The Cedar app can create an agent from its library or create a new agent with a name, description and optional default file. Library installation also prepares the template's configuration, sample outputs and initial chat before wiring its starting trigger. A blank agent has instructions but no automatic trigger until configured.
+
+An agent is backed by a subagent document. Its document ID is used by playbook references; its `agent_id` identifies execution history and its file namespace. These IDs are not interchangeable. New names are normalized to a free filename rather than overwriting another agent or a reserved system name.
+
+## Configure through MCP
+
+1. Load `cedar-configuration` and its relevant authoring resources.
+2. Read effective playbook configuration and the returned `editMap`.
+3. Read existing agents before creating another owner for the same output.
+4. Write the agent and supporting resources through authorized document operations.
+5. Read back the document ID, instructions and resource scope.
+6. Test the actual agent through supported diagnostics.
+7. Add the reference inside the intended trigger, then read it back.
+
+There is no external `agentLibrary.provision` or generic `spawn-subagent` registration. Library installation and workspace management are Cedar app capabilities; the MCP authoring path uses the [configuration](/capabilities/configuration), [documents](/capabilities/documents) and [playbook](/capabilities/playbooks) families.
+
+## Edit without losing existing behavior
+
+A first write to a new subagent path uses `upsert`. Existing subagent documents require `patch` or `append`; replacing an existing body requires a patch against freshly read content. Preserve unrelated instructions, identity fields, grants and references.
+
+Descriptions summarize the agent's purpose; they do not enforce eligibility. Put execution conditions into the consuming trigger instructions. Do not add retired `permissions` or `namespace` frontmatter keys as access controls. Use the actual resource and connection grants.
+
+## Activate and verify
+
+Creating a document does not establish a recurring invocation. A trigger reference must resolve to the saved document. Observe both its configured source and a real execution under the agent's own capabilities. `debug test-run` can suppress sends but still make other writes; it is not a universal dry run.
+
+The app's **Run now** executes the selected agent, optionally against an authorized conversation, and waits for its result. It does not fire every agent sharing the same cron block. Changing a trigger is separate from running once.
+
+Duplication, publishing and deletion have distinct behavior described in [sharing and lifecycle changes](/agent-platform/sharing).

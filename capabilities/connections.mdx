@@ -1,0 +1,54 @@
+---
+title: "Connections capabilities"
+description: "Complete capability map for Connections."
+---
+
+Manage supported connection settings, CRM sync and write policies, webhook sources, Slack sync and WhatsApp channel consent.
+
+## Guides
+
+- [CRM sync, mapping transforms and write controls](/configuration/crm-connections)
+
+## connection-write
+
+Availability: **external**. [Parameters and responses](/reference/connection-write).
+
+Change how a CONNECTED INTEGRATION behaves. Call config-read read-settings sections:&#91;"connections"&#93; first for the connectionId every change type below needs. CHANGES: (1) update_crm_field_mappings — add/update/remove a mapping between a CRM field and a Cedar field, including template mappings and per-placeholder transforms. Set isMultiPicklist here for Salesforce/Attio multi-selects. Never hand-type allowedValues: options come from config-write sourceFromCrm/link-mapping. (2) update_slack_sync_config — which Slack channels sync into deals, and how new ones are handled. scope="org" (org admin only) sets the org-wide DEFAULT instead of one connection. (3) update_crm_settings — sync/push switches, dealSyncFilter, and dealWriteGuard (never write to HubSpot deals matching a field/value map). (4) update_connection_instructions — standing rules, chat only (background runs never read them; CRM rules go in the crm-updater). REPLACES the existing text in full, so read it first. (5) manage_playbook_webhook — register what FIRES a &lt;trigger type="webhook"&gt; block, e.g. a Slack channel. (6) disconnect_linkedin_seat / disconnect_whatsapp_account — disconnect a seat/line by unipileAccountId. Connecting is human-only; send the user config-read's connectLinks link. (7) update_whatsapp_sync_config — "index every chat" override and/or per-chat consent tracking. (8) resolve_channel_link_proposal — link or dismiss an ambiguous Slack/LinkedIn/WhatsApp channel against a deal (op=resolve), or re-run the org's automatic linking pass (op=sweep). For AOP custom fields, their options, and their CRM field mappings use config-write. For the user's own settings (mail/notification preferences, inbox layout/tabs, task groups, webhook export) use workspace-write. For credentials and MCP servers use systems-write. For playbook, subagent, and resource file edits use write-document.
+
+Single-call family. Baseline scope: `playbook:write`.
+
+<Accordion title="All nested operations and modes (25)">
+
+| Selector | Choice | Variant |
+| --- | --- | --- |
+| `change.type` | `update_crm_field_mappings` | change.type=update_crm_field_mappings |
+| `change.op` | `add` | change.type=update_crm_field_mappings |
+| `change.op` | `update` | change.type=update_crm_field_mappings |
+| `change.op` | `remove` | change.type=update_crm_field_mappings |
+| `change.type` | `manage_playbook_webhook` | change.type=manage_playbook_webhook |
+| `change.op` | `create` | change.type=manage_playbook_webhook |
+| `change.op` | `enable` | change.type=manage_playbook_webhook |
+| `change.op` | `disable` | change.type=manage_playbook_webhook |
+| `change.op` | `list` | change.type=manage_playbook_webhook |
+| `change.op` | `test` | change.type=manage_playbook_webhook |
+| `change.op` | `delete` | change.type=manage_playbook_webhook |
+| `change.type` | `update_slack_sync_config` | change.type=update_slack_sync_config |
+| `change.type` | `update_crm_settings` | change.type=update_crm_settings |
+| `change.stageRequiredFieldsOp.op` | `set` | change.type=update_crm_settings |
+| `change.stageRequiredFieldsOp.op` | `remove` | change.type=update_crm_settings |
+| `change.type` | `update_connection_instructions` | change.type=update_connection_instructions |
+| `change.type` | `disconnect_linkedin_seat` | change.type=disconnect_linkedin_seat |
+| `change.type` | `disconnect_whatsapp_account` | change.type=disconnect_whatsapp_account |
+| `change.type` | `update_whatsapp_sync_config` | change.type=update_whatsapp_sync_config |
+| `change.type` | `resolve_channel_link_proposal` | change.type=resolve_channel_link_proposal |
+| `change.op` | `resolve` | change.type=resolve_channel_link_proposal |
+| `change.op` | `sweep` | change.type=resolve_channel_link_proposal |
+| `change.channel` | `slack` | change.type=resolve_channel_link_proposal |
+| `change.channel` | `linkedin` | change.type=resolve_channel_link_proposal |
+| `change.channel` | `whatsapp` | change.type=resolve_channel_link_proposal |
+
+</Accordion>
+
+## Access and results
+
+Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).

@@ -1,0 +1,20 @@
+---
+title: "User notifications"
+description: "Send alerts, discover Slack destinations and keep delivery separate from customer outreach."
+---
+
+`notify` sends a proactive message to the user through the selected supported channel. It can deliver Slack, iMessage, email or WhatsApp notifications where configured. Leaving the channel unset uses the user's setting; an explicit channel selects that destination for the message.
+
+## Slack destinations and interactions
+
+Use `list-slack-channels` to discover accessible channel IDs and the user's DM before naming a destination. Slack notifications can include structured action/link buttons, reactions and thread replies. iMessage supports the tapback choices exposed in the schema.
+
+These are notifications, not a blanket customer messaging API. A WhatsApp notification capability does not imply a general WhatsApp inbox or arbitrary recipient-send family. Use the channel-specific guides to distinguish notification delivery from live conversation operations.
+
+## Alerts and digests
+
+Use alerts for meaningful changes and a scheduled digest for repeated low-urgency updates. Put relevance filters before notification creation, retain processed source identifiers and choose the intended destination. The queue does not automatically collapse many notifications into one digest.
+
+Inspect delivery results. If a notification fails, do not route it through a customer draft/send path as an implicit fallback. An in-chat response is also separate from proactive notification delivery.
+
+[Slack setup](/slack/notifications) · [Full notification contract](/reference/notify)

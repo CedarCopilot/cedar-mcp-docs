@@ -1,0 +1,67 @@
+---
+title: "Chat context and history capabilities"
+description: "Complete capability map for Chat context and history."
+---
+
+Attach working context, search and load past chats, and navigate between Cedar conversations.
+
+## Guides
+
+- [Chat context and history](/agent-platform/chat)
+
+## chat-context
+
+Availability: **in-app-only**. [Parameters and responses](/reference/chat-context).
+
+<Accordion title="Full tool behavior and constraints">
+
+Manage this chat thread's context set — the items (conversations, email/slack threads, files, deals) the thread is working with, and its primary conversation.
+
+ACTIONS:
+- manage: attach/detach items and repoint the primary in one call. Pass manage: &#123; add?: &#91;&#123;kind,id,label?&#125;&#93;, remove?: &#91;&#123;kind,id&#125;&#93;, setPrimary?: &#123;id,name?&#125;, reasoning &#125;. Adding is an upsert by (kind,id). Call this when the user redirects to a different conversation, when you attach a newly-created file, or when you resolve an entity by a KNOWN id.
+- resolve: turn a name the user said ("the Numeral deal", "pull up Acme") into the thread's PRIMARY conversation in one step — searches by name, picks the best match, attaches it. Pass resolve: &#123; query, reasoning &#125;. Only kind="conversation" is supported; for a known id of another kind, use action: "manage".
+
+Each action takes its params in a same-named object — omit every params object except the one matching your chosen action.
+
+</Accordion>
+
+### Supported operations
+
+| Operation | Capability | Baseline scope |
+| --- | --- | --- |
+| `manage` | Attach/detach working-context items and optionally change the primary conversation. | `in-app` |
+| `resolve` | Resolve a conversation name into the chat's primary conversation and attach it. | `in-app` |
+
+## search-chat-history
+
+Availability: **in-app-only**. [Parameters and responses](/reference/search-chat-history).
+
+Search the user's own past chat threads by title AND message content — use this when the user asks about a previous conversation ("which chat did I...", "find that chat where...", "what did we discuss about...") that isn't the one you're currently in.
+
+Pass &#123; query, limit? &#125;. Returns matching threads ordered by most recently active, each with a snippet of the matching message when the match wasn't in the thread's title. Pass a result's threadId to load-chat-history to read its content into your own context, or to switch-chat-thread to move the user's screen into it.
+
+Single-call family. Baseline scope: `in-app`.
+
+## load-chat-history
+
+Availability: **in-app-only**. [Parameters and responses](/reference/load-chat-history).
+
+Load a past chat thread's own message history — use after search-chat-history finds the thread you want, when the user wants to pick that conversation back up rather than just being told it exists.
+
+Pass &#123; threadId, limit? &#125;. Returns the thread's messages (including prior tool calls/results) as a formatted transcript for you to read and continue from. This does NOT switch the user's screen to that thread — it only gives you the content for this turn, so tell the user what you found/did if it matters that they see it.
+
+Single-call family. Baseline scope: `in-app`.
+
+## switch-chat-thread
+
+Availability: **in-app-only**. [Parameters and responses](/reference/switch-chat-thread).
+
+Switch the user's active chat to one of their own past threads — use when the user wants to actually go back to / resume / open a past conversation, not just be told about it or have you reason over it (that's load-chat-history).
+
+Pass &#123; threadId &#125;. The user's screen navigates to that thread; you do not get its content back from this tool. Call it last in your turn — anything you say after this won't be visible until the user switches back.
+
+Single-call family. Baseline scope: `in-app`.
+
+## Access and results
+
+Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).

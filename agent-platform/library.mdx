@@ -1,0 +1,1408 @@
+---
+title: "Agent library"
+description: "Every shipped agent template, its capabilities, prerequisites and workspace."
+---
+
+The code registers **46 agent-library templates**. This catalog includes each template's purpose, starting trigger, required connections, configuration files and output type. Installing a template is a Cedar app operation; these are not additional MCP tool names. External clients author supported agent/playbook documents through the configuration and document families.
+
+## What installation creates
+
+Provisioning creates the agent definition, files it in the appropriate personal/team/background area, seeds configuration and sample outputs, starts its introductory chat, then wires its trigger. Existing definitions are skipped rather than overwritten. A partially provisioned agent can exist with a failed trigger or workspace step: inspect the returned failures and `triggerWired` status. Sample outputs are examples, not completed work on your records.
+
+Read [agent lifecycle](/agent-platform/lifecycle), [files and memory](/agent-platform/files-memory), and [permissions](/agent-platform/permissions) before enabling live work. Template trigger objects below use the product's provisioning format; the canonical playbook XML names are listed in [triggers](/agent-platform/triggers).
+
+| Template | Area | Capability |
+| --- | --- | --- |
+| [Sales next steps](#next-steps) | personal | Decides the one next step that moves the deal, and writes the tasks. |
+| [Meeting prep](#meeting-prep) | personal | Who is in the room, what happened last, what to get answered. |
+| [CRM updater](#crm-updater) | personal | Keeps stage, value, close date and fields true to the thread. |
+| [Pipeline review](#pipeline-review) | personal | Reconciles the CRM, then writes your deal-by-deal review prep. |
+| [Internal signals](#internal-signals) | personal | Maintain source-backed findings from deal events and stage changes. |
+| [Pipeline revivals](#internal-revivals) | personal | Curate due persisted findings into a dedicated review table. |
+| [Upsell &amp; expansion](#internal-growth) | personal | Curate due persisted findings into a dedicated review table. |
+| [Churn](#internal-churn) | personal | Curate due persisted findings into a dedicated review table. |
+| [Pipeline revival](#pipeline-revival) | personal | Every quiet deal, why it went cold, and the line that restarts it. |
+| [Org map &amp; multithreading](#org-map) | personal | Who else is in the building, who you have not met, and the path in. |
+| [Coaching](#coaching) | personal | What you did well on each call, and the one thing to change. |
+| [Objection library](#objection-library) | team | Every objection the team hits, and the answers that actually work. |
+| [LinkedIn watch](#linkedin-posts) | personal | The few posts and mentions today that are worth a reply. |
+| [LinkedIn outreach](#linkedin-outreach) | personal | Drafts and queues connection requests and messages. Never sends. |
+| [Call refresh](#call-refresh) | personal | Who they are, what changed since you booked, and the opener. |
+| [Lead scoring](#lead-scoring) | team | Scores each new contact against the ICP your won deals describe. |
+| [Content](#content) | team | Writes the week's posts from what customers actually said. |
+| [Forecast roll-up](#forecast-roll-up) | team | The team’s number, deal by deal, with what changed this week. |
+| [Team coaching](#team-coaching) | team | Each rep’s week, what to coach, and who needs you most. |
+| [Product gaps](#customer-feedback) | team | The product gaps customers asked for, ranked by revenue attached. |
+| [Dev &amp; debugging](#dev-debug) | personal | Turns a bug report into a repro, a scope, and a handoff. |
+| [Why we win](#why-we-win) | team | The sentences customers use when they say why they chose you. |
+| [Release feedback](#release-feedback) | team | How the last release landed, in customers’ own words. |
+| [Competitor intel](#competitor-intel) | team | Every competitor mention, what they claimed, and how it went. |
+| [Afternoon check-in](#task-checkin) | personal | What moved since the morning agenda, and what is still owed today. |
+| [Meeting confirmer](#meeting-confirmer) | personal | A day-before confirmation for the meetings that get forgotten. |
+| [Reasons to reach out](#reasons-to-reach-out) | personal | A dated, sourced reason to contact each quiet deal today. |
+| [Outbound email](#outbound-email) | personal | Cold emails built on a fresh hook, drafted for your approval. |
+| [Event outreach](#event-outreach) | personal | Research and messages for everyone on an event’s list. |
+| [Meeting recap](#meeting-recap) | personal | After each meeting: CRM note, next steps, recap email — all drafted. |
+| [Deal risk](#deal-risk) | personal | Every Wednesday: what could stop each deal, with the evidence quoted. |
+| [Proposal builder](#proposal-builder) | personal | Drafts the proposal from the deal record, every number traced. |
+| [Contract chaser](#contract-chaser) | personal | Every morning: who has each contract, for how long, and today’s chase. |
+| [Onboarding plan](#onboarding-plan) | personal | Every won deal's rollout, milestone by milestone, and what is stuck. |
+| [Account wiki](#account-wiki) | personal | One living page per account — who, what, why, and what changed. |
+| [Investor pipeline](#investor-pipeline) | personal | Every fund, where it stands, what you owe them, and the next prep. |
+| [Hiring pipeline](#hiring-pipeline) | personal | Every candidate, where they stand, the read so far, and the next prep. |
+| [Inbound lead research](#inbound-lead-research) | team | Researches each new inbound lead and grades it: sql, mql, or no. |
+| [Revival call list](#revival-call-list) | team | Who said "not now" with a date, and is due now — as a monthly queue. |
+| [Lost deal debrief](#lost-deal-debrief) | team | Every closed-lost deal: the reason, their words, and the pattern. |
+| [Deal alerts](#deal-alerts) | team | Posts the deal events the room asked for, once each, and nothing else. |
+| [Incumbent campaigns](#incumbent-campaigns) | team | Every deal you did not win, by the provider they stayed on and why. |
+| [Org chart](#org-chart) | personal | Keeps one deal’s buying committee current. |
+| [Strategist](#strategist) | personal | Decides which conversations need work at all. |
+| [Drafter](#drafter) | personal | Writes the drafts that are waiting in your inbox each morning. |
+| [Daily agenda](#daily-agenda) | personal | Builds the morning agenda from everything that needs you today. |
+
+## next-steps
+
+**Sales next steps** — Decides the one next step that moves the deal, and writes the tasks.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | personal · your-mid-funnel |
+| Definition | System agent: `next-steps` |
+| Default account setup | Seeded by default; inspect the account for current status |
+| Output | document at `overview` |
+| Requirements | No additional prerequisite declared by this template; connected account access and grants still apply |
+
+Starting trigger:
+
+```json
+{
+  "type": "any",
+  "scope": "global"
+}
+```
+
+Configuration files:
+
+- `config/next-step-rules`: Next-step rules
+
+
+## meeting-prep
+
+**Meeting prep** — Who is in the room, what happened last, what to get answered.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | personal · your-mid-funnel |
+| Definition | System agent: `meeting-prep` |
+| Default account setup | Seeded by default; inspect the account for current status |
+| Output | document at `overview` |
+| Requirements | A connected meeting recorder — it briefs from email alone without one. |
+| Required integration | meeting |
+
+Starting trigger:
+
+```json
+{
+  "type": "before_meeting",
+  "scope": "global",
+  "minutes": 60
+}
+```
+
+Configuration files:
+
+- `config/brief-template`: Brief template
+- `config/prep-rules`: Prep rules
+
+
+## crm-updater
+
+**CRM updater** — Keeps stage, value, close date and fields true to the thread.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | personal · your-mid-funnel |
+| Definition | System agent: `crm-updater` |
+| Default account setup | Seeded by default; inspect the account for current status |
+| Output | document at `overview` |
+| Requirements | No additional prerequisite declared by this template; connected account access and grants still apply |
+
+Starting trigger:
+
+```json
+{
+  "type": "any",
+  "scope": "global"
+}
+```
+
+Configuration files:
+
+- `config/field-rules`: Field rules
+
+
+## pipeline-review
+
+**Pipeline review** — Reconciles the CRM, then writes your deal-by-deal review prep.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | personal · your-mid-funnel |
+| Definition | System agent: `pipeline-review` |
+| Default account setup | Opt in through the library |
+| Output | table at `pipeline` |
+| Requirements | No additional prerequisite declared by this template; connected account access and grants still apply |
+
+Starting trigger:
+
+```json
+{
+  "type": "cron",
+  "scope": "global",
+  "schedule": "0 18 * * 1"
+}
+```
+
+Configuration files:
+
+- `config/review-rubric`: Review rubric
+
+Additional workspace files:
+
+- `review-notes`: Review notes
+
+
+## internal-signals
+
+**Internal signals** — Maintain source-backed findings from deal events and stage changes.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | personal · your-mid-funnel |
+| Definition | Customizable library template |
+| Default account setup | Opt in through the library |
+| Output | document at `overview` |
+| Requirements | No additional prerequisite declared by this template; connected account access and grants still apply |
+
+Starting trigger:
+
+```json
+{
+  "type": "any",
+  "scope": "global"
+}
+```
+
+Configuration files:
+
+- `config/setup`: Internal signal setup
+
+
+## internal-revivals
+
+**Pipeline revivals** — Curate due persisted findings into a dedicated review table.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | personal · your-mid-funnel |
+| Definition | Customizable library template |
+| Default account setup | Opt in through the library |
+| Output | table at `overview` |
+| Requirements | No additional prerequisite declared by this template; connected account access and grants still apply |
+
+Starting trigger:
+
+```json
+{
+  "type": "cron",
+  "scope": "global",
+  "schedule": "0 7 * * 1"
+}
+```
+
+Uses its agent instructions and preferences; no extra configuration files are declared.
+
+
+## internal-growth
+
+**Upsell &amp; expansion** — Curate due persisted findings into a dedicated review table.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | personal · your-customers |
+| Definition | Customizable library template |
+| Default account setup | Opt in through the library |
+| Output | table at `overview` |
+| Requirements | No additional prerequisite declared by this template; connected account access and grants still apply |
+
+Starting trigger:
+
+```json
+{
+  "type": "cron",
+  "scope": "global",
+  "schedule": "0 7 * * 1"
+}
+```
+
+Uses its agent instructions and preferences; no extra configuration files are declared.
+
+
+## internal-churn
+
+**Churn** — Curate due persisted findings into a dedicated review table.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | personal · your-customers |
+| Definition | Customizable library template |
+| Default account setup | Opt in through the library |
+| Output | table at `overview` |
+| Requirements | No additional prerequisite declared by this template; connected account access and grants still apply |
+
+Starting trigger:
+
+```json
+{
+  "type": "cron",
+  "scope": "global",
+  "schedule": "0 7 * * 1"
+}
+```
+
+Uses its agent instructions and preferences; no extra configuration files are declared.
+
+
+## pipeline-revival
+
+**Pipeline revival** — Every quiet deal, why it went cold, and the line that restarts it.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | personal · your-mid-funnel |
+| Definition | Customizable library template |
+| Default account setup | Opt in through the library |
+| Output | table at `revival` |
+| Requirements | No additional prerequisite declared by this template; connected account access and grants still apply |
+
+Starting trigger:
+
+```json
+{
+  "type": "cron",
+  "scope": "global",
+  "schedule": "0 7 * * 2"
+}
+```
+
+Configuration files:
+
+- `config/revival-rules`: Revival rules
+
+Additional workspace files:
+
+- `revival-notes`: Revival notes
+
+
+## org-map
+
+**Org map &amp; multithreading** — Who else is in the building, who you have not met, and the path in.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | personal · your-mid-funnel |
+| Definition | Customizable library template |
+| Default account setup | Opt in through the library |
+| Output | table at `org-map` |
+| Requirements | A connected meeting recorder — the transcript is half the map. |
+| Required integration | meeting |
+
+<Warning>The library currently declares `meeting.completed`, which is absent from the runtime playbook trigger vocabulary. Treat this as a configuration discrepancy: verify and correct the saved invocation source before relying on automatic dispatch. This catalog records the template as shipped; it does not certify that label as a working trigger.</Warning>
+
+Starting trigger:
+
+```json
+{
+  "type": "event",
+  "scope": "global",
+  "eventType": "meeting.completed"
+}
+```
+
+Configuration files:
+
+- `config/map-rules`: Map rules
+
+Additional workspace files:
+
+- `org-map-notes`: Org map notes
+
+
+## coaching
+
+**Coaching** — What you did well on each call, and the one thing to change.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | personal · your-day |
+| Definition | System agent: `coaching` |
+| Default account setup | Opt in through the library |
+| Output | document at `overview` |
+| Requirements | A meeting recorder. The org coaching playbook wins when your team has one; otherwise the seeded rubric. |
+| Required integration | meeting |
+
+<Warning>The library currently declares `meeting.completed`, which is absent from the runtime playbook trigger vocabulary. Treat this as a configuration discrepancy: verify and correct the saved invocation source before relying on automatic dispatch. This catalog records the template as shipped; it does not certify that label as a working trigger.</Warning>
+
+Starting trigger:
+
+```json
+{
+  "type": "event",
+  "scope": "global",
+  "eventType": "meeting.completed"
+}
+```
+
+Configuration files:
+
+- `config/rubric`: Call rubric
+
+
+## objection-library
+
+**Objection library** — Every objection the team hits, and the answers that actually work.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | team · ae |
+| Definition | Customizable library template |
+| Default account setup | Opt in through the library |
+| Output | document at `objections` |
+| Requirements | A connected meeting recorder — most objections are said out loud, once. |
+| Required integration | meeting |
+
+Starting trigger:
+
+```json
+{
+  "type": "cron",
+  "scope": "global",
+  "schedule": "0 6 * * 4"
+}
+```
+
+Configuration files:
+
+- `config/objection-taxonomy`: Objection taxonomy
+
+
+## linkedin-posts
+
+**LinkedIn watch** — The few posts and mentions today that are worth a reply.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | personal · your-top-of-funnel |
+| Definition | Customizable library template |
+| Default account setup | Opt in through the library |
+| Output | table at `mentions` |
+| Requirements | A connected LinkedIn seat (Unipile). |
+| Required integration | linkedin |
+
+Starting trigger:
+
+```json
+{
+  "type": "cron",
+  "scope": "global",
+  "schedule": "0 8 * * 1-5"
+}
+```
+
+Configuration files:
+
+- `config/watch-rules`: Watch rules
+
+Additional workspace files:
+
+- `watch-notes`: Watch notes
+
+
+## linkedin-outreach
+
+**LinkedIn outreach** — Drafts and queues connection requests and messages. Never sends.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | personal · your-top-of-funnel |
+| Definition | Customizable library template |
+| Default account setup | Opt in through the library |
+| Output | table at `queue` |
+| Requirements | A connected LinkedIn seat (Unipile). |
+| Required integration | linkedin |
+
+Starting trigger:
+
+```json
+{
+  "type": "cron",
+  "scope": "global",
+  "schedule": "0 9 * * 1-5"
+}
+```
+
+Configuration files:
+
+- `config/outreach-playbook`: Outreach playbook
+
+Additional workspace files:
+
+- `report`: Outreach report
+
+
+## call-refresh
+
+**Call refresh** — Who they are, what changed since you booked, and the opener.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | personal · your-top-of-funnel |
+| Definition | Customizable library template |
+| Default account setup | Opt in through the library |
+| Output | document at `overview` |
+| Requirements | A connected calendar. |
+
+Starting trigger:
+
+```json
+{
+  "type": "before_meeting",
+  "scope": "global",
+  "minutes": 30
+}
+```
+
+Configuration files:
+
+- `config/refresh-brief`: Refresh brief
+
+
+## lead-scoring
+
+**Lead scoring** — Scores each new contact against the ICP your won deals describe.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | team · top-of-funnel |
+| Definition | Customizable library template |
+| Default account setup | Opt in through the library |
+| Output | table at `scores` |
+| Requirements | Runs without enrichment, and says so on any score it had to guess. |
+
+<Warning>The library currently declares `contact.created`, which is absent from the runtime playbook trigger vocabulary. Treat this as a configuration discrepancy: verify and correct the saved invocation source before relying on automatic dispatch. This catalog records the template as shipped; it does not certify that label as a working trigger.</Warning>
+
+Starting trigger:
+
+```json
+{
+  "type": "event",
+  "scope": "global",
+  "eventType": "contact.created"
+}
+```
+
+Configuration files:
+
+- `config/icp`: ICP
+
+Additional workspace files:
+
+- `scoring-notes`: Scoring notes
+
+
+## content
+
+**Content** — Writes the week's posts from what customers actually said.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | team · sales-data-reporting |
+| Definition | Customizable library template |
+| Default account setup | Opt in through the library |
+| Output | document at `drafts` |
+| Requirements | Why we win — this agent reads `why-we-win` as its source material. |
+| Template dependency | [why-we-win](#why-we-win) |
+
+Starting trigger:
+
+```json
+{
+  "type": "cron",
+  "scope": "global",
+  "schedule": "0 8 * * 1"
+}
+```
+
+Configuration files:
+
+- `config/voice`: Voice
+- `config/sources`: Sources
+
+
+## forecast-roll-up
+
+**Forecast roll-up** — The team’s number, deal by deal, with what changed this week.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | team · leadership |
+| Definition | Customizable library template |
+| Default account setup | Opt in through the library |
+| Output | table at `forecast` |
+| Requirements | A connected CRM — the roll-up reconciles the number against it. |
+| Required integration | crm |
+
+Starting trigger:
+
+```json
+{
+  "type": "cron",
+  "scope": "global",
+  "schedule": "0 6 * * 1"
+}
+```
+
+Configuration files:
+
+- `config/forecast-rules`: Forecast rules
+
+Additional workspace files:
+
+- `forecast-summary`: Forecast summary
+
+
+## team-coaching
+
+**Team coaching** — Each rep’s week, what to coach, and who needs you most.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | team · leadership |
+| Definition | Customizable library template |
+| Default account setup | Opt in through the library |
+| Output | document at `coaching` |
+| Requirements | A connected meeting recorder — the calls are what it coaches from. |
+| Required integration | meeting |
+
+Starting trigger:
+
+```json
+{
+  "type": "cron",
+  "scope": "global",
+  "schedule": "0 6 * * 5"
+}
+```
+
+Configuration files:
+
+- `config/coaching-rubric`: Coaching rubric
+
+
+## customer-feedback
+
+**Product gaps** — The product gaps customers asked for, ranked by revenue attached.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | team · support-cs |
+| Definition | Customizable library template |
+| Default account setup | Opt in through the library |
+| Output | table at `feedback` |
+| Requirements | No additional prerequisite declared by this template; connected account access and grants still apply |
+
+Starting trigger:
+
+```json
+{
+  "type": "cron",
+  "scope": "global",
+  "schedule": "0 6 * * 1"
+}
+```
+
+Configuration files:
+
+- `config/gap-taxonomy`: Gap taxonomy
+
+Additional workspace files:
+
+- `feedback-notes`: Feedback notes
+
+
+## dev-debug
+
+**Dev &amp; debugging** — Turns a bug report into a repro, a scope, and a handoff.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | personal · your-customers |
+| Definition | Customizable library template |
+| Default account setup | Opt in through the library |
+| Output | document at `overview` |
+| Requirements | Better with an issue tracker connected — it dedupes rather than duplicates. |
+| Required integration | mcp |
+
+<Warning>The library currently declares `email.received`, which is absent from the runtime playbook trigger vocabulary. Treat this as a configuration discrepancy: verify and correct the saved invocation source before relying on automatic dispatch. This catalog records the template as shipped; it does not certify that label as a working trigger.</Warning>
+
+Starting trigger:
+
+```json
+{
+  "type": "event",
+  "scope": "global",
+  "eventType": "email.received"
+}
+```
+
+Configuration files:
+
+- `config/defect-template`: Defect template
+
+
+## why-we-win
+
+**Why we win** — The sentences customers use when they say why they chose you.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | team · support-cs |
+| Definition | Customizable library template |
+| Default account setup | Opt in through the library |
+| Output | document at `why-we-win` |
+| Requirements | No additional prerequisite declared by this template; connected account access and grants still apply |
+
+Starting trigger:
+
+```json
+{
+  "type": "cron",
+  "scope": "global",
+  "schedule": "0 6 1 * *"
+}
+```
+
+Configuration files:
+
+- `config/clearance-rules`: Clearance rules
+
+
+## release-feedback
+
+**Release feedback** — How the last release landed, in customers’ own words.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | team · sales-data-reporting |
+| Definition | Customizable library template |
+| Default account setup | Opt in through the library |
+| Output | document at `release-feedback` |
+| Requirements | No additional prerequisite declared by this template; connected account access and grants still apply |
+
+Starting trigger:
+
+```json
+{
+  "type": "cron",
+  "scope": "global",
+  "schedule": "0 6 * * 1"
+}
+```
+
+Configuration files:
+
+- `config/release-log`: Release log
+
+
+## competitor-intel
+
+**Competitor intel** — Every competitor mention, what they claimed, and how it went.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | team · sales-data-reporting |
+| Definition | Customizable library template |
+| Default account setup | Opt in through the library |
+| Output | table at `competitors` |
+| Requirements | A connected meeting recorder — most competitor mentions are an aside on a call. |
+| Required integration | meeting |
+
+Starting trigger:
+
+```json
+{
+  "type": "cron",
+  "scope": "global",
+  "schedule": "0 6 * * 3"
+}
+```
+
+Configuration files:
+
+- `config/competitors`: Competitors
+
+Additional workspace files:
+
+- `competitor-notes`: Competitor notes
+
+
+## task-checkin
+
+**Afternoon check-in** — What moved since the morning agenda, and what is still owed today.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | personal · your-day |
+| Definition | Customizable library template |
+| Default account setup | Opt in through the library |
+| Output | document at `checkin` |
+| Requirements | A connected meeting recorder — the calls section reads from email alone without one. |
+| Required integration | meeting |
+
+Starting trigger:
+
+```json
+{
+  "type": "cron",
+  "scope": "global",
+  "schedule": "0 15 * * 1-5"
+}
+```
+
+Configuration files:
+
+- `config/checkin-rules`: Check-in rules
+
+
+## meeting-confirmer
+
+**Meeting confirmer** — A day-before confirmation for the meetings that get forgotten.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | personal · your-day |
+| Definition | Customizable library template |
+| Default account setup | Opt in through the library |
+| Output | table at `confirmations` |
+| Requirements | A connected calendar. |
+
+Starting trigger:
+
+```json
+{
+  "type": "before_meeting",
+  "scope": "global",
+  "minutes": 1440
+}
+```
+
+Configuration files:
+
+- `config/confirmation-voice`: Confirmation voice
+- `config/suppression-rules`: Suppression rules
+
+
+## reasons-to-reach-out
+
+**Reasons to reach out** — A dated, sourced reason to contact each quiet deal today.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | personal · your-top-of-funnel |
+| Definition | Customizable library template |
+| Default account setup | Opt in through the library |
+| Output | table at `reasons` |
+| Requirements | Nothing beyond the inbox; a LinkedIn seat adds posts and job changes as signals. |
+
+Starting trigger:
+
+```json
+{
+  "type": "cron",
+  "scope": "global",
+  "schedule": "30 7 * * 1-5"
+}
+```
+
+Configuration files:
+
+- `config/signal-sources`: Signal sources
+
+
+## outbound-email
+
+**Outbound email** — Cold emails built on a fresh hook, drafted for your approval.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | personal · your-top-of-funnel |
+| Definition | Customizable library template |
+| Default account setup | Opt in through the library |
+| Output | table at `drafts` |
+| Requirements | No additional prerequisite declared by this template; connected account access and grants still apply |
+
+Starting trigger:
+
+```json
+{
+  "type": "cron",
+  "scope": "global",
+  "schedule": "0 8 * * 1-5"
+}
+```
+
+Configuration files:
+
+- `config/email-voice`: Email voice
+- `config/hook-rules`: Hook rules
+
+
+## event-outreach
+
+**Event outreach** — Research and messages for everyone on an event’s list.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | personal · your-top-of-funnel |
+| Definition | Customizable library template |
+| Default account setup | Opt in through the library |
+| Output | table at `attendees` |
+| Requirements | A LinkedIn seat (Unipile) only for LinkedIn-channel rows; email rows need nothing. |
+
+Starting trigger:
+
+```json
+{
+  "type": "any",
+  "scope": "global"
+}
+```
+
+Configuration files:
+
+- `config/event-playbook`: Event playbook
+
+
+## meeting-recap
+
+**Meeting recap** — After each meeting: CRM note, next steps, recap email — all drafted.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | personal · your-mid-funnel |
+| Definition | Customizable library template |
+| Default account setup | Opt in through the library |
+| Output | table at `recaps` |
+| Requirements | A connected meeting recorder — no transcript, no recap. |
+| Required integration | meeting |
+
+<Warning>The library currently declares `meeting.completed`, which is absent from the runtime playbook trigger vocabulary. Treat this as a configuration discrepancy: verify and correct the saved invocation source before relying on automatic dispatch. This catalog records the template as shipped; it does not certify that label as a working trigger.</Warning>
+
+Starting trigger:
+
+```json
+{
+  "type": "event",
+  "scope": "global",
+  "eventType": "meeting.completed"
+}
+```
+
+Configuration files:
+
+- `config/recap-template`: Recap template
+- `config/crm-note-rules`: CRM note rules
+
+Additional workspace files:
+
+- `recap-notes`: Recap notes
+
+
+## deal-risk
+
+**Deal risk** — Every Wednesday: what could stop each deal, with the evidence quoted.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | personal · your-mid-funnel |
+| Definition | Customizable library template |
+| Default account setup | Opt in through the library |
+| Output | table at `risks` |
+| Requirements | A connected CRM — stage, value and close date come off the CRM row. |
+| Required integration | crm |
+
+Starting trigger:
+
+```json
+{
+  "type": "cron",
+  "scope": "global",
+  "schedule": "0 7 * * 3"
+}
+```
+
+Configuration files:
+
+- `config/risk-rules`: Risk rules
+
+Additional workspace files:
+
+- `risk-notes`: Risk notes
+
+
+## proposal-builder
+
+**Proposal builder** — Drafts the proposal from the deal record, every number traced.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | personal · your-mid-funnel |
+| Definition | Customizable library template |
+| Default account setup | Opt in through the library |
+| Output | table at `proposals` |
+| Requirements | Fires on the proposal stage — name it in config; list prices in config/pricing-rules. |
+
+Starting trigger:
+
+```json
+{
+  "type": "field_change",
+  "scope": "global",
+  "field": "status",
+  "toValue": "proposal"
+}
+```
+
+Configuration files:
+
+- `config/proposal-template`: Proposal template
+- `config/pricing-rules`: Pricing rules
+
+Additional workspace files:
+
+- `proposal-notes`: Proposal notes
+
+
+## contract-chaser
+
+**Contract chaser** — Every morning: who has each contract, for how long, and today’s chase.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | personal · your-mid-funnel |
+| Definition | Customizable library template |
+| Default account setup | Opt in through the library |
+| Output | table at `contracts` |
+| Requirements | Works from the email threads; a contract stage in the CRM makes the sweep exact. |
+
+Starting trigger:
+
+```json
+{
+  "type": "cron",
+  "scope": "global",
+  "schedule": "0 9 * * 1-5"
+}
+```
+
+Configuration files:
+
+- `config/chase-cadence`: Chase cadence
+
+Additional workspace files:
+
+- `contract-notes`: Contract notes
+
+
+## onboarding-plan
+
+**Onboarding plan** — Every won deal's rollout, milestone by milestone, and what is stuck.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | personal · your-customers |
+| Definition | Customizable library template |
+| Default account setup | Opt in through the library |
+| Output | table at `onboarding` |
+| Requirements | Fires on the won status named in config/milestones; a meeting recorder makes the after-call updates real. |
+| Required integration | meeting |
+
+Starting trigger:
+
+```json
+{
+  "type": "field_change",
+  "scope": "global",
+  "field": "status",
+  "toValue": "closed_won"
+}
+```
+
+Configuration files:
+
+- `config/milestones`: Milestones
+- `config/checkin-voice`: Check-in voice
+
+Additional workspace files:
+
+- `check-in`: Check-in
+
+
+## account-wiki
+
+**Account wiki** — One living page per account — who, what, why, and what changed.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | personal · your-customers |
+| Definition | Customizable library template |
+| Default account setup | Opt in through the library |
+| Output | document at `wiki` |
+| Requirements | A connected meeting recorder — a transcript is what proposes a change. |
+| Required integration | meeting |
+
+<Warning>The library currently declares `meeting.completed`, which is absent from the runtime playbook trigger vocabulary. Treat this as a configuration discrepancy: verify and correct the saved invocation source before relying on automatic dispatch. This catalog records the template as shipped; it does not certify that label as a working trigger.</Warning>
+
+Starting trigger:
+
+```json
+{
+  "type": "event",
+  "scope": "global",
+  "eventType": "meeting.completed"
+}
+```
+
+Configuration files:
+
+- `config/wiki-template`: Wiki template
+- `config/approval-rules`: Approval rules
+
+
+## investor-pipeline
+
+**Investor pipeline** — Every fund, where it stands, what you owe them, and the next prep.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | personal · yours |
+| Definition | Customizable library template |
+| Default account setup | Opt in through the library |
+| Output | table at `investors` |
+| Requirements | A connected calendar — and a meeting recorder for the debrief after. |
+| Required integration | meeting |
+
+Starting trigger:
+
+```json
+{
+  "type": "before_meeting",
+  "scope": "global",
+  "minutes": 60
+}
+```
+
+Configuration files:
+
+- `config/fund-fit`: Fund fit
+- `config/investor-voice`: Investor voice
+
+Additional workspace files:
+
+- `debrief`: Debrief
+
+
+## hiring-pipeline
+
+**Hiring pipeline** — Every candidate, where they stand, the read so far, and the next prep.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | personal · yours |
+| Definition | Customizable library template |
+| Default account setup | Opt in through the library |
+| Output | table at `candidates` |
+| Requirements | A connected calendar — and a meeting recorder for the interviewers’ read. |
+| Required integration | meeting |
+
+Starting trigger:
+
+```json
+{
+  "type": "before_meeting",
+  "scope": "global",
+  "minutes": 60
+}
+```
+
+Configuration files:
+
+- `config/roles`: Roles
+- `config/interview-rubric`: Interview rubric
+
+Additional workspace files:
+
+- `debrief`: Debrief
+
+
+## inbound-lead-research
+
+**Inbound lead research** — Researches each new inbound lead and grades it: sql, mql, or no.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | team · top-of-funnel |
+| Definition | Customizable library template |
+| Default account setup | Opt in through the library |
+| Output | table at `inbound` |
+| Requirements | Runs from the contact alone; enrichment makes the firm gate sharper. |
+
+<Warning>The library currently declares `contact.created`, which is absent from the runtime playbook trigger vocabulary. Treat this as a configuration discrepancy: verify and correct the saved invocation source before relying on automatic dispatch. This catalog records the template as shipped; it does not certify that label as a working trigger.</Warning>
+
+Starting trigger:
+
+```json
+{
+  "type": "event",
+  "scope": "global",
+  "eventType": "contact.created"
+}
+```
+
+Configuration files:
+
+- `config/firm-gate`: Firm gate
+- `config/three-tests`: Three tests
+
+
+## revival-call-list
+
+**Revival call list** — Who said "not now" with a date, and is due now — as a monthly queue.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | team · top-of-funnel |
+| Definition | Customizable library template |
+| Default account setup | Opt in through the library |
+| Output | table at `call-list` |
+| Requirements | Closed-lost deals with a note on why — the promise is in the note. |
+
+Starting trigger:
+
+```json
+{
+  "type": "cron",
+  "scope": "global",
+  "schedule": "0 7 1 * *"
+}
+```
+
+Configuration files:
+
+- `config/revival-rules`: Revival rules
+
+
+## lost-deal-debrief
+
+**Lost deal debrief** — Every closed-lost deal: the reason, their words, and the pattern.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | team · leadership |
+| Definition | Customizable library template |
+| Default account setup | Opt in through the library |
+| Output | table at `debriefs` |
+| Requirements | A closed-lost stage the CRM or the rep actually sets — name it in config. |
+
+Starting trigger:
+
+```json
+{
+  "type": "field_change",
+  "scope": "global",
+  "field": "status",
+  "toValue": "closed_lost"
+}
+```
+
+Configuration files:
+
+- `config/loss-reasons`: Loss reasons
+
+Additional workspace files:
+
+- `debrief-notes`: Debrief notes
+
+
+## deal-alerts
+
+**Deal alerts** — Posts the deal events the room asked for, once each, and nothing else.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | team · leadership |
+| Definition | Customizable library template |
+| Default account setup | Opt in through the library |
+| Output | table at `alerts` |
+| Requirements | A connected Slack — every alert is a message there. |
+| Required integration | slack |
+
+Starting trigger:
+
+```json
+{
+  "type": "any",
+  "scope": "global"
+}
+```
+
+Configuration files:
+
+- `config/channel-map`: Channel map
+
+
+## incumbent-campaigns
+
+**Incumbent campaigns** — Every deal you did not win, by the provider they stayed on and why.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | team · sales-data-reporting |
+| Definition | Customizable library template |
+| Default account setup | Opt in through the library |
+| Output | table at `incumbents` |
+| Requirements | A deal field that names the incumbent — the list is segmented on it. |
+
+Starting trigger:
+
+```json
+{
+  "type": "cron",
+  "scope": "global",
+  "schedule": "0 7 1 * *"
+}
+```
+
+Configuration files:
+
+- `config/segments`: Segments
+
+Additional workspace files:
+
+- `segment-report`: Segment report
+
+
+## org-chart
+
+**Org chart** — Keeps one deal’s buying committee current.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | personal · your-mid-funnel |
+| Definition | System agent: `org-chart` |
+| Default account setup | Opt in through the library |
+| Output | document at `overview` |
+| Requirements | No additional prerequisite declared by this template; connected account access and grants still apply |
+
+Starting trigger:
+
+```json
+{
+  "type": "any",
+  "scope": "global"
+}
+```
+
+Configuration files:
+
+- `config/roles`: Roles
+
+
+## strategist
+
+**Strategist** — Decides which conversations need work at all.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | personal · your-mid-funnel |
+| Definition | System agent: `strategist` |
+| Default account setup | Opt in through the library |
+| Output | document at `overview` |
+| Requirements | No additional prerequisite declared by this template; connected account access and grants still apply |
+
+Starting trigger:
+
+```json
+{
+  "type": "any",
+  "scope": "global"
+}
+```
+
+Configuration files:
+
+- `config/on-track-rubric`: On-track rubric
+
+
+## drafter
+
+**Drafter** — Writes the drafts that are waiting in your inbox each morning.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | personal · your-day |
+| Definition | System agent: `drafter` |
+| Default account setup | Seeded by default; inspect the account for current status |
+| Output | document at `overview` |
+| Requirements | No additional prerequisite declared by this template; connected account access and grants still apply |
+
+Starting trigger:
+
+```json
+{
+  "type": "any",
+  "scope": "global"
+}
+```
+
+Configuration files:
+
+- `config/voice`: Voice
+- `config/skip-rules`: Skip rules
+
+
+## daily-agenda
+
+**Daily agenda** — Builds the morning agenda from everything that needs you today.
+
+| Setting | Starting configuration |
+| --- | --- |
+| Area | personal · your-day |
+| Definition | System agent: `daily-agenda` |
+| Default account setup | Seeded by default; inspect the account for current status |
+| Output | document at `overview` |
+| Requirements | No additional prerequisite declared by this template; connected account access and grants still apply |
+
+Starting trigger:
+
+```json
+{
+  "type": "cron",
+  "scope": "global",
+  "schedule": "0 7 * * 1-5"
+}
+```
+
+Configuration files:
+
+- `config/agenda-rules`: Agenda rules

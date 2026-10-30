@@ -1,0 +1,43 @@
+---
+title: "Tasks capabilities"
+description: "Complete capability map for Tasks."
+---
+
+Manage personal and shared work, recommendations, assignments, preparation, approval and completion.
+
+## Guides
+
+- [Task lifecycle, assignment and follow-up](/workspace/tasks)
+
+## task
+
+Availability: **external**. [Parameters and responses](/reference/task).
+
+<Accordion title="Full tool behavior and constraints">
+
+Task management; each action takes same-named params. dealList: shared deal tasks, recommendations, owner, assigner and note. creationOptions: eligible assignees; conversationId optional. createAssigned: manual task or personal reminder with explicit dueDate, optional conversationId, assignee and assignmentNote. Omit conversationId when no deal is selected; preserve a source Slack permalink in notes. Personal reminders never schedule automatic agent execution. complete: mark done. delete: dismiss/delete; draft deletion needs authorization. updateDueDate: edit date. start: prepare caller-owned work in the current Cedar chat; follow seedPrompt. Does not execute or send. Recommendations stay recommended; no accept action. Never impersonate teammates. applyApproval: apply an exact saved CRM approval on user request; await CRM confirmation, no agent fallback. Apply all: list scope="#crm-approvals", apply sequentially, report failures. list: own active tasks by conversation or scope="#today"/"#overdue"; groups/outputKinds filters, includeRecommended=true for proposals. create: requires a real deal for automatic drafting via agentExecutionEnabled. dueDate="NOW" allowed for non-agent tasks without a future blocker. update: edit/reschedule/toggle execution/mark done; cleanupDraft=true removes stale draft on completion. cancel: obsolete tasks by IDs/age/conversation. Current-run tasks protected from update/cancel. assignmentOptions: owners, authority, assignmentVersion, draft-reset needs, pendingTransfer. reassign: get options; needs owner/deal-owner/admin authority. Reuse draft-deletion approval and UUID idempotencyKey; recover pendingTransfer. Finishing is pending. Completion attempts assignee Slack DM with task link unless self-assigned/disabled. Never call notify-user (targets actor). Confirm transfer only; say Slack delivery is unconfirmed unless verified.
+
+</Accordion>
+
+### Supported operations
+
+| Operation | Capability | Baseline scope |
+| --- | --- | --- |
+| `list` | List the caller's tasks by conversation or scope, optionally including recommendations and output groups. | `crm:read` |
+| `applyApproval` | Apply an exact saved CRM approval on the user's request and await the CRM result. | `crm:read` |
+| `create` | Create a deal-backed task, including supported automatic preparation settings. | `crm:read` |
+| `update` | Edit, reschedule or complete a task and optionally remove its stale draft where authorized. | `crm:read` |
+| `cancel` | Cancel obsolete tasks by supported ID, age or conversation criteria; current-run tasks are protected. | `crm:read` |
+| `assignmentOptions` | Read eligible owners, authority, assignment version and draft-transfer requirements. | `crm:read` |
+| `reassign` | Transfer a task with version, authority and idempotency checks; inspect pending transfer state. | `crm:read` |
+| `dealList` | Read shared deal tasks, recommendations and assignment context. | `crm:read` |
+| `creationOptions` | Discover eligible assignees for a new task, optionally scoped to a conversation. | `crm:read` |
+| `createAssigned` | Create an explicitly assigned manual task or personal reminder with a due date. | `crm:read` |
+| `complete` | Mark the selected task complete without implying its proposed message was sent. | `crm:read` |
+| `delete` | Dismiss or delete a task; deleting a draft requires the relevant authorization. | `crm:read` |
+| `start` | Prepare caller-owned work in the current Cedar chat; this is not an outbound-send action. | `crm:read` |
+| `updateDueDate` | Change a task's due date through the dedicated date operation. | `crm:read` |
+
+## Access and results
+
+Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).

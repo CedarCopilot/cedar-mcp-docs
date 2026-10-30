@@ -1,0 +1,33 @@
+---
+title: "Execution and background work"
+description: "How interactive requests, events, scheduled rules and child runs produce durable results."
+---
+
+## Execution paths
+
+| Path | Trigger | Result to inspect |
+| --- | --- | --- |
+| Interactive Cedar chat | A user request with current chat context | Tool outcomes, proposed mutations and generated artifacts |
+| External MCP | An authenticated tool call | MCP errors plus the operation's structured result |
+| Event automation | Supported email, meeting, Slack, LinkedIn or CRM events | Parent execution, selected agents and outputs |
+| Direct playbook trigger | Signal, field-change, cron, before-meeting or webhook rule | Referenced agent execution and saved result |
+| Run now or test run | A deliberate request for one configured agent | That agent's actual completion and effects |
+| Scheduled message | An authorized saved message becoming due | Pending, claimed, delivered or failed schedule state |
+
+Persisted rules continue independently of the MCP conversation that configured them. They run as the relevant account with its connections and effective grants. Their instructions, scope and trigger determine what work occurs.
+
+## Queued does not mean finished
+
+Accepted webhooks and queued background events represent work handed to the runtime. Follow the execution to completion and inspect its resulting document, task, draft or notification. A source acknowledgment is not evidence that every downstream action succeeded.
+
+Queues, source deduplication and send claims address different failure modes. Scheduled Slack and LinkedIn sends have a claim step; recognized LinkedIn DM-cap errors can defer delivery. Slack source events above the source counter can be skipped. The [queueing guide](/automation/queueing) documents the actual guarantees and limits.
+
+## Keep outputs attributable
+
+Use stable conversation and document IDs, retain the execution ID for investigation, and read back important writes. Distinguish a drafted message, an approved schedule, an attempted send and confirmed delivery. A report saved as a document can be complete even if a separate notification failed.
+
+## Verify the actual path
+
+An interactive demonstration does not exercise trigger selection, the background agent's grants or a later scheduled step. Test the relevant configured execution and each distinct follow-on path. Send suppression does not make every other write read-only.
+
+[Invocation sources](/agent-platform/invocations) · [Observability](/agent-platform/observability)

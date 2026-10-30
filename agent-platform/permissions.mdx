@@ -1,0 +1,37 @@
+---
+title: "Agent permissions"
+description: "Connection scopes, resource grants and the boundaries of each execution surface."
+---
+
+The effective permission is the intersection of the caller's access, workspace connection policy, the agent's grants and the operation's own checks. Writing an instruction to use a tool does not grant that tool or its data.
+
+## Connection and action scopes
+
+The agent workspace exposes available connections and their effective actions. Cedar tool grants can narrow a family to specific actions; meeting access can additionally be refined by recorder. Some channel capabilities share a tool, so a Slack draft grant and an email draft grant are distinct even though both use `draft-comms`.
+
+A missing connection-scope configuration means inherit the currently permitted catalog. A present configuration means exactly its entries; an explicit empty configuration grants nothing. Connection scopes are stored as structured metadata, not a prose `permissions` block in the agent instructions.
+
+## Resource grants
+
+| Resource | Control |
+| --- | --- |
+| Files | Named document paths or IDs with read or read/write access |
+| Boards | Named board access, with writes separately controlled |
+| Graphs | Named graph access, with writes separately controlled |
+| Connected MCP servers | A server and, where configured, a selected set of its tools |
+
+These grants narrow the existing ceiling. They never turn a denied connection action into an allowed one. Missing grants inherit permitted behavior; explicitly empty grants deny that resource category. Connections marked as requiring an explicit agent grant do not become accessible merely through inheritance.
+
+Use the workspace grant controls or the documented authoring format. A file grant with a read/write suffix has a different meaning from an MCP tool allowlist. Read back the parsed grants rather than treating prompt text as proof of access.
+
+## Runtime workers and custom agents
+
+Persisted custom agents inherit the automation-loadable catalog unless their scopes narrow it. Some inline workers, including field updates, next-step work, drafting and table-row filling, use fixed allowlists. A row worker is further limited to its own row. Neither a skill nor a parent chat's access overrides those boundaries.
+
+Test the execution path you intend to run. A successful interactive tool call does not demonstrate that an inline worker has the same capability. App-only orchestration also remains unavailable to external MCP clients.
+
+## Account and deal access remain independent
+
+An administrator's ability to inspect or run a teammate's agent does not by itself grant access to every conversation. Conversation-scoped output and execution views enforce their own membership checks. User-private chat history is a separate boundary from agent execution history.
+
+[External MCP permissions](/getting-started/permissions) · [Connected tools](/agent-platform/connected-tools) · [Sharing](/agent-platform/sharing)

@@ -1,0 +1,12 @@
+---
+title: "Customer support and feedback"
+description: "Report a concrete issue with enough trace context to investigate it."
+---
+
+`send-user-feedback` saves a problem or question for the Cedar team and attempts a Slack notification. Provide a concise description of what was tried, what happened and the expected result. Include relevant run, conversation and agent IDs when available.
+
+The response distinguishes saving the report from delivering the team notification. If `notificationDelivered` is false, the report was saved but its Slack alert failed; do not report that both steps succeeded.
+
+Keep credentials, tokens and private email bodies out of the report. Exact errors and identifiers usually provide the investigation context. Load `customer-support` for the account-aware support workflow and use [diagnostics](/modules/diagnostics) to inspect an execution before claiming a root cause.
+
+[Feedback schema](/reference/send-user-feedback) · [Staff-only administration](/operations/support-and-staff)

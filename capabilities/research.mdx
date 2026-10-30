@@ -1,0 +1,37 @@
+---
+title: "Research and enrichment capabilities"
+description: "Complete capability map for Research and enrichment."
+---
+
+Research people and companies, discover provider capabilities, and explicitly use Fiber for manual enrichment.
+
+## Guides
+
+- [Research and enrichment](/modules/research)
+
+## research
+
+Availability: **external**. [Parameters and responses](/reference/research).
+
+<Accordion title="Full tool behavior and constraints">
+
+Use choose-enrichment with chooseEnrichment:&#123;description,question,knownFields?,provider?&#125; to select implemented enrichment schemas; save its selection in authorized agent config files and revalidate before reuse. No supplier lookup runs during selection. capabilities lists the full catalog. Crustdata is the rich-research default; meeting prep uses Crustdata. Fiber is the automatic company metadata/pictures default. Never silently change providers. Watchers use signals-write. enrich-company accepts domain or a locally resolvable companyName; enrich-person accepts email or linkedinUrl. For Crustdata, find a verified LinkedIn URL from saved contacts or name/employer web research; include email when known. Never guess identities or ask the user to find the URL. Email-only alternate providers require explicit selection. Fields depend on actual records; read capabilities and the research skill for mappings and limitations. Task enrichment is metered, including background tasks. Only trusted automatic base-company setup is subscription-included. Use server grants, compatible caches and receipts; vendor credits are not Cedar retail prices. A workflow pauses before exceeding $50 or 100 attempted records across batches/retries/subagents. On workflow_confirmation_required, stop for user approval in Cedar; never split work or change scope to evade it. After approval retry the denied pre-dispatch operation with a fresh key in the same workflow. Crustdata tasks over 50 people require whole-task count confirmation. Pass only the matching action object (chooseEnrichment/enrichCompany/enrichPerson/webSearch/webFetch). enrichPerson.write_to_file buffers the profile. Enrichment never proves active watching.
+
+</Accordion>
+
+<Note>web-search and web-fetch are in-app-only actions. External clients use their own web tools. For manual enrichment, explicitly select provider: "fiber"; the current code default may differ.</Note>
+
+### Supported operations
+
+| Operation | Capability | Baseline scope |
+| --- | --- | --- |
+| `capabilities` | Discover available research/enrichment providers and their supported operations. | `crm:read` |
+| `choose-enrichment` | Select supported enrichment behavior for the requested research task. | `enrichment:write` |
+| `enrich-company` | Enrich a company through the explicitly selected supported provider; use Fiber for manual enrichment. | `enrichment:write` |
+| `enrich-person` | Enrich a person through the explicitly selected supported provider; use Fiber for manual enrichment. | `enrichment:write` |
+| `web-search` | Search the web from Cedar's in-app surface; unavailable on external MCP. | `in-app` |
+| `web-fetch` | Fetch web content from Cedar's in-app surface; unavailable on external MCP. | `in-app` |
+
+## Access and results
+
+Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).

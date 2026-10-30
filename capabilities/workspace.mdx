@@ -1,0 +1,45 @@
+---
+title: "Workspace preferences capabilities"
+description: "Complete capability map for Workspace preferences."
+---
+
+Configure user settings, notification and mail preferences, UI preferences and supported workspace behavior.
+
+## Guides
+
+- [Inboxes, task groups and preferences](/workspace/preferences)
+
+## workspace-write
+
+Availability: **external**. [Parameters and responses](/reference/workspace-write).
+
+Change the user's own settings and workspace layout. Call config-read read-settings first to get the current ids — every update/delete/reorder needs them. CHANGES: (1) update_user_settings — Slack notification preferences and mail settings (signatureEnabled, signatureContent, defaultEmailAlias, undoSendEnabled); read-settings sections:&#91;"user_settings"&#93; first. (2) update_inbox_settings — inbox layout (inboxLayout, importantSignal, inboxOrder) and shared Gmail/LinkedIn/Slack inboxSortingInstructions. Read sections:&#91;"inboxes"&#93; first; empty instructions clear. Sorting works before CRM admission and does not authorize sending. (3) manage_inbox — create/update/delete/reorder a custom inbox tab (split); read-settings sections:&#91;"inboxes"&#93; for inbox ids, accountId is resolved server-side. (4) manage_task_group — create/update/delete/reorder a task group (the lanes tasks are filed into); read-settings sections:&#91;"task_groups"&#93; for group ids. (5) update_webhook_export_config — set/clear the HTTPS endpoint Cedar POSTs conversation-field updates to on every change (url:null clears it). For CRM/connection config (field mappings, Slack sync, CRM sync toggles, connection instructions, playbook webhooks) use connection-write instead. For AOP custom fields and their CRM mappings use config-write. For playbook, subagent, and resource file edits use write-document.
+
+Single-call family. Baseline scope: `playbook:write`.
+
+<Accordion title="All nested operations and modes (16)">
+
+| Selector | Choice | Variant |
+| --- | --- | --- |
+| `change.type` | `update_user_settings` | change.type=update_user_settings |
+| `change.type` | `update_inbox_settings` | change.type=update_inbox_settings |
+| `change.type` | `manage_inbox` | change.type=manage_inbox |
+| `change.op` | `create` | change.type=manage_inbox |
+| `change.op` | `update` | change.type=manage_inbox |
+| `change.op` | `delete` | change.type=manage_inbox |
+| `change.op` | `reorder` | change.type=manage_inbox |
+| `change.type` | `manage_task_group` | change.type=manage_task_group |
+| `change.op` | `create` | change.type=manage_task_group |
+| `change.op` | `update` | change.type=manage_task_group |
+| `change.op` | `delete` | change.type=manage_task_group |
+| `change.op` | `reorder` | change.type=manage_task_group |
+| `change.overduePolicy.mode` | `nag` | change.type=manage_task_group |
+| `change.overduePolicy.mode` | `auto-complete` | change.type=manage_task_group |
+| `change.overduePolicy.mode` | `ignore` | change.type=manage_task_group |
+| `change.type` | `update_webhook_export_config` | change.type=update_webhook_export_config |
+
+</Accordion>
+
+## Access and results
+
+Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).

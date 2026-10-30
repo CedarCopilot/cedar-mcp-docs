@@ -1,42 +1,71 @@
 ---
 title: "All modules and capabilities"
-description: "Find every MCP workflow, registered tool, skill and specialized resource."
+description: "A dedicated section for each channel, tool family and agent-platform capability."
 ---
 
-Use this directory to start from the job you want to do. The [complete capability index](/reference/coverage) enumerates every action, nested change variant, channel and mode; the [skill catalog](/skills/index) covers every registered skill and its resources.
+Each section brings together a capability overview, practical guides and its complete tool contracts. All registered family tools have exactly one home in navigation. Skills that combine several families are listed as workflow modules rather than invented APIs.
 
-| Module | Capabilities | Detailed guide |
+## Channels and modules
+
+| Section | Capabilities | Tool families |
 | --- | --- | --- |
-| LinkedIn | Seats, profiles, connections, posts, reactions, viewers, engagement, search, screening, chat, DMs, invitations, InMail, ingestion | [LinkedIn](/linkedin/overview) |
-| Signals | Person/company watchers, identity resolution, lifecycle, signal actions, internal extraction and reconciliation | [Signals](/signals/overview) |
-| Website events | Visitor-provider integration, form/webhook triggers, externally supplied page-change events | [Your website](/signals/website) |
-| Slack | Live search, threads/files, ingestion, channel watches, filtered triggers, alerts and digests | [Slack](/slack/overview) |
-| Email | Structured/live search, attachments, sent-draft analysis, drafting, reviewed sends, scheduling, observed tracking | [Email](/email/search-and-attachments) |
-| CRM | Deal search, fields, events, ownership, associations, ingestion and structural repairs | [CRM records](/crm/records-and-repair) |
-| Historical evidence | Taxonomy discovery, event timelines, field evolution, as-of values and raw source buffers | [Field history](/crm/field-history) |
-| Analytics | Cadence, funnel, hygiene, revenue, live CRM amounts, trends and custom read-only SQL | [Metrics](/crm/metrics) |
-| Deal intelligence | Question decomposition, cohorts, themes, evidence and cross-deal analysis | [Cedar Brain](/intelligence/deal-analysis) |
-| Coaching | BANT, SAYA, MEDDPICC, coaching reports and stage process structures | [Coaching](/intelligence/coaching) |
-| Knowledge | Company context, KB retrieval, uploads, reference facts and persistent handoffs | [Knowledge base](/knowledge/overview) |
-| Collateral | Decks, one-pagers, battle cards, case studies, executive briefs, matrices, business cases and action plans | [Collateral](/knowledge/collateral) |
-| Templates and files | Template extraction, imported reference content and supported Google file handoffs | [Templates](/knowledge/templates) |
-| Documents | Read/search/list, focused writes, move/share/revoke, deletion and restoration | [Documents](/documents/sharing) |
-| Tables | Typed schemas, row/cell edits, views, bindings, sections, imports/exports and row work | [Tables](/documents/tables) |
-| Tasks | Personal/shared work, recommendations, assignments, approvals, preparation and completion | [Tasks](/workspace/tasks) |
-| Meetings and calendar | Recorder capability discovery, meeting search/sync, availability and event mutation | [Meetings/calendar](/modules/tasks-calendar) |
-| Workspace | Saved views, strategic overviews, inboxes, LinkedIn navigation, task groups and preferences | [Workspace settings](/workspace/preferences) |
-| Agents and playbooks | Agent authoring, trigger wiring, routing, persistent rules and batch workflows | [Agent authoring](/automation/agent-authoring) |
-| Fields and mappings | Custom fields, options, CRM reconciliation, governance and stage rubrics | [Field configuration](/configuration/fields) |
-| Connected systems | CRM sync/push, write controls, MCP server configuration and provider boundaries | [Integrations](/integrations/external-systems) |
-| WhatsApp and channel linking | Sync consent, disconnects, ambiguous channel resolution and linking sweeps | [WhatsApp](/integrations/whatsapp) |
-| Organization administration | Members, inherited configuration, rollups and field/mapping propagation | [Team scope](/configuration/team) |
-| Data services | Enrichment selection, provider capabilities, account defaults and future policy | [Research](/modules/research) |
-| Billing | Accounts, wallets, limits, grants, approvals, finance links and delivery recovery | [Billing](/operations/billing-and-budgets) |
-| Diagnostics/support | Execution traces, conversation health, test runs, feedback and staff operations | [Support](/operations/support-and-staff) |
-| Additional app surfaces | Boards, workflow buttons, delegation, connected-MCP dispatch and chat history | [App-only capabilities](/operations/app-only) |
+| [LinkedIn](/capabilities/linkedin) | Research people and companies, discover prospects, inspect engagement, manage connected seats and conversations, and send approved invitations or messages. | `linkedin-read`, `linkedin-write` |
+| [Signals](/capabilities/signals) | Create and operate watchers, resolve identities, inspect discoveries, manage internal signal definitions, and turn evidence into reviewed follow-up actions. | `signals-read`, `signals-write` |
+| [Slack](/capabilities/slack) | Search and read workspace content and ingest threads. Combine source configuration, drafting and notification families for channel watches and delivery. | `slack-read`, `slack-write` |
+| [Email](/capabilities/email) | Find email and attachments, inspect sent-draft results, and send an explicitly approved email or saved provider draft. | `mail`, `send-email` |
+| [Email tracking](/capabilities/email-tracking) | Inspect observed opens, clicks and delivery evidence, including the distinction between raw activity and likely human engagement. | `email-tracking` |
+| [Drafting](/capabilities/drafting) | Prepare email, Slack and LinkedIn communications using account context and channel-specific draft operations. | `draft-comms` |
+| [Message scheduling](/capabilities/scheduling) | Persist approved email, Slack or LinkedIn messages for future delivery, with channel-specific queue and cancellation behavior. | `schedule-send` |
+| [Notifications](/capabilities/notifications) | Deliver user-facing alerts and actionable notifications through the supported notification channels. | `notify` |
+| [WhatsApp](/integrations/whatsapp) | Configure chat consent and synchronization, resolve deal associations, disconnect a line and understand supported user notifications. | Workflow or app controls; see guide |
+| [iMessage](/channels/imessage) | Deliver configured user notifications with supported tapbacks and explicit channel boundaries. | Workflow or app controls; see guide |
+| [CRM conversations](/capabilities/crm) | Find accounts and deals, read source evidence, update records, manage associations, ingest channels and repair conversation structure. | `conversation-read`, `conversation-write` |
+| [CRM analytics](/capabilities/crm-analytics) | Measure pipeline activity, cadence, revenue, hygiene and trends using the supported metrics and filters. | `conversation-analytics` |
+| [Field intelligence](/capabilities/field-intelligence) | Discover extracted taxonomy fields and inspect field history, provenance and values as of a past event. | `taxonomy-fields` |
+| [SQL reporting](/capabilities/sql) | Run guarded read-only reporting queries over the documented Cedar data model. | `run-sql` |
+| [Meetings](/capabilities/meetings) | Discover recorder capabilities, find meeting evidence and synchronize supported recorder data. | `meetings` |
+| [Calendar](/capabilities/calendar) | Inspect availability and event details, and create, update or delete calendar events with the connected account. | `calendar` |
+| [Tasks](/capabilities/tasks) | Manage personal and shared work, recommendations, assignments, preparation, approval and completion. | `task` |
+| [Documents](/capabilities/documents) | Find and read documents, create and patch content, import supported files, share or revoke access, and delete or restore documents. | `document-read`, `document-write` |
+| [Tables](/capabilities/tables) | Manage typed table schemas, rows, cells, views, bindings, sections, imports, exports and delegated row work. | `table` |
+| [Research and enrichment](/capabilities/research) | Research people and companies, discover provider capabilities, and explicitly use Fiber for manual enrichment. | `research` |
+| [Knowledge base](/knowledge/overview) | Retrieve account knowledge, maintain reference material and persist facts and reusable context. | Workflow or app controls; see guide |
+| [Collateral](/knowledge/collateral) | Create decks, one-pagers, battle cards, case studies, executive briefs, matrices, business cases and action plans from evidence. | Workflow or app controls; see guide |
+| [Coaching](/intelligence/coaching) | Apply sales frameworks and produce evidence-backed qualification, coaching reports and process guidance. | Workflow or app controls; see guide |
+| [Cedar Brain](/intelligence/deal-analysis) | Decompose analytical questions, build cohorts and investigate patterns across deals with gated intelligence skills. | Workflow or app controls; see guide |
+| [Saved views](/capabilities/views) | Configure visible workspace navigation and saved views for the supported Cedar surfaces. | `ui-config` |
+| [Workspace preferences](/capabilities/workspace) | Configure user settings, notification and mail preferences, UI preferences and supported workspace behavior. | `workspace-write` |
+| [Connections](/capabilities/connections) | Manage supported connection settings, CRM sync and write policies, webhook sources, Slack sync and WhatsApp channel consent. | `connection-write` |
+| [Data services](/capabilities/data-services) | Inspect or change supported enrichment, watcher and data-provider defaults without assuming every provider has the same capabilities. | `data-settings` |
+| [Billing](/capabilities/billing) | Read accounts, wallets and spending controls, and manage supported approvals, grants and finance actions. | `billing-read`, `billing-write` |
+| [Usage and delivery recovery](/capabilities/usage) | Inspect usage observations and retry eligible failed usage-delivery records through the guarded recovery operation. | `usage-observations-read`, `usage-observations-retry` |
+| [Customer support](/capabilities/support) | Submit a user-authorized issue or feedback report with the context needed to investigate it. | `send-user-feedback` |
 
-## What “available” means
+## Agent platform
 
-The registry contains 44 external registrations, including staff-only and feature-gated tools, plus 8 documented app-only tool families. Ordinary customer sessions receive a subset determined by scope, role and feature access. Billing administration also has staff checks inside its handler.
+| Section | Capabilities | Tool families |
+| --- | --- | --- |
+| [Platform overview](/agent-platform/overview) | Understand how MCP clients, interactive Cedar chat, persisted agents and background execution fit together. | Workflow or app controls; see guide |
+| [Agents and the library](/agent-platform/lifecycle) | Create and customize persistent agents, browse every library template, and distinguish default system agents from opt-in work. | Workflow or app controls; see guide |
+| [Playbooks and triggers](/capabilities/playbooks) | Configure AOP creation and routing, persist trigger rules, wire webhook or channel sources, and inspect the complete trigger vocabulary. | `aop-write` |
+| [Files, memory and outputs](/agent-platform/files-memory) | Organize agent configuration, learned memory, current outputs and run archives; review proposed instruction changes. | Workflow or app controls; see guide |
+| [Agent permissions and sharing](/agent-platform/permissions) | Set connection and resource grants, control access to connected systems, and publish, duplicate or remove agents at the correct scope. | Workflow or app controls; see guide |
+| [Configuration](/capabilities/configuration) | Read effective account and playbook configuration, change fields and stage rules, and write supported account configuration changes. | `config-read`, `config-write` |
+| [Organization administration](/capabilities/organization) | Inspect team scope and propagate supported configuration changes with explicit ownership and inheritance boundaries. | `config-propagate` |
+| [Connected systems](/capabilities/systems) | Configure authorized external systems and MCP connections while respecting workspace policy and per-agent grants. | `systems-write`, `external-mcp` |
+| [Boards](/capabilities/boards) | Operate board records, schemas and lanes from Cedar’s app-only tool surface. | `board` |
+| [Graphs and relationship maps](/agent-platform/graphs) | Use document-backed nodes, typed edges, views and scoped graph resources inside Cedar. | Workflow or app controls; see guide |
+| [Teams and agent organization](/agent-platform/teams) | Organize people and agents, inspect membership, and distinguish team filing from shared files and permissions. | Workflow or app controls; see guide |
+| [Workflow buttons](/capabilities/workflows) | Author inert workflow documents whose supported actions execute when a user clicks, and inspect execution-history capacity. | `workflow` |
+| [Delegation and code execution](/capabilities/delegation) | Delegate bounded Cedar work, read-only analysis, or code and external-system work through the in-app orchestration surface. | `delegate` |
+| [Chat context and history](/capabilities/chat) | Attach working context, search and load past chats, and navigate between Cedar conversations. | `chat-context`, `search-chat-history`, `load-chat-history`, `switch-chat-thread` |
+| [Skill loading](/capabilities/skills) | Load account-aware operating instructions and the gated Brain skill catalog without changing API authority. | `load-skill`, `load-brain-skills` |
+| [Execution and queues](/agent-platform/execution) | Understand event dispatch, worker execution, scheduled work, queue claims and overload controls. | Workflow or app controls; see guide |
+| [Diagnostics](/capabilities/diagnostics) | Inspect execution traces and conversation health, run deliberate agent tests and diagnose configuration or delivery problems. | `debug` |
+| [Staff administration](/capabilities/staff) | Inspect internal analytics, administer billing and manage authorized support acting sessions with Cedar staff access. | `analytics`, `billing-admin`, `cedar-staff-debug` |
 
-Skills add workflow knowledge, not new API authority. All 20 registered skills and 48 named resources are documented. A stale name in a type declaration or skill example is not counted as a callable tool. Use the runtime `tools/list` and skill catalog for the connection you are building against.
+## Complete inventories
+
+The contract contains **44 external registrations** (including staff and feature-gated entries) and **8 app-only tools**. The [capability index](/reference/coverage) covers every schema selector; your session's `tools/list` determines actual access.
+
+The platform catalog includes **46 library templates**, **13 system-agent definitions** and **12 playbook trigger types**. The [skill catalog](/skills/index) includes **20 skills** and **48 named resources**. These are distinct inventories, not additive counts of APIs.

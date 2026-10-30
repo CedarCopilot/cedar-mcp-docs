@@ -1,0 +1,87 @@
+---
+title: "Staff administration capabilities"
+description: "Complete capability map for Staff administration."
+---
+
+Inspect internal analytics, administer billing and manage authorized support acting sessions with Cedar staff access.
+
+## Guides
+
+- [Troubleshooting, feedback and staff tools](/operations/support-and-staff)
+
+## analytics
+
+Availability: **staff-only**. [Parameters and responses](/reference/analytics).
+
+<Accordion title="Full tool behavior and constraints">
+
+INTERNAL/STAFF-TIER ONLY — rejects any caller that is not Cedar staff (see this tool's top-of-file comment for why the check lives here and not only on the wrapped tRPC procedures). Org-wide draft-analytics and growth reporting. ACTIONS: (1) attribution-rate — of a user's (or all users') actual outbound emails, what fraction originated from a Cedar draft. Optionally scoped to one userId and/or one aopName. (2) attribution-by-category — draft volume/send-rate/avg-similarity broken down by email category, for one AOP (defaults to "Deals"). (3) similarity-distribution — histogram of word-count-similarity scores across sent drafts, for one AOP (defaults to "Deals"). (4) user-tiers — segments all active users into cold/low/high attribution tiers for one AOP (defaults to "Deals"). (5) overview — per-user draft totals/send-rate for ALL users at once; startDate/endDate/aopName are all optional (defaults: startDate 5 days ago, endDate unbounded). (6) monthly-growth — North Star email-attribution rate (with numerator/denominator broken out) plus PostHog engagement (DAU/WAU/MAU/stickiness) and per-user attribution spread, hardcoded to the "Deals" AOP. Its attribution count has a documented dedup imprecision (thread + 5-minute bucket, not message_id) — see this action's schema description. Each action takes its params in a same-named object (e.g. action: "attribution-rate" pairs with an attributionRate: &#123;...&#125; object) — omit every params object except the one matching your chosen action.
+
+</Accordion>
+
+<Note>Cedar staff only. Customer-facing pipeline metrics use conversation-analytics.</Note>
+
+### Supported operations
+
+| Operation | Capability | Baseline scope |
+| --- | --- | --- |
+| `attribution-rate` | Measure what fraction of actual outbound email originated from Cedar drafts. | `internal` |
+| `attribution-by-category` | Break down draft volume, send rate and similarity by email category. | `internal` |
+| `similarity-distribution` | Inspect the distribution of drafted-versus-sent word-count similarity. | `internal` |
+| `user-tiers` | Segment active users by email-attribution levels for the selected AOP. | `internal` |
+| `overview` | Read per-user draft totals and send rates across the supported user population. | `internal` |
+| `monthly-growth` | Read staff growth metrics, attribution and engagement, with the documented attribution deduplication limits. | `internal` |
+
+## billing-admin
+
+Availability: **staff-only**. [Parameters and responses](/reference/billing-admin).
+
+<Accordion title="Full tool behavior and constraints">
+
+Cedar staff only. organization-accounts paginates member organizations; provision-organization-accounts requires organizationIds/reviewReference and creates no funds or grants. organization-monthly-limits previews or applies (apply:true) $50/$80/$100 then each $100 notifications, preserving customer limits. Preview canonical Stripe subscriptions before verify-import with reviewed snapshotHash/ownershipReference. Immutable offers, catalog and prospective allowances require approved terms; never invent prices or modify existing Stripe plans/quantities. payment-events reads outcomes; retry-payment requires reviewReference/idempotencyKey and revalidates evidence. postpaid reads organization configuration. configure-postpaid requires postpaid:&#123;accountId,enabled,expectedVersion,subscriptionId?,rolloutReference&#125;; only the real staff operator may perform this rollout. It records staff authority and customerConsentAsserted:false, never customer opt-in or impersonation. Existing payer/eligibility checks remain. process-postpaid processes frozen usage or a known batchId; no caller-supplied amounts. correct-usage requires a reviewed correction.
+
+</Accordion>
+
+<Note>Cedar staff only. A billing scope alone does not authorize administration.</Note>
+
+### Supported operations
+
+| Operation | Capability | Baseline scope |
+| --- | --- | --- |
+| `inventory` | Inspect staff-only billing inventory. | `billing:read` |
+| `preview-import` | Preview canonical subscription evidence before a reviewed historical import. | `billing:read` |
+| `verify-import` | Verify an import using the reviewed snapshot and ownership reference. | `billing:write` |
+| `reconcile-subscription` | Reconcile supported subscription accounting state from verified evidence. | `billing:write` |
+| `save-offer` | Save an approved immutable commercial offer without inventing or changing existing plan terms. | `billing:write` |
+| `save-catalog` | Save approved billing catalog configuration. | `billing:write` |
+| `save-allowance` | Save an approved prospective allowance. | `billing:write` |
+| `payment-events` | Inspect payment-processing outcomes. | `billing:read` |
+| `retry-payment` | Retry an eligible payment-processing operation with reviewed evidence and an idempotency key. | `billing:write` |
+| `process-postpaid` | Process frozen usage or an existing batch; callers cannot supply arbitrary amounts. | `billing:write` |
+| `postpaid` | Inspect organization postpaid configuration with staff authority. | `billing:read` |
+| `configure-postpaid` | Apply a reviewed staff postpaid rollout without representing it as customer opt-in. | `billing:write` |
+| `correct-usage` | Apply a reviewed usage correction through the controlled correction path. | `billing:write` |
+| `organization-monthly-limits` | Preview or apply supported notification thresholds while preserving customer limits. | `billing:write` |
+| `organization-accounts` | Page through member organizations and their billing-account state. | `billing:read` |
+| `provision-organization-accounts` | Provision reviewed organization accounts without creating funds or spending grants. | `billing:write` |
+
+<Accordion title="All nested operations and modes (2)">
+
+| Selector | Choice | Variant |
+| --- | --- | --- |
+| `offer.type` | `topup` |  |
+| `offer.type` | `subscription` |  |
+
+</Accordion>
+
+## cedar-staff-debug
+
+Availability: **staff-only**. [Parameters and responses](/reference/cedar-staff-debug).
+
+Cedar staff only. Start or end a debug session that lets you see Cedar exactly as a specific user does, for observability and troubleshooting. While active, tools read and act on that user's account so you can diagnose their setup, executions, and data — and nothing is saved to their history. Call with `email` or `userId` to start; call with `clear:true` to end. It auto-ends after 30 min of inactivity, and every reply reminds you whose account you are debugging.
+
+Single-call family. Baseline scope: `internal`.
+
+## Access and results
+
+Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).

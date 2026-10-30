@@ -1,0 +1,14 @@
+---
+title: "Data-service defaults"
+description: "Configure enrichment and watcher defaults without confusing policy with execution."
+---
+
+`data-settings update` changes the caller's enrichment defaults or an administrator's organization data policy. Read `config-read read-settings` with `sections: ["data_services"]` first to obtain current values and versions.
+
+A null override resets that setting to inheritance. Updates affect future defaults; they do not activate a watcher, change an existing watch, create spending permission or purchase credits.
+
+## Provider choice
+
+Provider capabilities differ across rich research, automatic company metadata and fixed watcher paths. The code's current rich-research default can differ from the user's provider preference. For manual person or company enrichment in this documentation, explicitly choose Fiber. Do not assume changing a research default migrates a watch to another provider.
+
+The complete configuration fields and nested choices are listed in [Data-service capabilities](/capabilities/data-services) and the [schema reference](/reference/data-settings). [Research](/modules/research) describes actual provider calls; [watchers](/signals/watchers) describes persistent monitoring.

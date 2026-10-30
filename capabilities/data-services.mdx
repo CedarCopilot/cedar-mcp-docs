@@ -1,0 +1,30 @@
+---
+title: "Data services capabilities"
+description: "Complete capability map for Data services."
+---
+
+Inspect or change supported enrichment, watcher and data-provider defaults without assuming every provider has the same capabilities.
+
+## Guides
+
+- [Data-service defaults](/channels/data-services)
+
+## data-settings
+
+Availability: **external**. [Parameters and responses](/reference/data-settings).
+
+<Accordion title="Full tool behavior and constraints">
+
+Update your enrichment defaults or your organization’s data policy. Read config-read.read-settings with sections:&#91;"data_services"&#93; first for current versions. Crustdata is the rich-research default; automatic conversation company metadata and pictures stay on Fiber. Crustdata watchers are fixed. Organization writes require an administrator. Null resets an override to inheritance. This changes future defaults only; it does not activate watchers, grant spending, buy credits, or modify existing watches.
+
+</Accordion>
+
+### Supported operations
+
+| Operation | Capability | Baseline scope |
+| --- | --- | --- |
+| `update` | Change versioned enrichment defaults or administrator-controlled organization data policy for future work. | `playbook:write` |
+
+## Access and results
+
+Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).

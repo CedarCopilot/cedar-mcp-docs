@@ -1,0 +1,18 @@
+---
+title: "Read-only SQL reporting"
+description: "Aggregate Cedar evidence with guarded queries and authoritative field definitions."
+---
+
+`run-sql` supports analytical SELECT queries, including SELECT-based CTEs, against its allowlisted Cedar tables. It is useful for cohorts, aggregations, filters and joins that are awkward to express through a fixed metric action.
+
+Load the `run-sql` skill before querying for column meanings, join shapes and rejected patterns. For evidence extracted inside calls and emails, discover the taxonomy vocabulary instead of guessing an ordinary CRM column.
+
+## Query boundaries
+
+The tool parses queries, restricts tables and requires actual organization predicates and valid joins for tables without their own organization column. It caps results at 500 rows and execution at 30 seconds. Aggregate in SQL when possible; use returned event IDs with `conversation-read` for full source evidence.
+
+Read-only SQL is not a bypass for access controls or a way to update records. Use the appropriate mutation family for authorized changes. The [tool contract](/reference/run-sql) contains the current table allowlist and supported output options.
+
+## Interpret results
+
+State the cohort, time window and missing-data assumptions. A current field value is not proof of its historical state. Use [field history](/crm/field-history) when the question is about what was known at the time, and [CRM analytics](/crm/metrics) for the supported standard metrics.

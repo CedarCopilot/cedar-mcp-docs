@@ -1,0 +1,18 @@
+---
+title: "Meeting discovery and synchronization"
+description: "Find synced calls, recover missing recordings and inspect recorder capabilities."
+---
+
+The `meetings` family separates Cedar's stored evidence from the connected recorder's API.
+
+| Action | Capability |
+| --- | --- |
+| `find` | Search synced meetings by title, participant email/domain/name, organizer, dates or recording link |
+| `sync` | Search a supported recorder within a days-back window and attach a single matching missing meeting to a deal |
+| `capabilities` | Inspect what the caller's recorder supports before an expensive or unsupported search |
+
+Start with `find` for a named call or pasted recording link. The stored search behaves consistently across recorder providers. A missing meeting may require `sync`, with title, participant or URL filters to narrow its recorder window.
+
+Synchronization requires exactly one match. Zero or multiple matches do not silently choose a meeting; inspect the returned candidates and resolve the ambiguity. Recorder capabilities vary, particularly for transcript-content searches and wide historical windows.
+
+After discovery, use conversation evidence tools to read the full relevant source. A calendar event is a scheduled appointment; a synced recording is evidence of a meeting that occurred. [Calendar](/channels/calendar) manages the former.

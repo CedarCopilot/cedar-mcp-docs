@@ -1,0 +1,34 @@
+---
+title: "Files, memory and outputs"
+description: "Organize durable agent knowledge, current results and previous-run artifacts."
+---
+
+Each agent has a stable file namespace, separate from its instruction document. The workspace distinguishes what the agent works from, what it has learned and what it has produced.
+
+| Area | Contents | Path convention |
+| --- | --- | --- |
+| Playbook | The agent's instructions and identity | Its subagent document; shown as a virtual workspace item |
+| Configuration | Human-authored templates, rubrics, ICPs and checklists | `config/` |
+| Memory | Learned corrections, preferences and notes | `memory/` |
+| Archives | Previous-run artifacts | `archives/` |
+| Current outputs | The current overview, tables, briefs and named artifacts | At the agent namespace root |
+
+There is no required `outputs/` folder. An agent can create a folder with that name, but it is an ordinary output path, not the platform's output convention. The default file is `overview` unless configured otherwise. The app supports selecting an allowed relative output file or no default file.
+
+## Scope follows the stored path
+
+Personal files use the user's agent namespace. Team-level artifacts can use the organization namespace, while deal-specific outputs can belong to an authorized conversation. Knowing an agent ID does not grant access to another person's documents or a deal. Use returned paths and document IDs rather than guessing an account's layout.
+
+## Memory controls
+
+The app can read memory, append a correction or preference, replace one memory file, and clear a selected file or the agent's memory. Standard files are `corrections.md`, `preferences.md` and `notes.md`; additional Markdown files can also hold memory.
+
+Reflection condenses memory and can propose a change to the agent's instructions. Its dry-run option returns rewritten bodies without saving. Proposed instruction changes are reviewed separately: accepting applies the patch when the original text still matches; a stale patch returns a conflict. Declining records the decision so the same suggestion need not recur.
+
+These are agent-workspace controls, not separately registered external MCP memory tools. External document operations remain subject to document and agent-resource permissions.
+
+## Outputs and archives
+
+Library sample files show the intended shape of an output and are explicitly samples. A created sample table is not a completed analysis of your accounts. For a real run, inspect the saved output and its execution evidence. Keep the current artifact easy to open, and use archives for previous runs when the agent's instructions call for that history.
+
+Publishing an agent does not automatically share its private memory. [Sharing behavior](/agent-platform/sharing) explains the preview and selection controls.

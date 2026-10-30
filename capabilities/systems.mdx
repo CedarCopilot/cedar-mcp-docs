@@ -1,0 +1,50 @@
+---
+title: "Connected systems capabilities"
+description: "Complete capability map for Connected systems."
+---
+
+Configure authorized external systems and MCP connections while respecting workspace policy and per-agent grants.
+
+## Guides
+
+- [Connected systems and external MCP servers](/integrations/external-systems)
+- [Connected tools and MCP servers](/agent-platform/connected-tools)
+
+## systems-write
+
+Availability: **external**. [Parameters and responses](/reference/systems-write).
+
+Connect Cedar to an external system, or change how it is reached. MCP SERVERS — connect Cedar to one by URL. Storing a named CREDENTIAL for a system Cedar has no built-in integration for (Xero, a Microsoft Graph tenant identity, an internal API) is in-app/chat-only and not offered here. Use read-settings sections:&#91;"connections"&#93; first to see what already exists. Change types: (1) manage_mcp_connection: create/delete an MCP server by URL — public hosts only. A server that needs a static Authorization header must be added from the in-app chat, not here. (2) update_mcp_connection_settings: change an existing server's agent instructions or its background-agent access. SCOPE: "user" is that one person; "org" applies to every member of their organization and requires the caller to be an org admin. A user-scoped entry always shadows an org one of the same name.
+
+Single-call family. Baseline scope: `playbook:write`.
+
+<Accordion title="All nested operations and modes (4)">
+
+| Selector | Choice | Variant |
+| --- | --- | --- |
+| `change.type` | `manage_mcp_connection` | change.type=manage_mcp_connection |
+| `change.op` | `create` | change.type=manage_mcp_connection |
+| `change.op` | `delete` | change.type=manage_mcp_connection |
+| `change.type` | `update_mcp_connection_settings` | change.type=update_mcp_connection_settings |
+
+</Accordion>
+
+## external-mcp
+
+Availability: **in-app-only**. [Parameters and responses](/reference/external-mcp).
+
+<Accordion title="Full tool behavior and constraints">
+
+Call a tool on one of the user's connected external MCP servers (Notion, Linear, custom integrations, …). Load the `external-systems` skill first — it lists which connections exist and which tools each exposes. Actions: "call".
+
+</Accordion>
+
+### Supported operations
+
+| Operation | Capability | Baseline scope |
+| --- | --- | --- |
+| `call` | Call an authorized tool on a connected MCP server discovered through external-system context. | `in-app` |
+
+## Access and results
+
+Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).

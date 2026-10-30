@@ -1,0 +1,30 @@
+---
+title: "System agents"
+description: "Canonical system agents and whether they are seeded by default."
+---
+
+These **13 canonical slugs** are registered in the system-agent defaults. A registered definition does not mean every account has enabled it. Actual documents, triggers, grants and prerequisites determine behavior.
+
+| Agent | Capability | Seeded by default | Seeded active |
+| --- | --- | --- | --- |
+| `signals` | Signal agent — assesses whether a signal warrants reengagement and pings the user on Slack | Yes | Yes |
+| `crm-updater` | Updates conversation fields after each event | Yes | Yes |
+| `strategist` | Owns the strategic overview — the play, how we win, risks, on-track, and MEDDPICC | No | No |
+| `next-steps` | Manages follow-up tasks and next steps | Yes | Yes |
+| `meeting-prep` | Use this agent before every meeting, always, to prepare a brief 30-60 minutes ahead of each calendar event. | Yes | Yes |
+| `daily-agenda` | Use this agent on its cron schedule to orchestrate the morning run — triage the pipeline, clear settled tasks, dispatch a review per flagged deal, then curate the agenda. | Yes | Yes |
+| `pipeline-review` | Use this agent on its cron schedule, the evening before a recurring pipeline review, to audit and forecast the pipeline. | No | No |
+| `pipeline-review-prep` | Prepare weekly manager one-on-one briefs using verified CRM totals and per-rep research. | No | No |
+| `weekly-pipeline-review` | Prepare weekly manager one-on-one briefs using verified CRM totals and per-rep research. | No | No |
+| `drafter` | Use this agent — the designated drafter — when a deal needs something written; see the playbook for the specific trigger. Writes the one message the deal is owed. | Yes | Yes |
+| `coaching` | Scores every rep call against the org coaching rubric and rolls the week up per rep. Use this agent after a transcribed customer call, and once a week for the per-rep rollup. | No | No |
+| `org-chart` | Use this agent on every event on a deal to keep that deal's buying committee current — one node per person on the customer's side, and an edge only where something was actually said. | No | No |
+| `performance-report` | Reads coaching and drafting scores plus computed pipeline metrics and writes and delivers the weekly performance report. Fires on its own weekly cron, for one named leader. | No | No |
+
+## Read the current account
+
+User instructions can customize an agent's behavior. Read effective configuration and invocation sources before treating the registry's default as the active rule. The system registry currently has one `coaching` agent; old references to separate `coach-meeting` and `coach-weekly` agents describe an earlier design. Coaching requires configured account rubrics. The `performance-report` definition is an opt-in shell with account dependencies and an unfinished report-template setup in this checkout; registration alone is not a ready-to-run report.
+
+## Tool availability
+
+Persisted agents run with their own connection/resource grants. Some inline runtime workers have fixed allowlists and cannot perform every operation their parent chat can. Follow [agent permissions](/agent-platform/permissions) and verify the actual execution path. Library templates have their own [complete catalog](/agent-platform/library).

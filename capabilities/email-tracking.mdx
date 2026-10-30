@@ -1,0 +1,31 @@
+---
+title: "Email tracking capabilities"
+description: "Complete capability map for Email tracking."
+---
+
+Inspect observed opens, clicks and delivery evidence, including the distinction between raw activity and likely human engagement.
+
+## Guides
+
+- [Email opens and clicks](/email/tracking)
+
+## email-tracking
+
+Availability: **external**. [Parameters and responses](/reference/email-tracking).
+
+<Accordion title="Full tool behavior and constraints">
+
+Read the authenticated sender’s tracked email opens and clicks. list returns paginated message summaries, optionally filtered by Gmail thread or authorized Cedar conversation. get returns one trackingId and classified events. openCount/clickCount count likely human activity; raw counts include image proxies and automation. Unknown or automated requests do not prove an open. recipientEmail is the intended recipient of a single-recipient send, never verified reader identity; shared emails and forwarding cannot identify who read. No IP geolocation or device inference identifies a person. Read-only; never sends or enables tracking.
+
+</Accordion>
+
+### Supported operations
+
+| Operation | Capability | Baseline scope |
+| --- | --- | --- |
+| `list` | List tracked-email records and available engagement evidence with supported filters. | `email:read` |
+| `get` | Inspect a selected tracked email's observed open/click and classification details. | `email:read` |
+
+## Access and results
+
+Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).

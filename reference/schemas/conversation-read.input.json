@@ -201,7 +201,7 @@
             },
             "date": {
               "type": "string",
-              "description": "Reference date as ISO YYYY-MM-DD. Today is 2026-10-29 - compute from this."
+              "description": "Reference date as ISO YYYY-MM-DD. Today is 2026-10-30 - compute from this."
             },
             "dateTo": {
               "type": "string",

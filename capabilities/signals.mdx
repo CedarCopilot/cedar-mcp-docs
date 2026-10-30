@@ -1,0 +1,172 @@
+---
+title: "Signals capabilities"
+description: "Complete capability map for Signals."
+---
+
+Create and operate watchers, resolve identities, inspect discoveries, manage internal signal definitions, and turn evidence into reviewed follow-up actions.
+
+## Guides
+
+- [Signals module](/signals/overview)
+- [Configure person and company watches](/signals/watchers)
+- [Watch your own website](/signals/website)
+- [Internal signals and email evidence](/signals/internal)
+
+## signals-read
+
+Availability: **external**. [Parameters and responses](/reference/signals-read).
+
+<Accordion title="Full tool behavior and constraints">
+
+Native emailOpens contains likely opens of your tracked deal emails, including when the paid watch is off. Intended recipients are not verified readers; use email-tracking for classified evidence. Use get-internal for persisted evidence-backed internal candidates on a deal, including inactive history. eligibleSignalIds authorizes review only, not verified customer qualification or outreach: validate original evidence and current commercial state before writing actionable workflow rows; never contact from candidate presence alone; list-internal pages across accessible deals with due/suppression filters. Staff-only admin-inventory reads the saved watcher fleet and exact desired-active person scope with inventory cursor/limit, without activation or spend. Use action capabilities to discover entity tracking fields and saved-search datasets without a provider call or charge. Use action get to read the watchers and discovered signal history for an authorized deal. Returns selected people/company, per-target signals, settings, status, credit ceiling and paginated events. Includes selectionContext: the same People job instructions, evidence-backed buying-team assessments, job titles, roles, current deal summary, company description and saved ICP fields. availableTargets are eligible recommendations, NOT persisted or active watches. targets are the saved configuration; only each target with state active is live. Compare both lists before claiming who is watched. An evidenced People entry without email remains pending with identity_input_required; never describe missing identity as missing participation or infer why someone is absent. Read before editing to get the current version. Returns foundCount over all history pages, newCount for the authenticated user, and per-event isNew. Reading does not acknowledge signals or spend.
+
+</Accordion>
+
+<Note>admin-inventory is Cedar staff only, even if advertised in the family schema.</Note>
+
+### Supported operations
+
+| Operation | Capability | Baseline scope |
+| --- | --- | --- |
+| `get` | Read saved watchers, eligible target recommendations, history, status, versions and credit ceilings for a deal. | `signals:read` |
+| `capabilities` | Discover tracking fields and datasets without activating a provider call or spending. | `signals:read` |
+| `admin-inventory` | Inspect the saved watcher fleet and desired-active people scope with staff access. | `signals:read` |
+| `get-internal` | Read a deal's persisted internal signal candidates and inactive history. | `signals:read` |
+| `list-internal` | Page across accessible internal candidates with due and suppression filters. | `signals:read` |
+
+## signals-write
+
+Availability: **external**. [Parameters and responses](/reference/signals-write).
+
+<Accordion title="Full tool behavior and constraints">
+
+Treat education_added, skill_added, certification_added, honor_added, connection_count_change as weak/background signals. Do not choose them by default or as generic nice-to-have coverage. Select them only on an explicit user request, an explicitly configured user/organization preference, or a specific evidenced deal rationale; explain that rationale when selecting them. Preserve existing explicit selections and saved user/organization preferences rather than silently removing them. Education, skills, certifications and honors are one optional background-update group in the UI; connection count is also low priority. A generic request to activate signals does not opt into these extra rules.
+Findings: apply-extraction validates proposals (expectedRevision, idempotencyKey); mutate-internal curates signalId via snooze/dismiss/resolve/reopen/append-note/deactivate. Preserve human status/notes. Activate with evidenced buyer People/ICP/company, excluding internal, automated or unrelated contacts. Read capabilities/version; load cedar-configuration. When continuation.required, research identity, verify email/LinkedIn with the configured person provider, then resolve-identity by operationId; never guess or ask users to do lookups. Only returned active coverage is live. Group supported rules on existing target.signalTypes; preserve saved definitions. Indexed searches require exact buyer/company/person identifiers, never ambiguous names. Broad people searches or tasks over 50 people require explicit whole-task count confirmation. Start/Stop means active/paused; cancelled requires explicit permanent removal. Never raise caps or buy credits automatically. execute-action needs explicit user request plus stored action ID; discovery alone cannot execute. mark-read acknowledges only signalIds displayed to this user. Report billing, access and identity blockers.
+
+</Accordion>
+
+### Supported operations
+
+| Operation | Capability | Baseline scope |
+| --- | --- | --- |
+| `apply-extraction` | Validate and save proposed internal signal extraction with revision and idempotency protection. | `signals:write` |
+| `mutate-internal` | Snooze, dismiss, resolve, reopen, annotate or deactivate an internal candidate while preserving human decisions. | `signals:write` |
+| `activate` | Configure and activate evidence-backed watcher targets within account, identity and budget constraints. | `signals:write` |
+| `update` | Change an existing watch configuration using its current version and supported rules. | `signals:write` |
+| `set-state` | Change watch lifecycle state; pausing and permanent cancellation have different meanings. | `signals:write` |
+| `resolve-identity` | Continue a blocked activation with verified identity evidence and its operation ID. | `signals:write` |
+| `execute-action` | Execute an explicitly requested stored signal action by its saved action ID. | `email:draft` |
+| `mark-read` | Acknowledge only the signal IDs actually displayed to the current user. | `signals:write` |
+
+<Accordion title="All nested operations and modes (102)">
+
+| Selector | Choice | Variant |
+| --- | --- | --- |
+| `internalMutation.operation` | `snooze` |  |
+| `internalMutation.operation` | `dismiss` |  |
+| `internalMutation.operation` | `resolve` |  |
+| `internalMutation.operation` | `reopen` |  |
+| `internalMutation.operation` | `append-note` |  |
+| `internalMutation.operation` | `deactivate` |  |
+| `internalMutation.operation` | `hold-reconciliation` |  |
+| `internalMutation.operation` | `clear-reconciliation` |  |
+| `update.additionalWatches[].filters.type` | `=` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.type` | `!=` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.type` | `&gt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.type` | `&lt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.type` | `=&gt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.type` | `=&lt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.type` | `in` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.type` | `not_in` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.type` | `(.)` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.type` | `(!)` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.type` | `&#91;.&#93;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.type` | `not_contains` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.op` | `and` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.op` | `or` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].type` | `=` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].type` | `!=` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].type` | `&gt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].type` | `&lt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].type` | `=&gt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].type` | `=&lt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].type` | `in` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].type` | `not_in` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].type` | `(.)` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].type` | `(!)` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].type` | `&#91;.&#93;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].type` | `not_contains` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].op` | `and` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].op` | `or` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].type` | `=` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].type` | `!=` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].type` | `&gt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].type` | `&lt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].type` | `=&gt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].type` | `=&lt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].type` | `in` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].type` | `not_in` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].type` | `(.)` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].type` | `(!)` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].type` | `&#91;.&#93;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].type` | `not_contains` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].op` | `and` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].op` | `or` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].type` | `=` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].type` | `!=` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].type` | `&gt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].type` | `&lt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].type` | `=&gt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].type` | `=&lt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].type` | `in` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].type` | `not_in` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].type` | `(.)` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].type` | `(!)` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].type` | `&#91;.&#93;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].type` | `not_contains` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].op` | `and` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].op` | `or` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type` | `=` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type` | `!=` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type` | `&gt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type` | `&lt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type` | `=&gt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type` | `=&lt;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type` | `in` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type` | `not_in` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type` | `(.)` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type` | `(!)` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type` | `&#91;.&#93;` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type` | `not_contains` | update.additionalWatches&#91;&#93;.kind=discovery |
+| `update.additionalWatches[].track.type` | `changed` | update.additionalWatches&#91;&#93;.kind=entity |
+| `update.additionalWatches[].track.type` | `added` | update.additionalWatches&#91;&#93;.kind=entity |
+| `update.additionalWatches[].track.op` | `and` | update.additionalWatches&#91;&#93;.kind=entity |
+| `update.additionalWatches[].track.op` | `or` | update.additionalWatches&#91;&#93;.kind=entity |
+| `update.additionalWatches[].track.conditions[].type` | `changed` | update.additionalWatches&#91;&#93;.kind=entity |
+| `update.additionalWatches[].track.conditions[].type` | `added` | update.additionalWatches&#91;&#93;.kind=entity |
+| `update.additionalWatches[].track.conditions[].op` | `and` | update.additionalWatches&#91;&#93;.kind=entity |
+| `update.additionalWatches[].track.conditions[].op` | `or` | update.additionalWatches&#91;&#93;.kind=entity |
+| `update.additionalWatches[].track.conditions[].conditions[].type` | `changed` | update.additionalWatches&#91;&#93;.kind=entity |
+| `update.additionalWatches[].track.conditions[].conditions[].type` | `added` | update.additionalWatches&#91;&#93;.kind=entity |
+| `update.additionalWatches[].track.conditions[].conditions[].op` | `and` | update.additionalWatches&#91;&#93;.kind=entity |
+| `update.additionalWatches[].track.conditions[].conditions[].op` | `or` | update.additionalWatches&#91;&#93;.kind=entity |
+| `update.additionalWatches[].track.conditions[].conditions[].conditions[].type` | `changed` | update.additionalWatches&#91;&#93;.kind=entity |
+| `update.additionalWatches[].track.conditions[].conditions[].conditions[].type` | `added` | update.additionalWatches&#91;&#93;.kind=entity |
+| `update.fiberTrackers[].rules[].type` | `person_got_promoted` | update.fiberTrackers&#91;&#93;.rules&#91;&#93;.entityType=person |
+| `update.fiberTrackers[].rules[].type` | `person_got_demoted` | update.fiberTrackers&#91;&#93;.rules&#91;&#93;.entityType=person |
+| `update.fiberTrackers[].rules[].type` | `person_posted` | update.fiberTrackers&#91;&#93;.rules&#91;&#93;.entityType=person |
+| `update.fiberTrackers[].rules[].type` | `company_posted` | update.fiberTrackers&#91;&#93;.rules&#91;&#93;.entityType=company |
+| `update.fiberTrackers[].rules[].type` | `technology_added` | update.fiberTrackers&#91;&#93;.rules&#91;&#93;.entityType=company |
+| `update.fiberTrackers[].rules[].type` | `new_office_location` | update.fiberTrackers&#91;&#93;.rules&#91;&#93;.entityType=company |
+| `update.fiberTrackers[].rules[].type` | `recent_layoffs` | update.fiberTrackers&#91;&#93;.rules&#91;&#93;.entityType=company |
+| `update.fiberTrackers[].rules[].type` | `department_size_threshold` | update.fiberTrackers&#91;&#93;.rules&#91;&#93;.entityType=company |
+| `update.fiberTrackers[].rules[].type` | `recently_hired_with_title` | update.fiberTrackers&#91;&#93;.rules&#91;&#93;.entityType=company |
+| `update.fiberTrackers[].rules[].type` | `job_posting_in_function` | update.fiberTrackers&#91;&#93;.rules&#91;&#93;.entityType=company |
+| `update.fiberTrackers[].rules[].type` | `job_posting_with_keyword` | update.fiberTrackers&#91;&#93;.rules&#91;&#93;.entityType=company |
+| `update.fiberTrackers[].rules[].type` | `headcount_growth_percent` | update.fiberTrackers&#91;&#93;.rules&#91;&#93;.entityType=company |
+
+</Accordion>
+
+## Access and results
+
+Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).

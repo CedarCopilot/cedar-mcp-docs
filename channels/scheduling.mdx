@@ -1,0 +1,20 @@
+---
+title: "Schedule approved messages"
+description: "Future email, Slack and LinkedIn delivery with observable pending state."
+---
+
+`schedule-send` creates a real future send. The user must authorize the recipients, final message and time; a request to draft or prepare a task does not establish that approval. Background agents must not initiate customer outbound sends or schedules.
+
+| Channel | Required context | Delivery behavior |
+| --- | --- | --- |
+| Email | A saved provider draft matching the supplied recipients and body, with `email:send` access | Uses the mail scheduling path |
+| LinkedIn | A connected seat and an existing chat or resolved attendee ID | A first chat can be created at delivery; do not send early merely to create one |
+| Slack | The correct connected destination and final message | Persists for future channel delivery |
+
+Choose an unambiguous time with timezone information. Pending items appear in Cedar's Scheduled folder, where the user can cancel. Record the returned schedule identifier and inspect the final state instead of assuming acceptance means delivery.
+
+## Pacing and recovery
+
+Cedar queues scheduled delivery and can defer recognized pre-send LinkedIn DM-cap failures. Other failures can be terminal or ambiguous. Configure recipient deduplication and spacing before scheduling a batch; the scheduler does not invent a warm-up plan or outreach sequence.
+
+[Automatic queueing](/automation/queueing) · [LinkedIn limits and HeyReach levels](/linkedin/limits) · [Complete scheduling parameters](/reference/schedule-send)

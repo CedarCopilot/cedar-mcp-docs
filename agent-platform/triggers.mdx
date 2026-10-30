@@ -1,0 +1,27 @@
+---
+title: "All trigger types"
+description: "Every supported playbook trigger, its attributes and dispatch behavior."
+---
+
+This table is generated from the runtime trigger vocabulary. It describes the XML `type` values in a playbook, not the different JSON shape used by the agent-library provisioner.
+
+| Type | Fires when | Required trigger attributes | Dispatch |
+| --- | --- | --- | --- |
+| `any` | every supported event — email, meeting, Slack message, LinkedIn message, accepted LinkedIn connection, external-CRM sync (signals require explicit opt-in) | None beyond type | orchestrator |
+| `email` | an inbound or outbound email | None beyond type | orchestrator |
+| `meeting` | a meeting, once its transcript has landed | None beyond type | orchestrator |
+| `slack` | a message in a linked Slack channel | None beyond type | orchestrator |
+| `linkedin` | a LinkedIn message the counterpart sent (with any of the user's own alongside) — the user's sends alone never fire it | None beyond type | orchestrator |
+| `linkedin_connection` | someone accepting a LinkedIn connection request the user sent | None beyond type | orchestrator |
+| `external_crm` | a deal changing in the connected CRM (the sync, not a Cedar field write) | None beyond type | orchestrator |
+| `signal` | an actionable CRM signal, including watcher discoveries and qualified email-open evidence | None beyond type | direct |
+| `field-change` | a Cedar field taking a value — the only trigger that fires exactly once, when the thing becomes true | `field`, `to-value` | direct |
+| `cron` | a schedule, independent of any event | `schedule`, `timezone` | direct |
+| `before-meeting` | N minutes before a calendar event, if the meeting is already in the calendar data Cedar holds | `minutes` | direct |
+| `webhook` | an external POST to the playbook webhook endpoint, or a registered Slack-channel source | `id` | direct |
+
+## How dispatch differs
+
+Orchestrator triggers pass relevant instructions and agent descriptions to the event orchestrator, which decides which referenced agents to run. Direct triggers dispatch the configured block's referenced agents through their supported execution path. A description is not an executable eligibility condition. Put the condition in the consuming trigger instructions and verify the configured agent actually runs.
+
+A supported trigger still needs a saved agent document, a valid document reference, compatible scope and the required connection. Signals require explicit opt-in rather than being implied by `any`. A before-meeting trigger needs calendar data Cedar already holds. [Authoring and webhook setup](/automation/playbooks) · [Invocation sources](/agent-platform/invocations).

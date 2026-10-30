@@ -1,0 +1,49 @@
+---
+title: "Delegation and code execution capabilities"
+description: "Complete capability map for Delegation and code execution."
+---
+
+Delegate bounded Cedar work, read-only analysis, or code and external-system work through the in-app orchestration surface.
+
+## Guides
+
+- [Delegation and code execution](/agent-platform/delegation)
+- [Batch work across deals and rows](/automation/batch-operations)
+
+## delegate
+
+Availability: **in-app-only**. [Parameters and responses](/reference/delegate).
+
+<Accordion title="Full tool behavior and constraints">
+
+Creating/changing a CRM deal or conversation? FIRST read the effective crm-updater path from the agent directory (document-read), or use injected &lt;crm_write_rules&gt;, before searching email. Fallback only: #subagents/crm-updater.md. Delegate a self-contained task to a child execution. Two kinds:
+
+ACTIONS:
+- subagent: hand off to a Cedar subagent. Pass subagent: &#123; type, task, ... &#125;.
+  - type="orchestrator" — Cedar-native WRITES only (drafts, field updates, tasks) across 1+ conversations. NOT for code/HTML/JSON artifacts or external systems (Google Drive/Docs, HubSpot, Salesforce, Slack API, curl) — use action: "code" for those.
+  - type="analyzer" — READ-ONLY research over Cedar conversation content (emails, meetings, notes) with citations. Cannot write or call external systems.
+- code: hand off to a short-lived Claude Code session with Bash / WebSearch / WebFetch / Read / Write / Edit / Glob / Grep. Pass code: &#123; task, ... &#125;. Use for ALL external API calls, code execution, file generation, and web research. Describe the business goal, not the implementation.
+
+Each action takes its params in a same-named object — omit every params object except the one matching your chosen action.
+
+</Accordion>
+
+### Supported operations
+
+| Operation | Capability | Baseline scope |
+| --- | --- | --- |
+| `subagent` | Delegate Cedar-native work to an orchestrator or read-only evidence analysis to an analyzer. | `in-app` |
+| `code` | Delegate bounded code execution, external APIs, file generation or web research to the code executor. | `in-app` |
+
+<Accordion title="All nested operations and modes (2)">
+
+| Selector | Choice | Variant |
+| --- | --- | --- |
+| `subagent.type` | `orchestrator` |  |
+| `subagent.type` | `analyzer` |  |
+
+</Accordion>
+
+## Access and results
+
+Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).

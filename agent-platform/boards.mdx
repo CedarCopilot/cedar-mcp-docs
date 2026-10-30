@@ -1,0 +1,30 @@
+---
+title: "Boards and cards"
+description: "Board documents, configurable fields, grouping, card actions and triggers."
+---
+
+<Note>The `board` family is available inside Cedar. It is not an external MCP tool.</Note>
+
+Boards are documents with cards that are also documents. A card holds a title, description and field values; the board schema declares the field types and view. Cards can therefore participate in document links and sharing, subject to resource permissions.
+
+## Discover and create
+
+List boards, read one with its cards, inspect its schema and browse starting templates. Create from a template or define a new schema. The same board can support a task pipeline, account review, content workflow or another typed collection.
+
+## Configure the view and schema
+
+`set_schema` edits fields, views, triggers and metadata. It merges unless replacement is explicitly requested. Narrow operations add fields, update the view or change metadata without replacing the entire schema.
+
+Columns are the values of the view's grouping field. Regrouping by owner instead of status changes the view, not the underlying cards. Moving a card writes the configured grouping field and its order. Empty values can render as ungrouped unless the field supplies a default.
+
+Select fields can declare option icons. The schema preserves supported custom metadata and unknown field types, rendering unknown types as text; reserved keys still require valid shapes and the schema is bounded to 64 KB.
+
+## Work with cards
+
+Add a card, merge field edits, move it, append a comment, archive it, and search cards within one board or across boards by column, field value or substring. A card that names an undeclared field can cause that field to be adopted into the schema; inspect the returned `adopted` information.
+
+## Triggers and permissions
+
+Inspect triggers to see what fires the board and what it fires on a move. Author them through the schema and verify the configured behavior. Board grants and underlying document access apply; access to a parent agent does not make every board writable.
+
+[Complete board contract](/reference/board) · [Document sharing](/documents/sharing)

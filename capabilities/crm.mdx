@@ -1,0 +1,85 @@
+---
+title: "CRM conversations capabilities"
+description: "Complete capability map for CRM conversations."
+---
+
+Find accounts and deals, read source evidence, update records, manage associations, ingest channels and repair conversation structure.
+
+## Guides
+
+- [CRM and deal intelligence](/modules/crm)
+- [Find deals and read complete evidence](/crm/search-and-evidence)
+- [Maintain records, ownership and associations](/crm/records-and-repair)
+
+## conversation-read
+
+Availability: **external**. [Parameters and responses](/reference/conversation-read).
+
+<Accordion title="Full tool behavior and constraints">
+
+CRM conversation read/query over Cedar's OWN records (NOT the connected external CRM — that's action 4; ask if unclear). ACTIONS: (1) get — fetch a conversation by ID (brief timeline default; write_to_file for full content; expandEventId to inline one event); email entries include observed open/click tracking summaries when available. (2) find — locate Cedar conversations via `filters` (field/operator/value, ANDed): standard columns, computed booleans, or custom fields as "wm_&lt;fieldKey&gt;"; add extraFields for more columns. Call load-skill("conversation") for the full field reference. (3) search-semantic — vector/FTS search over conversation content (Turbopuffer); best for finding WHICH events matter. For ONE named call/email, do not answer from hits (a top-k slice, not the full transcript) — resolve its eventId here or via get's timeline, then re-read it whole via (1) get with expandEventId. (4) search-external-crm-deals — search the connected EXTERNAL CRM for a deal by keyword (get providerId from config read-settings first). DEAL-INTELLIGENCE (over extracted sub-event taxonomy atoms): (5) timeline — one time-ordered stream across events + both taxonomy planes for 1+ deals, filtered by fieldIds/kinds/stages/reps/scores/payload/time. (6) field-evolution — one field's series over time, grouped by deal. (7) value-as-of — a versioned field's value+scores at a stage/date/event. (8) describe-field — a field's plane/scores/vocab/payload keys (learn before filtering). (9) raw-content — resolve a deal's RAW verbatim events to a doc-sink buffer (stage-marked); read via read-document (#lines/#words) + search-documents (regex). (10) search — semantic search over the atoms (same cube); hits point back. Large results → the doc sink. Pass each action's params in a same-named object; omit the others.
+
+</Accordion>
+
+### Supported operations
+
+| Operation | Capability | Baseline scope |
+| --- | --- | --- |
+| `get` | Read an authorized conversation's supported details and context. | `crm:read` |
+| `find` | Find Cedar conversations using the family’s supported filters. | `crm:read` |
+| `search-semantic` | Search meaning across already-synced conversation evidence. | `crm:read` |
+| `search-external-crm-deals` | Find deals in the connected external CRM, separately from Cedar conversations. | `crm:read` |
+| `timeline` | Read a time-ordered stream across events and extracted fields for selected deals. | `crm:read` |
+| `field-evolution` | Inspect one field's change or occurrence series over time, grouped by deal. | `crm:read` |
+| `value-as-of` | Read a versioned field's value and scores at the resolved historical cutoff. | `crm:read` |
+| `describe-field` | Discover a field's plane, score support, vocabulary and observed payload values. | `crm:read` |
+| `raw-content` | Resolve full source transcripts, email and Slack evidence into a readable/searchable document buffer. | `crm:read` |
+| `search` | Search extracted taxonomy evidence and retain source IDs for timeline and verbatim follow-up. | `crm:read` |
+
+## conversation-write
+
+Availability: **external**. [Parameters and responses](/reference/conversation-write).
+
+<Accordion title="Full tool behavior and constraints">
+
+Creating/changing a CRM deal or conversation? FIRST read the effective crm-updater path from the agent directory (document-read), or use injected &lt;crm_write_rules&gt;, before searching email. Fallback only: #subagents/crm-updater.md. Write Cedar conversations. Creating one does not create or link an external CRM record (Salesforce/HubSpot/Attio/Copper). Link an existing deal with (6), or an agent-created deal with (2) linkCrmDeal. ACTIONS: (1) create — create a new CRM conversation. (2) update-fields — update conversation metadata/working-memory fields; pass linkCrmDeal to also link a newly-created CRM opportunity to this conversation (runs before the field update in the same call). (3) create-event — log a meeting/call/text/custom event on a conversation. (4) mutate — execute a structural conversation mutation (move_event, reassign_aop, refresh_conversation, clear_working_memory, merge_conversations, merge_companies, fix_misassignment, assign_aop_by_selection, rename_conversation). (5) reassign-ownership — transfer primary ownership of a conversation to another org member; auto-adds them as a member if they are not one already. (6) link-external-crm-deal — link an EXISTING external-CRM deal (found via conversation-read's search-external-crm-deals) to a conversation; writes the association only (call update-fields to sync values). (7) sync-gmail-thread — pull an email that never synced into Cedar from the user's LIVE Gmail (by threadId or searchQuery) into an existing deal, where it auto-processes. Each action takes its params in a same-named object (e.g. action: "update-fields" pairs with updateFields: &#123;...&#125;) — omit every params object except the one matching your chosen action.
+
+</Accordion>
+
+### Supported operations
+
+| Operation | Capability | Baseline scope |
+| --- | --- | --- |
+| `create` | Create a Cedar conversation; this alone does not create or link an external CRM deal. | `crm:read` |
+| `update-fields` | Update conversation metadata and working fields, with supported linkage for a newly created CRM opportunity. | `crm:read` |
+| `create-event` | Log a meeting, call, text or custom event on a conversation. | `crm:read` |
+| `mutate` | Apply structural repairs such as moving events, merges, AOP reassignment, refreshes or working-memory cleanup. | `crm:read` |
+| `reassign-ownership` | Transfer primary conversation ownership to another organization member. | `crm:read` |
+| `link-external-crm-deal` | Associate an existing external deal with Cedar; field synchronization remains a separate update. | `crm:read` |
+| `sync-gmail-thread` | Ingest a live Gmail thread into an existing deal and start its normal processing. | `email:read` |
+
+<Accordion title="All nested operations and modes (15)">
+
+| Selector | Choice | Variant |
+| --- | --- | --- |
+| `updateFields.fields[].mode` | `replace` |  |
+| `updateFields.fields[].mode` | `patch` |  |
+| `updateFields.fields[].mode` | `upsert` |  |
+| `updateFields.fields[].mode` | `append` |  |
+| `updateFields.fields[].mode` | `update` |  |
+| `mutate.mutation.operation` | `move_event` | mutate.mutation.operation=move_event |
+| `mutate.mutation.operation` | `reassign_aop` | mutate.mutation.operation=reassign_aop |
+| `mutate.mutation.operation` | `refresh_conversation` | mutate.mutation.operation=refresh_conversation |
+| `mutate.mutation.operation` | `refresh_fields` | mutate.mutation.operation=refresh_fields |
+| `mutate.mutation.operation` | `clear_working_memory` | mutate.mutation.operation=clear_working_memory |
+| `mutate.mutation.operation` | `merge_conversations` | mutate.mutation.operation=merge_conversations |
+| `mutate.mutation.operation` | `merge_companies` | mutate.mutation.operation=merge_companies |
+| `mutate.mutation.operation` | `fix_misassignment` | mutate.mutation.operation=fix_misassignment |
+| `mutate.mutation.operation` | `assign_aop_by_selection` | mutate.mutation.operation=assign_aop_by_selection |
+| `mutate.mutation.operation` | `rename_conversation` | mutate.mutation.operation=rename_conversation |
+
+</Accordion>
+
+## Access and results
+
+Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).

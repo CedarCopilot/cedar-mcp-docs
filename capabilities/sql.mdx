@@ -1,0 +1,42 @@
+---
+title: "SQL reporting capabilities"
+description: "Complete capability map for SQL reporting."
+---
+
+Run guarded read-only reporting queries over the documented Cedar data model.
+
+## Guides
+
+- [Read-only SQL reporting](/channels/sql)
+
+## run-sql
+
+Availability: **external**. [Parameters and responses](/reference/run-sql).
+
+Execute a read-only SQL SELECT query against the Cedar CRM database.
+
+The primary path for analytical questions about the pipeline — any aggregation, filter or join,
+e.g. "which objection themes separate won from lost deals?".
+
+**Call first**: `load-skill("run-sql")` — REQUIRED before any query (column meanings, join
+shapes, rejected query shapes + rewrites — not repeated here). Also `taxonomy-fields` for what
+happened INSIDE calls/emails (objections, discovery, pain, MEDDPICC) — org fields no CRM column
+holds.
+
+**Rules**:
+- SELECT only (`WITH ... SELECT` CTEs are fine); anything else is rejected.
+- Only these tables, incl. subqueries/CTEs: agent_executions, agent_operating_procedures, calendar_events, crm_call_events, crm_companies_global, crm_company_relationships, crm_conversation_companies, crm_conversation_contacts, crm_conversation_field_values, crm_conversation_updates, crm_conversation_users, crm_conversations, crm_custom_events, crm_email_events, crm_events, crm_meeting_events, crm_note_events, crm_people_global, crm_slack_messages, documents, user, user_tasks. Enforced
+  by parsing, not documentation.
+- Every table with an org column needs a real `WHERE`/`JOIN...ON` predicate scoping it to
+  your organization (e.g. `crm_conversations.organization_id = '&lt;your org id&gt;'`), AND'd in —
+  a UUID elsewhere in the text doesn't count. Don't know your org ID? Run any query first: the
+  rejection names your real one for the next call (never an argument; SQL text is the one place
+  it appears).
+- Tables with no org column must join one that has it, via a real foreign key.
+- Capped at 500 rows/30s. Aggregate in SQL; for verbatim moments, take ids to `conversation-read`.
+
+Single-call family. Baseline scope: `crm:read`.
+
+## Access and results
+
+Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).

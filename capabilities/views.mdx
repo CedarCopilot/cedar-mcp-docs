@@ -1,0 +1,65 @@
+---
+title: "Saved views capabilities"
+description: "Complete capability map for Saved views."
+---
+
+Configure visible workspace navigation and saved views for the supported Cedar surfaces.
+
+## Guides
+
+- [Saved views and strategic overviews](/workspace/saved-views)
+
+## ui-config
+
+Availability: **external**. [Parameters and responses](/reference/ui-config).
+
+<Accordion title="Full tool behavior and constraints">
+
+Discover the user's saved/pinned CRM views. ACTIONS: (1) list-canvases — call this when the user references their "home view", "pipeline view", "saved filters", or a named dashboard (e.g. "show me my Renewals view") instead of describing filters from scratch. Returns each pinned canvas (owned + shared) with a `query` object — pass it directly into conversation(&#123;action: "find", mode: "column_filters", ...query&#125;) to reproduce that exact view. (2) configure-overview — personalize what renders on a deal's strategic OVERVIEW for an AOP: add/remove overview items (fields or docs), gate them by a visibleWhen condition, change render mode, reorder, or reassign owner. Use when the user says e.g. "always show a battlecard for enterprise deals", "add a Champion field", "hide Forecast". Pass configureOverview: &#123; aopId?, ops: &#91;...&#93; &#125;. Does NOT cover mail/notification settings — those are config's apply-change action. (3) create-canvas — make a new saved view (pass title, type, and optionally viewConfig/data/homeViewOrder to pin it). (4) update-canvas — change a canvas's title/type/colour/icon/homeViewOrder, or its viewConfig (replaced in full) or data (merged). (5) delete-canvas — permanently remove a canvas you own. create-canvas/update-canvas/delete-canvas are self-scoped — a canvas is owned by exactly one user, so there is no cross-user form. Each action takes its params in a same-named object (e.g. action: "list-canvases" pairs with a listCanvases: &#123;&#125; object) — omit every params object except the one matching your chosen action.
+
+</Accordion>
+
+### Supported operations
+
+| Operation | Capability | Baseline scope |
+| --- | --- | --- |
+| `list-canvases` | Discover the caller's saved or pinned workspace views. | `crm:read` |
+| `configure-overview` | Configure which fields and documents appear in an AOP's strategic overview. | `playbook:write` |
+| `create-canvas` | Create a caller-owned saved canvas/view. | `crm:read` |
+| `update-canvas` | Update a saved canvas configuration while preserving intended settings. | `crm:read` |
+| `delete-canvas` | Delete the selected caller-owned saved canvas. | `crm:read` |
+
+<Accordion title="All nested operations and modes (24)">
+
+| Selector | Choice | Variant |
+| --- | --- | --- |
+| `configureOverview.ops[].op` | `add` | configureOverview.ops&#91;&#93;.op=add |
+| `configureOverview.ops[].op` | `remove` | configureOverview.ops&#91;&#93;.op=remove |
+| `configureOverview.ops[].op` | `setVisibleWhen` | configureOverview.ops&#91;&#93;.op=setVisibleWhen |
+| `configureOverview.ops[].op` | `setRender` | configureOverview.ops&#91;&#93;.op=setRender |
+| `configureOverview.ops[].op` | `setOwner` | configureOverview.ops&#91;&#93;.op=setOwner |
+| `configureOverview.ops[].op` | `reorder` | configureOverview.ops&#91;&#93;.op=reorder |
+| `createCanvas.type` | `conversationCanvas` |  |
+| `createCanvas.type` | `kanbanConversation` |  |
+| `createCanvas.type` | `cardList` |  |
+| `createCanvas.type` | `table` |  |
+| `createCanvas.type` | `report` |  |
+| `createCanvas.type` | `statistics` |  |
+| `createCanvas.type` | `tasks` |  |
+| `createCanvas.type` | `agenda` |  |
+| `createCanvas.type` | `calendar` |  |
+| `updateCanvas.type` | `conversationCanvas` |  |
+| `updateCanvas.type` | `kanbanConversation` |  |
+| `updateCanvas.type` | `cardList` |  |
+| `updateCanvas.type` | `table` |  |
+| `updateCanvas.type` | `report` |  |
+| `updateCanvas.type` | `statistics` |  |
+| `updateCanvas.type` | `tasks` |  |
+| `updateCanvas.type` | `agenda` |  |
+| `updateCanvas.type` | `calendar` |  |
+
+</Accordion>
+
+## Access and results
+
+Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).

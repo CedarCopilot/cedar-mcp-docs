@@ -1,0 +1,33 @@
+---
+title: "Drafting capabilities"
+description: "Complete capability map for Drafting."
+---
+
+Prepare email, Slack and LinkedIn communications using account context and channel-specific draft operations.
+
+## Guides
+
+- [Drafting across channels](/channels/drafting)
+
+## draft-comms
+
+Availability: **external**. [Parameters and responses](/reference/draft-comms).
+
+<Accordion title="Full tool behavior and constraints">
+
+Draft a communication for user review or send. ACTIONS: (1) draft-email — saves a REAL draft in the mail provider (Gmail/Outlook) via the provider API (unless propose: true, which only streams a preview card without persisting anything). The body MUST be pre-composed in HTML format. To attach files, first call document-read(&#123;action: "list", path: "#kb"&#125;) to find available uploads, then pass the relevant type="upload" document IDs in attachments. Optionally tag with draftCategory: emailResponses, scheduledFollowups, postMeetingFollowups, preMeetingPrep, conversationRefresh, executeTaskNow. (2) draft-slack-message — DRAFT ONLY, presents the Slack message to the user for review before sending (optionally tagged with taskType: response, follow-up, reminder, post-meeting, pre-meeting, reactivation, manual, calendar, crm-opportunity, field-approval). There is NO Slack API concept of a draft: this is always an ephemeral preview plus a user task carrying the Slack send action — nothing is created on Slack's side until the user clicks "Send to Slack" on the task card. Do not describe this as having "saved a Slack draft" the way draft-email saves a real provider draft — that would misdescribe the outcome to the user. Do NOT use draft-slack-message when you need to send a Slack message immediately or autonomously — use notify(&#123;action: "send"&#125;) instead for direct/immediate sends. (3) draft-linkedin-message — save a plain-text draft for an existing LinkedIn chat. Persists in Cedar for user review and NEVER sends. No CRM deal required. (4) show-draft — read-only: display an already-existing draft as a card instead of linking to Gmail; pass real draftIds. Each action takes its params in a same-named object (e.g. action: "draft-email" pairs with a draftEmail: &#123;...&#125; object) — omit every params object except the one matching your chosen action.
+
+</Accordion>
+
+### Supported operations
+
+| Operation | Capability | Baseline scope |
+| --- | --- | --- |
+| `draft-email` | Save a real HTML provider draft, or return only a preview when propose is enabled. | `email:draft` |
+| `draft-slack-message` | Create a review preview and Cedar task; no Slack-side draft or send occurs. | `crm:read` |
+| `draft-linkedin-message` | Save a plain-text Cedar draft for an existing LinkedIn chat without sending. | `linkedin:read` |
+| `show-draft` | Display an already-existing draft using its real draft ID. | `email:read` |
+
+## Access and results
+
+Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).

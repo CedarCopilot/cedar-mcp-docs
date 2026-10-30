@@ -1,0 +1,24 @@
+---
+title: "Calendar and availability"
+description: "Read events, check free time and make authorized calendar changes."
+---
+
+The calendar family works with the user's Google Calendar.
+
+| Action | Capability |
+| --- | --- |
+| `list-events` | Read a time range with available linked CRM context and modification rights |
+| `get-availability` | Check busy periods across the user's calendars |
+| `modify-event` | Create, update or delete an event, including recurrence where supplied |
+
+Before proposing a time, check availability and the intended timezone. Before moving an existing event, inspect `canModifyForEveryone`. An attendee who cannot modify the event for other guests needs the organizer to make the change.
+
+## Mutations and review
+
+Creation needs the event summary, start/end times and attendees. Updates and deletion require the actual event ID. Supported recurrence uses RFC 5545 rules from the contract.
+
+In Cedar's interactive chat, modification produces a proposal for review. On external MCP and other non-chat surfaces it applies immediately and can notify attendees. The calling client must obtain the user's intended approval before calling.
+
+A proposed slot, a dated task, an accepted calendar mutation and a recorded meeting are different artifacts. Report the actual result and retain the event ID for later changes.
+
+[Calendar parameters](/reference/calendar) · [Meeting evidence](/channels/meetings)

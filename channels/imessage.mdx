@@ -1,0 +1,12 @@
+---
+title: "iMessage notifications"
+description: "Deliver configured user notifications and supported tapbacks."
+---
+
+Cedar exposes iMessage as a configured user-notification destination through `notify send`. The notification contract supports the tapback choices `thumbsup`, `thumbsdown`, `heart`, `haha`, `exclamation` and `question`.
+
+Use the user's configured notification preference or explicitly choose the intended supported channel. Inspect the returned delivery result before reporting that the message arrived. Changing a preference does not prove a device or channel is connected and deliverable.
+
+This capability does not establish a general iMessage inbox, arbitrary contact search, bulk outreach or scheduled-iMessage API. The current `schedule-send` channels are email, LinkedIn and Slack.
+
+[Notification capabilities](/capabilities/notifications) · [Notification parameters](/reference/notify) · [Workspace preferences](/workspace/preferences)

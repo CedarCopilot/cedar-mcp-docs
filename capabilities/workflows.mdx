@@ -1,0 +1,31 @@
+---
+title: "Workflow buttons capabilities"
+description: "Complete capability map for Workflow buttons."
+---
+
+Author inert workflow documents whose supported actions execute when a user clicks, and inspect execution-history capacity.
+
+## Guides
+
+- [Workflow documents and buttons](/agent-platform/workflows)
+
+## workflow
+
+Availability: **in-app-only**. [Parameters and responses](/reference/workflow).
+
+<Accordion title="Full tool behavior and constraints">
+
+Discover mutation operations for workflow document buttons. Use these existing input schemas unchanged. Author workflow documents with document-write.write and fenced workflow rows. No operation runs until the user clicks. inspect_capacity reads an authorized document’s remaining execution-history capacity; a full document needs a manually configured successor, never automatic pruning. agent_prompt and add_to_chat_context are also supported button ops.
+
+</Accordion>
+
+### Supported operations
+
+| Operation | Capability | Baseline scope |
+| --- | --- | --- |
+| `list_operations` | Discover eligible mutation operations and their unchanged canonical input schemas for workflow buttons. | `in-app` |
+| `inspect_capacity` | Read a workflow document's remaining execution-history capacity. | `in-app` |
+
+## Access and results
+
+Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).

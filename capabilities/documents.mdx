@@ -1,0 +1,74 @@
+---
+title: "Documents capabilities"
+description: "Complete capability map for Documents."
+---
+
+Find and read documents, create and patch content, import supported files, share or revoke access, and delete or restore documents.
+
+## Guides
+
+- [Document workspace](/modules/documents-tables)
+- [Documents, sharing and recovery](/documents/sharing)
+- [Templates and imported files](/knowledge/templates)
+
+## document-read
+
+Availability: **external**. [Parameters and responses](/reference/document-read).
+
+<Accordion title="Full tool behavior and constraints">
+
+Cedar Docs — agent-curated persistent memory. Read-only. ACTIONS: (1) read — fetch a specific doc by virtual path, full markdown content. (2) list — what docs exist under a path prefix (metadata only, no content). Call this at the start of complex tasks before deciding what to read. (3) search — regex search across docs, returns excerpts with context lines, not full content. Use for a specific fact; use read for full context. Each action takes its params in a same-named object (action: "read" with read: &#123;path&#125;) — omit every params object except the one for your action. Personal chat instructions: #chat-agent → user/playbooks/CHAT_AGENT.md. Path shortcuts (#kb, #wiki, #playbook, #here, ...) and content shortcuts (#sections, #outline, #section/&#123;Name&#125;, #lines/&#123;a&#125;-&#123;b&#125;) are NOT listed here — you MUST call load-skill("documents") for the full reference before constructing any non-trivial path or reading a doc you haven't sized up yet. Never modifies anything — use document-write to create, edit, delete, restore, move, or share a doc.
+
+</Accordion>
+
+### Supported operations
+
+| Operation | Capability | Baseline scope |
+| --- | --- | --- |
+| `read` | Read authorized document content, including supported windows or returned buffer handles. | `docs:read` |
+| `list` | Discover files and folders in the authorized virtual document workspace. | `docs:read` |
+| `search` | Find documents or matching passages using the supported search filters. | `docs:read` |
+
+## document-write
+
+Availability: **external**. [Parameters and responses](/reference/document-write).
+
+<Accordion title="Full tool behavior and constraints">
+
+Cedar Docs: persistent agent-curated documents. ACTIONS: (1) write: upsert (replace), append, or patch. Types: document, workflow, html, agenda, conversation_agenda, attachment. If load-skill lists "documents", load it FIRST for the correct AOP template; otherwise write plain markdown. (2) delete: hide by documentId from document-read output. Interactive chat proposes this and waits for approval: explain the removal, never claim completion early. Autonomous surfaces (cron, external MCP, bots) apply immediately. (3) restore: undo deletion by documentId within 30 days. Org KB docs may be deleted by any org member; other unowned docs, PLAYBOOK.md, playbook resources and subagents are protected. (4) move: relocate between virtual paths, e.g. promote a thread artifact to persistent scope. (5) share: generate/revoke a public token-gated link. Requires a live user; publishing is a person's decision. (6) request-file: show a picker for a needed Google Drive file; relay the result rather than saying no picker is available. Chat writes attach/open automatically; never tell the UI to show one. Put params only in the object named for the action, e.g. action:"write", write:&#123;...&#125;. Read and update personal chat instructions at #chat-agent (user/playbooks/CHAT_AGENT.md); patch existing rules, or upsert if missing when saving a standing instruction. Read back to verify. Load documents skill before non-trivial paths or shortcuts (#kb, #wiki, #playbook, #here, #sections, #outline, #section/Name, #lines/a-b). Workflow: inert JSON fences with clickable buttons. Load documents skill for authoring; discover eligible mutation inputs with workflow.list_operations. Saving never executes buttons.
+
+</Accordion>
+
+<Note>A write on a playbook or agenda path requires playbook:write. Ordinary document writes use docs:read plus the role and document authorization checks.</Note>
+
+### Supported operations
+
+| Operation | Capability | Baseline scope |
+| --- | --- | --- |
+| `write` | Create, append or patch supported document content with the appropriate write mode. | `docs:read` |
+| `delete` | Delete an authorized document through the recoverable document lifecycle. | `playbook:write` |
+| `restore` | Restore an eligible deleted document within the supported recovery window. | `docs:read` |
+| `move` | Move a document to an authorized destination with its scope and access checks. | `docs:read` |
+| `share` | Create or revoke supported document access for the intended audience. | `docs:read` |
+| `request-file` | Request a file through the supported Cedar interaction; check surface availability. | `docs:read` |
+
+<Accordion title="All nested operations and modes (10)">
+
+| Selector | Choice | Variant |
+| --- | --- | --- |
+| `write.type` | `document` |  |
+| `write.type` | `workflow` |  |
+| `write.type` | `html` |  |
+| `write.type` | `agenda` |  |
+| `write.type` | `conversation_agenda` |  |
+| `write.type` | `attachment` |  |
+| `write.type` | `table` |  |
+| `write.mode` | `upsert` |  |
+| `write.mode` | `append` |  |
+| `write.mode` | `patch` |  |
+
+</Accordion>
+
+## Access and results
+
+Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).

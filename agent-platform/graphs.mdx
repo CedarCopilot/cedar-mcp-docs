@@ -1,0 +1,29 @@
+---
+title: "Graphs and relationship maps"
+description: "Document-backed nodes, typed relationships and agent resource permissions."
+---
+
+Cedar's product graph surface represents relationships between document-backed nodes. It can support account maps and organization charts with explicit fields and relationship kinds. The external MCP registry has no standalone graph family; documenting the product surface does not create a `graph` MCP endpoint.
+
+## Graph capabilities
+
+| Component | What it represents |
+| --- | --- |
+| Nodes | A document's place in the graph plus graph-specific field values |
+| Edges | A source, target and declared relationship kind |
+| Node schema | Typed fields, identity binding and display preferences |
+| View | Layout direction, the edge kind driving layout, optional tiers and colors |
+| Triggers | Supported incoming and outgoing graph-trigger configuration |
+| Metadata | Additional authored graph context |
+
+Fields bound to source identity data resolve from that source rather than becoming independent copied values. A graph-specific assessment, such as buying role, belongs in its own declared field. Unknown relationships should remain unknown; a seniority tier can organize a view without inventing reporting lines.
+
+The view can hide selected edge kinds without hiding their nodes. Layout changes do not rewrite the underlying relationship evidence. The current graph schema supports up to 200 nodes, 1,000 edges and a 64 KB schema.
+
+## Agent use and access
+
+Agents can have graph-specific resource grants, in addition to their connection and file permissions. A graph's visibility setting does not override the caller's access checks. Use the Cedar product's supported graph controls and authorized runtime capabilities, not a table mutation disguised as a graph operation.
+
+The [agent library](/agent-platform/library) includes organization-map and chart-oriented work. Inspect each template's output and trigger configuration before treating its installation as a completed relationship map.
+
+[Agent resource grants](/agent-platform/permissions) · [Boards](/agent-platform/boards)

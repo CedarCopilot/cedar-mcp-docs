@@ -1,0 +1,18 @@
+---
+title: "Usage observations and recovery"
+description: "Inspect durable measurements without confusing them with provider execution or charges."
+---
+
+The usage families expose durable shadow measurements associated with an authorized billing account.
+
+| Operation | Capability |
+| --- | --- |
+| `usage-observations-read producers` | Discover configured usage producers |
+| `usage-observations-read list` | Inspect the caller's measurements, known/unknown quantity and delivery state with supported filters |
+| `usage-observations-retry` | Retry eligible delivery of a saved blocked measurement to the usage ledger |
+
+Reading observations does not turn on AI charging, submit fresh usage or call a provider. Finance access does not expand the observation summaries to every user's underlying activity.
+
+A retry uses the immutable saved receipt and requires current spending permission, the original grant and compatible shadow-meter version. It cannot change the amount, create a grant, charge credits or repeat provider work. Distinguish a retried ledger-delivery record from re-running the user's original operation.
+
+[Billing and budgets](/operations/billing-and-budgets) · [Usage contracts](/capabilities/usage)

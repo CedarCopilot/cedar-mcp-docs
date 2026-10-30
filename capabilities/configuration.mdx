@@ -1,0 +1,96 @@
+---
+title: "Configuration capabilities"
+description: "Complete capability map for Configuration."
+---
+
+Read effective account and playbook configuration, change fields and stage rules, and write supported account configuration changes.
+
+## Guides
+
+- [Choose the configuration layer](/modules/configuration)
+- [Fields, picklists, mappings and stage rubrics](/configuration/fields)
+
+## config-read
+
+Availability: **external**. [Parameters and responses](/reference/config-read).
+
+<Accordion title="Full tool behavior and constraints">
+
+For "why didn't X happen"/system-behavior questions, load-skill('cedar-configuration') first — these actions read raw config, they don't explain behavior. ACTIONS: (1) read-playbook — mode="list"/"load_full"/"load_sections" of an AOP's PLAYBOOK.md, by aopId or aopName. load_full/load_sections also return the org playbook as `orgPlaybook` (a user-level-only read can miss real trigger/subagent wiring). mode: "list" also gives the caller's own AOPs (name/id/hasPlaybook/isNoOp). (2) read-settings — CRM/Slack connections (incl. connectionId, needed by apply-change) + user settings. (3) list-fields — every field's definition, mapping, and options (custom + built-in). MUST load-skill('cedar-configuration', 'fields-and-values') first — it has the full rules this omits. (4) list-org-members — the caller's own org directory (id/name/email), optionally filtered by `search`; use it for a teammate's userId instead of querying the user table. (5) find-bot-slack-channels — every Slack channel Cedar's bot can actually post to, optionally filtered by `nameFilter`. Use before authoring any new Slack delivery target, never a runtime lookup left in prose. Admin/owner sees every channel the bot is in; a regular member sees only ones they're also in. Not a personal notification destination (that's `notify`'s list-slack-channels) — answers "can Cedar deliver here", not "where does this rep want their own alerts". Each action takes its params in a same-named object (e.g. action: "read-playbook" pairs with a readPlaybook: &#123;...&#125; object) — omit every params object except the one matching your chosen action.
+
+</Accordion>
+
+### Supported operations
+
+| Operation | Capability | Baseline scope |
+| --- | --- | --- |
+| `read-playbook` | List AOPs or load full/selected playbook sections, including relevant organization content and edit targets. | `docs:read` |
+| `read-settings` | Read selected account settings and connected-system configuration. | `crm:read` |
+| `list-fields` | Inspect field definitions, mappings and options, with supported organization rollups. | `crm:read` |
+| `list-org-members` | Find IDs and directory details for members of the caller's organization. | `crm:read` |
+| `find-bot-slack-channels` | Find channels Cedar's bot can actually post to, subject to membership and administrator visibility. | `crm:read` |
+
+<Accordion title="All nested operations and modes (3)">
+
+| Selector | Choice | Variant |
+| --- | --- | --- |
+| `readPlaybook.mode` | `list` |  |
+| `readPlaybook.mode` | `load_full` |  |
+| `readPlaybook.mode` | `load_sections` |  |
+
+</Accordion>
+
+## config-write
+
+Availability: **external**. [Parameters and responses](/reference/config-write).
+
+<Accordion title="Full tool behavior and constraints">
+
+For "why didn't X happen"/system-behavior questions, load-skill('cedar-configuration') first — these actions write/mutate raw config, they don't explain behavior. ACTIONS: (1) reassign-aop — re-evaluate/reassign a conversation's AOP. (2) create-field — add a custom field. A field backed by a CRM picklist/multi-select (select OR list) is created with sourceFromCrm — never hand-typed options — then read back (config-read list-fields) to confirm it has options. (3) update-field — edit a custom or built-in field's label/description/governance flags. (4) delete-field — remove a custom field. (5) link-mapping — associate/reconcile a field with an external CRM field; the only agent tool path that changes a mapped field's options. (6) unlink-mapping — remove that association. (7-9) add/update/remove-field-option — manage a select/list field's options by value. (10) set-stage-criteria — set a stage's entry or exit criteria text in its PLAYBOOK.md. This changes the shared stage process for the whole team (org-level); it is not for one rep's personal rule. MUST load-skill('cedar-configuration', 'fields-and-values') before using the field actions — it has the full rules (built-in field keys, the mapped-field options restriction, delete/reconciliation safety) this omits. Each action takes its params in a same-named object (e.g. action: "create-field" pairs with a createField: &#123;...&#125; object) — omit every params object except the one matching your chosen action. For a CONNECTED INTEGRATION's own config (CRM field mappings, Slack sync, sync toggles, connection instructions, playbook webhooks) use connection-write. For inbox layout, inbox tabs, and task groups use workspace-write. For credentials and MCP servers use systems-write.
+
+</Accordion>
+
+### Supported operations
+
+| Operation | Capability | Baseline scope |
+| --- | --- | --- |
+| `reassign-aop` | Re-evaluate a conversation's AOP, with options to clear old working memory and initialize new fields. | `playbook:write` |
+| `create-field` | Create a custom field with its type, definition and supported settings. | `playbook:write` |
+| `update-field` | Edit an existing field; its type is immutable and mapped picklist options require reconciliation. | `playbook:write` |
+| `delete-field` | Remove a field through the supported configuration lifecycle. | `playbook:write` |
+| `link-mapping` | Link a CRM field and reconcile real provider options, reporting removed options for review. | `playbook:write` |
+| `unlink-mapping` | Remove the selected field's external CRM mapping. | `playbook:write` |
+| `add-field-option` | Add an allowed option where field governance and mapping rules permit it. | `playbook:write` |
+| `update-field-option` | Update a field option while respecting mapped-option constraints. | `playbook:write` |
+| `remove-field-option` | Remove a field option through the supported option operation. | `playbook:write` |
+| `set-stage-criteria` | Set a shared sales stage's entry and exit criteria. | `playbook:write` |
+
+<Accordion title="All nested operations and modes (19)">
+
+| Selector | Choice | Variant |
+| --- | --- | --- |
+| `createField.type` | `text` |  |
+| `createField.type` | `number` |  |
+| `createField.type` | `date` |  |
+| `createField.type` | `boolean` |  |
+| `createField.type` | `select` |  |
+| `createField.type` | `currency` |  |
+| `createField.type` | `url` |  |
+| `createField.type` | `email` |  |
+| `createField.type` | `phone` |  |
+| `createField.type` | `list` |  |
+| `createField.type` | `fraction` |  |
+| `createField.type` | `json` |  |
+| `createField.type` | `people` |  |
+| `createField.type` | `summarized_history` |  |
+| `createField.type` | `deal_brief` |  |
+| `linkMapping.resolutions[].action` | `remap-to` | linkMapping.resolutions&#91;&#93;.action=remap-to |
+| `linkMapping.resolutions[].action` | `keep-legacy` | linkMapping.resolutions&#91;&#93;.action=keep-legacy |
+| `removeFieldOption.resolution.action` | `remap-to` | removeFieldOption.resolution.action=remap-to |
+| `removeFieldOption.resolution.action` | `keep-legacy` | removeFieldOption.resolution.action=keep-legacy |
+
+</Accordion>
+
+## Access and results
+
+Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).

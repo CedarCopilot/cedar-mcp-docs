@@ -1,0 +1,130 @@
+---
+title: "Tables capabilities"
+description: "Complete capability map for Tables."
+---
+
+Manage typed table schemas, rows, cells, views, bindings, sections, imports, exports and delegated row work.
+
+## Guides
+
+- [Tables, row operations and data exchange](/documents/tables)
+
+## table
+
+Availability: **external**. [Parameters and responses](/reference/table).
+
+<Accordion title="Full tool behavior and constraints">
+
+Read/edit row-addressed Cedar tables. Load the tables skill first. Read before writing; never recreate a table to edit it.
+
+ACTIONS (pass the matching params object):
+read: pipe rows, revision and full schema; project columns/rowIds/where/limit; orderBy sorts by column type.
+create: declare labeled columns; from materializes rows from a real query.
+add_columns: add labeled columns, optionally after a key.
+update_columns: &#91;&#123;key,patch&#125;&#93; in columns; stable keys, omitted settings preserved, null clears optional settings.
+remove_columns: keys to remove, including cells.
+reorder_columns: every key exactly once.
+update_view: patch viewFilter, sort, subrowColumns, titleColumn or purpose; null clears optional settings.
+add_rows: one pipe row per line.
+set: one rowId.columnKey = value per line; unknown rowId creates a row only with titleColumn assigned.
+clear: same addresses, no values; keeps rows.
+delete_rows: by rowId.
+move_row: rowId, beforeRowId (null appends), required ifRevision; no active sort/subrows.
+insert_section: heading above/below anchorRowId.
+export: csv/xlsx file bytes as base64, using the UI export pipeline.
+import: uploaded xlsx/csv; updateInPlace merges by _id.
+fill: one agent per row; &gt;25 needs user confirmation. mode=delegate means YOU run briefs in parallel; spawned means Cedar runs them.
+bindings: built-in and account field paths.
+
+Bound columns are read-only: never set/fill one. Address rows by rowId; ordinals/A1 need ifRevision. Subrows: childId._parent = parentId. Section rows (_section) hold headings only; never fill them. Bulk strings use one record per line, not JSON arrays.
+
+</Accordion>
+
+<Note>Writes on playbook or agenda paths require playbook:write. External fill returns delegated row briefs; it does not launch Cedar row agents.</Note>
+
+### Supported operations
+
+| Operation | Capability | Baseline scope |
+| --- | --- | --- |
+| `read` | Read projected or filtered rows, typed sorting, the full schema and current revision. | `docs:read` |
+| `create` | Create labeled columns and optionally materialize rows from an actual query. | `docs:read` |
+| `add_columns` | Add labeled columns, optionally after an existing stable column key. | `docs:read` |
+| `add_rows` | Append rows using one pipe-delimited record per line. | `docs:read` |
+| `set` | Write addressed cells; creating an unknown row requires its title-column value. | `docs:read` |
+| `clear` | Clear addressed cells while preserving the rows. | `docs:read` |
+| `delete_rows` | Remove selected rows by stable row ID. | `docs:read` |
+| `import` | Import uploaded CSV/XLSX data; update-in-place can merge rows by _id. | `docs:read` |
+| `fill` | Prepare row work; external MCP returns briefs for the client to execute, with confirmation above 25 rows. | `docs:read` |
+| `bindings` | Discover built-in and account-specific field paths available for bound columns. | `docs:read` |
+| `update_columns` | Patch settings for existing column keys while preserving omitted settings. | `docs:read` |
+| `remove_columns` | Remove selected columns and their cells. | `docs:read` |
+| `reorder_columns` | Set column order by supplying every key exactly once. | `docs:read` |
+| `update_view` | Patch filters, sort, subrow columns, title column or table purpose. | `docs:read` |
+| `move_row` | Move a row with revision protection when sorting and subrows permit it. | `docs:read` |
+| `insert_section` | Insert a heading section above or below an anchor row. | `docs:read` |
+| `export` | Return CSV or XLSX file bytes through the standard export pipeline. | `docs:read` |
+
+<Accordion title="All nested operations and modes (54)">
+
+| Selector | Choice | Variant |
+| --- | --- | --- |
+| `create.schema.columns[].type` | `text` |  |
+| `create.schema.columns[].type` | `long_text` |  |
+| `create.schema.columns[].type` | `number` |  |
+| `create.schema.columns[].type` | `currency` |  |
+| `create.schema.columns[].type` | `percent` |  |
+| `create.schema.columns[].type` | `date` |  |
+| `create.schema.columns[].type` | `checkbox` |  |
+| `create.schema.columns[].type` | `select` |  |
+| `create.schema.columns[].type` | `multi_select` |  |
+| `create.schema.columns[].type` | `url` |  |
+| `create.schema.columns[].type` | `email` |  |
+| `create.schema.columns[].type` | `output` |  |
+| `create.schema.columns[].type` | `conversation` |  |
+| `create.schema.columns[].type` | `task` |  |
+| `create.schema.columns[].type` | `draft` |  |
+| `create.schema.columns[].type` | `doc` |  |
+| `create.schema.columns[].type` | `person` |  |
+| `create.schema.columns[].type` | `company` |  |
+| `add_columns.columns[].type` | `text` |  |
+| `add_columns.columns[].type` | `long_text` |  |
+| `add_columns.columns[].type` | `number` |  |
+| `add_columns.columns[].type` | `currency` |  |
+| `add_columns.columns[].type` | `percent` |  |
+| `add_columns.columns[].type` | `date` |  |
+| `add_columns.columns[].type` | `checkbox` |  |
+| `add_columns.columns[].type` | `select` |  |
+| `add_columns.columns[].type` | `multi_select` |  |
+| `add_columns.columns[].type` | `url` |  |
+| `add_columns.columns[].type` | `email` |  |
+| `add_columns.columns[].type` | `output` |  |
+| `add_columns.columns[].type` | `conversation` |  |
+| `add_columns.columns[].type` | `task` |  |
+| `add_columns.columns[].type` | `draft` |  |
+| `add_columns.columns[].type` | `doc` |  |
+| `add_columns.columns[].type` | `person` |  |
+| `add_columns.columns[].type` | `company` |  |
+| `update_columns.columns[].patch.type` | `text` |  |
+| `update_columns.columns[].patch.type` | `long_text` |  |
+| `update_columns.columns[].patch.type` | `number` |  |
+| `update_columns.columns[].patch.type` | `currency` |  |
+| `update_columns.columns[].patch.type` | `percent` |  |
+| `update_columns.columns[].patch.type` | `date` |  |
+| `update_columns.columns[].patch.type` | `checkbox` |  |
+| `update_columns.columns[].patch.type` | `select` |  |
+| `update_columns.columns[].patch.type` | `multi_select` |  |
+| `update_columns.columns[].patch.type` | `url` |  |
+| `update_columns.columns[].patch.type` | `email` |  |
+| `update_columns.columns[].patch.type` | `output` |  |
+| `update_columns.columns[].patch.type` | `conversation` |  |
+| `update_columns.columns[].patch.type` | `task` |  |
+| `update_columns.columns[].patch.type` | `draft` |  |
+| `update_columns.columns[].patch.type` | `doc` |  |
+| `update_columns.columns[].patch.type` | `person` |  |
+| `update_columns.columns[].patch.type` | `company` |  |
+
+</Accordion>
+
+## Access and results
+
+Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).

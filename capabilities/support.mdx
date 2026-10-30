@@ -1,0 +1,22 @@
+---
+title: "Customer support capabilities"
+description: "Complete capability map for Customer support."
+---
+
+Submit a user-authorized issue or feedback report with the context needed to investigate it.
+
+## Guides
+
+- [Customer support and feedback](/channels/support)
+
+## send-user-feedback
+
+Availability: **external**. [Parameters and responses](/reference/send-user-feedback).
+
+Save a problem or question for the Cedar team and attempt a Slack notification with your account attached. If notificationDelivered is false, the report was saved but Slack delivery failed. Call it when a Cedar tool fails in a way you cannot work around, a Cedar agent or run does something that contradicts its instructions, or the user is stuck or frustrated. You may report without being asked, but tell the user you did. Say what you tried, what happened, and what you expected, and pass runId / conversationId / agentId when you have them so the team can trace it. Never include credentials, tokens or email bodies; ids and exact error text are enough. Also used by the customer-support skill for the reserved "flag this" phrase (a full debug snapshot of the session) and when no gallery content answers a question.
+
+Single-call family. Baseline scope: `crm:read`.
+
+## Access and results
+
+Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).

@@ -1,0 +1,28 @@
+---
+title: "Chat context and history"
+description: "Attach the right evidence, resolve a primary conversation and revisit past Cedar chats."
+---
+
+<Note>These chat controls belong to Cedar's app surface. External MCP clients manage their own chat state.</Note>
+
+## Working context
+
+`chat-context manage` adds or removes context items and can change the primary conversation. Adding an item is an upsert by its kind and ID. Use a known ID when attaching an email thread, Slack thread, file, task or other supported item.
+
+`chat-context resolve` turns a conversation name into the thread's primary conversation by searching, selecting and attaching a matching conversation. It resolves conversations only; it is not a general entity resolver for arbitrary context kinds.
+
+Attaching context does not copy its permissions to the user or agent. The underlying record still requires access. When a user changes the subject, update the primary conversation so subsequent work is grounded in the intended deal.
+
+## Search, load and navigate
+
+| Family | Capability |
+| --- | --- |
+| `search-chat-history` | Find relevant past chats in the caller's history |
+| `load-chat-history` | Read messages from a selected authorized chat |
+| `switch-chat-thread` | Navigate the caller's Cedar screen to another chat |
+
+Search results are discovery; load the relevant messages before relying on what was decided. Navigation changes the visible chat rather than executing the original request again.
+
+The agent workspace separates prior automated executions from associated chats. An administrator inspecting a teammate's agent does not automatically receive that teammate's private chat messages; the current chat-history view is self-only.
+
+[Context and history contracts](/capabilities/chat) · [Execution history](/agent-platform/observability)

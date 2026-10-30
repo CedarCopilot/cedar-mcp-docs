@@ -1,0 +1,30 @@
+---
+title: "Workflow documents and buttons"
+description: "Create reviewable actions that run only when a user clicks."
+---
+
+A workflow document combines Markdown with actionable rows. Saving, parsing or editing it never runs a button. Cedar executes the saved action when an authenticated user clicks it, using the action's actual tool schema and permission checks.
+
+## Button capabilities
+
+| Operation | Behavior |
+| --- | --- |
+| `tool_call` | Execute an eligible mutation using a canonical family tool and input |
+| `agent_prompt` | Open visible chat with a supplied prompt and optional conversation/context |
+| `add_to_chat_context` | Attach selected context without sending a chat message |
+
+The app-only `workflow list_operations` call returns eligible mutations and their input schemas. It excludes delegation, connected-MCP dispatch, chat-context operations, debug test runs, table fill and file requests. It is not a generic way to turn any tool into a button.
+
+## Author a workflow
+
+Use `document-write` to create a workflow document. Each top-level `workflow` fence contains a row with a stable ID, title and one to twelve buttons. Button IDs must be unique within the row; row IDs must be unique across the document. Invalid rows remain visible but are not executable.
+
+A button carries an ID, concise label, optional effect description, operation and arguments. Keep the canonical tool input unchanged. Context attachments can identify conversations, email threads, Slack threads, LinkedIn chats, WhatsApp chats, files or tasks.
+
+External MCP clients can author authorized workflow documents, but cannot invoke the app-only operation catalog or execute the user's click. Author only schemas verified from the actual supported catalog; use visible chat handoffs where the remaining action needs user judgment.
+
+## Execution history and capacity
+
+Results are maintained separately from authored content. Do not fabricate a success state in the document. Cedar claims an invocation before execution and records its outcome. The current history limit is 200 invocations per workflow document. Inspect remaining capacity through `workflow inspect_capacity`; a full document requires a deliberately configured successor rather than automatic history pruning.
+
+[Workflow reference](/reference/workflow) · [Documents](/capabilities/documents)

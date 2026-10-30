@@ -1,0 +1,20 @@
+---
+title: "Teams and agent organization"
+description: "Organize people and agents while preserving file scope and execution permissions."
+---
+
+Cedar's team controls organize people, agents and shared work. Personal and Background areas are distinct from shared role teams. The app supports discovering visible teams, creating and naming teams, setting their color, listing members, joining/leaving, managing member roles and filing agents.
+
+## People and membership
+
+Membership changes are scoped to the caller's organization and the team's visibility. A user can join an eligible visible shared team; managing another person's membership or standing requires the appropriate team authority. The current join contract defaults to manager standing, while member standing provides the narrower role. The service protects the last manager from being demoted.
+
+Joining also attempts setup of the team's agents for that person. Membership can succeed even if some agent setup is skipped or fails; inspect the per-agent outcome rather than reporting every agent ready merely because the team join completed.
+
+## Filing agents
+
+An agent can be filed in one team, moved to another or unfiled. This changes its position in the agent organization. It does not move its files, rewrite resource grants or make private memory shared. Unfiled agents appear in the personal area; the Personal preset does not accept a redundant filing relationship. Background can hold filed agents.
+
+## Product controls versus MCP
+
+These are Cedar app team controls, not an external `teams` MCP family. External MCP can discover organization members through `config-read`, inspect supported team configuration and use the authorized [organization propagation](/capabilities/organization) operations. Publishing an agent's behavior to the organization has its own [preview and memory-sharing semantics](/agent-platform/sharing).
