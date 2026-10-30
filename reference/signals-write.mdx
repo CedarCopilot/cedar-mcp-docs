@@ -5,24 +5,214 @@ description: "Parameters, scopes, and response schema for signals-write."
 
 Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
-## Capability
+## Capabilities
+
+[Signals capabilities and guides](/capabilities/signals).
+
+<Accordion title="Full tool behavior and constraints">
 
 Treat education_added, skill_added, certification_added, honor_added, connection_count_change as weak/background signals. Do not choose them by default or as generic nice-to-have coverage. Select them only on an explicit user request, an explicitly configured user/organization preference, or a specific evidenced deal rationale; explain that rationale when selecting them. Preserve existing explicit selections and saved user/organization preferences rather than silently removing them. Education, skills, certifications and honors are one optional background-update group in the UI; connection count is also low priority. A generic request to activate signals does not opt into these extra rules. Findings: apply-extraction validates proposals (expectedRevision, idempotencyKey); mutate-internal curates signalId via snooze/dismiss/resolve/reopen/append-note/deactivate. Preserve human status/notes. Activate with evidenced buyer People/ICP/company, excluding internal, automated or unrelated contacts. Read capabilities/version; load cedar-configuration. When continuation.required, research identity, verify email/LinkedIn with the configured person provider, then resolve-identity by operationId; never guess or ask users to do lookups. Only returned active coverage is live. Group supported rules on existing target.signalTypes; preserve saved definitions. Indexed searches require exact buyer/company/person identifiers, never ambiguous names. Broad people searches or tasks over 50 people require explicit whole-task count confirmation. Start/Stop means active/paused; cancelled requires explicit permanent removal. Never raise caps or buy credits automatically. execute-action needs explicit user request plus stored action ID; discovery alone cannot execute. mark-read acknowledges only signalIds displayed to this user. Report billing, access and identity blockers.
 
+</Accordion>
+
 ## Operations and scopes
 
-| Action | Baseline scope |
-| --- | --- |
-| `apply-extraction` | `signals:write` |
-| `mutate-internal` | `signals:write` |
-| `activate` | `signals:write` |
-| `update` | `signals:write` |
-| `set-state` | `signals:write` |
-| `resolve-identity` | `signals:write` |
-| `execute-action` | `email:draft` |
-| `mark-read` | `signals:write` |
+| Action | Capability | Baseline scope |
+| --- | --- | --- |
+| `apply-extraction` | Validate and save proposed internal signal extraction with revision and idempotency protection. | `signals:write` |
+| `mutate-internal` | Snooze, dismiss, resolve, reopen, annotate or deactivate a candidate, or hold/clear reconciliation, with revision and idempotency protection. | `signals:write` |
+| `activate` | Configure and activate evidence-backed watcher targets within account, identity and budget constraints. | `signals:write` |
+| `update` | Change an existing watch configuration using its current version and supported rules. | `signals:write` |
+| `set-state` | Change watch lifecycle state; pausing and permanent cancellation have different meanings. | `signals:write` |
+| `resolve-identity` | Continue a blocked activation with verified identity evidence and its operation ID. | `signals:write` |
+| `execute-action` | Execute an explicitly requested stored signal action by its saved action ID. | `email:draft` |
+| `mark-read` | Acknowledge only the signal IDs actually displayed to the current user. | `signals:write` |
 
 Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Complete signal catalog
+
+Cedar combines **21 entity-change signals**, **12 Fiber tracker rules**, **4 saved-search datasets**, native email engagement, and configurable internal findings. Call `signals-read capabilities` for account-specific availability and `get` for actual saved coverage.
+
+### Person and company changes
+
+Select the exact `signalTypes` keys below on an identified target. Several rules can share one watch. Availability depends on provider records and account entitlements; a baseline is existing state, not a new signal.
+
+**People**
+
+| Signal | What it detects |
+| --- | --- |
+| `title_change` | Current job title changes. |
+| `job_change` | A current employment entry is added, such as joining a new employer. |
+| `headline_change` | The person updates their professional headline. |
+| `person_location_change` | The person’s listed location changes. |
+| `education_added` | An education or school entry is added. Explicit opt-in or evidenced rationale. |
+| `skill_added` | A professional skill is added. Explicit opt-in or evidenced rationale. |
+| `certification_added` | A professional certification is added. Explicit opt-in or evidenced rationale. Field entitlement required. |
+| `honor_added` | An honor or award is added. Explicit opt-in or evidenced rationale. Field entitlement required. |
+| `connection_count_change` | The person’s professional-network connection count changes. Explicit opt-in or evidenced rationale. |
+
+**Companies**
+
+| Signal | What it detects |
+| --- | --- |
+| `headcount_change` | The company’s total headcount changes. |
+| `funding_change` | Reported total funding changes. |
+| `news_added` | A company news item is added. |
+| `funding_round_change` | The reported latest funding-round type changes. |
+| `investor_added` | An investor is added to the company record. |
+| `acquisition_added` | An acquisition is added to the company record. |
+| `hiring_change` | The number of job openings changes. |
+| `company_name_change` | The company’s name changes. |
+| `funding_milestone_added` | A funding milestone is added. |
+| `follower_count_change` | The company’s follower count changes. |
+| `industry_change` | The company’s industry classification changes. |
+| `company_location_change` | The company’s listed country changes. |
+
+<Accordion title="Provider field mapping">
+
+The current entity-watch provider is `crustdata`.
+
+| Signal | Provider field | Change operator |
+| --- | --- | --- |
+| `title_change` | `basic_profile.current_title` | `changed` |
+| `job_change` | `experience.employment_details.current` | `added` |
+| `headline_change` | `basic_profile.headline` | `changed` |
+| `person_location_change` | `basic_profile.location.raw` | `changed` |
+| `education_added` | `education.schools` | `added` |
+| `skill_added` | `skills.professional_network_skills` | `added` |
+| `headcount_change` | `headcount.total` | `changed` |
+| `funding_change` | `funding.total_investment_usd` | `changed` |
+| `news_added` | `news` | `added` |
+| `funding_round_change` | `funding.last_round_type` | `changed` |
+| `investor_added` | `funding.investors` | `added` |
+| `acquisition_added` | `funding.acquisitions` | `added` |
+| `hiring_change` | `hiring.openings_count` | `changed` |
+| `company_name_change` | `basic_info.name` | `changed` |
+| `certification_added` | `certifications` | `added` |
+| `honor_added` | `honors` | `added` |
+| `connection_count_change` | `professional_network.connections` | `changed` |
+| `funding_milestone_added` | `funding.milestones` | `added` |
+| `follower_count_change` | `followers.count` | `changed` |
+| `industry_change` | `taxonomy.professional_network_industry` | `changed` |
+| `company_location_change` | `locations.country` | `changed` |
+
+</Accordion>
+
+Education, skills, certifications, honors and connection counts are optional background signals. A general request to enable signals does not select these weak signals by default. Preserve explicit existing preferences.
+
+### Fiber profile trackers
+
+Feature-gated; call signals-read capabilities for your account. Configure `fiberTrackers` with one tracker per deal subject, matching each rule's `entityType` to that subject. Each tracker supports **1–25 rules**, refreshes every **1–180 days** (default **30**), and accepts an optional **1–90 day** lookback per rule. A completed refresh consumes credits even if no new signal is found.
+
+| Rule / subject | Capability | Rule-specific filters |
+| --- | --- | --- |
+| `person_got_promoted` (person) | An interpreted move to a more senior role; cosmetic title edits do not count. | `seniorityKeywords` |
+| `person_got_demoted` (person) | An interpreted move to a less senior role, with provider evidence. | `seniorityKeywords` |
+| `person_posted` (person) | A new LinkedIn post from this person. | `minReactions` |
+| `company_posted` (company) | A new LinkedIn post from this company. | `minReactions` |
+| `technology_added` (company) | A technology newly detected at the company; optionally filter named technologies. | `technologies` |
+| `new_office_location` (company) | An additional office location; optionally filter countries, regions, states or cities. | `countries`; `cities`; `regions`; `states` |
+| `recent_layoffs` (company) | A reported layoff event; optionally require a minimum number or percentage affected. | `minPeopleAffected`; `minPercentAffected` |
+| `department_size_threshold` (company) | A named department crosses a headcount threshold, such as Engineering growing above 25 people. | `department` (required); `threshold` (required); `direction` (required): "above" · "below" |
+| `recently_hired_with_title` (company) | New hires whose titles match specified keywords, with an optional minimum hire count. | `titleKeywords` (required); `minNewHires` |
+| `job_posting_in_function` (company) | New job postings in selected functions, such as Engineering or Finance. | `jobFunctions` (required); `minPostings` |
+| `job_posting_with_keyword` (company) | New job postings matching title or description keywords, seniority or work modality. | `keywords` (required); `searchFields`; `seniorityLevels`; `modalities`; `minPostings` |
+| `headcount_growth_percent` (company) | Company headcount grows or shrinks by a specified percentage. | `minPercentChange` (required); `direction` (required): "grew" · "shrank" · "either"; `minStartingHeadcount` |
+
+Department and job-function rules accept these **40 functions**: `Accounting`, `Administrative`, `Advertising`, `Analyst`, `Art / Creative`, `Business Development`, `Consulting`, `Customer Service`, `Design`, `Distribution`, `Education`, `Engineering`, `Finance`, `General Business`, `Health Care Provider`, `Human Resources`, `Information Technology`, `Legal`, `Management`, `Manufacturing`, `Marketing`, `Product Management`, `Production`, `Project Management`, `Public Relations`, `Purchasing`, `Quality Assurance`, `Research`, `Sales`, `Science`, `Strategy / Planning`, `Supply Chain`, `Training`, `Writing / Editing`, `Community &amp; Social Services`, `Entrepreneurship`, `Military &amp; Protective Services`, `Other`, `Program &amp; Product Management`, `Real Estate`.
+
+Job-posting keyword rules can search title and/or description; seniority is Internship, Entry level, Associate, Mid-Senior level, Director or Executive; modality is On-site, Remote or Hybrid. Keyword arrays hold 1–50 values, each 1–200 characters. Location country filters use three-letter uppercase country codes. Thresholds and minimum counts must be positive; layoff percentages are at most 100 and headcount-change thresholds at most 1,000. See the rule parameter tables in [signals-write](/reference/signals-write) for every field and constraint. Avoid duplicate post coverage across providers.
+
+### Saved discovery searches
+
+Saved searches return **newly matching records** from repeated runs. Company discovery finds newly matching companies; use entity rules to watch changes to an already known company.
+
+| Dataset | What it discovers | Useful identity and filter context |
+| --- | --- | --- |
+| `person` | Newly matching people | Known employer plus role and ICP filters |
+| `company` | Newly matching companies | Saved company qualification criteria |
+| `job` | Newly matching job posts | Exact company identity/domain plus job filters |
+| `social_post` | Newly matching social posts | Exact person/company IDs with the correct actor type |
+
+Use `additionalWatches` for these searches or custom grouped entity predicates. The current limit is **20 additional watches per configuration**, with at most **25 discovery results per run**. These are repeated saved searches, not realtime discovery. Read [watch configuration](/signals/watchers) for identity, lifecycle and version handling.
+
+### Internal commercial findings
+
+These **5 shipped definitions** are editable account configuration, not a closed enum of allowed types. Custom and historical types remain readable.
+
+| Default type | Capability |
+| --- | --- |
+| `revival` | Review a lost, paused or stale deal with a source-backed historical buying reason, blocker or revisit window. |
+| `upsell` | Review incremental paid demand or demonstrated product value; verify current customer status, scope and readiness. |
+| `expansion` | Review additional seats, teams, locations or distinct workflows beyond the apparent existing scope. |
+| `churn` | Review explicit cancellation, nonrenewal or buyer-stated retention risk while preserving uncertainty about status and timing. |
+| `follow_up` | Track an actual unanswered chase after an earlier request for the same purpose; a relevant reply or confirmed meeting can end the condition. |
+
+Historical types `product_interest`, `value_evidence`, `competitive_context` can remain on existing records. Findings retain evidence, factual `active` state, human `open`/`dismissed`/`resolved` status, notes, snooze and review dates. Human status and factual applicability are separate. `get-internal` includes a deal's history; `list-internal` supports type, active, due and suppression filters with cursor pagination (1–100 records, default 25). A candidate or review date does not authorize outreach. [Internal signal lifecycle](/signals/internal).
+
+### Engagement and website signals
+
+| Source | Available evidence | Read or setup surface |
+| --- | --- | --- |
+| `email_open` | Qualified likely renders, including Gmail image-proxy renders, are included. Known prefetch, automated and unknown privacy/proxy loads are excluded. Recipient addresses are intended recipients, never verified reader identities; forwarding and sender views remain possible. | signals-read get returns emailOpens; email-tracking list/get exposes classified tracking evidence. |
+| Email clicks | Classified click evidence and raw versus likely-human counts | [Email tracking](/email/tracking); distinct from native `email_open` watch signals |
+| LinkedIn activity | Connected-account relations, post engagement and available profile viewers | [LinkedIn capabilities](/capabilities/linkedin); separate from provider entity-watch history |
+| Website activity | Visitor-provider events or first-party site events delivered to an HTTP input/playbook | [Website monitoring](/signals/website); configure ingestion before relying on these events |
+
+Native email opens are included without a paid watch. External entity changes use `watch.changed_entity`; discovery uses `watch.discovery_record`; Fiber refreshes use `watch.entity_refresh`. Paid watch activation requires approved rates, credentials and spending permission.
+
+## Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/signals-write#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `internalMutation.operation` | `snooze`, `dismiss`, `resolve`, `reopen`, `append-note`, `deactivate`, `hold-reconciliation`, `clear-reconciliation` |  |
+| `update.targets[].kind` | `person`, `company` |  |
+| `update.personRefreshFrequencyDays` | `1`, `3`, `7`, `14`, `30` |  |
+| `update.additionalWatches[].kind` | `discovery` | kind=discovery |
+| `update.additionalWatches[].dataset` | `person`, `company`, `job`, `social_post` | kind=discovery |
+| `update.additionalWatches[].filters.type` | `=`, `!=`, `&gt;`, `&lt;`, `=&gt;`, `=&lt;`, `in`, `not_in`, `(.)`, `(!)`, `&#91;.&#93;`, `not_contains` | kind=discovery |
+| `update.additionalWatches[].filters.op` | `and`, `or` | kind=discovery |
+| `update.additionalWatches[].filters.conditions[].type` | `=`, `!=`, `&gt;`, `&lt;`, `=&gt;`, `=&lt;`, `in`, `not_in`, `(.)`, `(!)`, `&#91;.&#93;`, `not_contains` | kind=discovery |
+| `update.additionalWatches[].filters.conditions[].op` | `and`, `or` | kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].type` | `=`, `!=`, `&gt;`, `&lt;`, `=&gt;`, `=&lt;`, `in`, `not_in`, `(.)`, `(!)`, `&#91;.&#93;`, `not_contains` | kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].op` | `and`, `or` | kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].type` | `=`, `!=`, `&gt;`, `&lt;`, `=&gt;`, `=&lt;`, `in`, `not_in`, `(.)`, `(!)`, `&#91;.&#93;`, `not_contains` | kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].op` | `and`, `or` | kind=discovery |
+| `update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type` | `=`, `!=`, `&gt;`, `&lt;`, `=&gt;`, `=&lt;`, `in`, `not_in`, `(.)`, `(!)`, `&#91;.&#93;`, `not_contains` | kind=discovery |
+| `update.additionalWatches[].subject.kind` | `person`, `company` | kind=discovery |
+| `update.additionalWatches[].kind` | `entity` | kind=entity |
+| `update.additionalWatches[].dataset` | `person`, `company` | kind=entity |
+| `update.additionalWatches[].track.type` | `changed`, `added` | kind=entity |
+| `update.additionalWatches[].track.op` | `and`, `or` | kind=entity |
+| `update.additionalWatches[].track.conditions[].type` | `changed`, `added` | kind=entity |
+| `update.additionalWatches[].track.conditions[].op` | `and`, `or` | kind=entity |
+| `update.additionalWatches[].track.conditions[].conditions[].type` | `changed`, `added` | kind=entity |
+| `update.additionalWatches[].track.conditions[].conditions[].op` | `and`, `or` | kind=entity |
+| `update.additionalWatches[].track.conditions[].conditions[].conditions[].type` | `changed`, `added` | kind=entity |
+| `update.fiberTrackers[].subject.kind` | `person`, `company` |  |
+| `update.fiberTrackers[].rules[].entityType` | `person` | entityType=person |
+| `update.fiberTrackers[].rules[].type` | `person_got_promoted` | entityType=person |
+| `update.fiberTrackers[].rules[].type` | `person_got_demoted` | entityType=person |
+| `update.fiberTrackers[].rules[].type` | `person_posted` | entityType=person |
+| `update.fiberTrackers[].rules[].entityType` | `company` | entityType=company |
+| `update.fiberTrackers[].rules[].type` | `company_posted` | entityType=company |
+| `update.fiberTrackers[].rules[].type` | `technology_added` | entityType=company |
+| `update.fiberTrackers[].rules[].type` | `new_office_location` | entityType=company |
+| `update.fiberTrackers[].rules[].type` | `recent_layoffs` | entityType=company |
+| `update.fiberTrackers[].rules[].type` | `department_size_threshold` | entityType=company |
+| `update.fiberTrackers[].rules[].direction` | `above`, `below` | entityType=company |
+| `update.fiberTrackers[].rules[].type` | `recently_hired_with_title` | entityType=company |
+| `update.fiberTrackers[].rules[].type` | `job_posting_in_function` | entityType=company |
+| `update.fiberTrackers[].rules[].type` | `job_posting_with_keyword` | entityType=company |
+| `update.fiberTrackers[].rules[].searchFields[]` | `title`, `description` | entityType=company |
+| `update.fiberTrackers[].rules[].seniorityLevels[]` | `Internship`, `Entry level`, `Associate`, `Mid-Senior level`, `Director`, `Executive` | entityType=company |
+| `update.fiberTrackers[].rules[].modalities[]` | `On-site`, `Remote`, `Hybrid` | entityType=company |
+| `update.fiberTrackers[].rules[].type` | `headcount_growth_percent` | entityType=company |
+| `update.fiberTrackers[].rules[].direction` | `grew`, `shrank`, `either` | entityType=company |
+| `setState.state` | `active`, `paused`, `cancelled` |  |
 
 ## Parameters
 

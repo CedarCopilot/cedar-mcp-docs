@@ -5,23 +5,56 @@ description: "Parameters, scopes, and response schema for conversation-write."
 
 Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
-## Capability
+## Capabilities
+
+[CRM conversations capabilities and guides](/capabilities/crm).
+
+<Accordion title="Full tool behavior and constraints">
 
 Creating/changing a CRM deal or conversation? FIRST read the effective crm-updater path from the agent directory (document-read), or use injected &lt;crm_write_rules&gt;, before searching email. Fallback only: #subagents/crm-updater.md. Write Cedar conversations. Creating one does not create or link an external CRM record (Salesforce/HubSpot/Attio/Copper). Link an existing deal with (6), or an agent-created deal with (2) linkCrmDeal. ACTIONS: (1) create — create a new CRM conversation. (2) update-fields — update conversation metadata/working-memory fields; pass linkCrmDeal to also link a newly-created CRM opportunity to this conversation (runs before the field update in the same call). (3) create-event — log a meeting/call/text/custom event on a conversation. (4) mutate — execute a structural conversation mutation (move_event, reassign_aop, refresh_conversation, clear_working_memory, merge_conversations, merge_companies, fix_misassignment, assign_aop_by_selection, rename_conversation). (5) reassign-ownership — transfer primary ownership of a conversation to another org member; auto-adds them as a member if they are not one already. (6) link-external-crm-deal — link an EXISTING external-CRM deal (found via conversation-read's search-external-crm-deals) to a conversation; writes the association only (call update-fields to sync values). (7) sync-gmail-thread — pull an email that never synced into Cedar from the user's LIVE Gmail (by threadId or searchQuery) into an existing deal, where it auto-processes. Each action takes its params in a same-named object (e.g. action: "update-fields" pairs with updateFields: &#123;...&#125;) — omit every params object except the one matching your chosen action.
 
+</Accordion>
+
 ## Operations and scopes
 
-| Action | Baseline scope |
-| --- | --- |
-| `create` | `crm:read` |
-| `update-fields` | `crm:read` |
-| `create-event` | `crm:read` |
-| `mutate` | `crm:read` |
-| `reassign-ownership` | `crm:read` |
-| `link-external-crm-deal` | `crm:read` |
-| `sync-gmail-thread` | `email:read` |
+| Action | Capability | Baseline scope |
+| --- | --- | --- |
+| `create` | Create a Cedar conversation; this alone does not create or link an external CRM deal. | `crm:read` |
+| `update-fields` | Update conversation metadata and working fields, with supported linkage for a newly created CRM opportunity. | `crm:read` |
+| `create-event` | Log a meeting, call, text or custom event on a conversation. | `crm:read` |
+| `mutate` | Apply structural repairs such as moving events, merges, AOP reassignment, refreshes or working-memory cleanup. | `crm:read` |
+| `reassign-ownership` | Transfer primary conversation ownership to another organization member. | `crm:read` |
+| `link-external-crm-deal` | Associate an existing external deal with Cedar; field synchronization remains a separate update. | `crm:read` |
+| `sync-gmail-thread` | Ingest a live Gmail thread into an existing deal and start its normal processing. | `email:read` |
 
 Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/conversation-write#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `updateFields.fields[].mode` | `replace`, `patch`, `upsert`, `append`, `update` | People: upsert value=&#123;people:&#91;&#123;id,...changes&#125;&#93;&#125;; history: append complete new entries or update existing IDs in value=&#123;entries:&#91;...&#93;&#125;. Omitted properties stay; arrays replace. New rows need all required data. replace=value only; patch=old_string+new_string only. Null/omitted never clears; "" clears. |
+| `updateFields.fields[].value.people[].engagement` | `mentioned`, `introduced`, `engaged`, `should_engage` |  |
+| `updateFields.fields[].value.people[].support` | `strong_support`, `support`, `neutral`, `opposed`, `unknown` |  |
+| `updateFields.fields[].value.entries[].kind` | `meeting`, `correspondence`, `email`, `milestone` |  |
+| `updateFields.fields[].value.stage` | `discovery`, `demo`, `commercial`, `negotiation` |  |
+| `updateFields.fields[].value.rows[].signal` | `green`, `yellow`, `red` |  |
+| `updateFields.fields[].signal` | `red`, `yellow`, `green` | Set only when the field description instructs a signal; follow its red/yellow/green rubric. |
+| `createEvent.eventType` | `meeting`, `call`, `text`, `custom` | Type of event: "meeting" for in-person or video meetings, "call" for phone calls, "text" for text/chat messages, "custom" for any other interaction. |
+| `mutate.mutation.operation` | `move_event` | operation=move_event |
+| `mutate.mutation.operation` | `reassign_aop` | operation=reassign_aop |
+| `mutate.mutation.operation` | `refresh_conversation` | operation=refresh_conversation |
+| `mutate.mutation.scope` | `reconcile`, `full` | operation=refresh_conversation — 'reconcile' (default): re-derive fields + tasks from the events now on the deal — NO draft. 'full': re-run the whole on-event pipeline for one event (incl. drafting) to reproduce a missing output — requires eventId. |
+| `mutate.mutation.operation` | `refresh_fields` | operation=refresh_fields |
+| `mutate.mutation.operation` | `clear_working_memory` | operation=clear_working_memory |
+| `mutate.mutation.operation` | `merge_conversations` | operation=merge_conversations |
+| `mutate.mutation.operation` | `merge_companies` | operation=merge_companies |
+| `mutate.mutation.operation` | `fix_misassignment` | operation=fix_misassignment |
+| `mutate.mutation.operation` | `assign_aop_by_selection` | operation=assign_aop_by_selection |
+| `mutate.mutation.operation` | `rename_conversation` | operation=rename_conversation |
+| `linkExternalCrmDeal.providerId` | `hubspot`, `attio`, `salesforce`, `copper` |  |
 
 ## Parameters
 

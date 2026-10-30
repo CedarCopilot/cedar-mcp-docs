@@ -7,22 +7,37 @@ Generated from Cedar's actual registration and Zod schemas. Your connection's `t
 
 <Note>A write on a playbook or agenda path requires playbook:write. Ordinary document writes use docs:read plus the role and document authorization checks.</Note>
 
-## Capability
+## Capabilities
+
+[Documents capabilities and guides](/capabilities/documents).
+
+<Accordion title="Full tool behavior and constraints">
 
 Cedar Docs: persistent agent-curated documents. ACTIONS: (1) write: upsert (replace), append, or patch. Types: document, workflow, html, agenda, conversation_agenda, attachment. If load-skill lists "documents", load it FIRST for the correct AOP template; otherwise write plain markdown. (2) delete: hide by documentId from document-read output. Interactive chat proposes this and waits for approval: explain the removal, never claim completion early. Autonomous surfaces (cron, external MCP, bots) apply immediately. (3) restore: undo deletion by documentId within 30 days. Org KB docs may be deleted by any org member; other unowned docs, PLAYBOOK.md, playbook resources and subagents are protected. (4) move: relocate between virtual paths, e.g. promote a thread artifact to persistent scope. (5) share: generate/revoke a public token-gated link. Requires a live user; publishing is a person's decision. (6) request-file: show a picker for a needed Google Drive file; relay the result rather than saying no picker is available. Chat writes attach/open automatically; never tell the UI to show one. Put params only in the object named for the action, e.g. action:"write", write:&#123;...&#125;. Read and update personal chat instructions at #chat-agent (user/playbooks/CHAT_AGENT.md); patch existing rules, or upsert if missing when saving a standing instruction. Read back to verify. Load documents skill before non-trivial paths or shortcuts (#kb, #wiki, #playbook, #here, #sections, #outline, #section/Name, #lines/a-b). Workflow: inert JSON fences with clickable buttons. Load documents skill for authoring; discover eligible mutation inputs with workflow.list_operations. Saving never executes buttons.
 
+</Accordion>
+
 ## Operations and scopes
 
-| Action | Baseline scope |
-| --- | --- |
-| `write` | `docs:read` |
-| `delete` | `playbook:write` |
-| `restore` | `docs:read` |
-| `move` | `docs:read` |
-| `share` | `docs:read` |
-| `request-file` | `docs:read` |
+| Action | Capability | Baseline scope |
+| --- | --- | --- |
+| `write` | Create, append or patch supported document content with the appropriate write mode. | `docs:read` |
+| `delete` | Delete an authorized document through the recoverable document lifecycle. | `playbook:write` |
+| `restore` | Restore an eligible deleted document within the supported recovery window. | `docs:read` |
+| `move` | Move a document to an authorized destination with its scope and access checks. | `docs:read` |
+| `share` | Create or revoke supported document access for the intended audience. | `docs:read` |
+| `request-file` | Request a file through the supported Cedar interaction; check surface availability. | `docs:read` |
 
 Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/document-write#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `write.type` | `document`, `workflow`, `html`, `agenda`, `conversation_agenda`, `attachment`, `table` | Behavioural type for the document. "document" = Y.js markdown (default for all text). "workflow" = markdown with actionable workflow JSON fences; saving never executes buttons. "html" = self-contained HTML blob rendered as iframe (use for presentations, reports). "agenda" = Y.js + task sync for the user daily agenda. "conversation_agenda" = Y.js + task sync for a per-conversation agenda. "attachment" = file reference (no content; details in metadata). "table" = spreadsheet, rendered as a data grid; only for CREATING one or rewriting it whole (frontmatter schema + one pipe table with a leading _id column) — use the `table` tool for every partial read/write, because a partial write routed through here rewrites every row and destroys row identity. |
+| `write.mode` | `upsert`, `append`, `patch` | Write mode. upsert=full replace (best for overview, strategy, meeting-prep, or ANY whole-document rewrite/restructure/dedup — pass the complete new content directly). append=add to end (best for canvas, research, chat history). patch=surgical edit for a SMALL, localized change only (read doc first, then replace old_string with new_string) — do not use patch with old_string/new_string spanning the whole document; that forces holding two full copies in context and will exhaust it on a large doc. Use upsert instead. |
 
 ## Parameters
 

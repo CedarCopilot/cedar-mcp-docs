@@ -27,6 +27,15 @@ Work with the user's Google Calendar. ACTIONS: (1) list-events — fetch events 
 | `get-availability` | Check busy periods across the user's calendars. | `crm:read` |
 | `modify-event` | Create, update or delete real calendar events; external MCP applies immediately and can notify attendees. | `crm:read` |
 
+### Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/calendar#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `modifyEvent.operation` | `create`, `update`, `delete` | Which calendar mutation to perform. "create" needs summary/startDateTime/endDateTime/attendees. "update" needs eventId plus any fields you want to change. "delete" needs only eventId. |
+| `modifyEvent.conferenceType` | `hangoutsMeet`, `zoom` | Which conference `wantsMeetLink` creates: `hangoutsMeet` (Google Meet, the default) or `zoom`, which Cedar mints on the user's own Zoom account and attaches to the event. Only set `zoom` when the user asked for Zoom by name; a user who has not connected Zoom gets an event with no video link rather than a failure. |
+
 <Accordion title="All nested operations and modes (3)">
 
 | Selector | Choice | Variant |

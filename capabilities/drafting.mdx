@@ -28,6 +28,15 @@ Draft a communication for user review or send. ACTIONS: (1) draft-email — save
 | `draft-linkedin-message` | Save a plain-text Cedar draft for an existing LinkedIn chat without sending. | `linkedin:read` |
 | `show-draft` | Display an already-existing draft using its real draft ID. | `email:read` |
 
+### Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/draft-comms#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `draftEmail.draftCategory` | `emailResponses`, `scheduledFollowups`, `postMeetingFollowups`, `preMeetingPrep`, `conversationRefresh`, `executeTaskNow` | OPTIONAL - The semantic category of this draft. Pass when you know the purpose: emailResponses = replying to an inbound email, scheduledFollowups = a scheduled or proactive follow-up, postMeetingFollowups = follow-up after a meeting, preMeetingPrep = pre-meeting agenda or prep email. |
+| `draftSlackMessage.taskType` | `response`, `follow-up`, `post-meeting`, `pre-meeting`, `reactivation`, `manual`, `calendar`, `crm-opportunity`, `field-approval` | Task type for categorization. Use "response" for replies, "follow-up" for follow-ups, "pre-meeting" for pre-meeting prep, "manual" for general tasks. |
+
 ## Access and results
 
 Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).

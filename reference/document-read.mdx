@@ -5,17 +5,23 @@ description: "Parameters, scopes, and response schema for document-read."
 
 Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
-## Capability
+## Capabilities
+
+[Documents capabilities and guides](/capabilities/documents).
+
+<Accordion title="Full tool behavior and constraints">
 
 Cedar Docs — agent-curated persistent memory. Read-only. ACTIONS: (1) read — fetch a specific doc by virtual path, full markdown content. (2) list — what docs exist under a path prefix (metadata only, no content). Call this at the start of complex tasks before deciding what to read. (3) search — regex search across docs, returns excerpts with context lines, not full content. Use for a specific fact; use read for full context. Each action takes its params in a same-named object (action: "read" with read: &#123;path&#125;) — omit every params object except the one for your action. Personal chat instructions: #chat-agent → user/playbooks/CHAT_AGENT.md. Path shortcuts (#kb, #wiki, #playbook, #here, ...) and content shortcuts (#sections, #outline, #section/&#123;Name&#125;, #lines/&#123;a&#125;-&#123;b&#125;) are NOT listed here — you MUST call load-skill("documents") for the full reference before constructing any non-trivial path or reading a doc you haven't sized up yet. Never modifies anything — use document-write to create, edit, delete, restore, move, or share a doc.
 
+</Accordion>
+
 ## Operations and scopes
 
-| Action | Baseline scope |
-| --- | --- |
-| `read` | `docs:read` |
-| `list` | `docs:read` |
-| `search` | `docs:read` |
+| Action | Capability | Baseline scope |
+| --- | --- | --- |
+| `read` | Read authorized document content, including supported windows or returned buffer handles. | `docs:read` |
+| `list` | Discover files and folders in the authorized virtual document workspace. | `docs:read` |
+| `search` | Find documents or matching passages using the supported search filters. | `docs:read` |
 
 Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
 

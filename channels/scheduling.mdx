@@ -15,6 +15,6 @@ Choose an unambiguous time with timezone information. Pending items appear in Ce
 
 ## Pacing and recovery
 
-Cedar queues scheduled delivery and can defer recognized pre-send LinkedIn DM-cap failures. Other failures can be terminal or ambiguous. Configure recipient deduplication and spacing before scheduling a batch; the scheduler does not invent a warm-up plan or outreach sequence.
+Cedar automatically manages the scheduled-message queue and checks limits before delivery. Scheduled LinkedIn DMs that reach Cedar's hourly or daily send cap are deferred for a later attempt. Other provider failures can be terminal or ambiguous; inspect the returned status before retrying. Choose recipient deduplication, spacing and warm-up cadence when preparing the batch. These protections reduce overload without guaranteeing that a provider will never restrict an account.
 
-[Automatic queueing](/automation/queueing) · [LinkedIn limits and HeyReach levels](/linkedin/limits) · [Complete scheduling parameters](/reference/schedule-send)
+[Automatic queueing](/automation/queueing) · [Limits and recommendations](/linkedin/limits) · [Complete scheduling parameters](/reference/schedule-send)

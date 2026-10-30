@@ -5,11 +5,28 @@ description: "Parameters, scopes, and response schema for systems-write."
 
 Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
-## Capability
+## Capabilities
+
+[Connected systems capabilities and guides](/capabilities/systems).
+
+<Accordion title="Full tool behavior and constraints">
 
 Connect Cedar to an external system, or change how it is reached. MCP SERVERS — connect Cedar to one by URL. Storing a named CREDENTIAL for a system Cedar has no built-in integration for (Xero, a Microsoft Graph tenant identity, an internal API) is in-app/chat-only and not offered here. Use read-settings sections:&#91;"connections"&#93; first to see what already exists. Change types: (1) manage_mcp_connection: create/delete an MCP server by URL — public hosts only. A server that needs a static Authorization header must be added from the in-app chat, not here. (2) update_mcp_connection_settings: change an existing server's agent instructions or its background-agent access. SCOPE: "user" is that one person; "org" applies to every member of their organization and requires the caller to be an org admin. A user-scoped entry always shadows an org one of the same name.
 
+</Accordion>
+
 Required baseline scope: `playbook:write`. Additional role and target checks apply.
+
+## Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/systems-write#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `change.type` | `manage_mcp_connection` | type=manage_mcp_connection |
+| `change.op` | `create`, `delete` | type=manage_mcp_connection — create/delete an MCP server connection. |
+| `change.scope` | `user`, `org` | type=manage_mcp_connection — Defaults "user". "org" shares the server with every member of the organization (org admins only); a member's own connection of the same name still wins. |
+| `change.type` | `update_mcp_connection_settings` | type=update_mcp_connection_settings |
 
 ## Parameters
 

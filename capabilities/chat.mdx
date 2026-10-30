@@ -32,6 +32,16 @@ Each action takes its params in a same-named object — omit every params object
 | `manage` | Attach/detach working-context items and optionally change the primary conversation. | `in-app` |
 | `resolve` | Resolve a conversation name into the chat's primary conversation and attach it. | `in-app` |
 
+### Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/chat-context#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `manage.add[].kind` | `conversation`, `email_thread`, `slack_thread`, `linkedin_chat`, `whatsapp_chat`, `file`, `task` |  |
+| `manage.remove[].kind` | `conversation`, `email_thread`, `slack_thread`, `linkedin_chat`, `whatsapp_chat`, `file`, `task` |  |
+| `resolve.kind` | `conversation`, `email_thread`, `slack_thread`, `linkedin_chat`, `whatsapp_chat`, `file`, `task` | Entity kind to resolve. Only "conversation" is supported today. |
+
 ## search-chat-history
 
 Availability: **in-app-only**. [Parameters and responses](/reference/search-chat-history).

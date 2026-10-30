@@ -7,33 +7,68 @@ Generated from Cedar's actual registration and Zod schemas. Your connection's `t
 
 <Note>Writes on playbook or agenda paths require playbook:write. External fill returns delegated row briefs; it does not launch Cedar row agents.</Note>
 
-## Capability
+## Capabilities
+
+[Tables capabilities and guides](/capabilities/tables).
+
+<Accordion title="Full tool behavior and constraints">
 
 Read/edit row-addressed Cedar tables. Load the tables skill first. Read before writing; never recreate a table to edit it.  ACTIONS (pass the matching params object): read: pipe rows, revision and full schema; project columns/rowIds/where/limit; orderBy sorts by column type. create: declare labeled columns; from materializes rows from a real query. add_columns: add labeled columns, optionally after a key. update_columns: &#91;&#123;key,patch&#125;&#93; in columns; stable keys, omitted settings preserved, null clears optional settings. remove_columns: keys to remove, including cells. reorder_columns: every key exactly once. update_view: patch viewFilter, sort, subrowColumns, titleColumn or purpose; null clears optional settings. add_rows: one pipe row per line. set: one rowId.columnKey = value per line; unknown rowId creates a row only with titleColumn assigned. clear: same addresses, no values; keeps rows. delete_rows: by rowId. move_row: rowId, beforeRowId (null appends), required ifRevision; no active sort/subrows. insert_section: heading above/below anchorRowId. export: csv/xlsx file bytes as base64, using the UI export pipeline. import: uploaded xlsx/csv; updateInPlace merges by _id. fill: one agent per row; &gt;25 needs user confirmation. mode=delegate means YOU run briefs in parallel; spawned means Cedar runs them. bindings: built-in and account field paths.  Bound columns are read-only: never set/fill one. Address rows by rowId; ordinals/A1 need ifRevision. Subrows: childId._parent = parentId. Section rows (_section) hold headings only; never fill them. Bulk strings use one record per line, not JSON arrays.
 
+</Accordion>
+
 ## Operations and scopes
 
-| Action | Baseline scope |
-| --- | --- |
-| `read` | `docs:read` |
-| `create` | `docs:read` |
-| `add_columns` | `docs:read` |
-| `add_rows` | `docs:read` |
-| `set` | `docs:read` |
-| `clear` | `docs:read` |
-| `delete_rows` | `docs:read` |
-| `import` | `docs:read` |
-| `fill` | `docs:read` |
-| `bindings` | `docs:read` |
-| `update_columns` | `docs:read` |
-| `remove_columns` | `docs:read` |
-| `reorder_columns` | `docs:read` |
-| `update_view` | `docs:read` |
-| `move_row` | `docs:read` |
-| `insert_section` | `docs:read` |
-| `export` | `docs:read` |
+| Action | Capability | Baseline scope |
+| --- | --- | --- |
+| `read` | Read projected or filtered rows, typed sorting, the full schema and current revision. | `docs:read` |
+| `create` | Create labeled columns and optionally materialize rows from an actual query. | `docs:read` |
+| `add_columns` | Add labeled columns, optionally after an existing stable column key. | `docs:read` |
+| `add_rows` | Append rows using one pipe-delimited record per line. | `docs:read` |
+| `set` | Write addressed cells; creating an unknown row requires its title-column value. | `docs:read` |
+| `clear` | Clear addressed cells while preserving the rows. | `docs:read` |
+| `delete_rows` | Remove selected rows by stable row ID. | `docs:read` |
+| `import` | Import uploaded CSV/XLSX data; update-in-place can merge rows by _id. | `docs:read` |
+| `fill` | Prepare row work; external MCP returns briefs for the client to execute, with confirmation above 25 rows. | `docs:read` |
+| `bindings` | Discover built-in and account-specific field paths available for bound columns. | `docs:read` |
+| `update_columns` | Patch settings for existing column keys while preserving omitted settings. | `docs:read` |
+| `remove_columns` | Remove selected columns and their cells. | `docs:read` |
+| `reorder_columns` | Set column order by supplying every key exactly once. | `docs:read` |
+| `update_view` | Patch filters, sort, subrow columns, title column or table purpose. | `docs:read` |
+| `move_row` | Move a row with revision protection when sorting and subrows permit it. | `docs:read` |
+| `insert_section` | Insert a heading section above or below an anchor row. | `docs:read` |
+| `export` | Return CSV or XLSX file bytes through the standard export pipeline. | `docs:read` |
 
 Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/table#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `read.orderBy.direction` | `asc`, `desc` | Default asc. |
+| `create.schema.viewFilter.operator` | `equals`, `not_equals`, `contains`, `not_contains`, `is_empty`, `not_empty` |  |
+| `create.schema.viewFilter.conditions[].operator` | `equals`, `not_equals`, `contains`, `not_contains`, `is_empty`, `not_empty` |  |
+| `create.schema.columns[].wrap` | `wrap`, `max-lines`, `overflow` |  |
+| `create.schema.columns[].type` | `text`, `long_text`, `number`, `currency`, `percent`, `date`, `checkbox`, `select`, `multi_select`, `url`, `email`, `output`, `conversation`, `task`, `draft`, `doc`, `person`, `company` | Cell type; defaults to text. conversation/task/draft/doc/person/company hold a `&#91;&#91;type: id&#93;&#93;` reference token and render as a live chip. |
+| `create.schema.columns[].outputKind` | `slack`, `email`, `file`, `linkedin`, `whatsapp`, `calendar` | output only. Which artifact this column produces — a column that declares none cannot be filled. |
+| `create.from.source` | `conversations`, `tasks`, `people`, `companies`, `documents` | Where rows come from. `conversations` and `tasks` are supported. |
+| `create.from.filter.eventFilter.count.operator` | `gt`, `gte`, `lt`, `lte`, `eq` |  |
+| `create.from.filter.eventFilter.dateOperator` | `before`, `after`, `on` |  |
+| `create.from.filter.orderBy.direction` | `asc`, `desc` |  |
+| `add_columns.columns[].wrap` | `wrap`, `max-lines`, `overflow` |  |
+| `add_columns.columns[].type` | `text`, `long_text`, `number`, `currency`, `percent`, `date`, `checkbox`, `select`, `multi_select`, `url`, `email`, `output`, `conversation`, `task`, `draft`, `doc`, `person`, `company` | Cell type; defaults to text. conversation/task/draft/doc/person/company hold a `&#91;&#91;type: id&#93;&#93;` reference token and render as a live chip. |
+| `add_columns.columns[].outputKind` | `slack`, `email`, `file`, `linkedin`, `whatsapp`, `calendar` | output only. Which artifact this column produces — a column that declares none cannot be filled. |
+| `update_columns.columns[].patch.type` | `text`, `long_text`, `number`, `currency`, `percent`, `date`, `checkbox`, `select`, `multi_select`, `url`, `email`, `output`, `conversation`, `task`, `draft`, `doc`, `person`, `company` | Cell type; defaults to text. conversation/task/draft/doc/person/company hold a `&#91;&#91;type: id&#93;&#93;` reference token and render as a live chip. |
+| `update_columns.columns[].patch.outputKind` | `slack`, `email`, `file`, `linkedin`, `whatsapp`, `calendar` | output only. Which artifact this column produces — a column that declares none cannot be filled. |
+| `update_columns.columns[].patch.wrap` | `wrap`, `max-lines`, `overflow` |  |
+| `update_view.viewFilter.operator` | `equals`, `not_equals`, `contains`, `not_contains`, `is_empty`, `not_empty` |  |
+| `update_view.viewFilter.conditions[].operator` | `equals`, `not_equals`, `contains`, `not_contains`, `is_empty`, `not_empty` |  |
+| `update_view.sort.direction` | `asc`, `desc` |  |
+| `insert_section.position` | `above`, `below` |  |
+| `export.format` | `csv`, `xlsx` |  |
+| `fill.modelTier` | `fast`, `standard` | Which model each row agent runs on, chosen by how hard ONE ROW is — the cost is paid per row, so a 500-row fill multiplies it. `fast` for a mechanical fill (write a cell from the fillInstruction, classify, extract, transcribe). `standard` (the default) when a row needs judgement, multi-step research, or drafting the user will send. |
 
 ## Parameters
 

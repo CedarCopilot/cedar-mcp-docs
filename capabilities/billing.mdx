@@ -67,6 +67,22 @@ Manage independent credit billing owned by the authenticated user’s organizati
 | `configure-postpaid` | Configure monthly extra-usage billing with current version, verified subscription and explicit consent reference. | `billing:write` |
 | `reconcile-postpaid` | Reconcile supported postpaid state without changing existing subscription prices or quantities. | `billing:write` |
 
+### Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/billing-write#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `scope` | `organization` |  |
+| `policy.scope.kind` | `account` | kind=account |
+| `policy.scope.kind` | `member` | kind=member |
+| `policy.scope.kind` | `meter` | kind=meter |
+| `policy.scope.kind` | `feature` | kind=feature |
+| `policy.scope.kind` | `features` | kind=features |
+| `policy.period` | `utc_day`, `utc_month`, `operation` |  |
+| `policy.delivery[]` | `in_app`, `email` |  |
+| `grant.role` | `member`, `finance`, `admin` |  |
+
 ## Access and results
 
 Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).

@@ -7,9 +7,15 @@ Generated from Cedar's actual registration and Zod schemas. Your connection's `t
 
 <Note>This tool requires the Cedar Brain feature and brain:read grant.</Note>
 
-## Capability
+## Capabilities
+
+[Skill loading capabilities and guides](/capabilities/skills).
+
+<Accordion title="Full tool behavior and constraints">
 
 Load a Cedar deal-intelligence "brain" skill's full instructions by name. These are the reasoning/analysis skills for deep pipeline questions — how deals are won/lost, cross-deal patterns, rep coaching from real calls, objection/competitor analysis. When your task is such an analysis, you MUST call this tool for the matching skill before proceeding. The one-liners below are only for picking WHICH skill applies — they do not replace loading it. If your client saves this tool's response to a file instead of showing it inline, you MUST read that file in full before acting. Call with no `name` for the full catalog. Available brain skills: &lt;available_skills&gt; - deal-intelligence-analysis: Analyze a customer's deals to uncover non-o… &#91;+8 resources&#93; - analysis-decomposition: Turn a high-level sales-coaching / diagnost… &#91;+4 resources&#93; &lt;/available_skills&gt;  When your task matches a skill, use the load-skill tool to read its full instructions before proceeding.
+
+</Accordion>
 
 Required baseline scope: `brain:read`. Additional role and target checks apply.
 

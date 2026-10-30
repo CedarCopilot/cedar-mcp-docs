@@ -5,20 +5,35 @@ description: "Parameters, scopes, and response schema for draft-comms."
 
 Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
-## Capability
+## Capabilities
+
+[Drafting capabilities and guides](/capabilities/drafting).
+
+<Accordion title="Full tool behavior and constraints">
 
 Draft a communication for user review or send. ACTIONS: (1) draft-email — saves a REAL draft in the mail provider (Gmail/Outlook) via the provider API (unless propose: true, which only streams a preview card without persisting anything). The body MUST be pre-composed in HTML format. To attach files, first call document-read(&#123;action: "list", path: "#kb"&#125;) to find available uploads, then pass the relevant type="upload" document IDs in attachments. Optionally tag with draftCategory: emailResponses, scheduledFollowups, postMeetingFollowups, preMeetingPrep, conversationRefresh, executeTaskNow. (2) draft-slack-message — DRAFT ONLY, presents the Slack message to the user for review before sending (optionally tagged with taskType: response, follow-up, reminder, post-meeting, pre-meeting, reactivation, manual, calendar, crm-opportunity, field-approval). There is NO Slack API concept of a draft: this is always an ephemeral preview plus a user task carrying the Slack send action — nothing is created on Slack's side until the user clicks "Send to Slack" on the task card. Do not describe this as having "saved a Slack draft" the way draft-email saves a real provider draft — that would misdescribe the outcome to the user. Do NOT use draft-slack-message when you need to send a Slack message immediately or autonomously — use notify(&#123;action: "send"&#125;) instead for direct/immediate sends. (3) draft-linkedin-message — save a plain-text draft for an existing LinkedIn chat. Persists in Cedar for user review and NEVER sends. No CRM deal required. (4) show-draft — read-only: display an already-existing draft as a card instead of linking to Gmail; pass real draftIds. Each action takes its params in a same-named object (e.g. action: "draft-email" pairs with a draftEmail: &#123;...&#125; object) — omit every params object except the one matching your chosen action.
 
+</Accordion>
+
 ## Operations and scopes
 
-| Action | Baseline scope |
-| --- | --- |
-| `draft-email` | `email:draft` |
-| `draft-slack-message` | `crm:read` |
-| `draft-linkedin-message` | `linkedin:read` |
-| `show-draft` | `email:read` |
+| Action | Capability | Baseline scope |
+| --- | --- | --- |
+| `draft-email` | Save a real HTML provider draft, or return only a preview when propose is enabled. | `email:draft` |
+| `draft-slack-message` | Create a review preview and Cedar task; no Slack-side draft or send occurs. | `crm:read` |
+| `draft-linkedin-message` | Save a plain-text Cedar draft for an existing LinkedIn chat without sending. | `linkedin:read` |
+| `show-draft` | Display an already-existing draft using its real draft ID. | `email:read` |
 
 Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/draft-comms#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `draftEmail.draftCategory` | `emailResponses`, `scheduledFollowups`, `postMeetingFollowups`, `preMeetingPrep`, `conversationRefresh`, `executeTaskNow` | OPTIONAL - The semantic category of this draft. Pass when you know the purpose: emailResponses = replying to an inbound email, scheduledFollowups = a scheduled or proactive follow-up, postMeetingFollowups = follow-up after a meeting, preMeetingPrep = pre-meeting agenda or prep email. |
+| `draftSlackMessage.taskType` | `response`, `follow-up`, `post-meeting`, `pre-meeting`, `reactivation`, `manual`, `calendar`, `crm-opportunity`, `field-approval` | Task type for categorization. Use "response" for replies, "follow-up" for follow-ups, "pre-meeting" for pre-meeting prep, "manual" for general tasks. |
 
 ## Parameters
 

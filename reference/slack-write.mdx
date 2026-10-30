@@ -5,15 +5,21 @@ description: "Parameters, scopes, and response schema for slack-write."
 
 Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
-## Capability
+## Capabilities
+
+[Slack capabilities and guides](/capabilities/slack).
+
+<Accordion title="Full tool behavior and constraints">
 
 Pull a specific Slack thread from the connected user's LIVE Slack into an existing Cedar deal. ACTION: (1) sync-thread — given an explicit channelId + threadTs (from slack-read's search-live) and a conversationId, fetch the thread and attach it to that deal's timeline, where it's stored. Ingests + attaches only — it does not search. Params go under syncThread: &#123;...&#125;.
 
+</Accordion>
+
 ## Operations and scopes
 
-| Action | Baseline scope |
-| --- | --- |
-| `sync-thread` | `slack:read` |
+| Action | Capability | Baseline scope |
+| --- | --- | --- |
+| `sync-thread` | Ingest a Slack thread into the supported Cedar conversation context. | `slack:read` |
 
 Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
 

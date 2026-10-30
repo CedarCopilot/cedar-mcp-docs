@@ -7,32 +7,47 @@ Generated from Cedar's actual registration and Zod schemas. Your connection's `t
 
 <Warning>This tool is registered only inside Cedar. External MCP clients cannot call it. Its contract is included to document the complete module boundary.</Warning>
 
-## Capability
+## Capabilities
+
+[Boards capabilities and guides](/capabilities/boards).
+
+<Accordion title="Full tool behavior and constraints">
 
 A kanban whose CARDS are documents — a path, a share link, a `&#91;&#91;doc: id&#93;&#93;` address. The board is a FILE and knows nothing about what it is for. A card is a title, a description and a flat bag of `fields`; the board's `fields&#91;&#93;` declares which keys exist and their types.  COLUMNS ARE A VIEW, never a card property. `view.groupByField` names the field whose VALUES are the columns: point it at `status` and columns are statuses, at `owner` and the SAME cards regroup — no card changed. `move` writes that field. Empty draws under `__ungrouped__` unless the field sets a `default`.  ACTIONS  list_boards · read · get_schema · list_templates — what exists · a board + cards · its schema · starting schemas.  create_board — from a list_templates id, or empty (a placeholder axis your `fields` replace).  set_schema — THE HEADLINE VERB: fields, view, `triggers`, anything under `meta`. MERGES; replace:true wipes. add_fields/set_view/set_board_meta edit narrowly.  list_triggers — what fires this board and what it fires on a move. Authored via set_schema `triggers`.  add_card · set · move · comment · archive — file · edit (fields MERGE) · column/order · append · delete.  cards — search every board (omit `board`) or one: by column, field value, substring.  SET GLYPHS WHEN YOU CREATE THE BOARD. A select field may carry `optionIcons`, one per value, e.g. &#123;backlog:"circle-dashed",done:"circle-check"&#125;. Names: circle-dashed circle circle-dot circle-check circle-x circle-slash inbox play pause eye clock flag alert. Unknown names draw nothing.  THE SCHEMA IS YOURS AND OPEN. Invent fields, a view, triggers, a `meta` block — unknown keys survive verbatim, an unknown `type` (e.g. "sentiment") is kept and drawn as text. Refused only: a reserved key of the wrong SHAPE, or &gt;64KB.  ADOPTION: a card naming an undeclared field ADDS it — check `adopted`.
 
+</Accordion>
+
 ## Operations and scopes
 
-| Action | Baseline scope |
-| --- | --- |
-| `list_boards` | `in-app` — unavailable externally |
-| `list_templates` | `in-app` — unavailable externally |
-| `read` | `in-app` — unavailable externally |
-| `create_board` | `in-app` — unavailable externally |
-| `get_schema` | `in-app` — unavailable externally |
-| `set_schema` | `in-app` — unavailable externally |
-| `add_fields` | `in-app` — unavailable externally |
-| `set_view` | `in-app` — unavailable externally |
-| `set_board_meta` | `in-app` — unavailable externally |
-| `add_card` | `in-app` — unavailable externally |
-| `set` | `in-app` — unavailable externally |
-| `move` | `in-app` — unavailable externally |
-| `comment` | `in-app` — unavailable externally |
-| `cards` | `in-app` — unavailable externally |
-| `archive` | `in-app` — unavailable externally |
-| `list_triggers` | `in-app` — unavailable externally |
+| Action | Capability | Baseline scope |
+| --- | --- | --- |
+| `list_boards` | Discover authorized board documents. | `in-app` — unavailable externally |
+| `list_templates` | List available starting board schemas. | `in-app` — unavailable externally |
+| `read` | Read a board and its cards. | `in-app` — unavailable externally |
+| `create_board` | Create a board from a template or new schema. | `in-app` — unavailable externally |
+| `get_schema` | Inspect declared fields, view, triggers and metadata. | `in-app` — unavailable externally |
+| `set_schema` | Merge schema changes, or explicitly replace the schema when requested. | `in-app` — unavailable externally |
+| `add_fields` | Add field definitions without replacing unrelated board settings. | `in-app` — unavailable externally |
+| `set_view` | Change grouping or other view settings. | `in-app` — unavailable externally |
+| `set_board_meta` | Edit board metadata through the narrow operation. | `in-app` — unavailable externally |
+| `add_card` | Create a document-backed card with its title, description and fields. | `in-app` — unavailable externally |
+| `set` | Merge changes into a card's fields. | `in-app` — unavailable externally |
+| `move` | Move a card by updating the grouping field and order. | `in-app` — unavailable externally |
+| `comment` | Append a comment to a card. | `in-app` — unavailable externally |
+| `cards` | Search cards in one board or across boards by column, field value or substring. | `in-app` — unavailable externally |
+| `archive` | Archive the selected card through the board lifecycle. | `in-app` — unavailable externally |
+| `list_triggers` | Inspect what fires the board and what its moves can trigger. | `in-app` — unavailable externally |
 
 Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/board#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `add_card.visibility` | `private`, `team` |  |
+| `set.visibility` | `private`, `team` |  |
 
 ## Parameters
 

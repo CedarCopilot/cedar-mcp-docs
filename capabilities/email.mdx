@@ -31,6 +31,14 @@ Mail operations. ACTIONS: (1) fetch-attachments — download and read email atta
 | `search-live` | Search the live Gmail mailbox using Gmail query syntax, including mail not yet synced. | `email:read` |
 | `read-thread` | Read a complete live email thread with available observed tracking evidence. | `email:read` |
 
+### Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/mail#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `find.direction` | `inbound`, `outbound` | Filter by direction. Use "outbound" for emails the user sent. |
+
 ## send-email
 
 Availability: **external**. [Parameters and responses](/reference/send-email).

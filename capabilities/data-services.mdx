@@ -25,6 +25,20 @@ Update your enrichment defaults or your organization’s data policy. Read confi
 | --- | --- | --- |
 | `update` | Change versioned enrichment defaults or administrator-controlled organization data policy for future work. | `playbook:write` |
 
+### Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/data-settings#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `update.scope` | `self`, `organization` |  |
+| `update.patch.personProvider` | `fiber`, `crustdata`, `apollo`, `moltsets` |  |
+| `update.patch.companyProvider` | `fiber`, `crustdata`, `apollo`, `moltsets` |  |
+| `update.patch.allowedProviders[]` | `fiber`, `crustdata`, `apollo`, `moltsets` |  |
+| `update.patch.watchDefaults.provider` | `crustdata` | provider=crustdata |
+| `update.patch.watchDefaults.refreshFrequencyDays` | `1`, `3`, `7`, `14`, `30` | provider=crustdata |
+| `update.patch.watchDefaults.signalTypes[]` | `title_change`, `job_change`, `headline_change`, `person_location_change`, `education_added`, `skill_added`, `headcount_change`, `funding_change`, `news_added`, `funding_round_change`, `investor_added`, `acquisition_added`, `hiring_change`, `company_name_change`, `certification_added`, `honor_added`, `connection_count_change`, `funding_milestone_added`, `follower_count_change`, `industry_change`, `company_location_change` | provider=crustdata |
+
 ## Access and results
 
 Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).

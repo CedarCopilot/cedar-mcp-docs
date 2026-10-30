@@ -5,21 +5,35 @@ description: "Parameters, scopes, and response schema for mail."
 
 Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
-## Capability
+## Capabilities
+
+[Email capabilities and guides](/capabilities/email).
+
+<Accordion title="Full tool behavior and constraints">
 
 Mail operations. ACTIONS: (1) fetch-attachments — download and read email attachment content by Gmail message ID. Pass messageId (from "Message ID:" on the email) and optionally attachmentId to fetch one file. (2) list-sent — fetch emails the Cedar agent drafted that were actually sent, to compare drafted vs. sent bodies. Use maxSimilarity &lt; 0.7 to find emails the user rewrote significantly. Each result's messageId can be passed straight into fetch-attachments to pull its attachments (null for older rows). (3) find — query sent/received emails by STRUCTURED criteria: direction (inbound/outbound), has attachments, sender, subject/snippet substring, date range. Use this instead of semantic search when you need emails matching specific metadata — e.g. "sent emails with attachments", "emails from X last week". Returns messageId values you can pass straight into fetch-attachments. (4) search-live — search the user's LIVE Gmail mailbox by full Gmail query syntax (search.messages-style, e.g. "from:jane@acme.com newer_than:30d has:attachment"); returns thread ids + subject/from/snippet. Use this (not find/search-semantic) for mail that may never have synced, or when you need the freshest state. (5) read-thread — read a full email thread LIVE from the mailbox by threadId (from search-live), including per-message observed open/click counts, timestamps, tracking-enabled flags and full event history with observed IP addresses when available. NOTE: for semantic (meaning-based) search over ALREADY-SYNCED mail, use conversation.search-semantic with filters.eventType: "email"; search-live is a raw live-mailbox query instead. Each action takes its params in a same-named object (e.g. action: "fetch-attachments" pairs with a fetchAttachments: &#123;messageId&#125; object) — omit every params object except the one matching your chosen action.
 
+</Accordion>
+
 ## Operations and scopes
 
-| Action | Baseline scope |
-| --- | --- |
-| `fetch-attachments` | `email:read` |
-| `list-sent` | `email:read` |
-| `find` | `email:read` |
-| `search-live` | `email:read` |
-| `read-thread` | `email:read` |
+| Action | Capability | Baseline scope |
+| --- | --- | --- |
+| `fetch-attachments` | Read attachment content by a real message ID, optionally selecting one attachment. | `email:read` |
+| `list-sent` | Find Cedar-drafted emails that were actually sent and compare draft versus sent content. | `email:read` |
+| `find` | Query synced email using structured sender, direction, attachment, text and date criteria. | `email:read` |
+| `search-live` | Search the live Gmail mailbox using Gmail query syntax, including mail not yet synced. | `email:read` |
+| `read-thread` | Read a complete live email thread with available observed tracking evidence. | `email:read` |
 
 Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/mail#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `find.direction` | `inbound`, `outbound` | Filter by direction. Use "outbound" for emails the user sent. |
 
 ## Parameters
 

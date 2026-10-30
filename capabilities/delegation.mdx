@@ -35,6 +35,16 @@ Each action takes its params in a same-named object — omit every params object
 | `subagent` | Delegate Cedar-native work to an orchestrator or read-only evidence analysis to an analyzer. | `in-app` |
 | `code` | Delegate bounded code execution, external APIs, file generation or web research to the code executor. | `in-app` |
 
+### Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/delegate#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `subagent.type` | `orchestrator`, `analyzer` | Type of subagent |
+| `subagent.skillToLoad` | `drafting`, `knowledge-base`, `calendar`, `conversation`, `tasks`, `multi-conversation-operations`, `customer-support`, `external-systems`, `connected-systems`, `research`, `documents`, `tables`, `notifications`, `cedar-configuration`, `collateral`, `wiki-extraction`, `coaching`, `run-sql`, `field-query`, `deal-intelligence-analysis`, `analysis-decomposition`, `daily-agenda`, `aop-selection`, `domain-identification`, `event-summarization`, `conversation-action-management`, `conversation-inspection` | Optional skill to pre-load in subagent (includes both chat and execution skills). Not typically needed for analyzer type. |
+| `code.drive_access` | `read`, `collateral-write` | Google Workspace access level for this run. Defaults to 'read' — the executor may list, read and export Drive files but cannot create or modify anything. Pass 'collateral-write' ONLY when the task is to author a new Google Doc, Sheet or Slides deck (e.g. collateral creation); it additionally allows create/copy/batchUpdate. Deleting a Drive file, emptying the trash and any sharing/permissions change are blocked in BOTH modes and cannot be enabled. |
+
 <Accordion title="All nested operations and modes (2)">
 
 | Selector | Choice | Variant |

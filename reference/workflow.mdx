@@ -7,16 +7,22 @@ Generated from Cedar's actual registration and Zod schemas. Your connection's `t
 
 <Warning>This tool is registered only inside Cedar. External MCP clients cannot call it. Its contract is included to document the complete module boundary.</Warning>
 
-## Capability
+## Capabilities
+
+[Workflow buttons capabilities and guides](/capabilities/workflows).
+
+<Accordion title="Full tool behavior and constraints">
 
 Discover mutation operations for workflow document buttons. Use these existing input schemas unchanged. Author workflow documents with document-write.write and fenced workflow rows. No operation runs until the user clicks. inspect_capacity reads an authorized document’s remaining execution-history capacity; a full document needs a manually configured successor, never automatic pruning. agent_prompt and add_to_chat_context are also supported button ops.
 
+</Accordion>
+
 ## Operations and scopes
 
-| Action | Baseline scope |
-| --- | --- |
-| `list_operations` | `in-app` — unavailable externally |
-| `inspect_capacity` | `in-app` — unavailable externally |
+| Action | Capability | Baseline scope |
+| --- | --- | --- |
+| `list_operations` | Discover eligible mutation operations and their unchanged canonical input schemas for workflow buttons. | `in-app` — unavailable externally |
+| `inspect_capacity` | Read a workflow document's remaining execution-history capacity. | `in-app` — unavailable externally |
 
 Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
 

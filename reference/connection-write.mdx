@@ -5,11 +5,43 @@ description: "Parameters, scopes, and response schema for connection-write."
 
 Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
-## Capability
+## Capabilities
+
+[Connections capabilities and guides](/capabilities/connections).
+
+<Accordion title="Full tool behavior and constraints">
 
 Change how a CONNECTED INTEGRATION behaves. Call config-read read-settings sections:&#91;"connections"&#93; first for the connectionId every change type below needs. CHANGES: (1) update_crm_field_mappings — add/update/remove a mapping between a CRM field and a Cedar field, including template mappings and per-placeholder transforms. Set isMultiPicklist here for Salesforce/Attio multi-selects. Never hand-type allowedValues: options come from config-write sourceFromCrm/link-mapping. (2) update_slack_sync_config — which Slack channels sync into deals, and how new ones are handled. scope="org" (org admin only) sets the org-wide DEFAULT instead of one connection. (3) update_crm_settings — sync/push switches, dealSyncFilter, and dealWriteGuard (never write to HubSpot deals matching a field/value map). (4) update_connection_instructions — standing rules, chat only (background runs never read them; CRM rules go in the crm-updater). REPLACES the existing text in full, so read it first. (5) manage_playbook_webhook — register what FIRES a &lt;trigger type="webhook"&gt; block, e.g. a Slack channel. (6) disconnect_linkedin_seat / disconnect_whatsapp_account — disconnect a seat/line by unipileAccountId. Connecting is human-only; send the user config-read's connectLinks link. (7) update_whatsapp_sync_config — "index every chat" override and/or per-chat consent tracking. (8) resolve_channel_link_proposal — link or dismiss an ambiguous Slack/LinkedIn/WhatsApp channel against a deal (op=resolve), or re-run the org's automatic linking pass (op=sweep). For AOP custom fields, their options, and their CRM field mappings use config-write. For the user's own settings (mail/notification preferences, inbox layout/tabs, task groups, webhook export) use workspace-write. For credentials and MCP servers use systems-write. For playbook, subagent, and resource file edits use write-document.
 
+</Accordion>
+
 Required baseline scope: `playbook:write`. Additional role and target checks apply.
+
+## Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/connection-write#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `change.type` | `update_crm_field_mappings` | type=update_crm_field_mappings |
+| `change.op` | `add`, `update`, `remove` | type=update_crm_field_mappings — add: create a new field mapping. update: change an existing mapping (matched by crmFieldName). remove: delete a mapping by crmFieldName. |
+| `change.transformations.*.type` | `date`, `number`, `string`, `json` | type=update_crm_field_mappings |
+| `change.referenceType` | `contact`, `company`, `deal` | type=update_crm_field_mappings — This CRM field is a reference/lookup to another record type, not a plain value. |
+| `change.type` | `manage_playbook_webhook` | type=manage_playbook_webhook |
+| `change.op` | `create`, `enable`, `disable`, `list`, `test`, `delete` | type=manage_playbook_webhook |
+| `change.scope` | `user`, `org` | type=manage_playbook_webhook — Required for op=create. org fires ONCE org-wide (org admin only); user fires per registered user. |
+| `change.sourceType` | `http`, `slack_channel` | type=manage_playbook_webhook — Default http (mints a POST URL). slack_channel fires on each message in sourceRef. |
+| `change.type` | `update_slack_sync_config` | type=update_slack_sync_config |
+| `change.scope` | `user`, `org` | type=update_slack_sync_config — Defaults "user" (configures only connectionId). "org" (org admin only) sets the ORG-WIDE DEFAULT instead — connectionId is ignored — used by any Slack connection in the org with no explicit config of its own; an explicit per-connection value always wins over this default. |
+| `change.type` | `update_crm_settings` | type=update_crm_settings |
+| `change.stageRequiredFieldsOp.op` | `set`, `remove` | type=update_crm_settings |
+| `change.type` | `update_connection_instructions` | type=update_connection_instructions |
+| `change.type` | `disconnect_linkedin_seat` | type=disconnect_linkedin_seat |
+| `change.type` | `disconnect_whatsapp_account` | type=disconnect_whatsapp_account |
+| `change.type` | `update_whatsapp_sync_config` | type=update_whatsapp_sync_config |
+| `change.type` | `resolve_channel_link_proposal` | type=resolve_channel_link_proposal |
+| `change.op` | `resolve`, `sweep` | type=resolve_channel_link_proposal — resolve: link (or dismiss) ONE ambiguous Slack/LinkedIn/WhatsApp channel against a specific deal. sweep: re-run the org's automatic linking pass and commit its verdicts — no specific container needed. |
+| `change.channel` | `slack`, `linkedin`, `whatsapp` | type=resolve_channel_link_proposal — Required for op=resolve. |
 
 ## Parameters
 

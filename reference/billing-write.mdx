@@ -5,29 +5,51 @@ description: "Parameters, scopes, and response schema for billing-write."
 
 Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
-## Capability
+## Capabilities
+
+[Billing capabilities and guides](/capabilities/billing).
+
+<Accordion title="Full tool behavior and constraints">
 
 Manage independent credit billing owned by the authenticated user’s organization. ensure-account creates an unfunded organization account and requires org administrator authority; personal accounts are historical read-only records; save-limit requires the current version from billing-read.limits and exact microcredit amounts. Caps apply to all matching account/member/feature/meter policies. reconcile expires stale holds and rebuilds balances; retry-delivery retries only a known pre-delivery infrastructure failure. checkout and finance-link return hosted payment URLs for approved offers; only a verified paid webhook grants credits. write-grant/revoke-grant require org admin authority. grant.recipientUserId identifies the grant recipient; member limits use policy.scope.memberUserId. Neither changes the acting user. request-import queues a staff ownership review. configure-postpaid requires an organization billing administrator, current version and an explicit user-authorized consentReference; read billing-read.postpaid first and select postpaid.subscriptionId from its verified subscriptions when ambiguous. Extra usage goes on that existing invoice. Never enable monthly charges as a side effect of enrichment. Existing subscription prices and quantities never change.
 
+</Accordion>
+
 ## Operations and scopes
 
-| Action | Baseline scope |
-| --- | --- |
-| `ensure-account` | `billing:write` |
-| `save-limit` | `billing:write` |
-| `read-alert` | `billing:write` |
-| `reconcile` | `billing:write` |
-| `retry-delivery` | `billing:write` |
-| `checkout` | `billing:write` |
-| `portal` | `billing:write` |
-| `finance-link` | `billing:write` |
-| `write-grant` | `billing:write` |
-| `revoke-grant` | `billing:write` |
-| `request-import` | `billing:write` |
-| `configure-postpaid` | `billing:write` |
-| `reconcile-postpaid` | `billing:write` |
+| Action | Capability | Baseline scope |
+| --- | --- | --- |
+| `ensure-account` | Create an unfunded organization billing account with administrator authority. | `billing:write` |
+| `save-limit` | Write a versioned spending limit using exact microcredit amounts. | `billing:write` |
+| `read-alert` | Acknowledge the selected billing alert. | `billing:write` |
+| `reconcile` | Expire stale holds and rebuild the account's computed balances. | `billing:write` |
+| `retry-delivery` | Retry a known eligible infrastructure failure before billing delivery. | `billing:write` |
+| `checkout` | Return a hosted checkout URL for an approved offer; a verified payment webhook grants credits. | `billing:write` |
+| `portal` | Return the authorized hosted billing-management portal link. | `billing:write` |
+| `finance-link` | Create a supported finance/payment link for an approved offer. | `billing:write` |
+| `write-grant` | Create or update a spending grant with organization administrator authority. | `billing:write` |
+| `revoke-grant` | Revoke a spending grant through the authorized administrative path. | `billing:write` |
+| `request-import` | Queue a staff review of historical account ownership/import evidence. | `billing:write` |
+| `configure-postpaid` | Configure monthly extra-usage billing with current version, verified subscription and explicit consent reference. | `billing:write` |
+| `reconcile-postpaid` | Reconcile supported postpaid state without changing existing subscription prices or quantities. | `billing:write` |
 
 Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/billing-write#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `scope` | `organization` |  |
+| `policy.scope.kind` | `account` | kind=account |
+| `policy.scope.kind` | `member` | kind=member |
+| `policy.scope.kind` | `meter` | kind=meter |
+| `policy.scope.kind` | `feature` | kind=feature |
+| `policy.scope.kind` | `features` | kind=features |
+| `policy.period` | `utc_day`, `utc_month`, `operation` |  |
+| `policy.delivery[]` | `in_app`, `email` |  |
+| `grant.role` | `member`, `finance`, `admin` |  |
 
 ## Parameters
 

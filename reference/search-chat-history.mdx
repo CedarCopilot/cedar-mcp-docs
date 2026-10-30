@@ -7,9 +7,15 @@ Generated from Cedar's actual registration and Zod schemas. Your connection's `t
 
 <Warning>This tool is registered only inside Cedar. External MCP clients cannot call it. Its contract is included to document the complete module boundary.</Warning>
 
-## Capability
+## Capabilities
+
+[Chat context and history capabilities and guides](/capabilities/chat).
+
+<Accordion title="Full tool behavior and constraints">
 
 Search the user's own past chat threads by title AND message content — use this when the user asks about a previous conversation ("which chat did I...", "find that chat where...", "what did we discuss about...") that isn't the one you're currently in.  Pass &#123; query, limit? &#125;. Returns matching threads ordered by most recently active, each with a snippet of the matching message when the match wasn't in the thread's title. Pass a result's threadId to load-chat-history to read its content into your own context, or to switch-chat-thread to move the user's screen into it.
+
+</Accordion>
 
 Required baseline scope: `in-app`. Additional role and target checks apply.
 

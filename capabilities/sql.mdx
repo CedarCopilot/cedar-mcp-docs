@@ -37,6 +37,14 @@ holds.
 
 Single-call family. Baseline scope: `crm:read`.
 
+### Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/run-sql#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `format` | `jsonl`, `csv`, `json` | File format when `out` is true. Default jsonl (one record per line) — prefer it, because CRM text contains newlines and line-based tools miscount CSV rows. csv for spreadsheets. |
+
 ## Access and results
 
 Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).

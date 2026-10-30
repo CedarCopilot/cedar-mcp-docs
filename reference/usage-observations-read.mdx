@@ -5,18 +5,32 @@ description: "Parameters, scopes, and response schema for usage-observations-rea
 
 Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
-## Capability
+## Capabilities
+
+[Usage and delivery recovery capabilities and guides](/capabilities/usage).
+
+<Accordion title="Full tool behavior and constraints">
 
 Inspect configured usage producers or your own durable shadow measurements for an authorized billing account. Shows known/unknown quantity and delivery status without enabling AI charges, submitting usage, or invoking providers. Account finance users still see only their own observation summaries.
 
+</Accordion>
+
 ## Operations and scopes
 
-| Action | Baseline scope |
-| --- | --- |
-| `producers` | `billing:read` |
-| `list` | `billing:read` |
+| Action | Capability | Baseline scope |
+| --- | --- | --- |
+| `producers` | Discover configured producers of durable usage observations. | `billing:read` |
+| `list` | Read the caller's shadow measurements, quantity certainty and ledger-delivery status. | `billing:read` |
 
 Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/usage-observations-read#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `state` | `awaiting_evidence`, `pending`, `leased`, `delivered`, `superseded`, `blocked` |  |
 
 ## Parameters
 

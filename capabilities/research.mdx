@@ -9,6 +9,102 @@ Research people and companies, discover provider capabilities, and explicitly us
 
 - [Research and enrichment](/modules/research)
 
+## Enrichment operations and field coverage
+
+The discovery catalog exposes **11 enrichment operations** across **5 providers**. These operation IDs are catalog entries selected through `choose-enrichment`, not additional top-level MCP tools. Catalog presence does not check credentials or authorize paid execution. For manual person/company enrichment, explicitly select **Fiber**; the shipped default is recorded separately in the tool contract. There is no automatic provider fallback.
+
+### fiber
+
+| Operation ID | Identity alternatives | Supported output fields | Cache TTL |
+| --- | --- | --- | --- |
+| `fiber.kitchenSinkPerson` | `person.workEmail` **or** `person.linkedinUrl` | `person.workEmail`, `person.fullName`, `person.title`, `person.headline`, `person.linkedinUrl`, `person.photoUrl`, `person.currentCompanyDomain`, `company.linkedinId` | 30 days |
+| `fiber.profilePosts` | `person.linkedinUrl` | `person.recentPosts` | 7 days |
+| `fiber.kitchenSinkCompany` | `company.domain` **or** `company.linkedinId` | `company.domain`, `company.name`, `company.linkedinUrl`, `company.logoUrl`, `company.description`, `company.industry`, `company.website`, `company.foundedYear`, `company.hqCity`, `company.hqCountry`, `company.hqFull`, `company.employeeCount` | 30 days |
+
+Adapter boundaries: Logo-only companyLogo/bulkCompanyLogos is a documented next optimization, not implemented in this catalog. Current base enrichment keeps Kitchen Sink for the full company profile. The vendor supports name plus company resolution, richer history, live refresh, contact reveal and company insights; Cedar exposes only the inputs and fields listed for each operation below. Contact reveal is separate from profile enrichment.
+
+### crustdata
+
+| Operation ID | Identity alternatives | Supported output fields | Cache TTL |
+| --- | --- | --- | --- |
+| `crustdata.personEnrich` | `person.workEmail` **or** `person.linkedinUrl` | `person.fullName`, `person.title`, `person.headline`, `person.summary`, `person.location`, `person.linkedinUrl`, `person.twitterHandle`, `person.languages`, `person.currentCompanyDomain`, `company.linkedinId`, `person.schools`, `person.education`, `person.pastCompanies` | 30 days |
+| `crustdata.companyEnrich` | `company.domain` **or** `company.linkedinId` | `company.domain`, `company.name`, `company.website`, `company.industry`, `company.foundedYear`, `company.twitterHandle`, `company.employeeCount`, `company.description`, `company.linkedinUrl`, `company.linkedinId`, `company.logoUrl`, `company.hqCity`, `company.hqCountry`, `company.employeeCountRange`, `company.totalFundingUsd`, `company.lastFundingStage`, `company.lastFundingAmountUsd`, `company.lastFundingDate`, `company.headcountByRole`, `company.salesHeadcount`, `company.headcountGrowth`, `company.jobOpeningsCount`, `company.recentJobOpenings` | 30 days |
+| `linkedin.deobfuscate` | `person.linkedinMemberUrn` | `person.linkedinUrl`, `person.fullName`, `person.title`, `person.currentCompanyDomain`, `company.linkedinId` | 30 days |
+
+Adapter boundaries: Vendor fields outside Cedar’s supported signal list and saved-search datasets are not configurable through Cedar. Realtime, semantic and geographic discovery require a separate adapter.
+
+### moltsets
+
+| Operation ID | Identity alternatives | Supported output fields | Cache TTL |
+| --- | --- | --- | --- |
+| `moltsets.businessProfile` | `person.workEmail` **or** `person.linkedinUrl` | `person.workEmail`, `person.fullName`, `person.title`, `person.headline`, `person.linkedinUrl`, `person.currentCompanyDomain` | 30 days |
+| `moltsets.companyByDomain` | `company.domain` | `company.domain`, `company.name`, `company.linkedinUrl`, `company.logoUrl`, `company.description`, `company.industry`, `company.hqCity`, `company.hqCountry`, `company.employeeCount` | 30 days |
+
+Adapter boundaries: Broad people/company discovery, name-to-email, mobile phones, personal-email lookup, advertising identifiers and IP-to-company are not exposed by this adapter. Mobile phone tokens are billed separately by the vendor.
+
+### apollo
+
+| Operation ID | Identity alternatives | Supported output fields | Cache TTL |
+| --- | --- | --- | --- |
+| `apollo.personEnrich` | `person.workEmail` | `person.workEmail`, `person.fullName`, `person.title`, `person.headline`, `person.linkedinUrl`, `person.photoUrl`, `person.twitterHandle`, `person.githubHandle`, `person.currentCompanyDomain` | 30 days |
+| `apollo.companyEnrich` | `company.domain` | `company.domain`, `company.name`, `company.website`, `company.description`, `company.industry`, `company.employeeCount`, `company.logoUrl`, `company.linkedinUrl`, `company.hqCity`, `company.foundedYear` | 30 days |
+
+### exa
+
+| Operation ID | Identity alternatives | Supported output fields | Cache TTL |
+| --- | --- | --- | --- |
+| `exa.search` | `person.fullName`, `person.currentCompanyName` | `person.recentNewsMentions` | 1 days |
+
+### Supported field meanings
+
+Fields are supported mappings, not a promise that every record has a value. Profile enrichment and contact reveal are separate operations. Only fields returned by the exposed discovery catalog are listed here.
+
+| Field | Value type | Meaning |
+| --- | --- | --- |
+| `person.fullName` | string | Full name |
+| `person.headline` | string | LinkedIn headline |
+| `person.summary` | string | Profile summary / about |
+| `person.photoUrl` | string | Profile photo URL |
+| `person.linkedinUrl` | string | Canonical LinkedIn profile URL |
+| `person.githubHandle` | string | GitHub username |
+| `person.twitterHandle` | string | Twitter/X handle |
+| `person.location` | string | Free-text location |
+| `person.title` | string | Current job title |
+| `person.currentCompanyDomain` | string | Current employer domain |
+| `person.pastCompanies` | string&#91;&#93; | Prior employer names |
+| `person.education` | object&#91;&#93; | Education &#123;school,degree,field,years&#125; |
+| `person.schools` | string&#91;&#93; | School names |
+| `person.languages` | string&#91;&#93; | Languages |
+| `person.recentPosts` | object&#91;&#93; | Recent posts/activity |
+| `person.recentNewsMentions` | object&#91;&#93; | Recent web/news mentions (Exa search) |
+| `person.workEmail` | string | Verified work email |
+| `company.name` | string | Company name |
+| `company.domain` | string | Primary domain |
+| `company.website` | string | Website URL |
+| `company.description` | string | Description |
+| `company.logoUrl` | string | Logo URL |
+| `company.linkedinUrl` | string | LinkedIn company URL |
+| `company.linkedinId` | string | LinkedIn organization id (chains person→company without a domain) |
+| `company.twitterHandle` | string | Twitter/X handle |
+| `company.foundedYear` | number | Year founded |
+| `company.industry` | string | Primary industry |
+| `company.hqCity` | string | HQ city |
+| `company.hqCountry` | string | HQ country |
+| `company.hqFull` | string | HQ formatted address |
+| `company.employeeCount` | number | Employee count |
+| `company.employeeCountRange` | string | Employee count range |
+| `company.headcountGrowth` | object | Headcount growth by period &#123;1m,3m,6m,12m&#125; |
+| `company.headcountByRole` | object | Headcount by role (absolute counts per role bucket) |
+| `company.salesHeadcount` | number | Number of people in sales roles (summed from headcountByRole sales buckets) |
+| `company.totalFundingUsd` | number | Total raised, USD |
+| `company.lastFundingStage` | string | Last round type/stage |
+| `company.lastFundingAmountUsd` | number | Last round amount, USD |
+| `company.lastFundingDate` | date | Last fundraise date |
+| `company.jobOpeningsCount` | number | Open job count |
+| `company.recentJobOpenings` | object&#91;&#93; | Recent job openings |
+
+Discovery is read-only. Automatic conversation base-company enrichment is subscription-included through the trusted conversation setup service. Enrichment requested by an agent to fulfill a task and explicitly activated watches remain credit-metered; background task execution is not an exemption. Provider-native credits and catalog estimates are not Cedar retail prices. Paid execution requires current organization policy, credentials and spending admission; use actual receipts and provider charge evidence.
+
 ## research
 
 Availability: **external**. [Parameters and responses](/reference/research).
@@ -31,6 +127,17 @@ Use choose-enrichment with chooseEnrichment:&#123;description,question,knownFiel
 | `enrich-person` | Enrich a person through the explicitly selected supported provider; use Fiber for manual enrichment. | `enrichment:write` |
 | `web-search` | Search the web from Cedar's in-app surface; unavailable on external MCP. | `in-app` |
 | `web-fetch` | Fetch web content from Cedar's in-app surface; unavailable on external MCP. | `in-app` |
+
+### Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/research#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `enrichCompany.provider` | `fiber`, `crustdata`, `apollo`, `moltsets` |  |
+| `chooseEnrichment.provider` | `fiber`, `crustdata`, `apollo`, `moltsets` |  |
+| `enrichPerson.provider` | `fiber`, `crustdata`, `apollo`, `moltsets` |  |
+| `webSearch.sources[]` | `news`, `web` |  |
 
 ## Access and results
 

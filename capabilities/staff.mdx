@@ -65,6 +65,20 @@ Cedar staff only. organization-accounts paginates member organizations; provisio
 | `organization-accounts` | Page through member organizations and their billing-account state. | `billing:read` |
 | `provision-organization-accounts` | Provision reviewed organization accounts without creating funds or spending grants. | `billing:write` |
 
+### Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/billing-admin#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `offer.type` | `topup`, `subscription` |  |
+| `offer.grantExpiry` | `never`, `paid_period_end` |  |
+| `catalog.meters[].chargingMode` | `disabled`, `shadow`, `billable` |  |
+| `catalog.rates[].billableOutcome` | `success_only`, `consumed_units` |  |
+| `catalog.rates[].cachePolicy` | `free` |  |
+| `allowance.quantityBasis` | `subscription`, `paid_seat` |  |
+| `allowance.expiresAtPeriodEnd` | `true` |  |
+
 <Accordion title="All nested operations and modes (2)">
 
 | Selector | Choice | Variant |

@@ -52,6 +52,15 @@ Cedar Docs: persistent agent-curated documents. ACTIONS: (1) write: upsert (repl
 | `share` | Create or revoke supported document access for the intended audience. | `docs:read` |
 | `request-file` | Request a file through the supported Cedar interaction; check surface availability. | `docs:read` |
 
+### Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/document-write#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `write.type` | `document`, `workflow`, `html`, `agenda`, `conversation_agenda`, `attachment`, `table` | Behavioural type for the document. "document" = Y.js markdown (default for all text). "workflow" = markdown with actionable workflow JSON fences; saving never executes buttons. "html" = self-contained HTML blob rendered as iframe (use for presentations, reports). "agenda" = Y.js + task sync for the user daily agenda. "conversation_agenda" = Y.js + task sync for a per-conversation agenda. "attachment" = file reference (no content; details in metadata). "table" = spreadsheet, rendered as a data grid; only for CREATING one or rewriting it whole (frontmatter schema + one pipe table with a leading _id column) — use the `table` tool for every partial read/write, because a partial write routed through here rewrites every row and destroys row identity. |
+| `write.mode` | `upsert`, `append`, `patch` | Write mode. upsert=full replace (best for overview, strategy, meeting-prep, or ANY whole-document rewrite/restructure/dedup — pass the complete new content directly). append=add to end (best for canvas, research, chat history). patch=surgical edit for a SMALL, localized change only (read doc first, then replace old_string with new_string) — do not use patch with old_string/new_string spanning the whole document; that forces holding two full copies in context and will exhaust it on a large doc. Use upsert instead. |
+
 <Accordion title="All nested operations and modes (10)">
 
 | Selector | Choice | Variant |

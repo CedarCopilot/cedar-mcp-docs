@@ -5,26 +5,56 @@ description: "Parameters, scopes, and response schema for config-write."
 
 Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
-## Capability
+## Capabilities
+
+[Configuration capabilities and guides](/capabilities/configuration).
+
+<Accordion title="Full tool behavior and constraints">
 
 For "why didn't X happen"/system-behavior questions, load-skill('cedar-configuration') first — these actions write/mutate raw config, they don't explain behavior. ACTIONS: (1) reassign-aop — re-evaluate/reassign a conversation's AOP. (2) create-field — add a custom field. A field backed by a CRM picklist/multi-select (select OR list) is created with sourceFromCrm — never hand-typed options — then read back (config-read list-fields) to confirm it has options. (3) update-field — edit a custom or built-in field's label/description/governance flags. (4) delete-field — remove a custom field. (5) link-mapping — associate/reconcile a field with an external CRM field; the only agent tool path that changes a mapped field's options. (6) unlink-mapping — remove that association. (7-9) add/update/remove-field-option — manage a select/list field's options by value. (10) set-stage-criteria — set a stage's entry or exit criteria text in its PLAYBOOK.md. This changes the shared stage process for the whole team (org-level); it is not for one rep's personal rule. MUST load-skill('cedar-configuration', 'fields-and-values') before using the field actions — it has the full rules (built-in field keys, the mapped-field options restriction, delete/reconciliation safety) this omits. Each action takes its params in a same-named object (e.g. action: "create-field" pairs with a createField: &#123;...&#125; object) — omit every params object except the one matching your chosen action. For a CONNECTED INTEGRATION's own config (CRM field mappings, Slack sync, sync toggles, connection instructions, playbook webhooks) use connection-write. For inbox layout, inbox tabs, and task groups use workspace-write. For credentials and MCP servers use systems-write.
 
+</Accordion>
+
 ## Operations and scopes
 
-| Action | Baseline scope |
-| --- | --- |
-| `reassign-aop` | `playbook:write` |
-| `create-field` | `playbook:write` |
-| `update-field` | `playbook:write` |
-| `delete-field` | `playbook:write` |
-| `link-mapping` | `playbook:write` |
-| `unlink-mapping` | `playbook:write` |
-| `add-field-option` | `playbook:write` |
-| `update-field-option` | `playbook:write` |
-| `remove-field-option` | `playbook:write` |
-| `set-stage-criteria` | `playbook:write` |
+| Action | Capability | Baseline scope |
+| --- | --- | --- |
+| `reassign-aop` | Re-evaluate a conversation's AOP, with options to clear old working memory and initialize new fields. | `playbook:write` |
+| `create-field` | Create a custom field with its type, definition and supported settings. | `playbook:write` |
+| `update-field` | Edit an existing field; its type is immutable and mapped picklist options require reconciliation. | `playbook:write` |
+| `delete-field` | Remove a field through the supported configuration lifecycle. | `playbook:write` |
+| `link-mapping` | Link a CRM field and reconcile real provider options, reporting removed options for review. | `playbook:write` |
+| `unlink-mapping` | Remove the selected field's external CRM mapping. | `playbook:write` |
+| `add-field-option` | Add an allowed option where field governance and mapping rules permit it. | `playbook:write` |
+| `update-field-option` | Update a field option while respecting mapped-option constraints. | `playbook:write` |
+| `remove-field-option` | Remove a field option through the supported option operation. | `playbook:write` |
+| `set-stage-criteria` | Set a shared sales stage's entry and exit criteria. | `playbook:write` |
 
 Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/config-write#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `createField.internalSignals.definitions[].eligibility` | `any`, `lost_or_lapsed`, `customer` |  |
+| `createField.signal.enabled` | `true` |  |
+| `createField.scope` | `user`, `org` | Field owner: user AOP or linked org AOP. list-fields returns both; CRM mappings stay user-scoped. |
+| `createField.type` | `text`, `number`, `date`, `boolean`, `select`, `currency`, `url`, `email`, `phone`, `list`, `fraction`, `json`, `people`, `summarized_history`, `deal_brief` | Field type. Fixed forever once created — there is no update-field path to change it. |
+| `updateField.internalSignals.definitions[].eligibility` | `any`, `lost_or_lapsed`, `customer` |  |
+| `updateField.signal.enabled` | `true` |  |
+| `updateField.scope` | `user`, `org` | Field owner: user AOP or linked org AOP. list-fields returns both; CRM mappings stay user-scoped. |
+| `deleteField.scope` | `user`, `org` | Field owner: user AOP or linked org AOP. list-fields returns both; CRM mappings stay user-scoped. |
+| `linkMapping.scope` | `user`, `org` | Field owner: user AOP or linked org AOP. list-fields returns both; CRM mappings stay user-scoped. |
+| `linkMapping.resolutions[].action` | `remap-to` | action=remap-to — Bulk-migrates every existing stored value from oldValue to newValue, then drops the old option. |
+| `linkMapping.resolutions[].action` | `keep-legacy` | action=keep-legacy — Leaves existing stored values as-is (no longer selectable going forward) and drops the old option. |
+| `addFieldOption.scope` | `user`, `org` | Field owner: user AOP or linked org AOP. list-fields returns both; CRM mappings stay user-scoped. |
+| `updateFieldOption.scope` | `user`, `org` | Field owner: user AOP or linked org AOP. list-fields returns both; CRM mappings stay user-scoped. |
+| `removeFieldOption.scope` | `user`, `org` | Field owner: user AOP or linked org AOP. list-fields returns both; CRM mappings stay user-scoped. |
+| `removeFieldOption.resolution.action` | `remap-to` | action=remap-to — Bulk-migrates every existing stored value from this option to newValue, then removes it. |
+| `removeFieldOption.resolution.action` | `keep-legacy` | action=keep-legacy — Leaves existing stored values as-is (no longer selectable going forward) and removes the option. |
+| `setStageCriteria.field` | `entry`, `exit` | Which criteria block to set. |
 
 ## Parameters
 

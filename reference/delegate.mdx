@@ -7,18 +7,34 @@ Generated from Cedar's actual registration and Zod schemas. Your connection's `t
 
 <Warning>This tool is registered only inside Cedar. External MCP clients cannot call it. Its contract is included to document the complete module boundary.</Warning>
 
-## Capability
+## Capabilities
+
+[Delegation and code execution capabilities and guides](/capabilities/delegation).
+
+<Accordion title="Full tool behavior and constraints">
 
 Creating/changing a CRM deal or conversation? FIRST read the effective crm-updater path from the agent directory (document-read), or use injected &lt;crm_write_rules&gt;, before searching email. Fallback only: #subagents/crm-updater.md. Delegate a self-contained task to a child execution. Two kinds:  ACTIONS: - subagent: hand off to a Cedar subagent. Pass subagent: &#123; type, task, ... &#125;.   - type="orchestrator" — Cedar-native WRITES only (drafts, field updates, tasks) across 1+ conversations. NOT for code/HTML/JSON artifacts or external systems (Google Drive/Docs, HubSpot, Salesforce, Slack API, curl) — use action: "code" for those.   - type="analyzer" — READ-ONLY research over Cedar conversation content (emails, meetings, notes) with citations. Cannot write or call external systems. - code: hand off to a short-lived Claude Code session with Bash / WebSearch / WebFetch / Read / Write / Edit / Glob / Grep. Pass code: &#123; task, ... &#125;. Use for ALL external API calls, code execution, file generation, and web research. Describe the business goal, not the implementation.  Each action takes its params in a same-named object — omit every params object except the one matching your chosen action.
 
+</Accordion>
+
 ## Operations and scopes
 
-| Action | Baseline scope |
-| --- | --- |
-| `subagent` | `in-app` — unavailable externally |
-| `code` | `in-app` — unavailable externally |
+| Action | Capability | Baseline scope |
+| --- | --- | --- |
+| `subagent` | Delegate Cedar-native work to an orchestrator or read-only evidence analysis to an analyzer. | `in-app` — unavailable externally |
+| `code` | Delegate bounded code execution, external APIs, file generation or web research to the code executor. | `in-app` — unavailable externally |
 
 Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/delegate#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `subagent.type` | `orchestrator`, `analyzer` | Type of subagent |
+| `subagent.skillToLoad` | `drafting`, `knowledge-base`, `calendar`, `conversation`, `tasks`, `multi-conversation-operations`, `customer-support`, `external-systems`, `connected-systems`, `research`, `documents`, `tables`, `notifications`, `cedar-configuration`, `collateral`, `wiki-extraction`, `coaching`, `run-sql`, `field-query`, `deal-intelligence-analysis`, `analysis-decomposition`, `daily-agenda`, `aop-selection`, `domain-identification`, `event-summarization`, `conversation-action-management`, `conversation-inspection` | Optional skill to pre-load in subagent (includes both chat and execution skills). Not typically needed for analyzer type. |
+| `code.drive_access` | `read`, `collateral-write` | Google Workspace access level for this run. Defaults to 'read' — the executor may list, read and export Drive files but cannot create or modify anything. Pass 'collateral-write' ONLY when the task is to author a new Google Doc, Sheet or Slides deck (e.g. collateral creation); it additionally allows create/copy/batchUpdate. Deleting a Drive file, emptying the trash and any sharing/permissions change are blocked in BOTH modes and cannot be enabled. |
 
 ## Parameters
 

@@ -5,30 +5,53 @@ description: "Parameters, scopes, and response schema for task."
 
 Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
-## Capability
+## Capabilities
+
+[Tasks capabilities and guides](/capabilities/tasks).
+
+<Accordion title="Full tool behavior and constraints">
 
 Task management; each action takes same-named params. dealList: shared deal tasks, recommendations, owner, assigner and note. creationOptions: eligible assignees; conversationId optional. createAssigned: manual task or personal reminder with explicit dueDate, optional conversationId, assignee and assignmentNote. Omit conversationId when no deal is selected; preserve a source Slack permalink in notes. Personal reminders never schedule automatic agent execution. complete: mark done. delete: dismiss/delete; draft deletion needs authorization. updateDueDate: edit date. start: prepare caller-owned work in the current Cedar chat; follow seedPrompt. Does not execute or send. Recommendations stay recommended; no accept action. Never impersonate teammates. applyApproval: apply an exact saved CRM approval on user request; await CRM confirmation, no agent fallback. Apply all: list scope="#crm-approvals", apply sequentially, report failures. list: own active tasks by conversation or scope="#today"/"#overdue"; groups/outputKinds filters, includeRecommended=true for proposals. create: requires a real deal for automatic drafting via agentExecutionEnabled. dueDate="NOW" allowed for non-agent tasks without a future blocker. update: edit/reschedule/toggle execution/mark done; cleanupDraft=true removes stale draft on completion. cancel: obsolete tasks by IDs/age/conversation. Current-run tasks protected from update/cancel. assignmentOptions: owners, authority, assignmentVersion, draft-reset needs, pendingTransfer. reassign: get options; needs owner/deal-owner/admin authority. Reuse draft-deletion approval and UUID idempotencyKey; recover pendingTransfer. Finishing is pending. Completion attempts assignee Slack DM with task link unless self-assigned/disabled. Never call notify-user (targets actor). Confirm transfer only; say Slack delivery is unconfirmed unless verified.
 
+</Accordion>
+
 ## Operations and scopes
 
-| Action | Baseline scope |
-| --- | --- |
-| `list` | `crm:read` |
-| `applyApproval` | `crm:read` |
-| `create` | `crm:read` |
-| `update` | `crm:read` |
-| `cancel` | `crm:read` |
-| `assignmentOptions` | `crm:read` |
-| `reassign` | `crm:read` |
-| `dealList` | `crm:read` |
-| `creationOptions` | `crm:read` |
-| `createAssigned` | `crm:read` |
-| `complete` | `crm:read` |
-| `delete` | `crm:read` |
-| `start` | `crm:read` |
-| `updateDueDate` | `crm:read` |
+| Action | Capability | Baseline scope |
+| --- | --- | --- |
+| `list` | List the caller's tasks by conversation or scope, optionally including recommendations and output groups. | `crm:read` |
+| `applyApproval` | Apply an exact saved CRM approval on the user's request and await the CRM result. | `crm:read` |
+| `create` | Create a deal-backed task, including supported automatic preparation settings. | `crm:read` |
+| `update` | Edit, reschedule or complete a task and optionally remove its stale draft where authorized. | `crm:read` |
+| `cancel` | Cancel obsolete tasks by supported ID, age or conversation criteria; current-run tasks are protected. | `crm:read` |
+| `assignmentOptions` | Read eligible owners, authority, assignment version and draft-transfer requirements. | `crm:read` |
+| `reassign` | Transfer a task with version, authority and idempotency checks; inspect pending transfer state. | `crm:read` |
+| `dealList` | Read shared deal tasks, recommendations and assignment context. | `crm:read` |
+| `creationOptions` | Discover eligible assignees for a new task, optionally scoped to a conversation. | `crm:read` |
+| `createAssigned` | Create an explicitly assigned manual task or personal reminder with a due date. | `crm:read` |
+| `complete` | Mark the selected task complete without implying its proposed message was sent. | `crm:read` |
+| `delete` | Dismiss or delete a task; deleting a draft requires the relevant authorization. | `crm:read` |
+| `start` | Prepare caller-owned work in the current Cedar chat; this is not an outbound-send action. | `crm:read` |
+| `updateDueDate` | Change a task's due date through the dedicated date operation. | `crm:read` |
 
 Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/task#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `list.scope` | `#today`, `#overdue`, `#crm-approvals`, `#all` | Scope: #all lists all open work user-wide, ignoring ambient conversation/date filters; recommendations default on. Follow nextCursor. For a deal inventory omit scope and set conversationId. #crm-approvals lists open CRM approvals user-wide. #today covers the previous 7 days through today; #overdue is before today without a lower bound. Date scopes use conversationId if supplied, otherwise user-wide. |
+| `list.outputKinds[]` | `email`, `slack`, `calendar`, `linkedin`, `whatsapp`, `crm-field`, `crm-opportunity`, `file`, `recommendation`, `none` |  |
+| `create.taskChannel` | `email`, `slack`, `linkedin`, `whatsapp` | How this task will be carried out: email, slack, linkedin or whatsapp. Only set it when the channel is genuinely part of the commitment — "reply to this thread" is an email by definition. For open-ended work like "follow up with Sarah", LEAVE IT UNSET: you do not know today whether that follow-up should be an email or a Slack message, and by the time it comes due a channel may exist that does not exist now. An unset channel is decided at execution, with better information; a guessed one is recorded as fact and biases whoever picks the task up. |
+| `create.taskType` | `response`, `follow-up`, `post-meeting`, `pre-meeting`, `reactivation`, `manual`, `calendar`, `crm-opportunity`, `field-approval` | Task type. Options: - response: reply to an inbound email - follow-up: outbound follow-up email - post-meeting: post-meeting recap - pre-meeting: pre-meeting prep - reactivation: re-engage a stalled deal - manual: general user-visible task - calendar: calendar invite or placeholder to send - crm-opportunity: create a new deal/opportunity in the external CRM. REQUIRED notes format: include provider (e.g. "hubspot"), accountId if known, instanceUrl if Salesforce, and the full conversation skill's opportunity-creation resource instructions so the chat agent has everything when the user invokes it. - field-approval: proposed field value change pending user approval. REQUIRED notes format: JSON string &#123;"fieldName":"&lt;field&gt;","value":"&lt;value&gt;","fieldLabel":"&lt;label&gt;","conversationId":"&lt;id&gt;"&#125; — this is parsed by applyFieldChange when the user approves. |
+| `create.tags[]` | `promised`, `awaiting-them` |  |
+| `update.taskType` | `response`, `follow-up`, `post-meeting`, `pre-meeting`, `reactivation`, `manual`, `calendar`, `crm-opportunity`, `field-approval` | Task type. Options: - response: reply to an inbound email - follow-up: outbound follow-up email - post-meeting: post-meeting recap - pre-meeting: pre-meeting prep - reactivation: re-engage a stalled deal - manual: general user-visible task - calendar: calendar invite or placeholder to send - crm-opportunity: create a new deal/opportunity in the external CRM. REQUIRED notes format: include provider (e.g. "hubspot"), accountId if known, instanceUrl if Salesforce, and the full conversation skill's opportunity-creation resource instructions so the chat agent has everything when the user invokes it. - field-approval: proposed field value change pending user approval. REQUIRED notes format: JSON string &#123;"fieldName":"&lt;field&gt;","value":"&lt;value&gt;","fieldLabel":"&lt;label&gt;","conversationId":"&lt;id&gt;"&#125; — this is parsed by applyFieldChange when the user approves. |
+| `update.tags[]` | `promised`, `awaiting-them` |  |
+| `update.status` | `todo`, `done` | Task status: 'todo' if this is the next task to be completed in this conversation. Use status='done' when the intended task action has already happened. Do not use cancel-task for completed work. |
+| `cancel.taskCreatedBy` | `agent`, `user` | When using cancelOlderThan: filter to only tasks created by this actor. Defaults to "agent" so user-created tasks are never accidentally bulk-deleted. |
+| `dealList.filter` | `all`, `assignedToMe`, `dealTasks`, `recommendations` |  |
 
 ## Parameters
 

@@ -5,19 +5,35 @@ description: "Parameters, scopes, and response schema for aop-write."
 
 Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
-## Capability
+## Capabilities
+
+[Playbooks and triggers capabilities and guides](/capabilities/playbooks).
+
+<Accordion title="Full tool behavior and constraints">
 
 For "why didn't X happen"/system-behavior questions, load-skill('cedar-configuration') first. ACTIONS: (1) create-aop — create a new AOP/playbook cloned from an existing one (field definitions, display config, and the whole PLAYBOOK.md/resources/subagents document tree). cloneFromAopId is required; there is no from-scratch path. (2) update-selection-procedure — replace an AOP's routing text in full (the text an LLM classifier reads to decide which AOP a new conversation belongs to). Already readable via config-read's read-playbook (mode: "list"). (3) update-custom-assignment-instruction — replace (or, with null, clear) an AOP's free-text override for domain/company identification on its deals, taking precedence over the model's own judgment. Each action takes its params in a same-named object (e.g. action: "create-aop" pairs with a createAop: &#123;...&#125; object) — omit the others. For custom field definitions/options and their CRM mappings use config-write. For a connected integration's own config use connection-write.
 
+</Accordion>
+
 ## Operations and scopes
 
-| Action | Baseline scope |
-| --- | --- |
-| `create-aop` | `playbook:write` |
-| `update-selection-procedure` | `playbook:write` |
-| `update-custom-assignment-instruction` | `playbook:write` |
+| Action | Capability | Baseline scope |
+| --- | --- | --- |
+| `create-aop` | Create an AOP from an existing source configuration. | `playbook:write` |
+| `update-selection-procedure` | Change the instructions used to select the appropriate AOP. | `playbook:write` |
+| `update-custom-assignment-instruction` | Change the supported custom conversation-assignment instruction. | `playbook:write` |
 
 Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/aop-write#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `createAop.scope` | `user`, `org` | Conversation ownership scope: "user" (one conversation per user+company) or "org" (one shared conversation per org+company). Defaults to the source AOP's own scope. |
+| `updateSelectionProcedure.scope` | `user`, `org` | Field owner: user AOP or linked org AOP. list-fields returns both; CRM mappings stay user-scoped. |
+| `updateCustomAssignmentInstruction.scope` | `user`, `org` | Field owner: user AOP or linked org AOP. list-fields returns both; CRM mappings stay user-scoped. |
 
 ## Parameters
 

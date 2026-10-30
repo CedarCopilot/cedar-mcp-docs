@@ -5,9 +5,15 @@ description: "Parameters, scopes, and response schema for usage-observations-ret
 
 Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
-## Capability
+## Capabilities
+
+[Usage and delivery recovery capabilities and guides](/capabilities/usage).
+
+<Accordion title="Full tool behavior and constraints">
 
 Retry delivery of your existing blocked shadow measurement to the usage ledger. Requires current spending permission and the original grant and shadow meter version. Reuses the immutable saved receipt; cannot change amounts, create grants, charge credits, or repeat provider work.
+
+</Accordion>
 
 Required baseline scope: `billing:write`. Additional role and target checks apply.
 

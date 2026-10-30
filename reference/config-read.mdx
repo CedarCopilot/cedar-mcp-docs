@@ -5,21 +5,37 @@ description: "Parameters, scopes, and response schema for config-read."
 
 Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
-## Capability
+## Capabilities
+
+[Configuration capabilities and guides](/capabilities/configuration).
+
+<Accordion title="Full tool behavior and constraints">
 
 For "why didn't X happen"/system-behavior questions, load-skill('cedar-configuration') first — these actions read raw config, they don't explain behavior. ACTIONS: (1) read-playbook — mode="list"/"load_full"/"load_sections" of an AOP's PLAYBOOK.md, by aopId or aopName. load_full/load_sections also return the org playbook as `orgPlaybook` (a user-level-only read can miss real trigger/subagent wiring). mode: "list" also gives the caller's own AOPs (name/id/hasPlaybook/isNoOp). (2) read-settings — CRM/Slack connections (incl. connectionId, needed by apply-change) + user settings. (3) list-fields — every field's definition, mapping, and options (custom + built-in). MUST load-skill('cedar-configuration', 'fields-and-values') first — it has the full rules this omits. (4) list-org-members — the caller's own org directory (id/name/email), optionally filtered by `search`; use it for a teammate's userId instead of querying the user table. (5) find-bot-slack-channels — every Slack channel Cedar's bot can actually post to, optionally filtered by `nameFilter`. Use before authoring any new Slack delivery target, never a runtime lookup left in prose. Admin/owner sees every channel the bot is in; a regular member sees only ones they're also in. Not a personal notification destination (that's `notify`'s list-slack-channels) — answers "can Cedar deliver here", not "where does this rep want their own alerts". Each action takes its params in a same-named object (e.g. action: "read-playbook" pairs with a readPlaybook: &#123;...&#125; object) — omit every params object except the one matching your chosen action.
 
+</Accordion>
+
 ## Operations and scopes
 
-| Action | Baseline scope |
-| --- | --- |
-| `read-playbook` | `docs:read` |
-| `read-settings` | `crm:read` |
-| `list-fields` | `crm:read` |
-| `list-org-members` | `crm:read` |
-| `find-bot-slack-channels` | `crm:read` |
+| Action | Capability | Baseline scope |
+| --- | --- | --- |
+| `read-playbook` | List AOPs or load full/selected playbook sections, including relevant organization content and edit targets. | `docs:read` |
+| `read-settings` | Read selected account settings and connected-system configuration. | `crm:read` |
+| `list-fields` | Inspect field definitions, mappings and options, with supported organization rollups. | `crm:read` |
+| `list-org-members` | Find IDs and directory details for members of the caller's organization. | `crm:read` |
+| `find-bot-slack-channels` | Find channels Cedar's bot can actually post to, subject to membership and administrator visibility. | `crm:read` |
 
 Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/config-read#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `readPlaybook.mode` | `list`, `load_full`, `load_sections` | "list" — discover the user's AOPs (name/id/hasPlaybook/isNoOp/selectionProcedure/customAssignmentInstruction/orgAssignmentInstruction/effectiveAssignmentInstruction), optionally filtered by aopName. "load_full" — read the full PLAYBOOK.md for one AOP, plus its org-level playbook (`orgPlaybook`) if one exists, plus an `editMap`: every referenced subagent/resource and each inline PLAYBOOK.md surface, tagged with `source` (user&#124;org) + `writeTarget`. To edit playbook behavior, write to a target's `writeTarget` — do NOT choose user-vs-org scope by hand. "load_sections" — read only the named sections of one AOP's playbook (and the same sections of its org-level playbook if one exists), plus the same `editMap` (requires `sections`). |
+| `readSettings.sections[]` | `connections`, `user_settings`, `inboxes`, `task_groups`, `credentials`, `data_services` |  |
+| `listFields.targetUserIds` | `org` |  |
 
 ## Parameters
 

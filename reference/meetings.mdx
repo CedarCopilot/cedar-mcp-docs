@@ -5,17 +5,23 @@ description: "Parameters, scopes, and response schema for meetings."
 
 Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
-## Capability
+## Capabilities
+
+[Meetings capabilities and guides](/capabilities/meetings).
+
+<Accordion title="Full tool behavior and constraints">
 
 Meeting operations. ACTIONS: (1) find — locate meetings Cedar has already synced, by title, attendee (email / domain / name), organizer, date range, or a pasted meeting/recording LINK. Works identically for every provider because it reads Cedar's store, not the provider's API — none of which support title search. Use this FIRST whenever the user references a call ("the pricing discussion", "the call with Jane last week") or pastes a Fathom/Circleback link. (2) sync — pull a meeting that never reached Cedar from the connected recorder (Fathom, Circleback, Granola, Gong, …) and attach it to a deal. Providers only accept a days-back window, so narrow with titleContains / participant / url; 0 or 2+ matches syncs nothing and returns candidates to disambiguate with the user. (3) capabilities — what this user's recorder can actually do and how to search it well. Call before an expensive or possibly-impossible hunt (searching what was SAID, a wide date range, or after sync came back empty); not needed for ordinary lookups, since find and sync take the same parameters and return the same answers whichever recorder is connected. Each action takes its params in a same-named object — omit every params object except the one matching your chosen action.
 
+</Accordion>
+
 ## Operations and scopes
 
-| Action | Baseline scope |
-| --- | --- |
-| `find` | `crm:read` |
-| `sync` | `crm:read` |
-| `capabilities` | `crm:read` |
+| Action | Capability | Baseline scope |
+| --- | --- | --- |
+| `find` | Find synced meetings by title, people, dates, organizer or recording link. | `crm:read` |
+| `sync` | Recover a missing recorder meeting and attach a single disambiguated match to a deal. | `crm:read` |
+| `capabilities` | Inspect what the caller's recorder actually supports before a broad or specialized search. | `crm:read` |
 
 Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
 

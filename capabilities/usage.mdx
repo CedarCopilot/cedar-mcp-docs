@@ -26,6 +26,14 @@ Inspect configured usage producers or your own durable shadow measurements for a
 | `producers` | Discover configured producers of durable usage observations. | `billing:read` |
 | `list` | Read the caller's shadow measurements, quantity certainty and ledger-delivery status. | `billing:read` |
 
+### Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/usage-observations-read#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `state` | `awaiting_evidence`, `pending`, `leased`, `delivered`, `superseded`, `blocked` |  |
+
 ## usage-observations-retry
 
 Availability: **external**. [Parameters and responses](/reference/usage-observations-retry).

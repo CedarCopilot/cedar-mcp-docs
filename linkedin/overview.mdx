@@ -5,6 +5,8 @@ description: "A connected LinkedIn seat for prospecting, relationship context, a
 
 Cedar's LinkedIn integration uses a connected Unipile seat. `linkedin-read` covers 20 operations; `linkedin-write` covers four. Cedar resolves a single connected seat automatically. With multiple seats, use `list-seats` and provide the returned `unipileAccountId`. You cannot select another user's seat.
 
+Cedar automatically checks account health and action limits, queues scheduled messages, and defers scheduled DMs when its own hourly or daily send cap is reached. These protections help reduce overload; they cannot guarantee freedom from provider restrictions. [Limits and recommendations](/linkedin/limits).
+
 ## Capabilities
 
 | Area | Actions | Typical use |

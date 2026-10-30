@@ -7,36 +7,52 @@ Generated from Cedar's actual registration and Zod schemas. Your connection's `t
 
 <Note>includeCrm: true additionally requires crm:read. Live reads can consume LinkedIn rate budget; find-chat can ingest a previously unsynced chat.</Note>
 
-## Capability
+## Capabilities
+
+[LinkedIn capabilities and guides](/capabilities/linkedin).
+
+<Accordion title="Full tool behavior and constraints">
 
 Read LinkedIn. Seat auto-resolves; unipileAccountId selects an owned seat; list-seats shows status. Use matching camelCase params objects. search/search-parameters: native Classic, Sales Navigator or Recruiter search/reference IDs (subscription-dependent). profiles: cached/live batches. companies: company profiles. connections-page/list-connections-page: resumable network; list-connections: bounded walk. list-own-posts: your authored posts/reshares, excluding other feed activity. list-post-reactions: pass reactionId as postId; never substitute the original post for a null reshare reactionId. post-page: posts, comments/replies or reactions. Pages return nextCursor/complete: resume even empty pages with a cursor, keeping seat/post. Partial data cannot prove absence. Network/engagement reads do no profile visits or enrichment. post-engagement: bounded reactors from recent posts/reshares, including originals reshared; sinceDays filters post age, not reaction time. new-connections: accepted invitations by sinceDays (default30), without advancing watermarks. profile-viewers: recent visitors. screen-prospects: prior-list/CRM/DM checks. outreach-status: refresh live messages/replies, including existing contacts; proposed cells only, no table writes. CRM checks need crm:read. Preserve table values/custom stages; unknown history stays unknown. list-chats: owned recent chats/drafts; draftsOnly supported; InMail excluded unless requested. read-chat: messages and unsent draft (body/source/updatedAt) by chatId. find-chat: exact person-to-DM lookup. Send only on explicit request via linkedin-write send-message with draft.body. view-profile: real notified visit, 64/day cap; identifier/url/personId or self:true. Never view just to resolve an invite target: send-invitation accepts URLs with its own lookup budget.
 
+</Accordion>
+
 ## Operations and scopes
 
-| Action | Baseline scope |
-| --- | --- |
-| `list-seats` | `linkedin:read` |
-| `view-profile` | `linkedin:read` |
-| `list-connections` | `linkedin:read` |
-| `list-connections-page` | `linkedin:read` |
-| `list-own-posts` | `linkedin:read` |
-| `list-post-reactions` | `linkedin:read` |
-| `profile-viewers` | `linkedin:read` |
-| `post-engagement` | `linkedin:read` |
-| `new-connections` | `linkedin:read` |
-| `list-chats` | `linkedin:read` |
-| `read-chat` | `linkedin:read` |
-| `find-chat` | `linkedin:read` |
-| `search` | `linkedin:read` |
-| `search-parameters` | `linkedin:read` |
-| `connections-page` | `linkedin:read` |
-| `post-page` | `linkedin:read` |
-| `profiles` | `linkedin:read` |
-| `companies` | `linkedin:read` |
-| `screen-prospects` | `linkedin:read` |
-| `outreach-status` | `linkedin:read` |
+| Action | Capability | Baseline scope |
+| --- | --- | --- |
+| `list-seats` | List the caller's connected LinkedIn seats and status. | `linkedin:read` |
+| `view-profile` | Make a real, potentially notified profile visit subject to the profile-view budget. | `linkedin:read` |
+| `list-connections` | Read a bounded walk of the connected account's network. | `linkedin:read` |
+| `list-connections-page` | Read a resumable network page; retain the returned cursor and seat. | `linkedin:read` |
+| `list-own-posts` | List authored posts and reshares, excluding unrelated feed activity. | `linkedin:read` |
+| `list-post-reactions` | Read reactions using the post's actual reaction ID, preserving reshare distinctions. | `linkedin:read` |
+| `profile-viewers` | Read available recent profile visitors. | `linkedin:read` |
+| `post-engagement` | Collect bounded engagement on recent posts/reshares; the age filter applies to posts, not reaction time. | `linkedin:read` |
+| `new-connections` | Read accepted invitations in the requested recent period without advancing ingestion watermarks. | `linkedin:read` |
+| `list-chats` | List owned recent chats and drafts, with supported draft and InMail filters. | `linkedin:read` |
+| `read-chat` | Read a chat's messages and any unsent draft body, source and update time. | `linkedin:read` |
+| `find-chat` | Resolve an exact person to a DM chat, potentially ingesting a previously unsynced conversation. | `linkedin:read` |
+| `search` | Search native Classic, Sales Navigator or Recruiter surfaces where the connected subscription supports them. | `linkedin:read` |
+| `search-parameters` | Discover reference identifiers and parameters for native search filters. | `linkedin:read` |
+| `connections-page` | Read the supported cursor-based connection page contract. | `linkedin:read` |
+| `post-page` | Page through posts, comments/replies or reactions using the selected operation. | `linkedin:read` |
+| `profiles` | Read supported cached/live profile batches without treating every read as a notified visit. | `linkedin:read` |
+| `companies` | Read LinkedIn company profiles. | `linkedin:read` |
+| `screen-prospects` | Check candidates against prior lists, CRM context and DM history; CRM checks require crm:read. | `linkedin:read` |
+| `outreach-status` | Refresh message/reply evidence and propose status cells without directly writing a table. | `linkedin:read` |
 
 Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/linkedin-read#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `search.api` | `classic`, `sales_navigator`, `recruiter` |  |
+| `search.category` | `people`, `companies` |  |
+| `postPage.kind` | `posts`, `comments`, `reactions` |  |
 
 ## Parameters
 

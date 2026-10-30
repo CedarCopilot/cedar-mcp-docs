@@ -18,6 +18,17 @@ Connect Cedar to an external system, or change how it is reached. MCP SERVERS �
 
 Single-call family. Baseline scope: `playbook:write`.
 
+### Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/systems-write#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `change.type` | `manage_mcp_connection` | type=manage_mcp_connection |
+| `change.op` | `create`, `delete` | type=manage_mcp_connection — create/delete an MCP server connection. |
+| `change.scope` | `user`, `org` | type=manage_mcp_connection — Defaults "user". "org" shares the server with every member of the organization (org admins only); a member's own connection of the same name still wins. |
+| `change.type` | `update_mcp_connection_settings` | type=update_mcp_connection_settings |
+
 <Accordion title="All nested operations and modes (4)">
 
 | Selector | Choice | Variant |

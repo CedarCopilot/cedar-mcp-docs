@@ -5,19 +5,34 @@ description: "Parameters, scopes, and response schema for calendar."
 
 Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
-## Capability
+## Capabilities
+
+[Calendar capabilities and guides](/capabilities/calendar).
+
+<Accordion title="Full tool behavior and constraints">
 
 Work with the user's Google Calendar. ACTIONS: (1) list-events — fetch events in a time range, enriched with linked CRM conversation info. (2) get-availability — check busy periods across the user's calendars before proposing meeting times. (3) modify-event — CREATE, UPDATE, or DELETE a calendar event (pick via the operation param: "create" needs summary/startDateTime/endDateTime/attendees; "update" needs eventId + the fields to change; "delete" needs eventId). Pass `recurrence` (RFC 5545 RRULE strings) to send a repeating invite. Before rescheduling or editing an existing event, check `canModifyForEveryone` from list-events — when it is false the user does NOT own the event and cannot move it for the other guests; modify-event will refuse the change, and you must offer to ask the organizer or propose times instead. In the in-app chat, modify-event streams a proposal card for the user to approve. On every other surface (external MCP, bots, automations) it applies the change immediately (creating/updating/deleting the real event and notifying attendees) — the calling client is the approval layer. Each action takes its params in a same-named object (e.g. action: "modify-event" pairs with a modifyEvent: &#123;...&#125; object) — omit every params object except the one matching your chosen action.
 
+</Accordion>
+
 ## Operations and scopes
 
-| Action | Baseline scope |
-| --- | --- |
-| `list-events` | `crm:read` |
-| `get-availability` | `crm:read` |
-| `modify-event` | `crm:read` |
+| Action | Capability | Baseline scope |
+| --- | --- | --- |
+| `list-events` | Read calendar events in a time range with available CRM context and modification rights. | `crm:read` |
+| `get-availability` | Check busy periods across the user's calendars. | `crm:read` |
+| `modify-event` | Create, update or delete real calendar events; external MCP applies immediately and can notify attendees. | `crm:read` |
 
 Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/calendar#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `modifyEvent.operation` | `create`, `update`, `delete` | Which calendar mutation to perform. "create" needs summary/startDateTime/endDateTime/attendees. "update" needs eventId plus any fields you want to change. "delete" needs only eventId. |
+| `modifyEvent.conferenceType` | `hangoutsMeet`, `zoom` | Which conference `wantsMeetLink` creates: `hangoutsMeet` (Google Meet, the default) or `zoom`, which Cedar mints on the user's own Zoom account and attaches to the event. Only set `zoom` when the user asked for Zoom by name; a user who has not connected Zoom gets an event with no video link rather than a failure. |
 
 ## Parameters
 

@@ -34,6 +34,15 @@ For "why didn't X happen" questions, call load-skill('cedar-configuration') firs
 | `create-monitor` | Create the supported diagnostic monitor; requires the staff-only internal scope. | `internal` |
 | `test-run` | Run one configured agent deliberately; sends are suppressed by default, but other writes can still occur. | `crm:read` |
 
+### Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/debug#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `testRun.triggerType` | `cron`, `before_meeting`, `webhook` | "cron" fires exactly ONE named subagent in isolation (requires subagentName). "before_meeting" fires EVERY before-meeting subagent wired to conversationId — not isolated to one subagent, since Cedar has no isolated-single-agent before_meeting path today; this mirrors what a real meeting trigger actually does. "webhook" fires one registered webhook (requires webhookId) through the same dispatch path a real inbound POST or Slack-channel message would take — conversationless, so save-draft/save-slack-draft/task creation are unavailable to whatever it runs. |
+| `testRun.level` | `user`, `org` | cron only. "user" reads the subagent from your own AOP; "org" reads it from the org AOP linked to your own AOP (you can only test an org-level agent your own AOP is actually linked to, never an arbitrary other org's). |
+
 ## Access and results
 
 Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).

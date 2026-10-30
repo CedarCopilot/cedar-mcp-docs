@@ -5,28 +5,34 @@ description: "Parameters, scopes, and response schema for billing-read."
 
 Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
-## Capability
+## Capabilities
+
+[Billing capabilities and guides](/capabilities/billing).
+
+<Accordion title="Full tool behavior and constraints">
 
 Read your organization billing account and any historical personal records, credit balance, usage receipts and durable activity, limits, alerts, spending grants, members, payment offers/subscriptions, monthly postpaid status and invoices, organization payer context or delivery status. List accounts first. Every result uses your authenticated permissions; finance access does not reveal another user’s deal or provider payload. Amounts are exact microcredit strings: 1 credit = 1,000,000 microcredits. workflow-approvals lists pending workflow spending confirmations; only the user can approve in Cedar Billing. This never purchases credits or starts paid work.
 
+</Accordion>
+
 ## Operations and scopes
 
-| Action | Baseline scope |
-| --- | --- |
-| `workflow-approvals` | `billing:read` |
-| `accounts` | `billing:read` |
-| `catalog` | `billing:read` |
-| `wallet` | `billing:read` |
-| `usage` | `billing:read` |
-| `activity` | `billing:read` |
-| `limits` | `billing:read` |
-| `alerts` | `billing:read` |
-| `grants` | `billing:read` |
-| `deliveries` | `billing:read` |
-| `commercial` | `billing:read` |
-| `postpaid` | `billing:read` |
-| `members` | `billing:read` |
-| `preference` | `billing:read` |
+| Action | Capability | Baseline scope |
+| --- | --- | --- |
+| `workflow-approvals` | List pending workflow spending confirmations that the user can approve in Cedar Billing. | `billing:read` |
+| `accounts` | Discover authorized organization billing accounts and historical personal records. | `billing:read` |
+| `catalog` | Read available billing catalog entries and permitted offers. | `billing:read` |
+| `wallet` | Inspect exact credit balances and wallet state. | `billing:read` |
+| `usage` | Read authorized usage receipts and accounting evidence. | `billing:read` |
+| `activity` | Read durable billing-account activity. | `billing:read` |
+| `limits` | Inspect account/member/feature/meter limits and their current versions. | `billing:read` |
+| `alerts` | Read spending and billing alerts. | `billing:read` |
+| `grants` | Inspect spending grants available through the caller's authority. | `billing:read` |
+| `deliveries` | Inspect billing-related delivery state. | `billing:read` |
+| `commercial` | Read supported payment offers, subscription and commercial context. | `billing:read` |
+| `postpaid` | Read monthly postpaid configuration, verified subscription context and invoices. | `billing:read` |
+| `members` | Read authorized billing-account members. | `billing:read` |
+| `preference` | Read the supported billing preference for the caller. | `billing:read` |
 
 Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
 

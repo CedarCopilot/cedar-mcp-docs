@@ -9,7 +9,7 @@ Candidates can point to a commercial change worth reviewing. Their presence—an
 
 ## Curation operations
 
-`signals-write apply-extraction` validates proposals using `expectedRevision` and an idempotency key. `mutate-internal` supports disposition and note operations such as snooze, dismiss, resolve, reopen, append-note, and deactivate. Preserve human status and notes. Background agents have a narrower set of permitted mutations than user-directed chat or external MCP.
+`signals-write apply-extraction` validates proposals using `expectedRevision` and an idempotency key. `mutate-internal` supports disposition and note operations snooze, dismiss, resolve, reopen, append-note, deactivate, hold-reconciliation, and clear-reconciliation. Preserve human status and notes. Background agents have a narrower set of permitted mutations than user-directed chat or external MCP.
 
 `execute-action` claims an existing stored signal action by `actionId`. It requires explicit user intent and `email:draft`; it does not itself grant `email:send`. Discovering a signal is never sufficient reason to execute its stored action.
 

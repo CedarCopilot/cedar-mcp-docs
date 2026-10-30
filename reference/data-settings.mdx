@@ -5,17 +5,37 @@ description: "Parameters, scopes, and response schema for data-settings."
 
 Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
-## Capability
+## Capabilities
+
+[Data services capabilities and guides](/capabilities/data-services).
+
+<Accordion title="Full tool behavior and constraints">
 
 Update your enrichment defaults or your organization’s data policy. Read config-read.read-settings with sections:&#91;"data_services"&#93; first for current versions. Crustdata is the rich-research default; automatic conversation company metadata and pictures stay on Fiber. Crustdata watchers are fixed. Organization writes require an administrator. Null resets an override to inheritance. This changes future defaults only; it does not activate watchers, grant spending, buy credits, or modify existing watches.
 
+</Accordion>
+
 ## Operations and scopes
 
-| Action | Baseline scope |
-| --- | --- |
-| `update` | `playbook:write` |
+| Action | Capability | Baseline scope |
+| --- | --- | --- |
+| `update` | Change versioned enrichment defaults or administrator-controlled organization data policy for future work. | `playbook:write` |
 
 Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/data-settings#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `update.scope` | `self`, `organization` |  |
+| `update.patch.personProvider` | `fiber`, `crustdata`, `apollo`, `moltsets` |  |
+| `update.patch.companyProvider` | `fiber`, `crustdata`, `apollo`, `moltsets` |  |
+| `update.patch.allowedProviders[]` | `fiber`, `crustdata`, `apollo`, `moltsets` |  |
+| `update.patch.watchDefaults.provider` | `crustdata` | provider=crustdata |
+| `update.patch.watchDefaults.refreshFrequencyDays` | `1`, `3`, `7`, `14`, `30` | provider=crustdata |
+| `update.patch.watchDefaults.signalTypes[]` | `title_change`, `job_change`, `headline_change`, `person_location_change`, `education_added`, `skill_added`, `headcount_change`, `funding_change`, `news_added`, `funding_round_change`, `investor_added`, `acquisition_added`, `hiring_change`, `company_name_change`, `certification_added`, `honor_added`, `connection_count_change`, `funding_milestone_added`, `follower_count_change`, `industry_change`, `company_location_change` | provider=crustdata |
 
 ## Parameters
 

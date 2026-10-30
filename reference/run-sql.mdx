@@ -5,11 +5,25 @@ description: "Parameters, scopes, and response schema for run-sql."
 
 Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
-## Capability
+## Capabilities
+
+[SQL reporting capabilities and guides](/capabilities/sql).
+
+<Accordion title="Full tool behavior and constraints">
 
 Execute a read-only SQL SELECT query against the Cedar CRM database.  The primary path for analytical questions about the pipeline — any aggregation, filter or join, e.g. "which objection themes separate won from lost deals?".  **Call first**: `load-skill("run-sql")` — REQUIRED before any query (column meanings, join shapes, rejected query shapes + rewrites — not repeated here). Also `taxonomy-fields` for what happened INSIDE calls/emails (objections, discovery, pain, MEDDPICC) — org fields no CRM column holds.  **Rules**: - SELECT only (`WITH ... SELECT` CTEs are fine); anything else is rejected. - Only these tables, incl. subqueries/CTEs: agent_executions, agent_operating_procedures, calendar_events, crm_call_events, crm_companies_global, crm_company_relationships, crm_conversation_companies, crm_conversation_contacts, crm_conversation_field_values, crm_conversation_updates, crm_conversation_users, crm_conversations, crm_custom_events, crm_email_events, crm_events, crm_meeting_events, crm_note_events, crm_people_global, crm_slack_messages, documents, user, user_tasks. Enforced   by parsing, not documentation. - Every table with an org column needs a real `WHERE`/`JOIN...ON` predicate scoping it to   your organization (e.g. `crm_conversations.organization_id = '&lt;your org id&gt;'`), AND'd in —   a UUID elsewhere in the text doesn't count. Don't know your org ID? Run any query first: the   rejection names your real one for the next call (never an argument; SQL text is the one place   it appears). - Tables with no org column must join one that has it, via a real foreign key. - Capped at 500 rows/30s. Aggregate in SQL; for verbatim moments, take ids to `conversation-read`.
 
+</Accordion>
+
 Required baseline scope: `crm:read`. Additional role and target checks apply.
+
+## Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/run-sql#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `format` | `jsonl`, `csv`, `json` | File format when `out` is true. Default jsonl (one record per line) — prefer it, because CRM text contains newlines and line-based tools miscount CSV rows. csv for spreadsheets. |
 
 ## Parameters
 

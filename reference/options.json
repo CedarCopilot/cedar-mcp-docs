@@ -1,0 +1,2779 @@
+{
+  "document-read": [],
+  "document-write": [
+    {
+      "path": "write.type",
+      "branch": "",
+      "values": [
+        "document",
+        "workflow",
+        "html",
+        "agenda",
+        "conversation_agenda",
+        "attachment",
+        "table"
+      ],
+      "description": "Behavioural type for the document. \"document\" = Y.js markdown (default for all text). \"workflow\" = markdown with actionable workflow JSON fences; saving never executes buttons. \"html\" = self-contained HTML blob rendered as iframe (use for presentations, reports). \"agenda\" = Y.js + task sync for the user daily agenda. \"conversation_agenda\" = Y.js + task sync for a per-conversation agenda. \"attachment\" = file reference (no content; details in metadata). \"table\" = spreadsheet, rendered as a data grid; only for CREATING one or rewriting it whole (frontmatter schema + one pipe table with a leading _id column) — use the `table` tool for every partial read/write, because a partial write routed through here rewrites every row and destroys row identity."
+    },
+    {
+      "path": "write.mode",
+      "branch": "",
+      "values": [
+        "upsert",
+        "append",
+        "patch"
+      ],
+      "description": "Write mode. upsert=full replace (best for overview, strategy, meeting-prep, or ANY whole-document rewrite/restructure/dedup — pass the complete new content directly). append=add to end (best for canvas, research, chat history). patch=surgical edit for a SMALL, localized change only (read doc first, then replace old_string with new_string) — do not use patch with old_string/new_string spanning the whole document; that forces holding two full copies in context and will exhaust it on a large doc. Use upsert instead."
+    }
+  ],
+  "table": [
+    {
+      "path": "read.orderBy.direction",
+      "branch": "",
+      "values": [
+        "asc",
+        "desc"
+      ],
+      "description": "Default asc."
+    },
+    {
+      "path": "create.schema.viewFilter.operator",
+      "branch": "",
+      "values": [
+        "equals",
+        "not_equals",
+        "contains",
+        "not_contains",
+        "is_empty",
+        "not_empty"
+      ],
+      "description": ""
+    },
+    {
+      "path": "create.schema.viewFilter.conditions[].operator",
+      "branch": "",
+      "values": [
+        "equals",
+        "not_equals",
+        "contains",
+        "not_contains",
+        "is_empty",
+        "not_empty"
+      ],
+      "description": ""
+    },
+    {
+      "path": "create.schema.columns[].wrap",
+      "branch": "",
+      "values": [
+        "wrap",
+        "max-lines",
+        "overflow"
+      ],
+      "description": ""
+    },
+    {
+      "path": "create.schema.columns[].type",
+      "branch": "",
+      "values": [
+        "text",
+        "long_text",
+        "number",
+        "currency",
+        "percent",
+        "date",
+        "checkbox",
+        "select",
+        "multi_select",
+        "url",
+        "email",
+        "output",
+        "conversation",
+        "task",
+        "draft",
+        "doc",
+        "person",
+        "company"
+      ],
+      "description": "Cell type; defaults to text. conversation/task/draft/doc/person/company hold a `[[type: id]]` reference token and render as a live chip."
+    },
+    {
+      "path": "create.schema.columns[].outputKind",
+      "branch": "",
+      "values": [
+        "slack",
+        "email",
+        "file",
+        "linkedin",
+        "whatsapp",
+        "calendar"
+      ],
+      "description": "output only. Which artifact this column produces — a column that declares none cannot be filled."
+    },
+    {
+      "path": "create.from.source",
+      "branch": "",
+      "values": [
+        "conversations",
+        "tasks",
+        "people",
+        "companies",
+        "documents"
+      ],
+      "description": "Where rows come from. `conversations` and `tasks` are supported."
+    },
+    {
+      "path": "create.from.filter.eventFilter.count.operator",
+      "branch": "",
+      "values": [
+        "gt",
+        "gte",
+        "lt",
+        "lte",
+        "eq"
+      ],
+      "description": ""
+    },
+    {
+      "path": "create.from.filter.eventFilter.dateOperator",
+      "branch": "",
+      "values": [
+        "before",
+        "after",
+        "on"
+      ],
+      "description": ""
+    },
+    {
+      "path": "create.from.filter.orderBy.direction",
+      "branch": "",
+      "values": [
+        "asc",
+        "desc"
+      ],
+      "description": ""
+    },
+    {
+      "path": "add_columns.columns[].wrap",
+      "branch": "",
+      "values": [
+        "wrap",
+        "max-lines",
+        "overflow"
+      ],
+      "description": ""
+    },
+    {
+      "path": "add_columns.columns[].type",
+      "branch": "",
+      "values": [
+        "text",
+        "long_text",
+        "number",
+        "currency",
+        "percent",
+        "date",
+        "checkbox",
+        "select",
+        "multi_select",
+        "url",
+        "email",
+        "output",
+        "conversation",
+        "task",
+        "draft",
+        "doc",
+        "person",
+        "company"
+      ],
+      "description": "Cell type; defaults to text. conversation/task/draft/doc/person/company hold a `[[type: id]]` reference token and render as a live chip."
+    },
+    {
+      "path": "add_columns.columns[].outputKind",
+      "branch": "",
+      "values": [
+        "slack",
+        "email",
+        "file",
+        "linkedin",
+        "whatsapp",
+        "calendar"
+      ],
+      "description": "output only. Which artifact this column produces — a column that declares none cannot be filled."
+    },
+    {
+      "path": "update_columns.columns[].patch.type",
+      "branch": "",
+      "values": [
+        "text",
+        "long_text",
+        "number",
+        "currency",
+        "percent",
+        "date",
+        "checkbox",
+        "select",
+        "multi_select",
+        "url",
+        "email",
+        "output",
+        "conversation",
+        "task",
+        "draft",
+        "doc",
+        "person",
+        "company"
+      ],
+      "description": "Cell type; defaults to text. conversation/task/draft/doc/person/company hold a `[[type: id]]` reference token and render as a live chip."
+    },
+    {
+      "path": "update_columns.columns[].patch.outputKind",
+      "branch": "",
+      "values": [
+        "slack",
+        "email",
+        "file",
+        "linkedin",
+        "whatsapp",
+        "calendar"
+      ],
+      "description": "output only. Which artifact this column produces — a column that declares none cannot be filled."
+    },
+    {
+      "path": "update_columns.columns[].patch.wrap",
+      "branch": "",
+      "values": [
+        "wrap",
+        "max-lines",
+        "overflow"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update_view.viewFilter.operator",
+      "branch": "",
+      "values": [
+        "equals",
+        "not_equals",
+        "contains",
+        "not_contains",
+        "is_empty",
+        "not_empty"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update_view.viewFilter.conditions[].operator",
+      "branch": "",
+      "values": [
+        "equals",
+        "not_equals",
+        "contains",
+        "not_contains",
+        "is_empty",
+        "not_empty"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update_view.sort.direction",
+      "branch": "",
+      "values": [
+        "asc",
+        "desc"
+      ],
+      "description": ""
+    },
+    {
+      "path": "insert_section.position",
+      "branch": "",
+      "values": [
+        "above",
+        "below"
+      ],
+      "description": ""
+    },
+    {
+      "path": "export.format",
+      "branch": "",
+      "values": [
+        "csv",
+        "xlsx"
+      ],
+      "description": ""
+    },
+    {
+      "path": "fill.modelTier",
+      "branch": "",
+      "values": [
+        "fast",
+        "standard"
+      ],
+      "description": "Which model each row agent runs on, chosen by how hard ONE ROW is — the cost is paid per row, so a 500-row fill multiplies it. `fast` for a mechanical fill (write a cell from the fillInstruction, classify, extract, transcribe). `standard` (the default) when a row needs judgement, multi-step research, or drafting the user will send."
+    }
+  ],
+  "config-read": [
+    {
+      "path": "readPlaybook.mode",
+      "branch": "",
+      "values": [
+        "list",
+        "load_full",
+        "load_sections"
+      ],
+      "description": "\"list\" — discover the user's AOPs (name/id/hasPlaybook/isNoOp/selectionProcedure/customAssignmentInstruction/orgAssignmentInstruction/effectiveAssignmentInstruction), optionally filtered by aopName. \"load_full\" — read the full PLAYBOOK.md for one AOP, plus its org-level playbook (`orgPlaybook`) if one exists, plus an `editMap`: every referenced subagent/resource and each inline PLAYBOOK.md surface, tagged with `source` (user|org) + `writeTarget`. To edit playbook behavior, write to a target's `writeTarget` — do NOT choose user-vs-org scope by hand. \"load_sections\" — read only the named sections of one AOP's playbook (and the same sections of its org-level playbook if one exists), plus the same `editMap` (requires `sections`)."
+    },
+    {
+      "path": "readSettings.sections[]",
+      "branch": "",
+      "values": [
+        "connections",
+        "user_settings",
+        "inboxes",
+        "task_groups",
+        "credentials",
+        "data_services"
+      ],
+      "description": ""
+    },
+    {
+      "path": "listFields.targetUserIds",
+      "branch": "",
+      "values": [
+        "org"
+      ],
+      "description": ""
+    }
+  ],
+  "config-write": [
+    {
+      "path": "createField.internalSignals.definitions[].eligibility",
+      "branch": "",
+      "values": [
+        "any",
+        "lost_or_lapsed",
+        "customer"
+      ],
+      "description": ""
+    },
+    {
+      "path": "createField.signal.enabled",
+      "branch": "",
+      "values": [
+        true
+      ],
+      "description": ""
+    },
+    {
+      "path": "createField.scope",
+      "branch": "",
+      "values": [
+        "user",
+        "org"
+      ],
+      "description": "Field owner: user AOP or linked org AOP. list-fields returns both; CRM mappings stay user-scoped."
+    },
+    {
+      "path": "createField.type",
+      "branch": "",
+      "values": [
+        "text",
+        "number",
+        "date",
+        "boolean",
+        "select",
+        "currency",
+        "url",
+        "email",
+        "phone",
+        "list",
+        "fraction",
+        "json",
+        "people",
+        "summarized_history",
+        "deal_brief"
+      ],
+      "description": "Field type. Fixed forever once created — there is no update-field path to change it."
+    },
+    {
+      "path": "updateField.internalSignals.definitions[].eligibility",
+      "branch": "",
+      "values": [
+        "any",
+        "lost_or_lapsed",
+        "customer"
+      ],
+      "description": ""
+    },
+    {
+      "path": "updateField.signal.enabled",
+      "branch": "",
+      "values": [
+        true
+      ],
+      "description": ""
+    },
+    {
+      "path": "updateField.scope",
+      "branch": "",
+      "values": [
+        "user",
+        "org"
+      ],
+      "description": "Field owner: user AOP or linked org AOP. list-fields returns both; CRM mappings stay user-scoped."
+    },
+    {
+      "path": "deleteField.scope",
+      "branch": "",
+      "values": [
+        "user",
+        "org"
+      ],
+      "description": "Field owner: user AOP or linked org AOP. list-fields returns both; CRM mappings stay user-scoped."
+    },
+    {
+      "path": "linkMapping.scope",
+      "branch": "",
+      "values": [
+        "user",
+        "org"
+      ],
+      "description": "Field owner: user AOP or linked org AOP. list-fields returns both; CRM mappings stay user-scoped."
+    },
+    {
+      "path": "linkMapping.resolutions[].action",
+      "branch": "action=remap-to",
+      "values": [
+        "remap-to"
+      ],
+      "description": "Bulk-migrates every existing stored value from oldValue to newValue, then drops the old option."
+    },
+    {
+      "path": "linkMapping.resolutions[].action",
+      "branch": "action=keep-legacy",
+      "values": [
+        "keep-legacy"
+      ],
+      "description": "Leaves existing stored values as-is (no longer selectable going forward) and drops the old option."
+    },
+    {
+      "path": "addFieldOption.scope",
+      "branch": "",
+      "values": [
+        "user",
+        "org"
+      ],
+      "description": "Field owner: user AOP or linked org AOP. list-fields returns both; CRM mappings stay user-scoped."
+    },
+    {
+      "path": "updateFieldOption.scope",
+      "branch": "",
+      "values": [
+        "user",
+        "org"
+      ],
+      "description": "Field owner: user AOP or linked org AOP. list-fields returns both; CRM mappings stay user-scoped."
+    },
+    {
+      "path": "removeFieldOption.scope",
+      "branch": "",
+      "values": [
+        "user",
+        "org"
+      ],
+      "description": "Field owner: user AOP or linked org AOP. list-fields returns both; CRM mappings stay user-scoped."
+    },
+    {
+      "path": "removeFieldOption.resolution.action",
+      "branch": "action=remap-to",
+      "values": [
+        "remap-to"
+      ],
+      "description": "Bulk-migrates every existing stored value from this option to newValue, then removes it."
+    },
+    {
+      "path": "removeFieldOption.resolution.action",
+      "branch": "action=keep-legacy",
+      "values": [
+        "keep-legacy"
+      ],
+      "description": "Leaves existing stored values as-is (no longer selectable going forward) and removes the option."
+    },
+    {
+      "path": "setStageCriteria.field",
+      "branch": "",
+      "values": [
+        "entry",
+        "exit"
+      ],
+      "description": "Which criteria block to set."
+    }
+  ],
+  "connection-write": [
+    {
+      "path": "change.type",
+      "branch": "type=update_crm_field_mappings",
+      "values": [
+        "update_crm_field_mappings"
+      ],
+      "description": ""
+    },
+    {
+      "path": "change.op",
+      "branch": "type=update_crm_field_mappings",
+      "values": [
+        "add",
+        "update",
+        "remove"
+      ],
+      "description": "add: create a new field mapping. update: change an existing mapping (matched by crmFieldName). remove: delete a mapping by crmFieldName."
+    },
+    {
+      "path": "change.transformations.*.type",
+      "branch": "type=update_crm_field_mappings",
+      "values": [
+        "date",
+        "number",
+        "string",
+        "json"
+      ],
+      "description": ""
+    },
+    {
+      "path": "change.referenceType",
+      "branch": "type=update_crm_field_mappings",
+      "values": [
+        "contact",
+        "company",
+        "deal"
+      ],
+      "description": "This CRM field is a reference/lookup to another record type, not a plain value."
+    },
+    {
+      "path": "change.type",
+      "branch": "type=manage_playbook_webhook",
+      "values": [
+        "manage_playbook_webhook"
+      ],
+      "description": ""
+    },
+    {
+      "path": "change.op",
+      "branch": "type=manage_playbook_webhook",
+      "values": [
+        "create",
+        "enable",
+        "disable",
+        "list",
+        "test",
+        "delete"
+      ],
+      "description": ""
+    },
+    {
+      "path": "change.scope",
+      "branch": "type=manage_playbook_webhook",
+      "values": [
+        "user",
+        "org"
+      ],
+      "description": "Required for op=create. org fires ONCE org-wide (org admin only); user fires per registered user."
+    },
+    {
+      "path": "change.sourceType",
+      "branch": "type=manage_playbook_webhook",
+      "values": [
+        "http",
+        "slack_channel"
+      ],
+      "description": "Default http (mints a POST URL). slack_channel fires on each message in sourceRef."
+    },
+    {
+      "path": "change.type",
+      "branch": "type=update_slack_sync_config",
+      "values": [
+        "update_slack_sync_config"
+      ],
+      "description": ""
+    },
+    {
+      "path": "change.scope",
+      "branch": "type=update_slack_sync_config",
+      "values": [
+        "user",
+        "org"
+      ],
+      "description": "Defaults \"user\" (configures only connectionId). \"org\" (org admin only) sets the ORG-WIDE DEFAULT instead — connectionId is ignored — used by any Slack connection in the org with no explicit config of its own; an explicit per-connection value always wins over this default."
+    },
+    {
+      "path": "change.type",
+      "branch": "type=update_crm_settings",
+      "values": [
+        "update_crm_settings"
+      ],
+      "description": ""
+    },
+    {
+      "path": "change.stageRequiredFieldsOp.op",
+      "branch": "type=update_crm_settings",
+      "values": [
+        "set",
+        "remove"
+      ],
+      "description": ""
+    },
+    {
+      "path": "change.type",
+      "branch": "type=update_connection_instructions",
+      "values": [
+        "update_connection_instructions"
+      ],
+      "description": ""
+    },
+    {
+      "path": "change.type",
+      "branch": "type=disconnect_linkedin_seat",
+      "values": [
+        "disconnect_linkedin_seat"
+      ],
+      "description": ""
+    },
+    {
+      "path": "change.type",
+      "branch": "type=disconnect_whatsapp_account",
+      "values": [
+        "disconnect_whatsapp_account"
+      ],
+      "description": ""
+    },
+    {
+      "path": "change.type",
+      "branch": "type=update_whatsapp_sync_config",
+      "values": [
+        "update_whatsapp_sync_config"
+      ],
+      "description": ""
+    },
+    {
+      "path": "change.type",
+      "branch": "type=resolve_channel_link_proposal",
+      "values": [
+        "resolve_channel_link_proposal"
+      ],
+      "description": ""
+    },
+    {
+      "path": "change.op",
+      "branch": "type=resolve_channel_link_proposal",
+      "values": [
+        "resolve",
+        "sweep"
+      ],
+      "description": "resolve: link (or dismiss) ONE ambiguous Slack/LinkedIn/WhatsApp channel against a specific deal. sweep: re-run the org's automatic linking pass and commit its verdicts — no specific container needed."
+    },
+    {
+      "path": "change.channel",
+      "branch": "type=resolve_channel_link_proposal",
+      "values": [
+        "slack",
+        "linkedin",
+        "whatsapp"
+      ],
+      "description": "Required for op=resolve."
+    }
+  ],
+  "aop-write": [
+    {
+      "path": "createAop.scope",
+      "branch": "",
+      "values": [
+        "user",
+        "org"
+      ],
+      "description": "Conversation ownership scope: \"user\" (one conversation per user+company) or \"org\" (one shared conversation per org+company). Defaults to the source AOP's own scope."
+    },
+    {
+      "path": "updateSelectionProcedure.scope",
+      "branch": "",
+      "values": [
+        "user",
+        "org"
+      ],
+      "description": "Field owner: user AOP or linked org AOP. list-fields returns both; CRM mappings stay user-scoped."
+    },
+    {
+      "path": "updateCustomAssignmentInstruction.scope",
+      "branch": "",
+      "values": [
+        "user",
+        "org"
+      ],
+      "description": "Field owner: user AOP or linked org AOP. list-fields returns both; CRM mappings stay user-scoped."
+    }
+  ],
+  "data-settings": [
+    {
+      "path": "update.scope",
+      "branch": "",
+      "values": [
+        "self",
+        "organization"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.patch.personProvider",
+      "branch": "",
+      "values": [
+        "fiber",
+        "crustdata",
+        "apollo",
+        "moltsets"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.patch.companyProvider",
+      "branch": "",
+      "values": [
+        "fiber",
+        "crustdata",
+        "apollo",
+        "moltsets"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.patch.allowedProviders[]",
+      "branch": "",
+      "values": [
+        "fiber",
+        "crustdata",
+        "apollo",
+        "moltsets"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.patch.watchDefaults.provider",
+      "branch": "provider=crustdata",
+      "values": [
+        "crustdata"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.patch.watchDefaults.refreshFrequencyDays",
+      "branch": "provider=crustdata",
+      "values": [
+        1,
+        3,
+        7,
+        14,
+        30
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.patch.watchDefaults.signalTypes[]",
+      "branch": "provider=crustdata",
+      "values": [
+        "title_change",
+        "job_change",
+        "headline_change",
+        "person_location_change",
+        "education_added",
+        "skill_added",
+        "headcount_change",
+        "funding_change",
+        "news_added",
+        "funding_round_change",
+        "investor_added",
+        "acquisition_added",
+        "hiring_change",
+        "company_name_change",
+        "certification_added",
+        "honor_added",
+        "connection_count_change",
+        "funding_milestone_added",
+        "follower_count_change",
+        "industry_change",
+        "company_location_change"
+      ],
+      "description": ""
+    }
+  ],
+  "config-propagate": [
+    {
+      "path": "propagateField.targets",
+      "branch": "",
+      "values": [
+        "uniform_and_missing"
+      ],
+      "description": ""
+    },
+    {
+      "path": "propagateField.targets",
+      "branch": "",
+      "values": [
+        "org"
+      ],
+      "description": ""
+    },
+    {
+      "path": "propagateMapping.targets",
+      "branch": "",
+      "values": [
+        "org"
+      ],
+      "description": ""
+    }
+  ],
+  "workspace-write": [
+    {
+      "path": "change.type",
+      "branch": "type=update_user_settings",
+      "values": [
+        "update_user_settings"
+      ],
+      "description": ""
+    },
+    {
+      "path": "change.slackNotifications.deliveryMethod",
+      "branch": "type=update_user_settings",
+      "values": [
+        "dm",
+        "channel"
+      ],
+      "description": ""
+    },
+    {
+      "path": "change.type",
+      "branch": "type=update_inbox_settings",
+      "values": [
+        "update_inbox_settings"
+      ],
+      "description": ""
+    },
+    {
+      "path": "change.linkedinNavigation.filters[].view",
+      "branch": "type=update_inbox_settings",
+      "values": [
+        "all",
+        "focused",
+        "archive",
+        "reminders",
+        "drafts",
+        "unread",
+        "starred",
+        "inmail",
+        "salesnav",
+        "spam",
+        "sponsored",
+        "other"
+      ],
+      "description": ""
+    },
+    {
+      "path": "change.linkedinNavigation.filters[].filter",
+      "branch": "type=update_inbox_settings",
+      "values": [
+        "all",
+        "waiting-them",
+        "waiting-me",
+        "unread"
+      ],
+      "description": ""
+    },
+    {
+      "path": "change.inboxLayout",
+      "branch": "type=update_inbox_settings",
+      "values": [
+        "inbox",
+        "important_other",
+        "stacked"
+      ],
+      "description": "Global inbox layout mode."
+    },
+    {
+      "path": "change.importantSignal",
+      "branch": "type=update_inbox_settings",
+      "values": [
+        "category_personal",
+        "gmail_important"
+      ],
+      "description": "Which signal marks a thread \"important\"."
+    },
+    {
+      "path": "change.type",
+      "branch": "type=manage_inbox",
+      "values": [
+        "manage_inbox"
+      ],
+      "description": ""
+    },
+    {
+      "path": "change.op",
+      "branch": "type=manage_inbox",
+      "values": [
+        "create",
+        "update",
+        "delete",
+        "reorder"
+      ],
+      "description": "create/update/delete/reorder a custom inbox tab (split). accountId is resolved server-side."
+    },
+    {
+      "path": "change.lookbackDays",
+      "branch": "type=manage_inbox",
+      "values": [
+        "all"
+      ],
+      "description": ""
+    },
+    {
+      "path": "change.channels[]",
+      "branch": "type=manage_inbox",
+      "values": [
+        "email",
+        "linkedin",
+        "whatsapp",
+        "slack"
+      ],
+      "description": ""
+    },
+    {
+      "path": "change.type",
+      "branch": "type=manage_task_group",
+      "values": [
+        "manage_task_group"
+      ],
+      "description": ""
+    },
+    {
+      "path": "change.op",
+      "branch": "type=manage_task_group",
+      "values": [
+        "create",
+        "update",
+        "delete",
+        "reorder"
+      ],
+      "description": "create/update/delete/reorder a task group (the lanes tasks are filed into)."
+    },
+    {
+      "path": "change.overduePolicy.mode",
+      "branch": "type=manage_task_group",
+      "values": [
+        "nag",
+        "auto-complete",
+        "ignore"
+      ],
+      "description": ""
+    },
+    {
+      "path": "change.type",
+      "branch": "type=update_webhook_export_config",
+      "values": [
+        "update_webhook_export_config"
+      ],
+      "description": ""
+    }
+  ],
+  "systems-write": [
+    {
+      "path": "change.type",
+      "branch": "type=manage_mcp_connection",
+      "values": [
+        "manage_mcp_connection"
+      ],
+      "description": ""
+    },
+    {
+      "path": "change.op",
+      "branch": "type=manage_mcp_connection",
+      "values": [
+        "create",
+        "delete"
+      ],
+      "description": "create/delete an MCP server connection."
+    },
+    {
+      "path": "change.scope",
+      "branch": "type=manage_mcp_connection",
+      "values": [
+        "user",
+        "org"
+      ],
+      "description": "Defaults \"user\". \"org\" shares the server with every member of the organization (org admins only); a member's own connection of the same name still wins."
+    },
+    {
+      "path": "change.type",
+      "branch": "type=update_mcp_connection_settings",
+      "values": [
+        "update_mcp_connection_settings"
+      ],
+      "description": ""
+    }
+  ],
+  "debug": [
+    {
+      "path": "testRun.triggerType",
+      "branch": "",
+      "values": [
+        "cron",
+        "before_meeting",
+        "webhook"
+      ],
+      "description": "\"cron\" fires exactly ONE named subagent in isolation (requires subagentName). \"before_meeting\" fires EVERY before-meeting subagent wired to conversationId — not isolated to one subagent, since Cedar has no isolated-single-agent before_meeting path today; this mirrors what a real meeting trigger actually does. \"webhook\" fires one registered webhook (requires webhookId) through the same dispatch path a real inbound POST or Slack-channel message would take — conversationless, so save-draft/save-slack-draft/task creation are unavailable to whatever it runs."
+    },
+    {
+      "path": "testRun.level",
+      "branch": "",
+      "values": [
+        "user",
+        "org"
+      ],
+      "description": "cron only. \"user\" reads the subagent from your own AOP; \"org\" reads it from the org AOP linked to your own AOP (you can only test an org-level agent your own AOP is actually linked to, never an arbitrary other org's)."
+    }
+  ],
+  "run-sql": [
+    {
+      "path": "format",
+      "branch": "",
+      "values": [
+        "jsonl",
+        "csv",
+        "json"
+      ],
+      "description": "File format when `out` is true. Default jsonl (one record per line) — prefer it, because CRM text contains newlines and line-based tools miscount CSV rows. csv for spreadsheets."
+    }
+  ],
+  "analytics": [],
+  "conversation-read": [
+    {
+      "path": "get.eventTypes[]",
+      "branch": "",
+      "values": [
+        "email",
+        "slack_message",
+        "meeting",
+        "external_crm"
+      ],
+      "description": ""
+    },
+    {
+      "path": "find.filters[].field",
+      "branch": "",
+      "values": [
+        "id",
+        "name",
+        "status",
+        "priority",
+        "dealValue",
+        "nextSteps",
+        "lastContactedAt",
+        "lastInboundAt",
+        "lastOutboundEmailAt",
+        "lastMeetingAt",
+        "nextStepDate",
+        "createdAt",
+        "updatedAt",
+        "aopId",
+        "important",
+        "ownerId",
+        "aopName",
+        "primaryCompanyName",
+        "primaryCompanyDomain",
+        "crmSynced",
+        "hasFutureCalendar"
+      ],
+      "description": ""
+    },
+    {
+      "path": "find.filters[].operator",
+      "branch": "",
+      "values": [
+        "eq",
+        "neq",
+        "gt",
+        "gte",
+        "lt",
+        "lte",
+        "like",
+        "ilike",
+        "in",
+        "notIn",
+        "isNull",
+        "isNotNull"
+      ],
+      "description": "The comparison operator"
+    },
+    {
+      "path": "find.eventFilter.dateOperator",
+      "branch": "",
+      "values": [
+        "before",
+        "after",
+        "on",
+        "range"
+      ],
+      "description": ""
+    },
+    {
+      "path": "find.eventFilter.count.operator",
+      "branch": "",
+      "values": [
+        "gt",
+        "gte",
+        "lt",
+        "lte",
+        "eq"
+      ],
+      "description": "Comparison operator"
+    },
+    {
+      "path": "find.orderBy.field",
+      "branch": "",
+      "values": [
+        "id",
+        "name",
+        "status",
+        "priority",
+        "dealValue",
+        "nextSteps",
+        "lastContactedAt",
+        "lastInboundAt",
+        "lastOutboundEmailAt",
+        "lastMeetingAt",
+        "nextStepDate",
+        "createdAt",
+        "updatedAt",
+        "aopId",
+        "important",
+        "ownerId",
+        "aopName",
+        "primaryCompanyName",
+        "primaryCompanyDomain",
+        "crmSynced",
+        "hasFutureCalendar"
+      ],
+      "description": ""
+    },
+    {
+      "path": "find.orderBy.direction",
+      "branch": "",
+      "values": [
+        "asc",
+        "desc"
+      ],
+      "description": ""
+    },
+    {
+      "path": "searchSemantic.filters.eventType",
+      "branch": "",
+      "values": [
+        "email",
+        "meeting",
+        "slack",
+        "external_crm"
+      ],
+      "description": ""
+    },
+    {
+      "path": "searchSemantic.filters.direction",
+      "branch": "",
+      "values": [
+        "inbound",
+        "outbound"
+      ],
+      "description": "Filter by email/meeting direction"
+    },
+    {
+      "path": "searchSemantic.searchType",
+      "branch": "",
+      "values": [
+        "vector",
+        "fts"
+      ],
+      "description": "Search method. \"vector\" = semantic similarity (default), for meaning. \"fts\" = exact keyword match (BM25), for a literal string — an order number, a URL, a name, or \"Attachments\" to find emails with attachments. Vectors blur exact tokens; use fts when the answer IS the string."
+    },
+    {
+      "path": "searchExternalCrmDeals.providerId",
+      "branch": "",
+      "values": [
+        "hubspot",
+        "attio",
+        "salesforce",
+        "copper"
+      ],
+      "description": "The CRM connection's providerId — get this from `config`'s `read-settings` action (sections: [\"connections\"])."
+    },
+    {
+      "path": "timeline.kinds[]",
+      "branch": "",
+      "values": [
+        "event",
+        "instance",
+        "judgment"
+      ],
+      "description": ""
+    },
+    {
+      "path": "search.filter.kinds[]",
+      "branch": "",
+      "values": [
+        "event",
+        "instance",
+        "judgment"
+      ],
+      "description": ""
+    }
+  ],
+  "conversation-write": [
+    {
+      "path": "updateFields.fields[].mode",
+      "branch": "",
+      "values": [
+        "replace",
+        "patch",
+        "upsert",
+        "append",
+        "update"
+      ],
+      "description": "People: upsert value={people:[{id,...changes}]}; history: append complete new entries or update existing IDs in value={entries:[...]}. Omitted properties stay; arrays replace. New rows need all required data. replace=value only; patch=old_string+new_string only. Null/omitted never clears; \"\" clears."
+    },
+    {
+      "path": "updateFields.fields[].value.people[].engagement",
+      "branch": "",
+      "values": [
+        "mentioned",
+        "introduced",
+        "engaged",
+        "should_engage"
+      ],
+      "description": ""
+    },
+    {
+      "path": "updateFields.fields[].value.people[].support",
+      "branch": "",
+      "values": [
+        "strong_support",
+        "support",
+        "neutral",
+        "opposed",
+        "unknown"
+      ],
+      "description": ""
+    },
+    {
+      "path": "updateFields.fields[].value.entries[].kind",
+      "branch": "",
+      "values": [
+        "meeting",
+        "correspondence",
+        "email",
+        "milestone"
+      ],
+      "description": ""
+    },
+    {
+      "path": "updateFields.fields[].value.stage",
+      "branch": "",
+      "values": [
+        "discovery",
+        "demo",
+        "commercial",
+        "negotiation"
+      ],
+      "description": ""
+    },
+    {
+      "path": "updateFields.fields[].value.rows[].signal",
+      "branch": "",
+      "values": [
+        "green",
+        "yellow",
+        "red"
+      ],
+      "description": ""
+    },
+    {
+      "path": "updateFields.fields[].signal",
+      "branch": "",
+      "values": [
+        "red",
+        "yellow",
+        "green"
+      ],
+      "description": "Set only when the field description instructs a signal; follow its red/yellow/green rubric."
+    },
+    {
+      "path": "createEvent.eventType",
+      "branch": "",
+      "values": [
+        "meeting",
+        "call",
+        "text",
+        "custom"
+      ],
+      "description": "Type of event: \"meeting\" for in-person or video meetings, \"call\" for phone calls, \"text\" for text/chat messages, \"custom\" for any other interaction."
+    },
+    {
+      "path": "mutate.mutation.operation",
+      "branch": "operation=move_event",
+      "values": [
+        "move_event"
+      ],
+      "description": ""
+    },
+    {
+      "path": "mutate.mutation.operation",
+      "branch": "operation=reassign_aop",
+      "values": [
+        "reassign_aop"
+      ],
+      "description": ""
+    },
+    {
+      "path": "mutate.mutation.operation",
+      "branch": "operation=refresh_conversation",
+      "values": [
+        "refresh_conversation"
+      ],
+      "description": ""
+    },
+    {
+      "path": "mutate.mutation.scope",
+      "branch": "operation=refresh_conversation",
+      "values": [
+        "reconcile",
+        "full"
+      ],
+      "description": "'reconcile' (default): re-derive fields + tasks from the events now on the deal — NO draft. 'full': re-run the whole on-event pipeline for one event (incl. drafting) to reproduce a missing output — requires eventId."
+    },
+    {
+      "path": "mutate.mutation.operation",
+      "branch": "operation=refresh_fields",
+      "values": [
+        "refresh_fields"
+      ],
+      "description": ""
+    },
+    {
+      "path": "mutate.mutation.operation",
+      "branch": "operation=clear_working_memory",
+      "values": [
+        "clear_working_memory"
+      ],
+      "description": ""
+    },
+    {
+      "path": "mutate.mutation.operation",
+      "branch": "operation=merge_conversations",
+      "values": [
+        "merge_conversations"
+      ],
+      "description": ""
+    },
+    {
+      "path": "mutate.mutation.operation",
+      "branch": "operation=merge_companies",
+      "values": [
+        "merge_companies"
+      ],
+      "description": ""
+    },
+    {
+      "path": "mutate.mutation.operation",
+      "branch": "operation=fix_misassignment",
+      "values": [
+        "fix_misassignment"
+      ],
+      "description": ""
+    },
+    {
+      "path": "mutate.mutation.operation",
+      "branch": "operation=assign_aop_by_selection",
+      "values": [
+        "assign_aop_by_selection"
+      ],
+      "description": ""
+    },
+    {
+      "path": "mutate.mutation.operation",
+      "branch": "operation=rename_conversation",
+      "values": [
+        "rename_conversation"
+      ],
+      "description": ""
+    },
+    {
+      "path": "linkExternalCrmDeal.providerId",
+      "branch": "",
+      "values": [
+        "hubspot",
+        "attio",
+        "salesforce",
+        "copper"
+      ],
+      "description": ""
+    }
+  ],
+  "slack-read": [],
+  "slack-write": [],
+  "conversation-analytics": [
+    {
+      "path": "computeMetric.metric",
+      "branch": "",
+      "values": [
+        "crm_won_amount",
+        "crm_open_due_amount",
+        "response_time",
+        "followup_time",
+        "post_meeting_time",
+        "reply_rate",
+        "event_count",
+        "time_between_stages",
+        "stage_funnel",
+        "win_rate",
+        "aop_conversion",
+        "deals_dropped",
+        "quiet_gap",
+        "gave_up_count",
+        "hygiene",
+        "contacts_reached",
+        "open_deal_age",
+        "stalled_deal_revenue",
+        "total_pipeline",
+        "won_pipeline",
+        "avg_acv",
+        "judged_strength"
+      ],
+      "description": "The analytics metric to compute server-side (never tally rows yourself)."
+    },
+    {
+      "path": "computeMetric.filter.kinds[]",
+      "branch": "",
+      "values": [
+        "event",
+        "instance",
+        "judgment"
+      ],
+      "description": ""
+    },
+    {
+      "path": "computeMetric.perDeal",
+      "branch": "",
+      "values": [
+        "latest",
+        "max"
+      ],
+      "description": "Deprecated and ignored. It only ever applied to the atom metrics, which moved to run-sql (per-deal normalization is a GROUP BY there, in whatever shape the question needs). Accepted so an existing caller does not fail validation."
+    },
+    {
+      "path": "computeMetricBatch.items[].metric",
+      "branch": "",
+      "values": [
+        "crm_won_amount",
+        "crm_open_due_amount",
+        "response_time",
+        "followup_time",
+        "post_meeting_time",
+        "reply_rate",
+        "event_count",
+        "time_between_stages",
+        "stage_funnel",
+        "win_rate",
+        "aop_conversion",
+        "deals_dropped",
+        "quiet_gap",
+        "gave_up_count",
+        "hygiene",
+        "contacts_reached",
+        "open_deal_age",
+        "stalled_deal_revenue",
+        "total_pipeline",
+        "won_pipeline",
+        "avg_acv",
+        "judged_strength"
+      ],
+      "description": "The analytics metric to compute server-side (never tally rows yourself)."
+    },
+    {
+      "path": "computeMetricBatch.items[].filter.kinds[]",
+      "branch": "",
+      "values": [
+        "event",
+        "instance",
+        "judgment"
+      ],
+      "description": ""
+    },
+    {
+      "path": "computeMetricBatch.items[].perDeal",
+      "branch": "",
+      "values": [
+        "latest",
+        "max"
+      ],
+      "description": "Deprecated and ignored. It only ever applied to the atom metrics, which moved to run-sql (per-deal normalization is a GROUP BY there, in whatever shape the question needs). Accepted so an existing caller does not fail validation."
+    },
+    {
+      "path": "computeMetricBatch.items[].trend.size",
+      "branch": "",
+      "values": [
+        "week",
+        "month"
+      ],
+      "description": ""
+    }
+  ],
+  "taxonomy-fields": [],
+  "task": [
+    {
+      "path": "list.scope",
+      "branch": "",
+      "values": [
+        "#today",
+        "#overdue",
+        "#crm-approvals",
+        "#all"
+      ],
+      "description": "Scope: #all lists all open work user-wide, ignoring ambient conversation/date filters; recommendations default on. Follow nextCursor. For a deal inventory omit scope and set conversationId. #crm-approvals lists open CRM approvals user-wide. #today covers the previous 7 days through today; #overdue is before today without a lower bound. Date scopes use conversationId if supplied, otherwise user-wide."
+    },
+    {
+      "path": "list.outputKinds[]",
+      "branch": "",
+      "values": [
+        "email",
+        "slack",
+        "calendar",
+        "linkedin",
+        "whatsapp",
+        "crm-field",
+        "crm-opportunity",
+        "file",
+        "recommendation",
+        "none"
+      ],
+      "description": ""
+    },
+    {
+      "path": "create.taskChannel",
+      "branch": "",
+      "values": [
+        "email",
+        "slack",
+        "linkedin",
+        "whatsapp"
+      ],
+      "description": "How this task will be carried out: email, slack, linkedin or whatsapp. Only set it when the channel is genuinely part of the commitment — \"reply to this thread\" is an email by definition. For open-ended work like \"follow up with Sarah\", LEAVE IT UNSET: you do not know today whether that follow-up should be an email or a Slack message, and by the time it comes due a channel may exist that does not exist now. An unset channel is decided at execution, with better information; a guessed one is recorded as fact and biases whoever picks the task up."
+    },
+    {
+      "path": "create.taskType",
+      "branch": "",
+      "values": [
+        "response",
+        "follow-up",
+        "post-meeting",
+        "pre-meeting",
+        "reactivation",
+        "manual",
+        "calendar",
+        "crm-opportunity",
+        "field-approval"
+      ],
+      "description": "Task type. Options:\n- response: reply to an inbound email\n- follow-up: outbound follow-up email\n- post-meeting: post-meeting recap\n- pre-meeting: pre-meeting prep\n- reactivation: re-engage a stalled deal\n- manual: general user-visible task\n- calendar: calendar invite or placeholder to send\n- crm-opportunity: create a new deal/opportunity in the external CRM. REQUIRED notes format: include provider (e.g. \"hubspot\"), accountId if known, instanceUrl if Salesforce, and the full conversation skill's opportunity-creation resource instructions so the chat agent has everything when the user invokes it.\n- field-approval: proposed field value change pending user approval. REQUIRED notes format: JSON string {\"fieldName\":\"<field>\",\"value\":\"<value>\",\"fieldLabel\":\"<label>\",\"conversationId\":\"<id>\"} — this is parsed by applyFieldChange when the user approves."
+    },
+    {
+      "path": "create.tags[]",
+      "branch": "",
+      "values": [
+        "promised",
+        "awaiting-them"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.taskType",
+      "branch": "",
+      "values": [
+        "response",
+        "follow-up",
+        "post-meeting",
+        "pre-meeting",
+        "reactivation",
+        "manual",
+        "calendar",
+        "crm-opportunity",
+        "field-approval"
+      ],
+      "description": "Task type. Options:\n- response: reply to an inbound email\n- follow-up: outbound follow-up email\n- post-meeting: post-meeting recap\n- pre-meeting: pre-meeting prep\n- reactivation: re-engage a stalled deal\n- manual: general user-visible task\n- calendar: calendar invite or placeholder to send\n- crm-opportunity: create a new deal/opportunity in the external CRM. REQUIRED notes format: include provider (e.g. \"hubspot\"), accountId if known, instanceUrl if Salesforce, and the full conversation skill's opportunity-creation resource instructions so the chat agent has everything when the user invokes it.\n- field-approval: proposed field value change pending user approval. REQUIRED notes format: JSON string {\"fieldName\":\"<field>\",\"value\":\"<value>\",\"fieldLabel\":\"<label>\",\"conversationId\":\"<id>\"} — this is parsed by applyFieldChange when the user approves."
+    },
+    {
+      "path": "update.tags[]",
+      "branch": "",
+      "values": [
+        "promised",
+        "awaiting-them"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.status",
+      "branch": "",
+      "values": [
+        "todo",
+        "done"
+      ],
+      "description": "Task status: 'todo' if this is the next task to be completed in this conversation. Use status='done' when the intended task action has already happened. Do not use cancel-task for completed work."
+    },
+    {
+      "path": "cancel.taskCreatedBy",
+      "branch": "",
+      "values": [
+        "agent",
+        "user"
+      ],
+      "description": "When using cancelOlderThan: filter to only tasks created by this actor. Defaults to \"agent\" so user-created tasks are never accidentally bulk-deleted."
+    },
+    {
+      "path": "dealList.filter",
+      "branch": "",
+      "values": [
+        "all",
+        "assignedToMe",
+        "dealTasks",
+        "recommendations"
+      ],
+      "description": ""
+    }
+  ],
+  "mail": [
+    {
+      "path": "find.direction",
+      "branch": "",
+      "values": [
+        "inbound",
+        "outbound"
+      ],
+      "description": "Filter by direction. Use \"outbound\" for emails the user sent."
+    }
+  ],
+  "email-tracking": [],
+  "meetings": [],
+  "calendar": [
+    {
+      "path": "modifyEvent.operation",
+      "branch": "",
+      "values": [
+        "create",
+        "update",
+        "delete"
+      ],
+      "description": "Which calendar mutation to perform. \"create\" needs summary/startDateTime/endDateTime/attendees. \"update\" needs eventId plus any fields you want to change. \"delete\" needs only eventId."
+    },
+    {
+      "path": "modifyEvent.conferenceType",
+      "branch": "",
+      "values": [
+        "hangoutsMeet",
+        "zoom"
+      ],
+      "description": "Which conference `wantsMeetLink` creates: `hangoutsMeet` (Google Meet, the default) or `zoom`, which Cedar mints on the user's own Zoom account and attaches to the event. Only set `zoom` when the user asked for Zoom by name; a user who has not connected Zoom gets an event with no video link rather than a failure."
+    }
+  ],
+  "notify": [
+    {
+      "path": "send.channel",
+      "branch": "",
+      "values": [
+        "email",
+        "slack",
+        "imessage",
+        "whatsapp"
+      ],
+      "description": "Deliver on a specific channel instead of the user's default. Leave UNSET almost always — the user picks where their notifications land. Set it (e.g. \"email\") only when the message argues for a channel, such as a long written report the user wants in their inbox. Not a retry mechanism: a failed send already falls back to email on its own."
+    },
+    {
+      "path": "send.slack.buttons[].kind",
+      "branch": "kind=action",
+      "values": [
+        "action"
+      ],
+      "description": ""
+    },
+    {
+      "path": "send.slack.buttons[].style",
+      "branch": "kind=action",
+      "values": [
+        "primary",
+        "danger",
+        "default"
+      ],
+      "description": ""
+    },
+    {
+      "path": "send.slack.buttons[].confirm.style",
+      "branch": "kind=action",
+      "values": [
+        "primary",
+        "danger"
+      ],
+      "description": ""
+    },
+    {
+      "path": "send.slack.buttons[].kind",
+      "branch": "kind=link",
+      "values": [
+        "link"
+      ],
+      "description": ""
+    },
+    {
+      "path": "send.slack.threadReplies[].buttons[].kind",
+      "branch": "kind=action",
+      "values": [
+        "action"
+      ],
+      "description": ""
+    },
+    {
+      "path": "send.slack.threadReplies[].buttons[].style",
+      "branch": "kind=action",
+      "values": [
+        "primary",
+        "danger",
+        "default"
+      ],
+      "description": ""
+    },
+    {
+      "path": "send.slack.threadReplies[].buttons[].confirm.style",
+      "branch": "kind=action",
+      "values": [
+        "primary",
+        "danger"
+      ],
+      "description": ""
+    },
+    {
+      "path": "send.slack.threadReplies[].buttons[].kind",
+      "branch": "kind=link",
+      "values": [
+        "link"
+      ],
+      "description": ""
+    },
+    {
+      "path": "send.imessage.tapbacks[].emoji",
+      "branch": "",
+      "values": [
+        "thumbsup",
+        "thumbsdown",
+        "heart",
+        "haha",
+        "exclamation",
+        "question"
+      ],
+      "description": ""
+    }
+  ],
+  "draft-comms": [
+    {
+      "path": "draftEmail.draftCategory",
+      "branch": "",
+      "values": [
+        "emailResponses",
+        "scheduledFollowups",
+        "postMeetingFollowups",
+        "preMeetingPrep",
+        "conversationRefresh",
+        "executeTaskNow"
+      ],
+      "description": "OPTIONAL - The semantic category of this draft. Pass when you know the purpose: emailResponses = replying to an inbound email, scheduledFollowups = a scheduled or proactive follow-up, postMeetingFollowups = follow-up after a meeting, preMeetingPrep = pre-meeting agenda or prep email."
+    },
+    {
+      "path": "draftSlackMessage.taskType",
+      "branch": "",
+      "values": [
+        "response",
+        "follow-up",
+        "post-meeting",
+        "pre-meeting",
+        "reactivation",
+        "manual",
+        "calendar",
+        "crm-opportunity",
+        "field-approval"
+      ],
+      "description": "Task type for categorization. Use \"response\" for replies, \"follow-up\" for follow-ups, \"pre-meeting\" for pre-meeting prep, \"manual\" for general tasks."
+    }
+  ],
+  "schedule-send": [],
+  "send-email": [],
+  "ui-config": [
+    {
+      "path": "configureOverview.ops[].op",
+      "branch": "op=add",
+      "values": [
+        "add"
+      ],
+      "description": ""
+    },
+    {
+      "path": "configureOverview.ops[].item.kind",
+      "branch": "op=add",
+      "values": [
+        "field",
+        "doc",
+        "contacts"
+      ],
+      "description": ""
+    },
+    {
+      "path": "configureOverview.ops[].item.fieldType",
+      "branch": "op=add",
+      "values": [
+        "cedar",
+        "custom"
+      ],
+      "description": ""
+    },
+    {
+      "path": "configureOverview.ops[].item.render",
+      "branch": "op=add",
+      "values": [
+        "scalar",
+        "markdown"
+      ],
+      "description": ""
+    },
+    {
+      "path": "configureOverview.ops[].op",
+      "branch": "op=remove",
+      "values": [
+        "remove"
+      ],
+      "description": ""
+    },
+    {
+      "path": "configureOverview.ops[].op",
+      "branch": "op=setVisibleWhen",
+      "values": [
+        "setVisibleWhen"
+      ],
+      "description": ""
+    },
+    {
+      "path": "configureOverview.ops[].op",
+      "branch": "op=setRender",
+      "values": [
+        "setRender"
+      ],
+      "description": ""
+    },
+    {
+      "path": "configureOverview.ops[].render",
+      "branch": "op=setRender",
+      "values": [
+        "scalar",
+        "markdown"
+      ],
+      "description": ""
+    },
+    {
+      "path": "configureOverview.ops[].op",
+      "branch": "op=setOwner",
+      "values": [
+        "setOwner"
+      ],
+      "description": ""
+    },
+    {
+      "path": "configureOverview.ops[].op",
+      "branch": "op=reorder",
+      "values": [
+        "reorder"
+      ],
+      "description": ""
+    },
+    {
+      "path": "createCanvas.type",
+      "branch": "",
+      "values": [
+        "conversationCanvas",
+        "kanbanConversation",
+        "cardList",
+        "table",
+        "report",
+        "statistics",
+        "tasks",
+        "agenda",
+        "calendar"
+      ],
+      "description": ""
+    },
+    {
+      "path": "updateCanvas.type",
+      "branch": "",
+      "values": [
+        "conversationCanvas",
+        "kanbanConversation",
+        "cardList",
+        "table",
+        "report",
+        "statistics",
+        "tasks",
+        "agenda",
+        "calendar"
+      ],
+      "description": ""
+    }
+  ],
+  "research": [
+    {
+      "path": "enrichCompany.provider",
+      "branch": "",
+      "values": [
+        "fiber",
+        "crustdata",
+        "apollo",
+        "moltsets"
+      ],
+      "description": ""
+    },
+    {
+      "path": "chooseEnrichment.provider",
+      "branch": "",
+      "values": [
+        "fiber",
+        "crustdata",
+        "apollo",
+        "moltsets"
+      ],
+      "description": ""
+    },
+    {
+      "path": "enrichPerson.provider",
+      "branch": "",
+      "values": [
+        "fiber",
+        "crustdata",
+        "apollo",
+        "moltsets"
+      ],
+      "description": ""
+    },
+    {
+      "path": "webSearch.sources[]",
+      "branch": "",
+      "values": [
+        "news",
+        "web"
+      ],
+      "description": ""
+    }
+  ],
+  "signals-read": [],
+  "signals-write": [
+    {
+      "path": "internalMutation.operation",
+      "branch": "",
+      "values": [
+        "snooze",
+        "dismiss",
+        "resolve",
+        "reopen",
+        "append-note",
+        "deactivate",
+        "hold-reconciliation",
+        "clear-reconciliation"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.targets[].kind",
+      "branch": "",
+      "values": [
+        "person",
+        "company"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.personRefreshFrequencyDays",
+      "branch": "",
+      "values": [
+        1,
+        3,
+        7,
+        14,
+        30
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.additionalWatches[].kind",
+      "branch": "kind=discovery",
+      "values": [
+        "discovery"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.additionalWatches[].dataset",
+      "branch": "kind=discovery",
+      "values": [
+        "person",
+        "company",
+        "job",
+        "social_post"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.additionalWatches[].filters.type",
+      "branch": "kind=discovery",
+      "values": [
+        "=",
+        "!=",
+        ">",
+        "<",
+        "=>",
+        "=<",
+        "in",
+        "not_in",
+        "(.)",
+        "(!)",
+        "[.]",
+        "not_contains"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.additionalWatches[].filters.op",
+      "branch": "kind=discovery",
+      "values": [
+        "and",
+        "or"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.additionalWatches[].filters.conditions[].type",
+      "branch": "kind=discovery",
+      "values": [
+        "=",
+        "!=",
+        ">",
+        "<",
+        "=>",
+        "=<",
+        "in",
+        "not_in",
+        "(.)",
+        "(!)",
+        "[.]",
+        "not_contains"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.additionalWatches[].filters.conditions[].op",
+      "branch": "kind=discovery",
+      "values": [
+        "and",
+        "or"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.additionalWatches[].filters.conditions[].conditions[].type",
+      "branch": "kind=discovery",
+      "values": [
+        "=",
+        "!=",
+        ">",
+        "<",
+        "=>",
+        "=<",
+        "in",
+        "not_in",
+        "(.)",
+        "(!)",
+        "[.]",
+        "not_contains"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.additionalWatches[].filters.conditions[].conditions[].op",
+      "branch": "kind=discovery",
+      "values": [
+        "and",
+        "or"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.additionalWatches[].filters.conditions[].conditions[].conditions[].type",
+      "branch": "kind=discovery",
+      "values": [
+        "=",
+        "!=",
+        ">",
+        "<",
+        "=>",
+        "=<",
+        "in",
+        "not_in",
+        "(.)",
+        "(!)",
+        "[.]",
+        "not_contains"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.additionalWatches[].filters.conditions[].conditions[].conditions[].op",
+      "branch": "kind=discovery",
+      "values": [
+        "and",
+        "or"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.additionalWatches[].filters.conditions[].conditions[].conditions[].conditions[].type",
+      "branch": "kind=discovery",
+      "values": [
+        "=",
+        "!=",
+        ">",
+        "<",
+        "=>",
+        "=<",
+        "in",
+        "not_in",
+        "(.)",
+        "(!)",
+        "[.]",
+        "not_contains"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.additionalWatches[].subject.kind",
+      "branch": "kind=discovery",
+      "values": [
+        "person",
+        "company"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.additionalWatches[].kind",
+      "branch": "kind=entity",
+      "values": [
+        "entity"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.additionalWatches[].dataset",
+      "branch": "kind=entity",
+      "values": [
+        "person",
+        "company"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.additionalWatches[].track.type",
+      "branch": "kind=entity",
+      "values": [
+        "changed",
+        "added"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.additionalWatches[].track.op",
+      "branch": "kind=entity",
+      "values": [
+        "and",
+        "or"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.additionalWatches[].track.conditions[].type",
+      "branch": "kind=entity",
+      "values": [
+        "changed",
+        "added"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.additionalWatches[].track.conditions[].op",
+      "branch": "kind=entity",
+      "values": [
+        "and",
+        "or"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.additionalWatches[].track.conditions[].conditions[].type",
+      "branch": "kind=entity",
+      "values": [
+        "changed",
+        "added"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.additionalWatches[].track.conditions[].conditions[].op",
+      "branch": "kind=entity",
+      "values": [
+        "and",
+        "or"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.additionalWatches[].track.conditions[].conditions[].conditions[].type",
+      "branch": "kind=entity",
+      "values": [
+        "changed",
+        "added"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.fiberTrackers[].subject.kind",
+      "branch": "",
+      "values": [
+        "person",
+        "company"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.fiberTrackers[].rules[].entityType",
+      "branch": "entityType=person",
+      "values": [
+        "person"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.fiberTrackers[].rules[].type",
+      "branch": "entityType=person",
+      "values": [
+        "person_got_promoted"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.fiberTrackers[].rules[].type",
+      "branch": "entityType=person",
+      "values": [
+        "person_got_demoted"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.fiberTrackers[].rules[].type",
+      "branch": "entityType=person",
+      "values": [
+        "person_posted"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.fiberTrackers[].rules[].entityType",
+      "branch": "entityType=company",
+      "values": [
+        "company"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.fiberTrackers[].rules[].type",
+      "branch": "entityType=company",
+      "values": [
+        "company_posted"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.fiberTrackers[].rules[].type",
+      "branch": "entityType=company",
+      "values": [
+        "technology_added"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.fiberTrackers[].rules[].type",
+      "branch": "entityType=company",
+      "values": [
+        "new_office_location"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.fiberTrackers[].rules[].type",
+      "branch": "entityType=company",
+      "values": [
+        "recent_layoffs"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.fiberTrackers[].rules[].type",
+      "branch": "entityType=company",
+      "values": [
+        "department_size_threshold"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.fiberTrackers[].rules[].direction",
+      "branch": "entityType=company",
+      "values": [
+        "above",
+        "below"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.fiberTrackers[].rules[].type",
+      "branch": "entityType=company",
+      "values": [
+        "recently_hired_with_title"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.fiberTrackers[].rules[].type",
+      "branch": "entityType=company",
+      "values": [
+        "job_posting_in_function"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.fiberTrackers[].rules[].type",
+      "branch": "entityType=company",
+      "values": [
+        "job_posting_with_keyword"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.fiberTrackers[].rules[].searchFields[]",
+      "branch": "entityType=company",
+      "values": [
+        "title",
+        "description"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.fiberTrackers[].rules[].seniorityLevels[]",
+      "branch": "entityType=company",
+      "values": [
+        "Internship",
+        "Entry level",
+        "Associate",
+        "Mid-Senior level",
+        "Director",
+        "Executive"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.fiberTrackers[].rules[].modalities[]",
+      "branch": "entityType=company",
+      "values": [
+        "On-site",
+        "Remote",
+        "Hybrid"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.fiberTrackers[].rules[].type",
+      "branch": "entityType=company",
+      "values": [
+        "headcount_growth_percent"
+      ],
+      "description": ""
+    },
+    {
+      "path": "update.fiberTrackers[].rules[].direction",
+      "branch": "entityType=company",
+      "values": [
+        "grew",
+        "shrank",
+        "either"
+      ],
+      "description": ""
+    },
+    {
+      "path": "setState.state",
+      "branch": "",
+      "values": [
+        "active",
+        "paused",
+        "cancelled"
+      ],
+      "description": ""
+    }
+  ],
+  "billing-read": [],
+  "usage-observations-read": [
+    {
+      "path": "state",
+      "branch": "",
+      "values": [
+        "awaiting_evidence",
+        "pending",
+        "leased",
+        "delivered",
+        "superseded",
+        "blocked"
+      ],
+      "description": ""
+    }
+  ],
+  "usage-observations-retry": [],
+  "billing-write": [
+    {
+      "path": "scope",
+      "branch": "",
+      "values": [
+        "organization"
+      ],
+      "description": ""
+    },
+    {
+      "path": "policy.scope.kind",
+      "branch": "kind=account",
+      "values": [
+        "account"
+      ],
+      "description": ""
+    },
+    {
+      "path": "policy.scope.kind",
+      "branch": "kind=member",
+      "values": [
+        "member"
+      ],
+      "description": ""
+    },
+    {
+      "path": "policy.scope.kind",
+      "branch": "kind=meter",
+      "values": [
+        "meter"
+      ],
+      "description": ""
+    },
+    {
+      "path": "policy.scope.kind",
+      "branch": "kind=feature",
+      "values": [
+        "feature"
+      ],
+      "description": ""
+    },
+    {
+      "path": "policy.scope.kind",
+      "branch": "kind=features",
+      "values": [
+        "features"
+      ],
+      "description": ""
+    },
+    {
+      "path": "policy.period",
+      "branch": "",
+      "values": [
+        "utc_day",
+        "utc_month",
+        "operation"
+      ],
+      "description": ""
+    },
+    {
+      "path": "policy.delivery[]",
+      "branch": "",
+      "values": [
+        "in_app",
+        "email"
+      ],
+      "description": ""
+    },
+    {
+      "path": "grant.role",
+      "branch": "",
+      "values": [
+        "member",
+        "finance",
+        "admin"
+      ],
+      "description": ""
+    }
+  ],
+  "billing-admin": [
+    {
+      "path": "offer.type",
+      "branch": "",
+      "values": [
+        "topup",
+        "subscription"
+      ],
+      "description": ""
+    },
+    {
+      "path": "offer.grantExpiry",
+      "branch": "",
+      "values": [
+        "never",
+        "paid_period_end"
+      ],
+      "description": ""
+    },
+    {
+      "path": "catalog.meters[].chargingMode",
+      "branch": "",
+      "values": [
+        "disabled",
+        "shadow",
+        "billable"
+      ],
+      "description": ""
+    },
+    {
+      "path": "catalog.rates[].billableOutcome",
+      "branch": "",
+      "values": [
+        "success_only",
+        "consumed_units"
+      ],
+      "description": ""
+    },
+    {
+      "path": "catalog.rates[].cachePolicy",
+      "branch": "",
+      "values": [
+        "free"
+      ],
+      "description": ""
+    },
+    {
+      "path": "allowance.quantityBasis",
+      "branch": "",
+      "values": [
+        "subscription",
+        "paid_seat"
+      ],
+      "description": ""
+    },
+    {
+      "path": "allowance.expiresAtPeriodEnd",
+      "branch": "",
+      "values": [
+        true
+      ],
+      "description": ""
+    }
+  ],
+  "linkedin-read": [
+    {
+      "path": "search.api",
+      "branch": "",
+      "values": [
+        "classic",
+        "sales_navigator",
+        "recruiter"
+      ],
+      "description": ""
+    },
+    {
+      "path": "search.category",
+      "branch": "",
+      "values": [
+        "people",
+        "companies"
+      ],
+      "description": ""
+    },
+    {
+      "path": "postPage.kind",
+      "branch": "",
+      "values": [
+        "posts",
+        "comments",
+        "reactions"
+      ],
+      "description": ""
+    }
+  ],
+  "linkedin-write": [
+    {
+      "path": "sendInvitation.noteRequestedByUser",
+      "branch": "",
+      "values": [
+        true
+      ],
+      "description": "The user explicitly asked for a note on this connection request. Required whenever `note` is set; never set it to justify a note the user did not ask for."
+    }
+  ],
+  "send-user-feedback": [
+    {
+      "path": "category",
+      "branch": "",
+      "values": [
+        "bug",
+        "confused",
+        "feature_request",
+        "other"
+      ],
+      "description": "bug: a Cedar tool or agent failed or behaved wrongly. confused: the user or agent could not tell how something works. feature_request: a capability that is missing. Default other."
+    }
+  ],
+  "board": [
+    {
+      "path": "add_card.visibility",
+      "branch": "",
+      "values": [
+        "private",
+        "team"
+      ],
+      "description": ""
+    },
+    {
+      "path": "set.visibility",
+      "branch": "",
+      "values": [
+        "private",
+        "team"
+      ],
+      "description": ""
+    }
+  ],
+  "workflow": [],
+  "chat-context": [
+    {
+      "path": "manage.add[].kind",
+      "branch": "",
+      "values": [
+        "conversation",
+        "email_thread",
+        "slack_thread",
+        "linkedin_chat",
+        "whatsapp_chat",
+        "file",
+        "task"
+      ],
+      "description": ""
+    },
+    {
+      "path": "manage.remove[].kind",
+      "branch": "",
+      "values": [
+        "conversation",
+        "email_thread",
+        "slack_thread",
+        "linkedin_chat",
+        "whatsapp_chat",
+        "file",
+        "task"
+      ],
+      "description": ""
+    },
+    {
+      "path": "resolve.kind",
+      "branch": "",
+      "values": [
+        "conversation",
+        "email_thread",
+        "slack_thread",
+        "linkedin_chat",
+        "whatsapp_chat",
+        "file",
+        "task"
+      ],
+      "description": "Entity kind to resolve. Only \"conversation\" is supported today."
+    }
+  ],
+  "delegate": [
+    {
+      "path": "subagent.type",
+      "branch": "",
+      "values": [
+        "orchestrator",
+        "analyzer"
+      ],
+      "description": "Type of subagent"
+    },
+    {
+      "path": "subagent.skillToLoad",
+      "branch": "",
+      "values": [
+        "drafting",
+        "knowledge-base",
+        "calendar",
+        "conversation",
+        "tasks",
+        "multi-conversation-operations",
+        "customer-support",
+        "external-systems",
+        "connected-systems",
+        "research",
+        "documents",
+        "tables",
+        "notifications",
+        "cedar-configuration",
+        "collateral",
+        "wiki-extraction",
+        "coaching",
+        "run-sql",
+        "field-query",
+        "deal-intelligence-analysis",
+        "analysis-decomposition",
+        "daily-agenda",
+        "aop-selection",
+        "domain-identification",
+        "event-summarization",
+        "conversation-action-management",
+        "conversation-inspection"
+      ],
+      "description": "Optional skill to pre-load in subagent (includes both chat and execution skills). Not typically needed for analyzer type."
+    },
+    {
+      "path": "code.drive_access",
+      "branch": "",
+      "values": [
+        "read",
+        "collateral-write"
+      ],
+      "description": "Google Workspace access level for this run. Defaults to 'read' — the executor may list, read and export Drive files but cannot create or modify anything. Pass 'collateral-write' ONLY when the task is to author a new Google Doc, Sheet or Slides deck (e.g. collateral creation); it additionally allows create/copy/batchUpdate. Deleting a Drive file, emptying the trash and any sharing/permissions change are blocked in BOTH modes and cannot be enabled."
+    }
+  ],
+  "external-mcp": [],
+  "search-chat-history": [],
+  "load-chat-history": [],
+  "switch-chat-thread": [],
+  "load-skill": [],
+  "load-brain-skills": [],
+  "cedar-staff-debug": []
+}

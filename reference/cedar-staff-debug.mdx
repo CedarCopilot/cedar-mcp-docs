@@ -7,9 +7,15 @@ Generated from Cedar's actual registration and Zod schemas. Your connection's `t
 
 <Warning>This tool requires Cedar staff access. It is not available to ordinary customer connections.</Warning>
 
-## Capability
+## Capabilities
+
+[Staff administration capabilities and guides](/capabilities/staff).
+
+<Accordion title="Full tool behavior and constraints">
 
 Cedar staff only. Start or end a debug session that lets you see Cedar exactly as a specific user does, for observability and troubleshooting. While active, tools read and act on that user's account so you can diagnose their setup, executions, and data — and nothing is saved to their history. Call with `email` or `userId` to start; call with `clear:true` to end. It auto-ends after 30 min of inactivity, and every reply reminds you whose account you are debugging.
+
+</Accordion>
 
 Required baseline scope: `internal`. Additional role and target checks apply.
 

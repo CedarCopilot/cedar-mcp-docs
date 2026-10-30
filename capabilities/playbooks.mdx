@@ -29,6 +29,16 @@ For "why didn't X happen"/system-behavior questions, load-skill('cedar-configura
 | `update-selection-procedure` | Change the instructions used to select the appropriate AOP. | `playbook:write` |
 | `update-custom-assignment-instruction` | Change the supported custom conversation-assignment instruction. | `playbook:write` |
 
+### Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/aop-write#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `createAop.scope` | `user`, `org` | Conversation ownership scope: "user" (one conversation per user+company) or "org" (one shared conversation per org+company). Defaults to the source AOP's own scope. |
+| `updateSelectionProcedure.scope` | `user`, `org` | Field owner: user AOP or linked org AOP. list-fields returns both; CRM mappings stay user-scoped. |
+| `updateCustomAssignmentInstruction.scope` | `user`, `org` | Field owner: user AOP or linked org AOP. list-fields returns both; CRM mappings stay user-scoped. |
+
 ## Access and results
 
 Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).

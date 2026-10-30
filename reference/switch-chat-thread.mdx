@@ -7,9 +7,15 @@ Generated from Cedar's actual registration and Zod schemas. Your connection's `t
 
 <Warning>This tool is registered only inside Cedar. External MCP clients cannot call it. Its contract is included to document the complete module boundary.</Warning>
 
-## Capability
+## Capabilities
+
+[Chat context and history capabilities and guides](/capabilities/chat).
+
+<Accordion title="Full tool behavior and constraints">
 
 Switch the user's active chat to one of their own past threads — use when the user wants to actually go back to / resume / open a past conversation, not just be told about it or have you reason over it (that's load-chat-history).  Pass &#123; threadId &#125;. The user's screen navigates to that thread; you do not get its content back from this tool. Call it last in your turn — anything you say after this won't be visible until the user switches back.
+
+</Accordion>
 
 Required baseline scope: `in-app`. Additional role and target checks apply.
 

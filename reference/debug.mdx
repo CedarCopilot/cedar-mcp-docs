@@ -7,23 +7,38 @@ Generated from Cedar's actual registration and Zod schemas. Your connection's `t
 
 <Note>create-monitor requires the staff-only internal scope. Cross-account operations have additional authorization checks.</Note>
 
-## Capability
+## Capabilities
+
+[Diagnostics capabilities and guides](/capabilities/diagnostics).
+
+<Accordion title="Full tool behavior and constraints">
 
 For "why didn't X happen" questions, call load-skill('cedar-configuration') first — these actions surface raw signals, not an explanation of how integrations/playbooks/execution fit together. Debugging &amp; account-health ops, self-scoped by default (admin/owner: also a teammate in-org; staff: any account). ACTIONS: (1) diagnose-conversation — checks on a conversation (wrong company, vendor email contamination, missing AOP, failed executions). (2) recent-executions — recent agent executions for a conversation/user, or pass runId to drill into its tool calls. (3) execution-detail — one run's output/tool calls + each sub-agent it called (output, agentName, toolCallCount) but NOT their own tool calls — re-call with a sub-agent's runId for those. (4) tool-call-detail — full input/output for one tool call by id (from execution-detail's toolCalls&#91;&#93; or a sub-agent run's own calls). (5) health-report — per-user snapshot (targetUserId, defaults to yourself; admin/owner: also a teammate) OR org-wide status (orgId, Cedar-staff only) — the org-wide view skips an expensive red-flag signal the per-user view computes; never call an account healthy from it alone. (6) create-monitor — Sherlock verification/regression monitor. Cedar-staff only. (7) test-run — run a subagent you just authored/edited to see what it does before it ships. Self-scoped to your own agents + org-level agents your AOP links to. Sends suppressed by default (deliverForReal: false) — blocks sends only; DB and connected-system (CRM, Drive) writes still happen, so it is NOT a dry run. deliverForReal: true actually sends; on an org-level agent this needs org admin/owner. Each action's params go in a same-named object (e.g. action: "diagnose-conversation" pairs with diagnoseConversation: &#123;conversationId&#125;) — omit every object except the one for your action.
 
+</Accordion>
+
 ## Operations and scopes
 
-| Action | Baseline scope |
-| --- | --- |
-| `diagnose-conversation` | `crm:read` |
-| `recent-executions` | `crm:read` |
-| `execution-detail` | `crm:read` |
-| `tool-call-detail` | `crm:read` |
-| `health-report` | `crm:read` |
-| `create-monitor` | `internal` — staff only |
-| `test-run` | `crm:read` |
+| Action | Capability | Baseline scope |
+| --- | --- | --- |
+| `diagnose-conversation` | Inspect a conversation's supported diagnostic state and processing evidence. | `crm:read` |
+| `recent-executions` | Find recent agent executions with supported filters. | `crm:read` |
+| `execution-detail` | Inspect a selected run's execution details and trace context. | `crm:read` |
+| `tool-call-detail` | Inspect a recorded tool call's detailed input/output evidence where authorized. | `crm:read` |
+| `health-report` | Read the supported account or execution-health report. | `crm:read` |
+| `create-monitor` | Create the supported diagnostic monitor; requires the staff-only internal scope. | `internal` — staff only |
+| `test-run` | Run one configured agent deliberately; sends are suppressed by default, but other writes can still occur. | `crm:read` |
 
 Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/debug#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `testRun.triggerType` | `cron`, `before_meeting`, `webhook` | "cron" fires exactly ONE named subagent in isolation (requires subagentName). "before_meeting" fires EVERY before-meeting subagent wired to conversationId — not isolated to one subagent, since Cedar has no isolated-single-agent before_meeting path today; this mirrors what a real meeting trigger actually does. "webhook" fires one registered webhook (requires webhookId) through the same dispatch path a real inbound POST or Slack-channel message would take — conversationless, so save-draft/save-slack-draft/task creation are unavailable to whatever it runs. |
+| `testRun.level` | `user`, `org` | cron only. "user" reads the subagent from your own AOP; "org" reads it from the org AOP linked to your own AOP (you can only test an org-level agent your own AOP is actually linked to, never an arbitrary other org's). |
 
 ## Parameters
 

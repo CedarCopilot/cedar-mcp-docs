@@ -26,6 +26,23 @@ Send proactive notifications and discover Slack destinations. ACTIONS: (1) send 
 | `send` | Send a user notification on the chosen configured channel, with supported Slack interactions or iMessage tapbacks. | `crm:read` |
 | `list-slack-channels` | Discover accessible Slack notification destinations and the user's DM. | `crm:read` |
 
+### Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/notify#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `send.channel` | `email`, `slack`, `imessage`, `whatsapp` | Deliver on a specific channel instead of the user's default. Leave UNSET almost always — the user picks where their notifications land. Set it (e.g. "email") only when the message argues for a channel, such as a long written report the user wants in their inbox. Not a retry mechanism: a failed send already falls back to email on its own. |
+| `send.slack.buttons[].kind` | `action` | kind=action |
+| `send.slack.buttons[].style` | `primary`, `danger`, `default` | kind=action |
+| `send.slack.buttons[].confirm.style` | `primary`, `danger` | kind=action |
+| `send.slack.buttons[].kind` | `link` | kind=link |
+| `send.slack.threadReplies[].buttons[].kind` | `action` | kind=action |
+| `send.slack.threadReplies[].buttons[].style` | `primary`, `danger`, `default` | kind=action |
+| `send.slack.threadReplies[].buttons[].confirm.style` | `primary`, `danger` | kind=action |
+| `send.slack.threadReplies[].buttons[].kind` | `link` | kind=link |
+| `send.imessage.tapbacks[].emoji` | `thumbsup`, `thumbsdown`, `heart`, `haha`, `exclamation`, `question` |  |
+
 <Accordion title="All nested operations and modes (4)">
 
 | Selector | Choice | Variant |

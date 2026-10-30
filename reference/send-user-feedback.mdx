@@ -5,11 +5,25 @@ description: "Parameters, scopes, and response schema for send-user-feedback."
 
 Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
-## Capability
+## Capabilities
+
+[Customer support capabilities and guides](/capabilities/support).
+
+<Accordion title="Full tool behavior and constraints">
 
 Save a problem or question for the Cedar team and attempt a Slack notification with your account attached. If notificationDelivered is false, the report was saved but Slack delivery failed. Call it when a Cedar tool fails in a way you cannot work around, a Cedar agent or run does something that contradicts its instructions, or the user is stuck or frustrated. You may report without being asked, but tell the user you did. Say what you tried, what happened, and what you expected, and pass runId / conversationId / agentId when you have them so the team can trace it. Never include credentials, tokens or email bodies; ids and exact error text are enough. Also used by the customer-support skill for the reserved "flag this" phrase (a full debug snapshot of the session) and when no gallery content answers a question.
 
+</Accordion>
+
 Required baseline scope: `crm:read`. Additional role and target checks apply.
+
+## Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/send-user-feedback#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `category` | `bug`, `confused`, `feature_request`, `other` | bug: a Cedar tool or agent failed or behaved wrongly. confused: the user or agent could not tell how something works. feature_request: a capability that is missing. Default other. |
 
 ## Parameters
 

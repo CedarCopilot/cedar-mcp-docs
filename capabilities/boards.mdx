@@ -56,6 +56,15 @@ ADOPTION: a card naming an undeclared field ADDS it — check `adopted`.
 | `archive` | Archive the selected card through the board lifecycle. | `in-app` |
 | `list_triggers` | Inspect what fires the board and what its moves can trigger. | `in-app` |
 
+### Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/board#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `add_card.visibility` | `private`, `team` |  |
+| `set.visibility` | `private`, `team` |  |
+
 ## Access and results
 
 Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).

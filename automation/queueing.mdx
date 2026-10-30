@@ -1,9 +1,11 @@
 ---
 title: "Automatic queueing and overload control"
-description: "What Cedar queues, what it defers, and what your workflow must pace."
+description: "Automatic limits and durable scheduling help keep outreach within account capacity."
 ---
 
-## Three different mechanisms
+Cedar automatically checks LinkedIn account limits and manages durable queues for scheduled messages. Scheduled LinkedIn DMs that hit Cedar's hourly or daily send cap stay pending and move to a later attempt. This reduces overload and helps keep outreach within the configured account limits; it cannot guarantee that a provider will never restrict an account.
+
+## Automatic protection by delivery path
 
 | Mechanism | What happens | What it does not promise |
 | --- | --- | --- |
@@ -40,7 +42,7 @@ The MCP does not choose your outreach cadence. A responsible client should maint
 
 For example, 20 DMs over eight working hours gives approximately 24 minutes between scheduled messages. Persist the recipient, approved body, scheduled time, schedule ID, and status in a table. Stop preparing follow-ups when a reply or relevant change makes them unnecessary. Revalidate before scheduling.
 
-See [Cedar caps and HeyReach recommendations](/linkedin/limits) for the actual numbers and source dates.
+See [Limits and recommendations](/linkedin/limits) for the actual numbers and source dates.
 
 ## Slack event overload
 

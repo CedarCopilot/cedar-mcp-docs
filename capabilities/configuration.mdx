@@ -30,6 +30,16 @@ For "why didn't X happen"/system-behavior questions, load-skill('cedar-configura
 | `list-org-members` | Find IDs and directory details for members of the caller's organization. | `crm:read` |
 | `find-bot-slack-channels` | Find channels Cedar's bot can actually post to, subject to membership and administrator visibility. | `crm:read` |
 
+### Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/config-read#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `readPlaybook.mode` | `list`, `load_full`, `load_sections` | "list" — discover the user's AOPs (name/id/hasPlaybook/isNoOp/selectionProcedure/customAssignmentInstruction/orgAssignmentInstruction/effectiveAssignmentInstruction), optionally filtered by aopName. "load_full" — read the full PLAYBOOK.md for one AOP, plus its org-level playbook (`orgPlaybook`) if one exists, plus an `editMap`: every referenced subagent/resource and each inline PLAYBOOK.md surface, tagged with `source` (user&#124;org) + `writeTarget`. To edit playbook behavior, write to a target's `writeTarget` — do NOT choose user-vs-org scope by hand. "load_sections" — read only the named sections of one AOP's playbook (and the same sections of its org-level playbook if one exists), plus the same `editMap` (requires `sections`). |
+| `readSettings.sections[]` | `connections`, `user_settings`, `inboxes`, `task_groups`, `credentials`, `data_services` |  |
+| `listFields.targetUserIds` | `org` |  |
+
 <Accordion title="All nested operations and modes (3)">
 
 | Selector | Choice | Variant |
@@ -64,6 +74,30 @@ For "why didn't X happen"/system-behavior questions, load-skill('cedar-configura
 | `update-field-option` | Update a field option while respecting mapped-option constraints. | `playbook:write` |
 | `remove-field-option` | Remove a field option through the supported option operation. | `playbook:write` |
 | `set-stage-criteria` | Set a shared sales stage's entry and exit criteria. | `playbook:write` |
+
+### Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/config-write#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `createField.internalSignals.definitions[].eligibility` | `any`, `lost_or_lapsed`, `customer` |  |
+| `createField.signal.enabled` | `true` |  |
+| `createField.scope` | `user`, `org` | Field owner: user AOP or linked org AOP. list-fields returns both; CRM mappings stay user-scoped. |
+| `createField.type` | `text`, `number`, `date`, `boolean`, `select`, `currency`, `url`, `email`, `phone`, `list`, `fraction`, `json`, `people`, `summarized_history`, `deal_brief` | Field type. Fixed forever once created — there is no update-field path to change it. |
+| `updateField.internalSignals.definitions[].eligibility` | `any`, `lost_or_lapsed`, `customer` |  |
+| `updateField.signal.enabled` | `true` |  |
+| `updateField.scope` | `user`, `org` | Field owner: user AOP or linked org AOP. list-fields returns both; CRM mappings stay user-scoped. |
+| `deleteField.scope` | `user`, `org` | Field owner: user AOP or linked org AOP. list-fields returns both; CRM mappings stay user-scoped. |
+| `linkMapping.scope` | `user`, `org` | Field owner: user AOP or linked org AOP. list-fields returns both; CRM mappings stay user-scoped. |
+| `linkMapping.resolutions[].action` | `remap-to` | action=remap-to — Bulk-migrates every existing stored value from oldValue to newValue, then drops the old option. |
+| `linkMapping.resolutions[].action` | `keep-legacy` | action=keep-legacy — Leaves existing stored values as-is (no longer selectable going forward) and drops the old option. |
+| `addFieldOption.scope` | `user`, `org` | Field owner: user AOP or linked org AOP. list-fields returns both; CRM mappings stay user-scoped. |
+| `updateFieldOption.scope` | `user`, `org` | Field owner: user AOP or linked org AOP. list-fields returns both; CRM mappings stay user-scoped. |
+| `removeFieldOption.scope` | `user`, `org` | Field owner: user AOP or linked org AOP. list-fields returns both; CRM mappings stay user-scoped. |
+| `removeFieldOption.resolution.action` | `remap-to` | action=remap-to — Bulk-migrates every existing stored value from this option to newValue, then removes it. |
+| `removeFieldOption.resolution.action` | `keep-legacy` | action=keep-legacy — Leaves existing stored values as-is (no longer selectable going forward) and removes the option. |
+| `setStageCriteria.field` | `entry`, `exit` | Which criteria block to set. |
 
 <Accordion title="All nested operations and modes (19)">
 

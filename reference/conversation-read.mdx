@@ -5,26 +5,52 @@ description: "Parameters, scopes, and response schema for conversation-read."
 
 Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
-## Capability
+## Capabilities
+
+[CRM conversations capabilities and guides](/capabilities/crm).
+
+<Accordion title="Full tool behavior and constraints">
 
 CRM conversation read/query over Cedar's OWN records (NOT the connected external CRM — that's action 4; ask if unclear). ACTIONS: (1) get — fetch a conversation by ID (brief timeline default; write_to_file for full content; expandEventId to inline one event); email entries include observed open/click tracking summaries when available. (2) find — locate Cedar conversations via `filters` (field/operator/value, ANDed): standard columns, computed booleans, or custom fields as "wm_&lt;fieldKey&gt;"; add extraFields for more columns. Call load-skill("conversation") for the full field reference. (3) search-semantic — vector/FTS search over conversation content (Turbopuffer); best for finding WHICH events matter. For ONE named call/email, do not answer from hits (a top-k slice, not the full transcript) — resolve its eventId here or via get's timeline, then re-read it whole via (1) get with expandEventId. (4) search-external-crm-deals — search the connected EXTERNAL CRM for a deal by keyword (get providerId from config read-settings first). DEAL-INTELLIGENCE (over extracted sub-event taxonomy atoms): (5) timeline — one time-ordered stream across events + both taxonomy planes for 1+ deals, filtered by fieldIds/kinds/stages/reps/scores/payload/time. (6) field-evolution — one field's series over time, grouped by deal. (7) value-as-of — a versioned field's value+scores at a stage/date/event. (8) describe-field — a field's plane/scores/vocab/payload keys (learn before filtering). (9) raw-content — resolve a deal's RAW verbatim events to a doc-sink buffer (stage-marked); read via read-document (#lines/#words) + search-documents (regex). (10) search — semantic search over the atoms (same cube); hits point back. Large results → the doc sink. Pass each action's params in a same-named object; omit the others.
 
+</Accordion>
+
 ## Operations and scopes
 
-| Action | Baseline scope |
-| --- | --- |
-| `get` | `crm:read` |
-| `find` | `crm:read` |
-| `search-semantic` | `crm:read` |
-| `search-external-crm-deals` | `crm:read` |
-| `timeline` | `crm:read` |
-| `field-evolution` | `crm:read` |
-| `value-as-of` | `crm:read` |
-| `describe-field` | `crm:read` |
-| `raw-content` | `crm:read` |
-| `search` | `crm:read` |
+| Action | Capability | Baseline scope |
+| --- | --- | --- |
+| `get` | Read an authorized conversation's supported details and context. | `crm:read` |
+| `find` | Find Cedar conversations using the family’s supported filters. | `crm:read` |
+| `search-semantic` | Search meaning across already-synced conversation evidence. | `crm:read` |
+| `search-external-crm-deals` | Find deals in the connected external CRM, separately from Cedar conversations. | `crm:read` |
+| `timeline` | Read a time-ordered stream across events and extracted fields for selected deals. | `crm:read` |
+| `field-evolution` | Inspect one field's change or occurrence series over time, grouped by deal. | `crm:read` |
+| `value-as-of` | Read a versioned field's value and scores at the resolved historical cutoff. | `crm:read` |
+| `describe-field` | Discover a field's plane, score support, vocabulary and observed payload values. | `crm:read` |
+| `raw-content` | Resolve full source transcripts, email and Slack evidence into a readable/searchable document buffer. | `crm:read` |
+| `search` | Search extracted taxonomy evidence and retain source IDs for timeline and verbatim follow-up. | `crm:read` |
 
 Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/conversation-read#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `get.eventTypes[]` | `email`, `slack_message`, `meeting`, `external_crm` |  |
+| `find.filters[].field` | `id`, `name`, `status`, `priority`, `dealValue`, `nextSteps`, `lastContactedAt`, `lastInboundAt`, `lastOutboundEmailAt`, `lastMeetingAt`, `nextStepDate`, `createdAt`, `updatedAt`, `aopId`, `important`, `ownerId`, `aopName`, `primaryCompanyName`, `primaryCompanyDomain`, `crmSynced`, `hasFutureCalendar` |  |
+| `find.filters[].operator` | `eq`, `neq`, `gt`, `gte`, `lt`, `lte`, `like`, `ilike`, `in`, `notIn`, `isNull`, `isNotNull` | The comparison operator |
+| `find.eventFilter.dateOperator` | `before`, `after`, `on`, `range` |  |
+| `find.eventFilter.count.operator` | `gt`, `gte`, `lt`, `lte`, `eq` | Comparison operator |
+| `find.orderBy.field` | `id`, `name`, `status`, `priority`, `dealValue`, `nextSteps`, `lastContactedAt`, `lastInboundAt`, `lastOutboundEmailAt`, `lastMeetingAt`, `nextStepDate`, `createdAt`, `updatedAt`, `aopId`, `important`, `ownerId`, `aopName`, `primaryCompanyName`, `primaryCompanyDomain`, `crmSynced`, `hasFutureCalendar` |  |
+| `find.orderBy.direction` | `asc`, `desc` |  |
+| `searchSemantic.filters.eventType` | `email`, `meeting`, `slack`, `external_crm` |  |
+| `searchSemantic.filters.direction` | `inbound`, `outbound` | Filter by email/meeting direction |
+| `searchSemantic.searchType` | `vector`, `fts` | Search method. "vector" = semantic similarity (default), for meaning. "fts" = exact keyword match (BM25), for a literal string — an order number, a URL, a name, or "Attachments" to find emails with attachments. Vectors blur exact tokens; use fts when the answer IS the string. |
+| `searchExternalCrmDeals.providerId` | `hubspot`, `attio`, `salesforce`, `copper` | The CRM connection's providerId — get this from `config`'s `read-settings` action (sections: &#91;"connections"&#93;). |
+| `timeline.kinds[]` | `event`, `instance`, `judgment` |  |
+| `search.filter.kinds[]` | `event`, `instance`, `judgment` |  |
 
 ## Parameters
 

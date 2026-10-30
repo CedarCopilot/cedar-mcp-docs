@@ -30326,6 +30326,1205 @@
       "actionScopes": {}
     }
   ],
+  "capabilityCatalogs": {
+    "signals": {
+      "nativeSignals": [
+        {
+          "key": "email_open",
+          "provider": "cedar",
+          "label": "Email opens",
+          "automatic": true,
+          "billing": "Included; no provider watch or enrichment required.",
+          "evidence": "Qualified likely renders, including Gmail image-proxy renders, are included. Known prefetch, automated and unknown privacy/proxy loads are excluded. Recipient addresses are intended recipients, never verified reader identities; forwarding and sender views remain possible.",
+          "read": "signals-read get returns emailOpens; email-tracking list/get exposes classified tracking evidence."
+        }
+      ],
+      "provider": "crustdata",
+      "providers": [
+        "crustdata",
+        "fiber"
+      ],
+      "fiber": {
+        "featureFlag": "cedar-fiber-tracker",
+        "setting": "fiberTrackers",
+        "billing": "Cedar credits per completed profile refresh, including zero-signal runs",
+        "meter": "watch.entity_refresh",
+        "defaultRefreshIntervalDays": 30,
+        "intervalDays": {
+          "min": 1,
+          "max": 180
+        },
+        "rules": {
+          "person_got_promoted": "An interpreted move to a more senior role; cosmetic title edits do not count.",
+          "person_got_demoted": "An interpreted move to a less senior role, with provider evidence.",
+          "person_posted": "A new LinkedIn post from this person.",
+          "company_posted": "A new LinkedIn post from this company.",
+          "technology_added": "A technology newly detected at the company; optionally filter named technologies.",
+          "new_office_location": "An additional office location; optionally filter countries, regions, states or cities.",
+          "recent_layoffs": "A reported layoff event; optionally require a minimum number or percentage affected.",
+          "department_size_threshold": "A named department crosses a headcount threshold, such as Engineering growing above 25 people.",
+          "recently_hired_with_title": "New hires whose titles match specified keywords, with an optional minimum hire count.",
+          "job_posting_in_function": "New job postings in selected functions, such as Engineering or Finance.",
+          "job_posting_with_keyword": "New job postings matching title or description keywords, seniority or work modality.",
+          "headcount_growth_percent": "Company headcount grows or shrinks by a specified percentage."
+        },
+        "jobFunctions": [
+          "Accounting",
+          "Administrative",
+          "Advertising",
+          "Analyst",
+          "Art / Creative",
+          "Business Development",
+          "Consulting",
+          "Customer Service",
+          "Design",
+          "Distribution",
+          "Education",
+          "Engineering",
+          "Finance",
+          "General Business",
+          "Health Care Provider",
+          "Human Resources",
+          "Information Technology",
+          "Legal",
+          "Management",
+          "Manufacturing",
+          "Marketing",
+          "Product Management",
+          "Production",
+          "Project Management",
+          "Public Relations",
+          "Purchasing",
+          "Quality Assurance",
+          "Research",
+          "Sales",
+          "Science",
+          "Strategy / Planning",
+          "Supply Chain",
+          "Training",
+          "Writing / Editing",
+          "Community & Social Services",
+          "Entrepreneurship",
+          "Military & Protective Services",
+          "Other",
+          "Program & Product Management",
+          "Real Estate"
+        ],
+        "configuration": "One tracker per deal subject with subject {kind, recordId}, id, enabled, refreshIntervalDays and rules (each with type and entityType). Preserve existing settings. Department thresholds require department, positive integer threshold and direction above/below. New hires require titleKeywords; job functions require jobFunctions; job keywords require keywords; headcount percent requires minPercentChange and direction grew/shrank/either. Never invent filters. No follower or connection rules. Resolve missing LinkedIn identity using Fiber. Do not enable duplicate post coverage in both providers.",
+        "documentation": "https://docs.fiber.ai/monitoring/tracker",
+        "availability": "Feature-gated; call signals-read capabilities for your account."
+      },
+      "entityTracking": [
+        {
+          "key": "title_change",
+          "dataset": "person",
+          "field": "basic_profile.current_title",
+          "type": "changed",
+          "requiresFieldEntitlement": false,
+          "lowPriorityOptIn": false
+        },
+        {
+          "key": "job_change",
+          "dataset": "person",
+          "field": "experience.employment_details.current",
+          "type": "added",
+          "requiresFieldEntitlement": false,
+          "lowPriorityOptIn": false
+        },
+        {
+          "key": "headline_change",
+          "dataset": "person",
+          "field": "basic_profile.headline",
+          "type": "changed",
+          "requiresFieldEntitlement": false,
+          "lowPriorityOptIn": false
+        },
+        {
+          "key": "person_location_change",
+          "dataset": "person",
+          "field": "basic_profile.location.raw",
+          "type": "changed",
+          "requiresFieldEntitlement": false,
+          "lowPriorityOptIn": false
+        },
+        {
+          "key": "education_added",
+          "dataset": "person",
+          "field": "education.schools",
+          "type": "added",
+          "requiresFieldEntitlement": false,
+          "lowPriorityOptIn": true
+        },
+        {
+          "key": "skill_added",
+          "dataset": "person",
+          "field": "skills.professional_network_skills",
+          "type": "added",
+          "requiresFieldEntitlement": false,
+          "lowPriorityOptIn": true
+        },
+        {
+          "key": "headcount_change",
+          "dataset": "company",
+          "field": "headcount.total",
+          "type": "changed",
+          "requiresFieldEntitlement": false,
+          "lowPriorityOptIn": false
+        },
+        {
+          "key": "funding_change",
+          "dataset": "company",
+          "field": "funding.total_investment_usd",
+          "type": "changed",
+          "requiresFieldEntitlement": false,
+          "lowPriorityOptIn": false
+        },
+        {
+          "key": "news_added",
+          "dataset": "company",
+          "field": "news",
+          "type": "added",
+          "requiresFieldEntitlement": false,
+          "lowPriorityOptIn": false
+        },
+        {
+          "key": "funding_round_change",
+          "dataset": "company",
+          "field": "funding.last_round_type",
+          "type": "changed",
+          "requiresFieldEntitlement": false,
+          "lowPriorityOptIn": false
+        },
+        {
+          "key": "investor_added",
+          "dataset": "company",
+          "field": "funding.investors",
+          "type": "added",
+          "requiresFieldEntitlement": false,
+          "lowPriorityOptIn": false
+        },
+        {
+          "key": "acquisition_added",
+          "dataset": "company",
+          "field": "funding.acquisitions",
+          "type": "added",
+          "requiresFieldEntitlement": false,
+          "lowPriorityOptIn": false
+        },
+        {
+          "key": "hiring_change",
+          "dataset": "company",
+          "field": "hiring.openings_count",
+          "type": "changed",
+          "requiresFieldEntitlement": false,
+          "lowPriorityOptIn": false
+        },
+        {
+          "key": "company_name_change",
+          "dataset": "company",
+          "field": "basic_info.name",
+          "type": "changed",
+          "requiresFieldEntitlement": false,
+          "lowPriorityOptIn": false
+        },
+        {
+          "key": "certification_added",
+          "dataset": "person",
+          "field": "certifications",
+          "type": "added",
+          "requiresFieldEntitlement": true,
+          "lowPriorityOptIn": true
+        },
+        {
+          "key": "honor_added",
+          "dataset": "person",
+          "field": "honors",
+          "type": "added",
+          "requiresFieldEntitlement": true,
+          "lowPriorityOptIn": true
+        },
+        {
+          "key": "connection_count_change",
+          "dataset": "person",
+          "field": "professional_network.connections",
+          "type": "changed",
+          "requiresFieldEntitlement": false,
+          "lowPriorityOptIn": true
+        },
+        {
+          "key": "funding_milestone_added",
+          "dataset": "company",
+          "field": "funding.milestones",
+          "type": "added",
+          "requiresFieldEntitlement": false,
+          "lowPriorityOptIn": false
+        },
+        {
+          "key": "follower_count_change",
+          "dataset": "company",
+          "field": "followers.count",
+          "type": "changed",
+          "requiresFieldEntitlement": false,
+          "lowPriorityOptIn": false
+        },
+        {
+          "key": "industry_change",
+          "dataset": "company",
+          "field": "taxonomy.professional_network_industry",
+          "type": "changed",
+          "requiresFieldEntitlement": false,
+          "lowPriorityOptIn": false
+        },
+        {
+          "key": "company_location_change",
+          "dataset": "company",
+          "field": "locations.country",
+          "type": "changed",
+          "requiresFieldEntitlement": false,
+          "lowPriorityOptIn": false
+        }
+      ],
+      "entitySelectionPolicy": {
+        "lowPrioritySignalTypes": [
+          "education_added",
+          "skill_added",
+          "certification_added",
+          "honor_added",
+          "connection_count_change"
+        ],
+        "priority": "low",
+        "selectByDefault": false,
+        "allowWhen": [
+          "explicit_user_or_organization_preference",
+          "specific_evidenced_deal_rationale"
+        ],
+        "guidance": "Treat education_added, skill_added, certification_added, honor_added, connection_count_change as weak/background signals. Do not choose them by default or as generic nice-to-have coverage. Select them only on an explicit user request, an explicitly configured user/organization preference, or a specific evidenced deal rationale; explain that rationale when selecting them. Preserve existing explicit selections and saved user/organization preferences rather than silently removing them. Education, skills, certifications and honors are one optional background-update group in the UI; connection count is also low priority. A generic request to activate signals does not opt into these extra rules."
+      },
+      "watcherFamilies": [
+        {
+          "kind": "entity",
+          "dataset": "person"
+        },
+        {
+          "kind": "entity",
+          "dataset": "company"
+        },
+        {
+          "kind": "discovery",
+          "dataset": "person"
+        },
+        {
+          "kind": "discovery",
+          "dataset": "company"
+        },
+        {
+          "kind": "discovery",
+          "dataset": "job"
+        },
+        {
+          "kind": "discovery",
+          "dataset": "social_post"
+        }
+      ],
+      "savedSearchDatasets": [
+        "person",
+        "company",
+        "job",
+        "social_post"
+      ],
+      "savedSearchMeaning": "Run saved filters repeatedly and deliver newly matching records.",
+      "configuration": "Read signals first and preserve the current version. Set each saved target signalTypes to the applicable entityTracking keys; these are grouped into existing provider watches, not a separate watch per rule. Use additionalWatches for discovery saved searches or custom grouped entity predicates only; never duplicate a target signal in an additional watch. Discovery filters must identify the deal company or evidenced people precisely, not just similar names. Use person/company IDs with the correct actor type for social posts, company IDs/domain for jobs, and employer plus ICP criteria for people discovery. Company discovery is newly matching membership, not ongoing company change tracking.",
+      "billing": {
+        "entityMeter": "watch.changed_entity",
+        "discoveryMeter": "watch.discovery_record",
+        "baseEnrichment": "Included in the subscription.",
+        "rule": "An approved rate and spending permission are required before provider dispatch. Record native provider credits separately; never assume they equal Cedar credits or dollar cost."
+      },
+      "limits": {
+        "additionalWatches": 20,
+        "discoveryResultsPerRun": 25,
+        "realtimeDiscovery": false
+      },
+      "documentation": {
+        "person": "https://docs.crustdata.com/watcher-docs/person/entity",
+        "company": "https://docs.crustdata.com/watcher-docs/company/entity",
+        "socialPosts": "https://docs.crustdata.com/watcher-docs/social-post/discovery",
+        "jobs": "https://docs.crustdata.com/watcher-docs/job/watch",
+        "personDiscovery": "https://docs.crustdata.com/watcher-docs/person/discovery",
+        "companyDiscovery": "https://docs.crustdata.com/watcher-docs/company/discovery"
+      },
+      "internalTypes": [
+        "revival",
+        "upsell",
+        "expansion",
+        "churn",
+        "follow_up"
+      ],
+      "historicalInternalTypes": [
+        "product_interest",
+        "value_evidence",
+        "competitive_context"
+      ]
+    },
+    "metrics": {
+      "metrics": [
+        {
+          "metric": "response_time",
+          "description": "Median seconds between consecutive direction-changing events (their reply latency).",
+          "reducer": "median",
+          "unit": "seconds",
+          "groupBys": [
+            "rep",
+            "stage",
+            "deal",
+            "event_type",
+            "email_classification",
+            "outcome",
+            "month"
+          ],
+          "source": "events"
+        },
+        {
+          "metric": "followup_time",
+          "description": "Median seconds between consecutive outbound emails (follow-up cadence).",
+          "reducer": "median",
+          "unit": "seconds",
+          "groupBys": [
+            "rep",
+            "stage",
+            "deal",
+            "event_type",
+            "email_classification",
+            "outcome",
+            "month"
+          ],
+          "source": "events"
+        },
+        {
+          "metric": "post_meeting_time",
+          "description": "Median seconds from a meeting to the next email (post-meeting recap latency).",
+          "reducer": "median",
+          "unit": "seconds",
+          "groupBys": [
+            "rep",
+            "stage",
+            "deal",
+            "event_type",
+            "email_classification",
+            "outcome",
+            "month"
+          ],
+          "source": "events"
+        },
+        {
+          "metric": "reply_rate",
+          "description": "Share of deals (with an outbound email) that drew an inbound reply.",
+          "reducer": "rate",
+          "unit": "percent",
+          "groupBys": [
+            "rep",
+            "deal",
+            "outcome",
+            "month"
+          ],
+          "source": "deals"
+        },
+        {
+          "metric": "event_count",
+          "description": "Number of events matching the filter (activity volume).",
+          "reducer": "count",
+          "unit": "count",
+          "groupBys": [
+            "rep",
+            "stage",
+            "deal",
+            "event_type",
+            "email_classification",
+            "outcome",
+            "month"
+          ],
+          "source": "events"
+        },
+        {
+          "metric": "stage_funnel",
+          "description": "Funnel — count of DISTINCT deals that reached each stage (a deal reached stage X if any of its events is stamped stage_at_time=X). Groups by stage; ignores groupBy.",
+          "reducer": "count",
+          "unit": "count",
+          "groupBys": [],
+          "source": "events"
+        },
+        {
+          "metric": "time_between_stages",
+          "description": "Median seconds each deal took to move from stageA to stageB (target=\"stageA->stageB\").",
+          "reducer": "median",
+          "unit": "seconds",
+          "groupBys": [
+            "rep",
+            "deal",
+            "outcome",
+            "month"
+          ],
+          "requiresTarget": true,
+          "source": "deals"
+        },
+        {
+          "metric": "win_rate",
+          "description": "Share of terminal deals that were won — requires the outcome mapping.",
+          "reducer": "rate",
+          "unit": "percent",
+          "groupBys": [
+            "rep",
+            "deal",
+            "outcome",
+            "month"
+          ],
+          "requiresOutcome": true,
+          "source": "deals"
+        },
+        {
+          "metric": "aop_conversion",
+          "description": "Lead-band: share of conversations ever bound to a non-Deal AOP that were later reassigned to a Deal-bound AOP (a real AOP change, e.g. Vooma's Lead AOP → Deals AOP at qualification) — \"lead → opp conversion\". Deals-only conversations (never non-Deal-bound) are excluded, same as win_rate excludes non-terminal deals. No outcome mapping needed — the AOP's own boundObjectApiName is the terminal signal, not a status value.",
+          "reducer": "rate",
+          "unit": "percent",
+          "groupBys": [
+            "rep",
+            "deal",
+            "month"
+          ],
+          "source": "deals"
+        },
+        {
+          "metric": "deals_dropped",
+          "description": "Share of OPEN deals (requires outcome) whose last outbound touch (email or meeting) is older than target days (default 10) — a never-contacted deal always counts as dropped.",
+          "reducer": "rate",
+          "unit": "percent",
+          "groupBys": [
+            "rep",
+            "deal",
+            "month"
+          ],
+          "requiresOutcome": true,
+          "source": "deals"
+        },
+        {
+          "metric": "quiet_gap",
+          "description": "Median days since the last outbound touch, over OPEN deals (requires outcome) that have EVER been touched — never-contacted deals are excluded (see deals_dropped for that fact). target is unused (the day-threshold only gates deals_dropped/gave_up_count).",
+          "reducer": "median",
+          "unit": "days",
+          "groupBys": [
+            "rep",
+            "deal",
+            "month"
+          ],
+          "requiresOutcome": true,
+          "source": "deals"
+        },
+        {
+          "metric": "gave_up_count",
+          "description": "Average number of outbound emails in a stalled, unanswered chain — a run of outbound sends since the last inbound reply (or ever, if none) whose last send is at least target days old (default 10). No outcome mapping needed.",
+          "reducer": "mean",
+          "unit": "count",
+          "groupBys": [
+            "rep",
+            "deal",
+            "month"
+          ],
+          "source": "deals"
+        },
+        {
+          "metric": "hygiene",
+          "description": "Average COUNT of populated fields on the OPEN pipeline (requires outcome, redefined 2026-09-29): the 4 native buyer fields (company, contact, deal_value, next_step — target optionally narrows this subset, default all four) PLUS every custom field that deal's own rep has actually live-synced from their CRM (resolved per rep, not a fixed list — see queryHygieneSamples). A raw count, not a percentage: the real denominator varies per rep.",
+          "reducer": "mean",
+          "unit": "count",
+          "groupBys": [
+            "rep",
+            "deal",
+            "month"
+          ],
+          "requiresOutcome": true,
+          "source": "deals"
+        },
+        {
+          "metric": "contacts_reached",
+          "description": "Median distinct REAL external contacts per deal in the OPEN pipeline (requires outcome, redefined 2026-09-29), from crm_conversation_contacts — excludes the org's own staff (its configured domains) and known automated/vendor senders (a calendar-notification alias, a document-signing relay, a sales-engagement tool, etc.); a real contact on a personal email domain still counts. A deal with no qualifying contact is a real 0, not omitted.",
+          "reducer": "median",
+          "unit": "count",
+          "groupBys": [
+            "rep",
+            "deal",
+            "month"
+          ],
+          "requiresOutcome": true,
+          "source": "deals"
+        },
+        {
+          "metric": "open_deal_age",
+          "description": "Median days since the earliest tracked event on each OPEN deal (requires outcome) — a live snapshot of pipeline staleness, not historical time-to-close. Replaces time_between_stages as deal_progression's real source: that one needs a stageA->stageB target this schema has nowhere to carry, and even with one only ~23% of closed deals at a real org had a usable stage-transition timestamp. A deal with no tracked event at all has no computable age and is excluded, not counted as 0.",
+          "reducer": "median",
+          "unit": "days",
+          "groupBys": [
+            "rep",
+            "deal",
+            "month"
+          ],
+          "requiresOutcome": true,
+          "source": "deals"
+        },
+        {
+          "metric": "stalled_deal_revenue",
+          "description": "Real SUM of deal_value across OPEN deals quiet past the quiet-gap threshold (requires outcome; target is an optional day-threshold override, default 10, same convention as deals_dropped/quiet_gap/gave_up_count) — the same stalled-deal population as deals_dropped, summed by dollar value instead of counted. A stalled deal with no deal_value contributes 0, not excluded.",
+          "reducer": "sum",
+          "unit": "currency",
+          "groupBys": [
+            "rep",
+            "deal",
+            "month"
+          ],
+          "requiresOutcome": true,
+          "source": "deals"
+        },
+        {
+          "metric": "crm_won_amount",
+          "description": "Live CRM closed-won amount and count by currency in an explicit close-date window. Requires exactly one filter.reps user, from/to, and crmReporting.timezone. Uses mapped ACV and provider closed flags; no Cedar fallback. Includes verified provider deal inventory and missing-amount count.",
+          "groupBys": [],
+          "reducer": "sum",
+          "unit": "currency",
+          "source": "deals"
+        },
+        {
+          "metric": "crm_open_due_amount",
+          "description": "Live CRM open amount and count by currency closing in an explicit window. Same required rep/window/timezone and verified inventory as crm_won_amount; no Cedar fallback.",
+          "groupBys": [],
+          "reducer": "sum",
+          "unit": "currency",
+          "source": "deals"
+        },
+        {
+          "metric": "total_pipeline",
+          "description": "Real SUM of deal_value across OPEN deals that actually have one (requires outcome) — the performance report's former headline \"total pipeline\" figure (superseded by won_pipeline/avg_acv as the headline tile, 2026-09-30, but still real and independently useful). A deal with no positive deal_value is EXCLUDED, not zero-filled: unlike stalled_deal_revenue, this can't legitimately count a dollar figure nobody has.",
+          "reducer": "sum",
+          "unit": "currency",
+          "groupBys": [
+            "rep",
+            "deal",
+            "month"
+          ],
+          "requiresOutcome": true,
+          "source": "deals"
+        },
+        {
+          "metric": "won_pipeline",
+          "description": "Total dollar value of CLOSED-WON deals in the window (requires outcome), summing deal_value over deals with a real (non-null, non-zero) deal_value. Shares its sample set with avg_acv (same deals, reduced via sum instead of mean).",
+          "reducer": "sum",
+          "unit": "currency",
+          "groupBys": [
+            "rep",
+            "deal",
+            "month"
+          ],
+          "requiresOutcome": true,
+          "source": "deals"
+        },
+        {
+          "metric": "avg_acv",
+          "description": "Average deal_value across CLOSED-WON deals in the window (requires outcome), over deals with a real (non-null, non-zero) deal_value. Shares its sample set with won_pipeline (same deals, reduced via mean instead of sum).",
+          "reducer": "mean",
+          "unit": "currency",
+          "groupBys": [
+            "rep",
+            "deal",
+            "month"
+          ],
+          "requiresOutcome": true,
+          "source": "deals"
+        },
+        {
+          "metric": "judged_strength",
+          "description": "Average taxonomy-atom strength across every list-field atom whose field_id matches target (a family glob, e.g. \"coaching.discovery.*\" or \"coaching.followup.rs*\") — the ONE metric that aggregates the sub-event taxonomy rather than crm_conversations/crm_events. Atoms with no strength score are excluded, never counted as 0. No outcome mapping needed.",
+          "reducer": "mean",
+          "unit": "score",
+          "groupBys": [
+            "rep",
+            "deal",
+            "month"
+          ],
+          "requiresTarget": true,
+          "source": "atoms"
+        }
+      ],
+      "groupBys": [
+        "rep",
+        "stage",
+        "field",
+        "deal",
+        "event_type",
+        "email_classification",
+        "outcome",
+        "month"
+      ],
+      "notes": [
+        "This catalog covers EVENT and DEAL metrics, plus ONE taxonomy-ATOM metric: \"judged_strength\" (average strength across every list-field atom whose field_id matches a target family glob, grouped by rep/deal/month and windowed by date like any other metric here). What is still NOT here: per-criterion distributions, counting occurrences, or aggregating a non-strength payload key — those still need `run-sql`, which also gives readable rep names and arbitrary per-deal normalization this catalog never will. Start with the `taxonomy-fields` tool to learn which fields exist, then load-skill(\"run-sql\") for anything \"judged_strength\" cannot express.",
+        "Every row returns { group, value, n, sampleIds } — n is the sample size, sampleIds (capped at 50) point back to the atoms/events summarized.",
+        "groupBy:\"outcome\" and metric \"win_rate\" both REQUIRE an agent-supplied outcome:{ won:[...], lost:[...] } status mapping.",
+        "The filter is the SAME TimelineFilter cube used by the timeline reader; omit conversationIds to scope org-wide.",
+        "response_time/followup_time/post_meeting_time/reply_rate/event_count/stage_funnel/time_between_stages already generalize to any AOP as-is — none hardcodes an Opportunity-specific stage/status literal; stage and status vocab are always caller-supplied or read off the AOP's own field definitions. \"win_rate\" generalizes the same way (see its own note). \"aop_conversion\" is the one genuinely new Lead-band metric — an AOP reassignment is not a status value on any single AOP's vocabulary.",
+        "\"deals_dropped\"/\"quiet_gap\"/\"gave_up_count\" share one `target` convention: an optional positive number of days (the quiet-gap threshold), defaulting to 10 when omitted. \"hygiene\"'s `target` is unrelated — an optional comma-separated subset of its field keys (company, contact, deal_value, next_step), defaulting to all four."
+      ]
+    },
+    "research": {
+      "documentationReviewedAt": "2026-10-22",
+      "defaultProvider": "crustdata",
+      "automaticCompanyProvider": "fiber",
+      "watchProvider": "crustdata",
+      "automaticFallback": false,
+      "credentialsChecked": false,
+      "billing": "Discovery is read-only. Automatic conversation base-company enrichment is subscription-included through the trusted conversation setup service. Enrichment requested by an agent to fulfill a task and explicitly activated watches remain credit-metered; background task execution is not an exemption. Provider-native credits and catalog estimates are not Cedar retail prices. Paid execution requires current organization policy, credentials and spending admission; use actual receipts and provider charge evidence.",
+      "providers": [
+        {
+          "provider": "fiber",
+          "guidance": "Default only for automatic conversation company metadata and pictures. Rich person/company research, including meeting preparation, defaults to Crustdata. Fiber remains available by explicit selection; profile posts are a separate operation. A declared field is a supported mapping, not a guarantee that a record has a value.",
+          "documentedButNotExposedHere": [
+            "Logo-only companyLogo/bulkCompanyLogos is a documented next optimization, not implemented in this catalog. Current base enrichment keeps Kitchen Sink for the full company profile.",
+            "The vendor supports name plus company resolution, richer history, live refresh, contact reveal and company insights; Cedar exposes only the inputs and fields listed for each operation below. Contact reveal is separate from profile enrichment."
+          ],
+          "sources": [
+            "https://docs.fiber.ai/enrichment/kitchen-sink",
+            "https://docs.fiber.ai/enrichment/contact-reveal",
+            "https://docs.fiber.ai/linkedin/live-fetch",
+            "https://docs.fiber.ai/enrichment/logos-and-photos"
+          ],
+          "operations": [
+            {
+              "id": "fiber.kitchenSinkPerson",
+              "requiresAnyOf": [
+                [
+                  "person.workEmail"
+                ],
+                [
+                  "person.linkedinUrl"
+                ]
+              ],
+              "fields": [
+                "person.workEmail",
+                "person.fullName",
+                "person.title",
+                "person.headline",
+                "person.linkedinUrl",
+                "person.photoUrl",
+                "person.currentCompanyDomain",
+                "company.linkedinId"
+              ],
+              "cacheTtlDays": 30,
+              "explicitProviderRequired": true
+            },
+            {
+              "id": "fiber.profilePosts",
+              "requiresAnyOf": [
+                [
+                  "person.linkedinUrl"
+                ]
+              ],
+              "fields": [
+                "person.recentPosts"
+              ],
+              "cacheTtlDays": 7,
+              "explicitProviderRequired": true
+            },
+            {
+              "id": "fiber.kitchenSinkCompany",
+              "requiresAnyOf": [
+                [
+                  "company.domain"
+                ],
+                [
+                  "company.linkedinId"
+                ]
+              ],
+              "fields": [
+                "company.domain",
+                "company.name",
+                "company.linkedinUrl",
+                "company.logoUrl",
+                "company.description",
+                "company.industry",
+                "company.website",
+                "company.foundedYear",
+                "company.hqCity",
+                "company.hqCountry",
+                "company.hqFull",
+                "company.employeeCount"
+              ],
+              "cacheTtlDays": 30,
+              "explicitProviderRequired": true
+            }
+          ]
+        },
+        {
+          "provider": "crustdata",
+          "guidance": "Default for rich person/company research, including meeting preparation, funding, department headcount, hiring, education and employment history. Explicit user or organization provider settings override this default. Missing data or credentials never authorizes an automatic fallback. Cedar deal watchers use Crustdata.",
+          "documentedButNotExposedHere": [
+            "Vendor fields outside Cedar’s supported signal list and saved-search datasets are not configurable through Cedar. Realtime, semantic and geographic discovery require a separate adapter."
+          ],
+          "sources": [
+            "https://www.crustdata.com/apis/company-enrichment",
+            "https://docs.crustdata.com/watcher-docs/person/entity",
+            "https://docs.crustdata.com/watcher-docs/company/entity"
+          ],
+          "operations": [
+            {
+              "id": "crustdata.personEnrich",
+              "requiresAnyOf": [
+                [
+                  "person.workEmail"
+                ],
+                [
+                  "person.linkedinUrl"
+                ]
+              ],
+              "fields": [
+                "person.fullName",
+                "person.title",
+                "person.headline",
+                "person.summary",
+                "person.location",
+                "person.linkedinUrl",
+                "person.twitterHandle",
+                "person.languages",
+                "person.currentCompanyDomain",
+                "company.linkedinId",
+                "person.schools",
+                "person.education",
+                "person.pastCompanies"
+              ],
+              "cacheTtlDays": 30,
+              "explicitProviderRequired": false
+            },
+            {
+              "id": "crustdata.companyEnrich",
+              "requiresAnyOf": [
+                [
+                  "company.domain"
+                ],
+                [
+                  "company.linkedinId"
+                ]
+              ],
+              "fields": [
+                "company.domain",
+                "company.name",
+                "company.website",
+                "company.industry",
+                "company.foundedYear",
+                "company.twitterHandle",
+                "company.employeeCount",
+                "company.description",
+                "company.linkedinUrl",
+                "company.linkedinId",
+                "company.logoUrl",
+                "company.hqCity",
+                "company.hqCountry",
+                "company.employeeCountRange",
+                "company.totalFundingUsd",
+                "company.lastFundingStage",
+                "company.lastFundingAmountUsd",
+                "company.lastFundingDate",
+                "company.headcountByRole",
+                "company.salesHeadcount",
+                "company.headcountGrowth",
+                "company.jobOpeningsCount",
+                "company.recentJobOpenings"
+              ],
+              "cacheTtlDays": 30,
+              "explicitProviderRequired": false
+            },
+            {
+              "id": "linkedin.deobfuscate",
+              "requiresAnyOf": [
+                [
+                  "person.linkedinMemberUrn"
+                ]
+              ],
+              "fields": [
+                "person.linkedinUrl",
+                "person.fullName",
+                "person.title",
+                "person.currentCompanyDomain",
+                "company.linkedinId"
+              ],
+              "cacheTtlDays": 30,
+              "explicitProviderRequired": false
+            }
+          ]
+        },
+        {
+          "provider": "moltsets",
+          "guidance": "Optional explicit specialist for business profiles by email or LinkedIn and exact-domain company profiles. Useful for business-email validation metadata and employer context. Risk scores describe email deliverability, not person identity. Crustdata remains the research default; automatic company pictures use Fiber. No MoltSets watcher API is exposed. Flat subscriptions and fair-use limits do not establish a per-record USD rate: configure credentials and an approved billing rate before use; native tokens and unknown dollar costs remain distinct.",
+          "documentedButNotExposedHere": [
+            "Broad people/company discovery, name-to-email, mobile phones, personal-email lookup, advertising identifiers and IP-to-company are not exposed by this adapter. Mobile phone tokens are billed separately by the vendor."
+          ],
+          "sources": [
+            "https://developer.moltsets.com/api-reference/reverse-lookups/reverse-email-lookup",
+            "https://developer.moltsets.com/api-reference/reverse-lookups/reverse-linkedin-lookup",
+            "https://developer.moltsets.com/api-reference/search/search-for-companies",
+            "https://developer.moltsets.com/getting-started/rate-limits"
+          ],
+          "operations": [
+            {
+              "id": "moltsets.businessProfile",
+              "requiresAnyOf": [
+                [
+                  "person.workEmail"
+                ],
+                [
+                  "person.linkedinUrl"
+                ]
+              ],
+              "fields": [
+                "person.workEmail",
+                "person.fullName",
+                "person.title",
+                "person.headline",
+                "person.linkedinUrl",
+                "person.currentCompanyDomain"
+              ],
+              "cacheTtlDays": 30,
+              "explicitProviderRequired": true
+            },
+            {
+              "id": "moltsets.companyByDomain",
+              "requiresAnyOf": [
+                [
+                  "company.domain"
+                ]
+              ],
+              "fields": [
+                "company.domain",
+                "company.name",
+                "company.linkedinUrl",
+                "company.logoUrl",
+                "company.description",
+                "company.industry",
+                "company.hqCity",
+                "company.hqCountry",
+                "company.employeeCount"
+              ],
+              "cacheTtlDays": 30,
+              "explicitProviderRequired": true
+            }
+          ]
+        },
+        {
+          "provider": "apollo",
+          "guidance": "Existing optional profile adapter. Select explicitly; availability is not evidence it is the right default.",
+          "documentedButNotExposedHere": [],
+          "sources": [],
+          "operations": [
+            {
+              "id": "apollo.personEnrich",
+              "requiresAnyOf": [
+                [
+                  "person.workEmail"
+                ]
+              ],
+              "fields": [
+                "person.workEmail",
+                "person.fullName",
+                "person.title",
+                "person.headline",
+                "person.linkedinUrl",
+                "person.photoUrl",
+                "person.twitterHandle",
+                "person.githubHandle",
+                "person.currentCompanyDomain"
+              ],
+              "cacheTtlDays": 30,
+              "explicitProviderRequired": true
+            },
+            {
+              "id": "apollo.companyEnrich",
+              "requiresAnyOf": [
+                [
+                  "company.domain"
+                ]
+              ],
+              "fields": [
+                "company.domain",
+                "company.name",
+                "company.website",
+                "company.description",
+                "company.industry",
+                "company.employeeCount",
+                "company.logoUrl",
+                "company.linkedinUrl",
+                "company.hqCity",
+                "company.foundedYear"
+              ],
+              "cacheTtlDays": 30,
+              "explicitProviderRequired": true
+            }
+          ]
+        },
+        {
+          "provider": "exa",
+          "guidance": "Web/news research operation, not a replacement for verified person/company identity enrichment.",
+          "documentedButNotExposedHere": [],
+          "sources": [],
+          "operations": [
+            {
+              "id": "exa.search",
+              "requiresAnyOf": [
+                [
+                  "person.fullName",
+                  "person.currentCompanyName"
+                ]
+              ],
+              "fields": [
+                "person.recentNewsMentions"
+              ],
+              "cacheTtlDays": 1,
+              "explicitProviderRequired": true
+            }
+          ]
+        }
+      ],
+      "watchers": {
+        "provider": "crustdata",
+        "tool": "signals-write",
+        "action": "activate",
+        "signals": [
+          "title_change",
+          "job_change",
+          "headline_change",
+          "person_location_change",
+          "education_added",
+          "skill_added",
+          "headcount_change",
+          "funding_change",
+          "news_added",
+          "funding_round_change",
+          "investor_added",
+          "acquisition_added",
+          "hiring_change",
+          "company_name_change",
+          "certification_added",
+          "honor_added",
+          "connection_count_change",
+          "funding_milestone_added",
+          "follower_count_change",
+          "industry_change",
+          "company_location_change"
+        ],
+        "guidance": "Entity watches track known deal people/company. Saved-search watches cover people, companies, job posts and social posts through the signals tools. Activation uses deal evidence, organization funding and persistent history; a baseline is not a new signal. More than 50 people requires confirmation of the whole planned count."
+      },
+      "fields": {
+        "person.fullName": {
+          "type": "string",
+          "scope": "person",
+          "desc": "Full name"
+        },
+        "person.headline": {
+          "type": "string",
+          "scope": "person",
+          "desc": "LinkedIn headline"
+        },
+        "person.summary": {
+          "type": "string",
+          "scope": "person",
+          "desc": "Profile summary / about"
+        },
+        "person.photoUrl": {
+          "type": "string",
+          "scope": "person",
+          "desc": "Profile photo URL"
+        },
+        "person.linkedinUrl": {
+          "type": "string",
+          "scope": "person",
+          "desc": "Canonical LinkedIn profile URL"
+        },
+        "person.githubHandle": {
+          "type": "string",
+          "scope": "person",
+          "desc": "GitHub username"
+        },
+        "person.twitterHandle": {
+          "type": "string",
+          "scope": "person",
+          "desc": "Twitter/X handle"
+        },
+        "person.location": {
+          "type": "string",
+          "scope": "person",
+          "desc": "Free-text location"
+        },
+        "person.title": {
+          "type": "string",
+          "scope": "person",
+          "desc": "Current job title"
+        },
+        "person.currentCompanyDomain": {
+          "type": "string",
+          "scope": "person",
+          "desc": "Current employer domain"
+        },
+        "person.pastCompanies": {
+          "type": "string[]",
+          "scope": "person",
+          "desc": "Prior employer names"
+        },
+        "person.education": {
+          "type": "object[]",
+          "scope": "person",
+          "desc": "Education {school,degree,field,years}"
+        },
+        "person.schools": {
+          "type": "string[]",
+          "scope": "person",
+          "desc": "School names"
+        },
+        "person.languages": {
+          "type": "string[]",
+          "scope": "person",
+          "desc": "Languages"
+        },
+        "person.recentPosts": {
+          "type": "object[]",
+          "scope": "person",
+          "desc": "Recent posts/activity"
+        },
+        "person.recentNewsMentions": {
+          "type": "object[]",
+          "scope": "person",
+          "desc": "Recent web/news mentions (Exa search)"
+        },
+        "person.workEmail": {
+          "type": "string",
+          "scope": "person",
+          "desc": "Verified work email"
+        },
+        "company.name": {
+          "type": "string",
+          "scope": "company",
+          "desc": "Company name"
+        },
+        "company.domain": {
+          "type": "string",
+          "scope": "company",
+          "desc": "Primary domain"
+        },
+        "company.website": {
+          "type": "string",
+          "scope": "company",
+          "desc": "Website URL"
+        },
+        "company.description": {
+          "type": "string",
+          "scope": "company",
+          "desc": "Description"
+        },
+        "company.logoUrl": {
+          "type": "string",
+          "scope": "company",
+          "desc": "Logo URL"
+        },
+        "company.linkedinUrl": {
+          "type": "string",
+          "scope": "company",
+          "desc": "LinkedIn company URL"
+        },
+        "company.linkedinId": {
+          "type": "string",
+          "scope": "company",
+          "desc": "LinkedIn organization id (chains person→company without a domain)"
+        },
+        "company.twitterHandle": {
+          "type": "string",
+          "scope": "company",
+          "desc": "Twitter/X handle"
+        },
+        "company.foundedYear": {
+          "type": "number",
+          "scope": "company",
+          "desc": "Year founded"
+        },
+        "company.industry": {
+          "type": "string",
+          "scope": "company",
+          "desc": "Primary industry"
+        },
+        "company.hqCity": {
+          "type": "string",
+          "scope": "company",
+          "desc": "HQ city"
+        },
+        "company.hqCountry": {
+          "type": "string",
+          "scope": "company",
+          "desc": "HQ country"
+        },
+        "company.hqFull": {
+          "type": "string",
+          "scope": "company",
+          "desc": "HQ formatted address"
+        },
+        "company.employeeCount": {
+          "type": "number",
+          "scope": "company",
+          "desc": "Employee count"
+        },
+        "company.employeeCountRange": {
+          "type": "string",
+          "scope": "company",
+          "desc": "Employee count range"
+        },
+        "company.headcountGrowth": {
+          "type": "object",
+          "scope": "company",
+          "desc": "Headcount growth by period {1m,3m,6m,12m}"
+        },
+        "company.headcountByRole": {
+          "type": "object",
+          "scope": "company",
+          "desc": "Headcount by role (absolute counts per role bucket)"
+        },
+        "company.salesHeadcount": {
+          "type": "number",
+          "scope": "company",
+          "desc": "Number of people in sales roles (summed from headcountByRole sales buckets)"
+        },
+        "company.totalFundingUsd": {
+          "type": "number",
+          "scope": "company",
+          "desc": "Total raised, USD"
+        },
+        "company.lastFundingStage": {
+          "type": "string",
+          "scope": "company",
+          "desc": "Last round type/stage"
+        },
+        "company.lastFundingAmountUsd": {
+          "type": "number",
+          "scope": "company",
+          "desc": "Last round amount, USD"
+        },
+        "company.lastFundingDate": {
+          "type": "date",
+          "scope": "company",
+          "desc": "Last fundraise date"
+        },
+        "company.jobOpeningsCount": {
+          "type": "number",
+          "scope": "company",
+          "desc": "Open job count"
+        },
+        "company.recentJobOpenings": {
+          "type": "object[]",
+          "scope": "company",
+          "desc": "Recent job openings"
+        }
+      }
+    }
+  },
   "skills": [
     {
       "name": "drafting",

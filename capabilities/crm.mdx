@@ -36,6 +36,26 @@ CRM conversation read/query over Cedar's OWN records (NOT the connected external
 | `raw-content` | Resolve full source transcripts, email and Slack evidence into a readable/searchable document buffer. | `crm:read` |
 | `search` | Search extracted taxonomy evidence and retain source IDs for timeline and verbatim follow-up. | `crm:read` |
 
+### Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/conversation-read#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `get.eventTypes[]` | `email`, `slack_message`, `meeting`, `external_crm` |  |
+| `find.filters[].field` | `id`, `name`, `status`, `priority`, `dealValue`, `nextSteps`, `lastContactedAt`, `lastInboundAt`, `lastOutboundEmailAt`, `lastMeetingAt`, `nextStepDate`, `createdAt`, `updatedAt`, `aopId`, `important`, `ownerId`, `aopName`, `primaryCompanyName`, `primaryCompanyDomain`, `crmSynced`, `hasFutureCalendar` |  |
+| `find.filters[].operator` | `eq`, `neq`, `gt`, `gte`, `lt`, `lte`, `like`, `ilike`, `in`, `notIn`, `isNull`, `isNotNull` | The comparison operator |
+| `find.eventFilter.dateOperator` | `before`, `after`, `on`, `range` |  |
+| `find.eventFilter.count.operator` | `gt`, `gte`, `lt`, `lte`, `eq` | Comparison operator |
+| `find.orderBy.field` | `id`, `name`, `status`, `priority`, `dealValue`, `nextSteps`, `lastContactedAt`, `lastInboundAt`, `lastOutboundEmailAt`, `lastMeetingAt`, `nextStepDate`, `createdAt`, `updatedAt`, `aopId`, `important`, `ownerId`, `aopName`, `primaryCompanyName`, `primaryCompanyDomain`, `crmSynced`, `hasFutureCalendar` |  |
+| `find.orderBy.direction` | `asc`, `desc` |  |
+| `searchSemantic.filters.eventType` | `email`, `meeting`, `slack`, `external_crm` |  |
+| `searchSemantic.filters.direction` | `inbound`, `outbound` | Filter by email/meeting direction |
+| `searchSemantic.searchType` | `vector`, `fts` | Search method. "vector" = semantic similarity (default), for meaning. "fts" = exact keyword match (BM25), for a literal string — an order number, a URL, a name, or "Attachments" to find emails with attachments. Vectors blur exact tokens; use fts when the answer IS the string. |
+| `searchExternalCrmDeals.providerId` | `hubspot`, `attio`, `salesforce`, `copper` | The CRM connection's providerId — get this from `config`'s `read-settings` action (sections: &#91;"connections"&#93;). |
+| `timeline.kinds[]` | `event`, `instance`, `judgment` |  |
+| `search.filter.kinds[]` | `event`, `instance`, `judgment` |  |
+
 ## conversation-write
 
 Availability: **external**. [Parameters and responses](/reference/conversation-write).
@@ -57,6 +77,33 @@ Creating/changing a CRM deal or conversation? FIRST read the effective crm-updat
 | `reassign-ownership` | Transfer primary conversation ownership to another organization member. | `crm:read` |
 | `link-external-crm-deal` | Associate an existing external deal with Cedar; field synchronization remains a separate update. | `crm:read` |
 | `sync-gmail-thread` | Ingest a live Gmail thread into an existing deal and start its normal processing. | `email:read` |
+
+### Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/conversation-write#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `updateFields.fields[].mode` | `replace`, `patch`, `upsert`, `append`, `update` | People: upsert value=&#123;people:&#91;&#123;id,...changes&#125;&#93;&#125;; history: append complete new entries or update existing IDs in value=&#123;entries:&#91;...&#93;&#125;. Omitted properties stay; arrays replace. New rows need all required data. replace=value only; patch=old_string+new_string only. Null/omitted never clears; "" clears. |
+| `updateFields.fields[].value.people[].engagement` | `mentioned`, `introduced`, `engaged`, `should_engage` |  |
+| `updateFields.fields[].value.people[].support` | `strong_support`, `support`, `neutral`, `opposed`, `unknown` |  |
+| `updateFields.fields[].value.entries[].kind` | `meeting`, `correspondence`, `email`, `milestone` |  |
+| `updateFields.fields[].value.stage` | `discovery`, `demo`, `commercial`, `negotiation` |  |
+| `updateFields.fields[].value.rows[].signal` | `green`, `yellow`, `red` |  |
+| `updateFields.fields[].signal` | `red`, `yellow`, `green` | Set only when the field description instructs a signal; follow its red/yellow/green rubric. |
+| `createEvent.eventType` | `meeting`, `call`, `text`, `custom` | Type of event: "meeting" for in-person or video meetings, "call" for phone calls, "text" for text/chat messages, "custom" for any other interaction. |
+| `mutate.mutation.operation` | `move_event` | operation=move_event |
+| `mutate.mutation.operation` | `reassign_aop` | operation=reassign_aop |
+| `mutate.mutation.operation` | `refresh_conversation` | operation=refresh_conversation |
+| `mutate.mutation.scope` | `reconcile`, `full` | operation=refresh_conversation — 'reconcile' (default): re-derive fields + tasks from the events now on the deal — NO draft. 'full': re-run the whole on-event pipeline for one event (incl. drafting) to reproduce a missing output — requires eventId. |
+| `mutate.mutation.operation` | `refresh_fields` | operation=refresh_fields |
+| `mutate.mutation.operation` | `clear_working_memory` | operation=clear_working_memory |
+| `mutate.mutation.operation` | `merge_conversations` | operation=merge_conversations |
+| `mutate.mutation.operation` | `merge_companies` | operation=merge_companies |
+| `mutate.mutation.operation` | `fix_misassignment` | operation=fix_misassignment |
+| `mutate.mutation.operation` | `assign_aop_by_selection` | operation=assign_aop_by_selection |
+| `mutate.mutation.operation` | `rename_conversation` | operation=rename_conversation |
+| `linkExternalCrmDeal.providerId` | `hubspot`, `attio`, `salesforce`, `copper` |  |
 
 <Accordion title="All nested operations and modes (15)">
 

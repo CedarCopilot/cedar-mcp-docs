@@ -1,9 +1,25 @@
 ---
-title: "Limits and HeyReach recommendations"
-description: "Cedar-enforced caps and separate, sourced outreach pacing guidance."
+title: "Limits and recommendations"
+description: "Automatic account limits, queued messages, and recommended activity by account stage."
 ---
 
-## Cedar's enforced defaults
+Cedar helps protect connected accounts from overload by automatically checking account health, enforcing action limits, and queueing scheduled messages. When a scheduled LinkedIn DM reaches Cedar's hourly or daily send limit, Cedar keeps it pending and defers delivery.
+
+Based on significant internal and external research, Cedar uses action-specific rate limits and recommends activity levels by account stage. Cedar handles enforcement of its limits and scheduled-message deferral automatically. These protections reduce risk; they are **not a guarantee** against provider restrictions.
+
+## Automatic account protection
+
+| Protection | What Cedar handles |
+| --- | --- |
+| Per-account limits | Checks the connected seat's allowance before an action; every applicable window must permit it |
+| Account health | Checks provider/account health before sending |
+| Scheduled-message queues | Saves approved messages for future delivery and claims queued work before sending |
+| Hourly or daily DM cap | Defers scheduled LinkedIn DMs and checks the limits again at the next attempt |
+| Visibility and control | Keeps scheduled items available for inspection and cancellation in Cedar |
+
+Immediate sends return a limit error when capped. Use scheduled sends for automatic queue handling. See [automatic queueing](/automation/queueing) for delivery timing and failure handling.
+
+## Enforced action limits
 
 These are per connected LinkedIn seat, from the current governor implementation. They are application ceilings, not recommended targets or guarantees about LinkedIn restrictions.
 
@@ -23,13 +39,13 @@ Cached recipient IDs avoid a live lookup. A new recipient can require both a loo
 
 Buckets use the service runtime's local calendar boundaries; weeks start Monday. Do not promise a recipient-local or Pacific reset time. There is no MCP action here for raising these limits, and no unified 200-actions-per-day Cedar governor across action categories.
 
-## HeyReach's recommended levels
+## Recommendations by account stage
 
-The following is **HeyReach guidance**, reviewed October 29, 2026. Cedar's current LinkedIn provider path is Unipile, and these recommendations are not automatically configured in Cedar.
+Account history affects the appropriate operating level. Use the following researched starting points to choose a conservative schedule within Cedar's enforced limits. The current governor applies the action limits above; it does not yet select a different warm-up tier automatically.
 
 ### New or lightly connected accounts
 
-| Stage | HeyReach's guidance |
+| Stage | Recommended starting point |
 | --- | --- |
 | Before automation | Build at least 100 connections manually |
 | Week 1 after connecting | 5 invitations per day |
@@ -37,11 +53,11 @@ The following is **HeyReach guidance**, reviewed October 29, 2026. Cedar's curre
 | Following weeks | Gradually move toward 15–20 invitations per day |
 | Below 1,000 connections | Keep invitations at 20–25/day or lower after warm-up |
 
-HeyReach also advises avoiding concurrent automation tools on the same account. These values come from its [free-account preparation guide](https://help.heyreach.io/en/articles/10415479-can-i-use-a-free-linkedin-account-with-heyreach), which is the more conservative starting point for a fresh account.
+Use the more conservative schedule for fresh accounts and avoid overlapping automation on the same seat. These starting points are informed by the [account preparation guide](https://help.heyreach.io/en/articles/10415479-can-i-use-a-free-linkedin-account-with-heyreach), reviewed October 29, 2026.
 
 ### Broader campaign guidance
 
-HeyReach's [company-expansion guide](https://www.heyreach.io/blog/linkedin-company-expansion-strategy) suggests these ranges for a broader campaign setup:
+For accounts with established activity, the [campaign pacing research](https://www.heyreach.io/blog/linkedin-company-expansion-strategy) gives these additional reference ranges (reviewed October 29, 2026):
 
 | Account stage or action | Suggested level |
 | --- | --- |
@@ -54,10 +70,8 @@ HeyReach's [company-expansion guide](https://www.heyreach.io/blog/linkedin-compa
 
 The two articles address different starting conditions. Use the lower new-account schedule when account history is weak, and remain within Cedar's **80 invitations/week** even when a daily recommendation would imply a larger total.
 
-HeyReach's [safety article](https://help.heyreach.io/en/articles/9877960-is-heyreach-safe-to-use) describes its own guardrails as approximately **100 invitations/week** and **200 total actions/day**. These are HeyReach's published operational claims; they are not Cedar's implemented counters or a universal LinkedIn allowance.
-
 ## Practical Cedar pacing
 
 For a conservative initial DM program, 20 messages across an eight-hour working day is roughly one every 24 minutes. That is an example scheduling policy, not an enforced Cedar interval. Maintain one shared per-seat plan across workflows, leave room for normal user activity, and stop when account health or provider feedback requires it.
 
-Choose future times deliberately, then use `schedule-send` for each user-authorized message. Cedar defers scheduled DMs when its own hour/day send cap is reached. It does not automatically apply warm-up tiers, working hours, jitter, cross-tool budgets, or HeyReach sender rotation. [Queue behavior](/automation/queueing).
+Use `schedule-send` for approved messages at the chosen times. Cedar manages the durable queue, checks its limits before delivery, and defers scheduled DMs when its own hour/day cap is reached. Working hours, warm-up pacing and coordination with activity outside Cedar remain part of your chosen schedule. [Queue behavior](/automation/queueing).

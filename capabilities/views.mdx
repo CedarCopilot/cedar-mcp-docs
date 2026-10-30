@@ -29,6 +29,25 @@ Discover the user's saved/pinned CRM views. ACTIONS: (1) list-canvases — call 
 | `update-canvas` | Update a saved canvas configuration while preserving intended settings. | `crm:read` |
 | `delete-canvas` | Delete the selected caller-owned saved canvas. | `crm:read` |
 
+### Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/ui-config#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `configureOverview.ops[].op` | `add` | op=add |
+| `configureOverview.ops[].item.kind` | `field`, `doc`, `contacts` | op=add |
+| `configureOverview.ops[].item.fieldType` | `cedar`, `custom` | op=add |
+| `configureOverview.ops[].item.render` | `scalar`, `markdown` | op=add |
+| `configureOverview.ops[].op` | `remove` | op=remove |
+| `configureOverview.ops[].op` | `setVisibleWhen` | op=setVisibleWhen |
+| `configureOverview.ops[].op` | `setRender` | op=setRender |
+| `configureOverview.ops[].render` | `scalar`, `markdown` | op=setRender |
+| `configureOverview.ops[].op` | `setOwner` | op=setOwner |
+| `configureOverview.ops[].op` | `reorder` | op=reorder |
+| `createCanvas.type` | `conversationCanvas`, `kanbanConversation`, `cardList`, `table`, `report`, `statistics`, `tasks`, `agenda`, `calendar` |  |
+| `updateCanvas.type` | `conversationCanvas`, `kanbanConversation`, `cardList`, `table`, `report`, `statistics`, `tasks`, `agenda`, `calendar` |  |
+
 <Accordion title="All nested operations and modes (24)">
 
 | Selector | Choice | Variant |

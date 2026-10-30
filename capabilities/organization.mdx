@@ -26,6 +26,16 @@ ORG-ADMIN ONLY. Push one field definition or CRM mapping out to many reps at onc
 | `propagate-field` | Copy an organization field definition to selected reps; report differences and gate forced overwrites. | `playbook:write` |
 | `propagate-mapping` | Copy a CRM mapping onto each target's own provider connection with option reconciliation. | `playbook:write` |
 
+### Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/config-propagate#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `propagateField.targets` | `uniform_and_missing` |  |
+| `propagateField.targets` | `org` |  |
+| `propagateMapping.targets` | `org` |  |
+
 ## Access and results
 
 Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).

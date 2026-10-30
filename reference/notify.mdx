@@ -5,18 +5,41 @@ description: "Parameters, scopes, and response schema for notify."
 
 Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
-## Capability
+## Capabilities
+
+[Notifications capabilities and guides](/capabilities/notifications).
+
+<Accordion title="Full tool behavior and constraints">
 
 Send proactive notifications and discover Slack destinations. ACTIONS: (1) send — send a message to the user on the ONE channel they have chosen: Slack DM or channel (with structured Block Kit buttons — kind: action, link; style: primary, danger, default — reactions, and thread replies), iMessage (with tapbacks — emoji: thumbsup, thumbsdown, heart, haha, exclamation, question), email, or WhatsApp. Use for post-meeting DMs, daily agenda, alerts, and other out-of-band messages — NOT for the in-conversation reply, which uses the &lt;final_answer&gt; JSON pattern instead. Leave `channel` unset to use the user setting; set it (e.g. "email") only when the message argues for a channel — a long written report reads better in the inbox. Never use draft-comms to route a notification around a failed channel; that is for customer-facing mail. (2) list-slack-channels — list Slack channels (plus the user DM) accessible to the user. Call this before send with a slack.channelId destination to discover valid channel IDs. Each action takes its params in a same-named object (e.g. action: "send" pairs with a send: &#123;text, ...&#125; object) — omit every params object except the one matching your chosen action.
 
+</Accordion>
+
 ## Operations and scopes
 
-| Action | Baseline scope |
-| --- | --- |
-| `send` | `crm:read` |
-| `list-slack-channels` | `crm:read` |
+| Action | Capability | Baseline scope |
+| --- | --- | --- |
+| `send` | Send a user notification on the chosen configured channel, with supported Slack interactions or iMessage tapbacks. | `crm:read` |
+| `list-slack-channels` | Discover accessible Slack notification destinations and the user's DM. | `crm:read` |
 
 Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
+
+## Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/notify#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `send.channel` | `email`, `slack`, `imessage`, `whatsapp` | Deliver on a specific channel instead of the user's default. Leave UNSET almost always — the user picks where their notifications land. Set it (e.g. "email") only when the message argues for a channel, such as a long written report the user wants in their inbox. Not a retry mechanism: a failed send already falls back to email on its own. |
+| `send.slack.buttons[].kind` | `action` | kind=action |
+| `send.slack.buttons[].style` | `primary`, `danger`, `default` | kind=action |
+| `send.slack.buttons[].confirm.style` | `primary`, `danger` | kind=action |
+| `send.slack.buttons[].kind` | `link` | kind=link |
+| `send.slack.threadReplies[].buttons[].kind` | `action` | kind=action |
+| `send.slack.threadReplies[].buttons[].style` | `primary`, `danger`, `default` | kind=action |
+| `send.slack.threadReplies[].buttons[].confirm.style` | `primary`, `danger` | kind=action |
+| `send.slack.threadReplies[].buttons[].kind` | `link` | kind=link |
+| `send.imessage.tapbacks[].emoji` | `thumbsup`, `thumbsdown`, `heart`, `haha`, `exclamation`, `question` |  |
 
 ## Parameters
 

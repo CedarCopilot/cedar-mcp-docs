@@ -7,17 +7,23 @@ Generated from Cedar's actual registration and Zod schemas. Your connection's `t
 
 <Note>read-thread may persist messages into an already-linked deal. Read scope is not a guarantee of zero side effects.</Note>
 
-## Capability
+## Capabilities
+
+[Slack capabilities and guides](/capabilities/slack).
+
+<Accordion title="Full tool behavior and constraints">
 
 Read the connected user's LIVE Slack (not Cedar's synced store). ACTIONS: (1) search-live — search Slack messages by text (search.messages); returns matches (channelId + ts/threadTs + permalink + snippet) to inspect or pass to slack-write's sync-thread. (2) read-thread — read a specific thread (conversations.replies) or a channel's recent messages; if that channel is ALREADY linked to one of your deals the messages are also stored on that deal's timeline automatically (idempotent, returned as syncedTo + ingested), so no follow-up sync-thread call is needed; each message lists its uploaded files (id, name, type). (3) read-file: external MCP clients only: look at the image(s) on one message (channelId + messageTs &#91;+ threadTs&#93; from read-thread, optionally one fileId); images come back as image content. Inside Cedar's own chat it returns the file list only. search-live and read-file never persist, and an UNLINKED channel is never attributed on its own: use slack-write's sync-thread to pick a deal for one. Requires the Slack "search:read" grant; a user who connected Slack before it existed gets a reconnect-required error. Each action takes its params in a same-named object (action: "search-live" pairs with searchLive: &#123;...&#125;) — omit every params object except the one matching your chosen action.
 
+</Accordion>
+
 ## Operations and scopes
 
-| Action | Baseline scope |
-| --- | --- |
-| `search-live` | `slack:read` |
-| `read-thread` | `slack:read` |
-| `read-file` | `slack:read` |
+| Action | Capability | Baseline scope |
+| --- | --- | --- |
+| `search-live` | Search the connected Slack workspace for current matching content. | `slack:read` |
+| `read-thread` | Read a full Slack thread and supported context; linked-deal content may also be persisted. | `slack:read` |
+| `read-file` | Read a supported Slack file through the caller's authorized connection. | `slack:read` |
 
 Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
 

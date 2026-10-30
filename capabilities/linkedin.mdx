@@ -10,7 +10,7 @@ Research people and companies, discover prospects, inspect engagement, manage co
 - [LinkedIn module](/linkedin/overview)
 - [Search and screen prospects](/linkedin/prospecting)
 - [Draft, send, and schedule](/linkedin/messaging)
-- [Limits and HeyReach recommendations](/linkedin/limits)
+- [Limits and recommendations](/linkedin/limits)
 
 ## linkedin-read
 
@@ -49,6 +49,16 @@ Read LinkedIn. Seat auto-resolves; unipileAccountId selects an owned seat; list-
 | `screen-prospects` | Check candidates against prior lists, CRM context and DM history; CRM checks require crm:read. | `linkedin:read` |
 | `outreach-status` | Refresh message/reply evidence and propose status cells without directly writing a table. | `linkedin:read` |
 
+### Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/linkedin-read#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `search.api` | `classic`, `sales_navigator`, `recruiter` |  |
+| `search.category` | `people`, `companies` |  |
+| `postPage.kind` | `posts`, `comments`, `reactions` |  |
+
 ## linkedin-write
 
 Availability: **external**. [Parameters and responses](/reference/linkedin-write).
@@ -68,6 +78,14 @@ LinkedIn outbound actions; seat auto-resolves (unipileAccountId selects an owned
 | `send-invitation` | Send an authorized connection request; a note requires an explicit note request and its flag. | `linkedin:write` |
 | `send-inmail` | Send an authorized InMail to a non-connection within the seat's InMail budget. | `linkedin:write` |
 | `sync-chat` | Ingest live history from an owned chat into a deal; sends nothing and needs only linkedin:read. | `linkedin:read` |
+
+### Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/linkedin-write#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `sendInvitation.noteRequestedByUser` | `true` | The user explicitly asked for a note on this connection request. Required whenever `note` is set; never set it to justify a note the user did not ask for. |
 
 ## Access and results
 

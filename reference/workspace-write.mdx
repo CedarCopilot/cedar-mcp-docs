@@ -5,11 +5,39 @@ description: "Parameters, scopes, and response schema for workspace-write."
 
 Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
-## Capability
+## Capabilities
+
+[Workspace preferences capabilities and guides](/capabilities/workspace).
+
+<Accordion title="Full tool behavior and constraints">
 
 Change the user's own settings and workspace layout. Call config-read read-settings first to get the current ids — every update/delete/reorder needs them. CHANGES: (1) update_user_settings — Slack notification preferences and mail settings (signatureEnabled, signatureContent, defaultEmailAlias, undoSendEnabled); read-settings sections:&#91;"user_settings"&#93; first. (2) update_inbox_settings — inbox layout (inboxLayout, importantSignal, inboxOrder) and shared Gmail/LinkedIn/Slack inboxSortingInstructions. Read sections:&#91;"inboxes"&#93; first; empty instructions clear. Sorting works before CRM admission and does not authorize sending. (3) manage_inbox — create/update/delete/reorder a custom inbox tab (split); read-settings sections:&#91;"inboxes"&#93; for inbox ids, accountId is resolved server-side. (4) manage_task_group — create/update/delete/reorder a task group (the lanes tasks are filed into); read-settings sections:&#91;"task_groups"&#93; for group ids. (5) update_webhook_export_config — set/clear the HTTPS endpoint Cedar POSTs conversation-field updates to on every change (url:null clears it). For CRM/connection config (field mappings, Slack sync, CRM sync toggles, connection instructions, playbook webhooks) use connection-write instead. For AOP custom fields and their CRM mappings use config-write. For playbook, subagent, and resource file edits use write-document.
 
+</Accordion>
+
 Required baseline scope: `playbook:write`. Additional role and target checks apply.
+
+## Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/workspace-write#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `change.type` | `update_user_settings` | type=update_user_settings |
+| `change.slackNotifications.deliveryMethod` | `dm`, `channel` | type=update_user_settings |
+| `change.type` | `update_inbox_settings` | type=update_inbox_settings |
+| `change.linkedinNavigation.filters[].view` | `all`, `focused`, `archive`, `reminders`, `drafts`, `unread`, `starred`, `inmail`, `salesnav`, `spam`, `sponsored`, `other` | type=update_inbox_settings |
+| `change.linkedinNavigation.filters[].filter` | `all`, `waiting-them`, `waiting-me`, `unread` | type=update_inbox_settings |
+| `change.inboxLayout` | `inbox`, `important_other`, `stacked` | type=update_inbox_settings — Global inbox layout mode. |
+| `change.importantSignal` | `category_personal`, `gmail_important` | type=update_inbox_settings — Which signal marks a thread "important". |
+| `change.type` | `manage_inbox` | type=manage_inbox |
+| `change.op` | `create`, `update`, `delete`, `reorder` | type=manage_inbox — create/update/delete/reorder a custom inbox tab (split). accountId is resolved server-side. |
+| `change.lookbackDays` | `all` | type=manage_inbox |
+| `change.channels[]` | `email`, `linkedin`, `whatsapp`, `slack` | type=manage_inbox |
+| `change.type` | `manage_task_group` | type=manage_task_group |
+| `change.op` | `create`, `update`, `delete`, `reorder` | type=manage_task_group — create/update/delete/reorder a task group (the lanes tasks are filed into). |
+| `change.overduePolicy.mode` | `nag`, `auto-complete`, `ignore` | type=manage_task_group |
+| `change.type` | `update_webhook_export_config` | type=update_webhook_export_config |
 
 ## Parameters
 

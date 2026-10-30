@@ -17,6 +17,32 @@ Change how a CONNECTED INTEGRATION behaves. Call config-read read-settings secti
 
 Single-call family. Baseline scope: `playbook:write`.
 
+### Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/connection-write#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `change.type` | `update_crm_field_mappings` | type=update_crm_field_mappings |
+| `change.op` | `add`, `update`, `remove` | type=update_crm_field_mappings — add: create a new field mapping. update: change an existing mapping (matched by crmFieldName). remove: delete a mapping by crmFieldName. |
+| `change.transformations.*.type` | `date`, `number`, `string`, `json` | type=update_crm_field_mappings |
+| `change.referenceType` | `contact`, `company`, `deal` | type=update_crm_field_mappings — This CRM field is a reference/lookup to another record type, not a plain value. |
+| `change.type` | `manage_playbook_webhook` | type=manage_playbook_webhook |
+| `change.op` | `create`, `enable`, `disable`, `list`, `test`, `delete` | type=manage_playbook_webhook |
+| `change.scope` | `user`, `org` | type=manage_playbook_webhook — Required for op=create. org fires ONCE org-wide (org admin only); user fires per registered user. |
+| `change.sourceType` | `http`, `slack_channel` | type=manage_playbook_webhook — Default http (mints a POST URL). slack_channel fires on each message in sourceRef. |
+| `change.type` | `update_slack_sync_config` | type=update_slack_sync_config |
+| `change.scope` | `user`, `org` | type=update_slack_sync_config — Defaults "user" (configures only connectionId). "org" (org admin only) sets the ORG-WIDE DEFAULT instead — connectionId is ignored — used by any Slack connection in the org with no explicit config of its own; an explicit per-connection value always wins over this default. |
+| `change.type` | `update_crm_settings` | type=update_crm_settings |
+| `change.stageRequiredFieldsOp.op` | `set`, `remove` | type=update_crm_settings |
+| `change.type` | `update_connection_instructions` | type=update_connection_instructions |
+| `change.type` | `disconnect_linkedin_seat` | type=disconnect_linkedin_seat |
+| `change.type` | `disconnect_whatsapp_account` | type=disconnect_whatsapp_account |
+| `change.type` | `update_whatsapp_sync_config` | type=update_whatsapp_sync_config |
+| `change.type` | `resolve_channel_link_proposal` | type=resolve_channel_link_proposal |
+| `change.op` | `resolve`, `sweep` | type=resolve_channel_link_proposal — resolve: link (or dismiss) ONE ambiguous Slack/LinkedIn/WhatsApp channel against a specific deal. sweep: re-run the org's automatic linking pass and commit its verdicts — no specific container needed. |
+| `change.channel` | `slack`, `linkedin`, `whatsapp` | type=resolve_channel_link_proposal — Required for op=resolve. |
+
 <Accordion title="All nested operations and modes (25)">
 
 | Selector | Choice | Variant |

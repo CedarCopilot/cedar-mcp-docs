@@ -17,6 +17,14 @@ Save a problem or question for the Cedar team and attempt a Slack notification w
 
 Single-call family. Baseline scope: `crm:read`.
 
+### Supported options and filters
+
+Every finite input choice is listed here, including array values and nested variants. Free-text filters, dates, numeric ranges and runtime validation are covered in the [parameter tables](/reference/send-user-feedback#parameters). Options apply to their named operation or branch.
+
+| Input | Choices | Variant / meaning |
+| --- | --- | --- |
+| `category` | `bug`, `confused`, `feature_request`, `other` | bug: a Cedar tool or agent failed or behaved wrongly. confused: the user or agent could not tell how something works. feature_request: a capability that is missing. Default other. |
+
 ## Access and results
 
 Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).
