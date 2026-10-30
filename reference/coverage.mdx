@@ -9,29 +9,6 @@ Staff, feature-gated, and app-only entries are labeled. An action requiring `in-
 
 ## Overview
 
-### Tasks
-
-#### task
-
-[Full parameters and responses](/reference/task) · Availability: **external**.
-
-| Selector | Value | Variant / scope |
-| --- | --- | --- |
-| `action` | `list` | crm:read |
-| `action` | `applyApproval` | crm:read |
-| `action` | `create` | crm:read |
-| `action` | `update` | crm:read |
-| `action` | `cancel` | crm:read |
-| `action` | `assignmentOptions` | crm:read |
-| `action` | `reassign` | crm:read |
-| `action` | `dealList` | crm:read |
-| `action` | `creationOptions` | crm:read |
-| `action` | `createAssigned` | crm:read |
-| `action` | `complete` | crm:read |
-| `action` | `delete` | crm:read |
-| `action` | `start` | crm:read |
-| `action` | `updateDueDate` | crm:read |
-
 ### Saved views
 
 #### ui-config
@@ -208,6 +185,211 @@ Single call, baseline scope: `crm:read`.
 [Full parameters and responses](/reference/cedar-staff-debug) · Availability: **staff-only**.
 
 Single call, baseline scope: `internal`.
+
+## Agent platform
+
+### User tasks
+
+#### task
+
+[Full parameters and responses](/reference/task) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `list` | crm:read |
+| `action` | `applyApproval` | crm:read |
+| `action` | `create` | crm:read |
+| `action` | `update` | crm:read |
+| `action` | `cancel` | crm:read |
+| `action` | `assignmentOptions` | crm:read |
+| `action` | `reassign` | crm:read |
+| `action` | `dealList` | crm:read |
+| `action` | `creationOptions` | crm:read |
+| `action` | `createAssigned` | crm:read |
+| `action` | `complete` | crm:read |
+| `action` | `delete` | crm:read |
+| `action` | `start` | crm:read |
+| `action` | `updateDueDate` | crm:read |
+
+### Playbooks and triggers
+
+#### aop-write
+
+[Full parameters and responses](/reference/aop-write) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `create-aop` | playbook:write |
+| `action` | `update-selection-procedure` | playbook:write |
+| `action` | `update-custom-assignment-instruction` | playbook:write |
+
+### Connected systems
+
+#### systems-write
+
+[Full parameters and responses](/reference/systems-write) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `change.type` | `manage_mcp_connection` | change.type=manage_mcp_connection |
+| `change.op` | `create` | change.type=manage_mcp_connection |
+| `change.op` | `delete` | change.type=manage_mcp_connection |
+| `change.type` | `update_mcp_connection_settings` | change.type=update_mcp_connection_settings |
+
+#### external-mcp
+
+[Full parameters and responses](/reference/external-mcp) · Availability: **in-app-only**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `call` | in-app |
+
+### Workflow buttons
+
+#### workflow
+
+[Full parameters and responses](/reference/workflow) · Availability: **in-app-only**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `list_operations` | in-app |
+| `action` | `inspect_capacity` | in-app |
+
+### Delegation and code execution
+
+#### delegate
+
+[Full parameters and responses](/reference/delegate) · Availability: **in-app-only**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `subagent` | in-app |
+| `action` | `code` | in-app |
+| `subagent.type` | `orchestrator` | See tool and target permissions |
+| `subagent.type` | `analyzer` | See tool and target permissions |
+
+### Chat context and history
+
+#### chat-context
+
+[Full parameters and responses](/reference/chat-context) · Availability: **in-app-only**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `manage` | in-app |
+| `action` | `resolve` | in-app |
+
+#### search-chat-history
+
+[Full parameters and responses](/reference/search-chat-history) · Availability: **in-app-only**.
+
+Single call, baseline scope: `in-app`.
+
+#### load-chat-history
+
+[Full parameters and responses](/reference/load-chat-history) · Availability: **in-app-only**.
+
+Single call, baseline scope: `in-app`.
+
+#### switch-chat-thread
+
+[Full parameters and responses](/reference/switch-chat-thread) · Availability: **in-app-only**.
+
+Single call, baseline scope: `in-app`.
+
+### Configuration
+
+#### config-read
+
+[Full parameters and responses](/reference/config-read) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `read-playbook` | docs:read |
+| `action` | `read-settings` | crm:read |
+| `action` | `list-fields` | crm:read |
+| `action` | `list-org-members` | crm:read |
+| `action` | `find-bot-slack-channels` | crm:read |
+| `readPlaybook.mode` | `list` | See tool and target permissions |
+| `readPlaybook.mode` | `load_full` | See tool and target permissions |
+| `readPlaybook.mode` | `load_sections` | See tool and target permissions |
+
+#### config-write
+
+[Full parameters and responses](/reference/config-write) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `reassign-aop` | playbook:write |
+| `action` | `create-field` | playbook:write |
+| `action` | `update-field` | playbook:write |
+| `action` | `delete-field` | playbook:write |
+| `action` | `link-mapping` | playbook:write |
+| `action` | `unlink-mapping` | playbook:write |
+| `action` | `add-field-option` | playbook:write |
+| `action` | `update-field-option` | playbook:write |
+| `action` | `remove-field-option` | playbook:write |
+| `action` | `set-stage-criteria` | playbook:write |
+| `createField.type` | `text` | See tool and target permissions |
+| `createField.type` | `number` | See tool and target permissions |
+| `createField.type` | `date` | See tool and target permissions |
+| `createField.type` | `boolean` | See tool and target permissions |
+| `createField.type` | `select` | See tool and target permissions |
+| `createField.type` | `currency` | See tool and target permissions |
+| `createField.type` | `url` | See tool and target permissions |
+| `createField.type` | `email` | See tool and target permissions |
+| `createField.type` | `phone` | See tool and target permissions |
+| `createField.type` | `list` | See tool and target permissions |
+| `createField.type` | `fraction` | See tool and target permissions |
+| `createField.type` | `json` | See tool and target permissions |
+| `createField.type` | `people` | See tool and target permissions |
+| `createField.type` | `summarized_history` | See tool and target permissions |
+| `createField.type` | `deal_brief` | See tool and target permissions |
+| `linkMapping.resolutions[].action` | `remap-to` | linkMapping.resolutions&#91;&#93;.action=remap-to |
+| `linkMapping.resolutions[].action` | `keep-legacy` | linkMapping.resolutions&#91;&#93;.action=keep-legacy |
+| `removeFieldOption.resolution.action` | `remap-to` | removeFieldOption.resolution.action=remap-to |
+| `removeFieldOption.resolution.action` | `keep-legacy` | removeFieldOption.resolution.action=keep-legacy |
+
+### Organization administration
+
+#### config-propagate
+
+[Full parameters and responses](/reference/config-propagate) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `propagate-field` | playbook:write |
+| `action` | `propagate-mapping` | playbook:write |
+
+### Skill loading
+
+#### load-skill
+
+[Full parameters and responses](/reference/load-skill) · Availability: **external**.
+
+Single call, baseline scope: `authenticated`.
+
+#### load-brain-skills
+
+[Full parameters and responses](/reference/load-brain-skills) · Availability: **feature-gated**.
+
+Single call, baseline scope: `brain:read`.
+
+### Diagnostics
+
+#### debug
+
+[Full parameters and responses](/reference/debug) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `diagnose-conversation` | crm:read |
+| `action` | `recent-executions` | crm:read |
+| `action` | `execution-detail` | crm:read |
+| `action` | `tool-call-detail` | crm:read |
+| `action` | `health-report` | crm:read |
+| `action` | `create-monitor` | internal |
+| `action` | `test-run` | crm:read |
 
 ## Channels
 
@@ -787,186 +969,4 @@ Single call, baseline scope: `crm:read`.
 | `change.channel` | `slack` | change.type=resolve_channel_link_proposal |
 | `change.channel` | `linkedin` | change.type=resolve_channel_link_proposal |
 | `change.channel` | `whatsapp` | change.type=resolve_channel_link_proposal |
-
-## Agent platform
-
-### Playbooks and triggers
-
-#### aop-write
-
-[Full parameters and responses](/reference/aop-write) · Availability: **external**.
-
-| Selector | Value | Variant / scope |
-| --- | --- | --- |
-| `action` | `create-aop` | playbook:write |
-| `action` | `update-selection-procedure` | playbook:write |
-| `action` | `update-custom-assignment-instruction` | playbook:write |
-
-### Connected systems
-
-#### systems-write
-
-[Full parameters and responses](/reference/systems-write) · Availability: **external**.
-
-| Selector | Value | Variant / scope |
-| --- | --- | --- |
-| `change.type` | `manage_mcp_connection` | change.type=manage_mcp_connection |
-| `change.op` | `create` | change.type=manage_mcp_connection |
-| `change.op` | `delete` | change.type=manage_mcp_connection |
-| `change.type` | `update_mcp_connection_settings` | change.type=update_mcp_connection_settings |
-
-#### external-mcp
-
-[Full parameters and responses](/reference/external-mcp) · Availability: **in-app-only**.
-
-| Selector | Value | Variant / scope |
-| --- | --- | --- |
-| `action` | `call` | in-app |
-
-### Workflow buttons
-
-#### workflow
-
-[Full parameters and responses](/reference/workflow) · Availability: **in-app-only**.
-
-| Selector | Value | Variant / scope |
-| --- | --- | --- |
-| `action` | `list_operations` | in-app |
-| `action` | `inspect_capacity` | in-app |
-
-### Delegation and code execution
-
-#### delegate
-
-[Full parameters and responses](/reference/delegate) · Availability: **in-app-only**.
-
-| Selector | Value | Variant / scope |
-| --- | --- | --- |
-| `action` | `subagent` | in-app |
-| `action` | `code` | in-app |
-| `subagent.type` | `orchestrator` | See tool and target permissions |
-| `subagent.type` | `analyzer` | See tool and target permissions |
-
-### Chat context and history
-
-#### chat-context
-
-[Full parameters and responses](/reference/chat-context) · Availability: **in-app-only**.
-
-| Selector | Value | Variant / scope |
-| --- | --- | --- |
-| `action` | `manage` | in-app |
-| `action` | `resolve` | in-app |
-
-#### search-chat-history
-
-[Full parameters and responses](/reference/search-chat-history) · Availability: **in-app-only**.
-
-Single call, baseline scope: `in-app`.
-
-#### load-chat-history
-
-[Full parameters and responses](/reference/load-chat-history) · Availability: **in-app-only**.
-
-Single call, baseline scope: `in-app`.
-
-#### switch-chat-thread
-
-[Full parameters and responses](/reference/switch-chat-thread) · Availability: **in-app-only**.
-
-Single call, baseline scope: `in-app`.
-
-### Configuration
-
-#### config-read
-
-[Full parameters and responses](/reference/config-read) · Availability: **external**.
-
-| Selector | Value | Variant / scope |
-| --- | --- | --- |
-| `action` | `read-playbook` | docs:read |
-| `action` | `read-settings` | crm:read |
-| `action` | `list-fields` | crm:read |
-| `action` | `list-org-members` | crm:read |
-| `action` | `find-bot-slack-channels` | crm:read |
-| `readPlaybook.mode` | `list` | See tool and target permissions |
-| `readPlaybook.mode` | `load_full` | See tool and target permissions |
-| `readPlaybook.mode` | `load_sections` | See tool and target permissions |
-
-#### config-write
-
-[Full parameters and responses](/reference/config-write) · Availability: **external**.
-
-| Selector | Value | Variant / scope |
-| --- | --- | --- |
-| `action` | `reassign-aop` | playbook:write |
-| `action` | `create-field` | playbook:write |
-| `action` | `update-field` | playbook:write |
-| `action` | `delete-field` | playbook:write |
-| `action` | `link-mapping` | playbook:write |
-| `action` | `unlink-mapping` | playbook:write |
-| `action` | `add-field-option` | playbook:write |
-| `action` | `update-field-option` | playbook:write |
-| `action` | `remove-field-option` | playbook:write |
-| `action` | `set-stage-criteria` | playbook:write |
-| `createField.type` | `text` | See tool and target permissions |
-| `createField.type` | `number` | See tool and target permissions |
-| `createField.type` | `date` | See tool and target permissions |
-| `createField.type` | `boolean` | See tool and target permissions |
-| `createField.type` | `select` | See tool and target permissions |
-| `createField.type` | `currency` | See tool and target permissions |
-| `createField.type` | `url` | See tool and target permissions |
-| `createField.type` | `email` | See tool and target permissions |
-| `createField.type` | `phone` | See tool and target permissions |
-| `createField.type` | `list` | See tool and target permissions |
-| `createField.type` | `fraction` | See tool and target permissions |
-| `createField.type` | `json` | See tool and target permissions |
-| `createField.type` | `people` | See tool and target permissions |
-| `createField.type` | `summarized_history` | See tool and target permissions |
-| `createField.type` | `deal_brief` | See tool and target permissions |
-| `linkMapping.resolutions[].action` | `remap-to` | linkMapping.resolutions&#91;&#93;.action=remap-to |
-| `linkMapping.resolutions[].action` | `keep-legacy` | linkMapping.resolutions&#91;&#93;.action=keep-legacy |
-| `removeFieldOption.resolution.action` | `remap-to` | removeFieldOption.resolution.action=remap-to |
-| `removeFieldOption.resolution.action` | `keep-legacy` | removeFieldOption.resolution.action=keep-legacy |
-
-### Organization administration
-
-#### config-propagate
-
-[Full parameters and responses](/reference/config-propagate) · Availability: **external**.
-
-| Selector | Value | Variant / scope |
-| --- | --- | --- |
-| `action` | `propagate-field` | playbook:write |
-| `action` | `propagate-mapping` | playbook:write |
-
-### Skill loading
-
-#### load-skill
-
-[Full parameters and responses](/reference/load-skill) · Availability: **external**.
-
-Single call, baseline scope: `authenticated`.
-
-#### load-brain-skills
-
-[Full parameters and responses](/reference/load-brain-skills) · Availability: **feature-gated**.
-
-Single call, baseline scope: `brain:read`.
-
-### Diagnostics
-
-#### debug
-
-[Full parameters and responses](/reference/debug) · Availability: **external**.
-
-| Selector | Value | Variant / scope |
-| --- | --- | --- |
-| `action` | `diagnose-conversation` | crm:read |
-| `action` | `recent-executions` | crm:read |
-| `action` | `execution-detail` | crm:read |
-| `action` | `tool-call-detail` | crm:read |
-| `action` | `health-report` | crm:read |
-| `action` | `create-monitor` | internal |
-| `action` | `test-run` | crm:read |
 

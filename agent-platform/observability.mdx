@@ -5,6 +5,19 @@ description: "Inspect configured behavior, execution evidence and outputs before
 
 The agent workspace can show last-run information, recent run counts, outputs, associated chats and configured invocation sources. Execution history and chat history are separate views. Where a conversation is supplied, its access is checked independently of access to the agent.
 
+## What becomes visible
+
+| Layer | Evidence to inspect |
+| --- | --- |
+| Configuration | Saved instructions, triggers, invocation sources and grants |
+| Execution | Run status, timestamps, errors, tool results and child work |
+| Human work | Task owner, recommendation/approval state, due date and inventory receipt |
+| Output | The actual saved document, table, report or draft and its access rules |
+| Analytical backing | Metric definitions, sample counts, source IDs, filters and verified provider provenance |
+| Delivery | The channel's returned delivery state, separately from queueing or task completion |
+
+[Task visibility](/tasks/visibility), [data visibility](/brain/visibility) and [statistical backing](/intelligence/statistical-backing) explain the corresponding receipts and evidence. A successful agent run alone does not validate every claim in its output.
+
 ## Investigate a run
 
 1. Confirm the agent definition and effective playbook rule.

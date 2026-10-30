@@ -8,15 +8,24 @@ Cedar's Model Context Protocol server connects your AI client to GTM evidence an
 ## Explore Cedar
 
 <CardGroup cols={2}>
+<Card title="Connect and discover" icon="plug" href="/getting-started/quickstart">Authenticate your MCP client, discover available tools and make a first read.</Card>
+<Card title="Agent platform" icon="robot" href="/agent-platform/overview">The agent library, user tasks, specialized documents, triggers, memory, permissions and execution.</Card>
 <Card title="Channels" icon="comments" href="/channels/overview">LinkedIn, email, Slack, messaging, meetings and calendars—with their channel tools, sending and limits.</Card>
 <Card title="Enrichment" icon="magnifying-glass" href="/enrichment/overview">Person and company profiles, the web enrichment builder, field catalogs and provider tools.</Card>
 <Card title="Pipeline intelligence" icon="chart-line" href="/intelligence/overview">Pipeline metrics, deal analysis, signals, coaching and evidence-backed outputs.</Card>
 <Card title="Brain · Data layer" icon="database" href="/brain/overview">Records, source evidence, fields, knowledge, documents, tables, boards and graphs.</Card>
-<Card title="Agent platform" icon="robot" href="/agent-platform/overview">The agent library, lifecycle, triggers, memory, permissions, skills and execution.</Card>
-<Card title="Connect and discover" icon="plug" href="/getting-started/quickstart">Authenticate your MCP client, discover available tools and make a first read.</Card>
 </CardGroup>
 
 Each product area contains its own modules, workflows and tool references. LinkedIn includes [sending and limits](/linkedin/limits); the agent platform includes the [agent library](/agent-platform/library). Browse the [full hierarchy](/getting-started/modules) for every family, or the [tool catalog](/reference/index) for exact registered names.
+
+## Work, outputs and evidence
+
+<CardGroup cols={2}>
+<Card title="User tasks" icon="list-check" href="/tasks/overview">14 MCP actions to inspect, create, assign, prepare, approve, reschedule and complete work.</Card>
+<Card title="Specialized documents" icon="file-lines" href="/agent-platform/specialized-documents">Lists, task-aware agendas, structured tables, flowcharts, reports and actionable documents.</Card>
+<Card title="Visibility and access" icon="eye" href="/brain/visibility">Understand accessible records, task inventories, resource grants and the coverage of a result.</Card>
+<Card title="Statistical backing" icon="chart-column" href="/intelligence/statistical-backing">Inspect sample counts, source IDs, calculations and verified CRM inventories behind findings.</Card>
+</CardGroup>
 
 ## What you can build
 
@@ -27,7 +36,8 @@ Each product area contains its own modules, workflows and tool references. Linke
 | Act on a website visit | Visitor provider or form → Cedar HTTP input/playbook → qualification → reviewable follow-up |
 | Monitor buyers and accounts | Person/company watchers → signal history → evidence-backed review → tasks or drafts |
 | Keep a pipeline current | Email, Slack, meetings and LinkedIn context → CRM fields → analytics |
-| Give agents a persistent workspace | Documents, row-addressed tables, tasks, and configured playbooks |
+| Give agents a persistent workspace | Lists, row-addressed tables, flowcharts, reports, tasks and configured playbooks |
+| Turn recommendations into owned work | Task inventory → eligible assignee → preparation or approval → completion and verified result |
 | Build buyer-facing materials | Deal evidence + knowledge base + templates → deck, one-pager, business case or action plan |
 | Coach reps and explain pipeline outcomes | Qualification frameworks + field history + taxonomy evidence + server-computed metrics |
 | Roll out team configuration | Effective playbooks + field rollups + authorized field/mapping propagation |
@@ -35,6 +45,6 @@ Each product area contains its own modules, workflows and tool references. Linke
 
 ## How to use these docs
 
-Choose **Channels**, **Enrichment**, **Pipeline intelligence**, **Brain** or **Agent platform**. Each area groups its tools and guides hierarchically. Shared channel tools live under Channels; data-layer tools live under Brain; agent templates and skills live inside Agent platform. **Overview** contains connection guides, the full reference, workspace tools and administration. The tool reference preserves the complete schema for each family; consult it for exact field names, enums, limits, and response branches. JSON snippets in guides are **tool arguments** unless explicitly labeled JSON-RPC or HTTP. Replace example identifiers with values returned by your account.
+Start with **Overview**, then choose **Agent platform**, **Channels**, **Enrichment**, **Pipeline intelligence** or **Brain**. Every family opens with an overview before its detailed capabilities, guides and tool contracts. Shared channel tools live under Channels; data-layer tools live under Brain; user tasks, specialized outputs, agent templates and skills live inside Agent platform. **Overview** contains connection guides, the full reference, workspace preferences and administration. The tool reference preserves the complete schema for each family; consult it for exact field names, enums, limits, and response branches. JSON snippets in guides are **tool arguments** unless explicitly labeled JSON-RPC or HTTP. Replace example identifiers with values returned by your account.
 
 This documentation was audited against repository source on **October 29, 2026**. A deployed server may differ; its `tools/list` response, `load-skill` instructions, and runtime capability discovery take precedence. [Capability boundaries](/getting-started/capability-boundaries) identify app-only, gated, and separate-API features.

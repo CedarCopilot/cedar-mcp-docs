@@ -1,0 +1,43 @@
+---
+title: "Task visibility and complete inventories"
+description: "Understand whose work is visible, how task authority differs, and what an inventory receipt proves."
+---
+
+Cedar distinguishes task ownership, shared deal visibility, assignment authority and agent visibility. This lets a teammate see relevant deal work while preserving controls over another person's queue.
+
+## Who can see and change work
+
+| Surface | Access and behavior |
+| --- | --- |
+| Personal inventory | `list` defaults to the authenticated user's work. `#all` means that user's open work, not every task in the organization. |
+| Another user's inventory | `targetUserId` requires an organization owner/admin and a target in the same organization. |
+| Deal tasks | Shared tasks follow the underlying conversation's visibility. Personal task containers retain their owner-specific access rules. |
+| Ordinary task visibility | The service can allow the task owner or a reader of its linked conversation to view the task. Visibility does not grant every mutation. |
+| Assignment | Discover options with `assignmentOptions` or `creationOptions`. Eligible owners, deal owners and organization administrators follow the relevant assignment checks. |
+| Queue-changing actions | Scheduling, deletion, cancellation and agent-execution changes have action-specific ownership checks. Use the returned authority and errors instead of assuming read access is write access. |
+| Agent visibility | Task-group settings determine whether work is surfaced to agents. This is distinct from document sharing, human permissions and automatic execution settings. |
+
+## Inventory receipts
+
+Task inventory responses include a receipt describing the actual returned inventory. A summary such as “all work reviewed” should be supported by the receipt and pagination, not inferred from the length of one response.
+
+| Field | Meaning |
+| --- | --- |
+| `ownerId`, `conversationId` | The owner and optional conversation scope of the inventory. |
+| `revision` | A digest of the retained inventory contents, used to bind a consistent traversal. |
+| `totalCount` | Number of rows in the retained inventory, which may itself be filtered. |
+| `categories.todo`, `categories.recommended` | Counts of these statuses in that inventory. |
+| `offset`, `returnedCount` | The current page's position and row count, when returned. |
+| `scopeComplete` | Whether the retained snapshot represents a complete inventory rather than a filtered subset. |
+| `complete` | Whether this response contains the complete inventory in a single unpaginated traversal response. It is false for partial pages. |
+| `nextCursor` | Response cursor for another page. Preserve the same query scope and filters. |
+
+The server retains a snapshot for pagination and validates the cursor's scope. If a cursor is rejected or expires, restart the query. An empty filtered view establishes no matching work in that view; it does not establish that the user has no tasks. After a mutation, refresh the inventory before making a new completeness claim.
+
+## Trace an action to its result
+
+Keep task IDs, linked conversation IDs, source permalinks, ownership and returned action results together. Reassignment can include a version check, idempotency key, draft cleanup and a pending transfer. A pending transfer is not a completed reassignment. A saved CRM approval is applied through `applyApproval`, with confirmation from the CRM path before reporting completion.
+
+When a task creates a draft or scheduled action, inspect the resulting artifact and delivery state. Task completion alone is not independent proof that a message reached its recipient.
+
+[Task overview](/tasks/overview) · [Lifecycle](/workspace/tasks) · [Data visibility](/brain/visibility) · [Execution visibility](/agent-platform/observability)

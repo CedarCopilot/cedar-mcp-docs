@@ -1,0 +1,32 @@
+---
+title: "Tables as agent workspaces"
+description: "Give an agent structured working data, reviewable row results and a durable output surface."
+---
+
+Tables let an agent maintain a prospect list, account review, evidence matrix or recurring report as structured data. Each row has a stable identity; columns declare the meaning and type of its values. The same table can be a working input, an output and a handoff to another authorized workflow.
+
+## What an agent can do
+
+| Workflow | Table capabilities |
+| --- | --- |
+| Start a workspace | Create a table, declare columns and add rows; supported query-backed creation can supply initial data. |
+| Maintain a shortlist | Read a projected/filtered view, sort it, add or remove rows, and update cells by stable row ID. |
+| Add research or analysis | Store evidence, classifications and supported enriched fields in declared columns; keep source references alongside conclusions. |
+| Organize a review | Add sections, move rows, change views and preserve revision requirements for positional edits. |
+| Reflect CRM context | Inspect and configure supported column bindings; bound read-only cells retain their source rules. |
+| Exchange working files | Import/export CSV or XLSX using the tool's supported mapping and file formats. Preserve `_id` when round-tripping rows. |
+| Prepare row work | Use `fill` for the current execution surface, then retain each row's identity as results are written back. |
+
+## Persistent agent outputs
+
+Put the table in the authorized workspace and reference it from the agent's instructions. Read its schema and current rows before editing. Use `table` for partial changes, including cells and rows; `document-write` with type `table` is for creation or deliberate whole-table replacement. A whole-document rewrite can destroy row identity and unrelated work.
+
+A source link or review status in a table is useful context, but it does not create a user task by itself. Use the [task family](/tasks/overview) for ownership, due dates, assignment and completion, and store returned task references where appropriate.
+
+## Row work through external MCP
+
+External `fill` returns delegated row briefs to the calling agent; it does not launch Cedar's internal row agents. Follow the returned batching and confirmation requirements. Manual person/company enrichment uses Fiber explicitly. The [Enrichment module](/enrichment/overview) separately documents the web column builder and its provider, AI, search, lookup and derived-column workflows.
+
+The underlying table tool belongs to the [Brain data layer](/brain/overview), where its full schema and operation catalog remain available. This guide describes its role as an agent workspace.
+
+[Table overview and operations](/documents/tables) · [Complete capabilities](/capabilities/tables) · [Table contract](/reference/table) · [Files and memory](/agent-platform/files-memory)

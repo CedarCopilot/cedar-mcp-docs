@@ -1,5 +1,6 @@
 ---
-title: "Pipeline, cadence and outcome metrics"
+title: "CRM analytics overview"
+sidebarTitle: "Overview"
 description: "Compute all supported metrics with explicit samples, outcomes and reporting windows."
 ---
 
@@ -24,7 +25,7 @@ Use `compute-metric` for one question or `compute-metric-batch` for up to 50 ind
 
 ## Cohorts and denominators
 
-Filters can restrict deals, reps, stages, dates and supported evidence dimensions. Omitting conversation IDs can widen the query to the organization. Pick the cohort deliberately. Rows return `value`, sample count `n`, and sample IDs; report these when explaining a result. An empty ordinary sample commonly yields null.
+Filters can restrict deals, reps, stages, dates and supported evidence dimensions. Omitting conversation IDs can widen the query to the organization. Pick the cohort deliberately. Rows return `value`, sample count `n`, and sample IDs; report these when explaining a result. Sample IDs are capped at 50 and need not enumerate the full sample. Preserve the returned empty/missing state instead of inventing a zero. See [visibility and statistical backing](/intelligence/statistical-backing) for sampling units, denominators, normalization, provenance and statistical interpretation.
 
 Outcome-sensitive Cedar metrics require an explicit `outcome` definition with the account's won/lost values. Cedar does not infer which custom statuses are terminal. `judged_strength` requires the intended taxonomy family in `target`.
 

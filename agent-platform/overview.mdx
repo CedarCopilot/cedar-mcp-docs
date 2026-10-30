@@ -1,14 +1,24 @@
 ---
-title: "Agent platform"
+title: "Agent platform overview"
+sidebarTitle: "Overview"
 description: "Build, configure and operate persistent Cedar agents alongside external MCP clients."
 ---
 
-Cedar's agent platform combines persistent instructions, connected data, triggers, permissions, execution history and durable outputs. MCP exposes the supported tools for reading evidence, creating artifacts and configuring automation. Cedar's app adds the agent library, workspace controls, interactive delegation and workflow buttons.
+Cedar's agent platform combines persistent instructions, connected data, user tasks, specialized documents, triggers, permissions and execution history. Agents can turn evidence into owned work and durable outputs: lists, tables, flowcharts, reports and task-aware agendas. MCP exposes the supported tools for reading evidence, managing tasks, creating artifacts and configuring automation. Cedar's app adds the agent library, workspace controls, interactive delegation and workflow buttons.
+
+<CardGroup cols={2}>
+<Card title="User tasks" icon="list-check" href="/tasks/overview">Read open work, assign owners, prepare follow-ups, apply saved approvals and track completion through 14 MCP actions.</Card>
+<Card title="Specialized documents" icon="file-lines" href="/agent-platform/specialized-documents">Give agents lists, agendas, tables, reports, flowcharts and actionable documents.</Card>
+<Card title="Agent library" icon="robot" href="/agent-platform/library">Browse every template and inspect its prerequisites, workspace and trigger setup.</Card>
+<Card title="Execution visibility" icon="eye" href="/agent-platform/observability">Inspect runs, traces, saved artifacts and the actual result of a configured workflow.</Card>
+</CardGroup>
 
 ## Platform capabilities
 
 | Area | What you can do | Where to start |
 | --- | --- | --- |
+| User tasks | Inspect personal/deal work, assign, prepare, approve, reschedule and complete tasks | [Tasks](/tasks/overview) |
+| Specialized documents | Produce lists, task-aware agendas, structured tables, reports and visual diagrams | [Outputs](/agent-platform/specialized-documents) |
 | Agent library | Inspect every template, prerequisites, starting triggers and workspace files | [Library](/agent-platform/library) |
 | Agent lifecycle | Create, customize, test and wire agents; inspect active configuration | [Lifecycle](/agent-platform/lifecycle) |
 | Playbooks | Define account-wide and stage-specific rules and reference agent documents | [Playbooks](/automation/playbooks) |
@@ -19,6 +29,7 @@ Cedar's agent platform combines persistent instructions, connected data, trigger
 | Workflow buttons | Put explicit user actions into documents | [Workflows](/agent-platform/workflows) |
 | Delegation | Split bounded native work, evidence analysis and code execution | [Delegation](/agent-platform/delegation) |
 | Execution | Inspect configured invocation sources, run history, errors and resulting artifacts | [Observability](/agent-platform/observability) |
+| Evidence and statistics | Preserve source IDs, sample counts, scope, calculation and verified provider provenance in reports | [Statistical backing](/intelligence/statistical-backing) |
 
 ## Choose the right surface
 
@@ -29,3 +40,5 @@ Interactive chat can propose mutations or hand work to child executors. Backgrou
 ## Configure a useful agent
 
 Start with the business outcome and where its result belongs. Choose an existing system agent or library template where it already owns that outcome. Read current account instructions, prepare its configuration and output destination, check its grants, test its actual execution, then wire the intended trigger. A saved agent, an enabled trigger, a successful run and a delivered result are separate states to verify.
+
+The task inventory shows who owns the next step; output documents hold the working result; run history records execution; source references and metric samples support the report's claims. [Data visibility](/brain/visibility) explains the access and coverage of each layer.

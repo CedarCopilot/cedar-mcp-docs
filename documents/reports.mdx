@@ -1,0 +1,32 @@
+---
+title: "Reports and evidence-backed outputs"
+description: "Publish readable findings with source links, visible samples and reusable agent outputs."
+---
+
+Cedar agents can create pipeline reviews, account briefs, coaching analyses and other reports from the evidence available to them. Use a Markdown document for editable narrative or a self-contained HTML document for a designed report with charts, tables and diagrams. Reports can live in an agent's output workspace and be updated by configured runs.
+
+## Report capabilities
+
+| Capability | How it fits |
+| --- | --- |
+| Evidence collection | CRM records, original messages/meetings, field history, signals and authorized enrichment |
+| Server-computed measurements | The 22-metric catalog, supported grouping/filtering and batch computation |
+| Custom analysis | Guarded read-only SQL and the available analysis skills |
+| Structured working data | Row-addressed tables with explicit columns, source IDs and supported bindings |
+| Narrative and visual output | `document-write` types `document` or `html`; HTML is rendered in Cedar's document view |
+| Persistent updates | An agent's configured output destination, grants and invocation source |
+| Distribution | The document's supported sharing controls and explicitly configured notifications |
+
+HTML content is supplied as a complete document. Charts and flowcharts can be authored inside that HTML, including inline SVG. Inspect the rendered result before sharing it. A separate report or presentation file requires the relevant supported artifact workflow; saving HTML does not itself promise a PDF or slide export.
+
+## Make the backing visible
+
+For each numerical conclusion, show the metric definition, unit, population, reporting window, sample count and source. Keep returned sample IDs for drill-down. Explain missing fields, excluded records, mixed currencies and incomplete coverage where they affect interpretation. Historical claims should use evidence available at the relevant time.
+
+The [statistical backing guide](/intelligence/statistical-backing) explains `n`, capped `sampleIds`, grouping, per-deal normalization and verified CRM inventories. It also separates descriptive measurements from statistical tests that must be performed explicitly.
+
+## Maintain a report across runs
+
+Keep the stable current report in the intended output location and follow the agent workspace's archive conventions for past runs. Record when the evidence was read. If a write is proposed for approval, keep the report's status pending until the result confirms it was saved. Sharing the output and notifying its audience are separate outcomes to verify.
+
+[Pipeline intelligence](/intelligence/overview) · [Collateral formats](/knowledge/collateral) · [Visibility and access](/brain/visibility) · [Run history](/agent-platform/observability)

@@ -1,0 +1,34 @@
+---
+title: "Data visibility, access and provenance"
+description: "Understand what a client or agent can see, what a report covers, and where its evidence came from."
+---
+
+Cedar's data layer gives agents a shared context while retaining the access rules of records, connections and resources. Visibility has two practical meanings: which data the caller can access, and how clearly an output shows the evidence and coverage behind it.
+
+## Access is evaluated at each layer
+
+| Layer | What to inspect |
+| --- | --- |
+| MCP registration | The current session's `tools/list`: advertised families can still contain staff-only, feature-gated or app-only operations. |
+| Scope and operation | Baseline scope plus action-specific checks. A family with a read-named scope may still contain guarded mutations. |
+| Organization and target | Caller identity, organization role and supported target-user rules. A supplied ID does not grant access. |
+| Conversation and task | Conversation visibility, task ownership and the authority required by the specific task action. |
+| Connected provider | The selected account's permissions, subscription, consent and available data. |
+| Document and resource | Ownership, sharing, file/resource grants and any special path policy. |
+| Agent execution | The agent's grants and the tool allowlist of the execution path that actually runs it. |
+
+An agent's file grants, a document's human audience, and a task group's agent visibility are separate settings. Changing one does not automatically change the others. [Agent permissions](/agent-platform/permissions), [task visibility](/tasks/visibility) and [document sharing](/documents/sharing) describe these controls in detail.
+
+## Show the boundary of a result
+
+A search or report reflects the accessible, selected records and the data available at read time. Keep its organization/owner scope, filters, dates, source and pagination state. Missing access, unsynced evidence and a genuinely empty result have different meanings.
+
+The verified live CRM amount metrics explicitly report `visibility: connected_crm_permissions`. Their deal inventory reflects the connected CRM account's access; it is not a claim of unrestricted access to the provider's entire organization. Task inventories expose counts, revision and completeness indicators. Metric samples expose `n` and source IDs. These are concrete ways to inspect coverage.
+
+## Follow a conclusion back to evidence
+
+Use CRM event IDs and original content for source statements; use field timelines and value-as-of reads for historical claims; preserve document IDs and agent run references for generated outputs. A current field value, an extracted judgment and an original buyer statement are different forms of evidence.
+
+For numerical reports, make the denominator and exclusions visible alongside the finding. [Statistical backing](/intelligence/statistical-backing) describes the returned measurement fields and what they establish. For automated work, [execution visibility](/agent-platform/observability) connects configuration, runs, tool results, saved artifacts and delivery status.
+
+[Records and provenance](/brain/evidence-and-records) · [MCP permissions](/getting-started/permissions) · [Complete tool catalog](/reference/index)

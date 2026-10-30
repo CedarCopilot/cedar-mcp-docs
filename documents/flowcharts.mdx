@@ -1,0 +1,26 @@
+---
+title: "Flowcharts, diagrams and relationship maps"
+description: "Create visual process outputs and use structured graph resources where relationships need to remain editable."
+---
+
+An agent can make a flowchart or diagram as a self-contained HTML document, using inline SVG for boxes, connectors and labels. This supports process maps, decision trees, handoff diagrams and explanations of a proposed workflow through the external document-write surface.
+
+## Choose the right representation
+
+| Need | Representation |
+| --- | --- |
+| Explain steps and decisions | An HTML/SVG flowchart stored with `document-write`, type `html` |
+| Add a diagram to a report | Embed the diagram in the same self-contained HTML report |
+| Maintain queryable node/edge relationships | Cedar's product graph resource, with declared node fields, edge kinds and view configuration |
+| Organize records into lanes | A board resource through the supported Cedar app surface |
+| Let a person execute a step | A workflow document with an eligible, explicitly clicked button |
+
+There is no external `flowchart` document type or `graph` tool family. HTML/SVG is an authored visual output; the structured graph surface has its own data model and permissions. Do not assume a Mermaid code fence becomes an interactive graph or that a drawn arrow executes an action.
+
+## Preserve meaning and evidence
+
+Label conditions and outcomes clearly. Use source references for asserted relationships and distinguish an observed process from a proposed one. For an account map, unknown reporting lines should remain unknown. A visual seniority tier does not establish a reporting relationship.
+
+Store the diagram in an authorized output location, inspect its rendering and share it with the intended audience. Use [workflow documents](/agent-platform/workflows) when the artifact should offer actual user-clicked actions; saving a workflow document does not execute its buttons.
+
+[Graph capabilities](/agent-platform/graphs) · [Boards](/agent-platform/boards) · [Reports](/documents/reports) · [Document sharing](/documents/sharing)

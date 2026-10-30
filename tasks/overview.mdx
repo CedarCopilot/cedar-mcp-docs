@@ -1,0 +1,59 @@
+---
+title: "User tasks overview"
+sidebarTitle: "Overview"
+description: "Turn recommendations into owned work, prepare actions, and track follow-through through MCP."
+---
+
+**Yes, the external MCP has access to user tasks.** The `task` family exposes 14 actions for personal work, deal follow-ups, recommendations, assignments, approvals and completion. Tasks connect evidence to an owner and a next step, so an agent's output can become visible, actionable work.
+
+## Capabilities at a glance
+
+| Capability | What you can do | Actions |
+| --- | --- | --- |
+| Work inventory | Read open work across your account, due/overdue work, CRM approvals or a particular deal; filter lanes and output kinds | `list`, `dealList` |
+| Personal reminders | Create a dated reminder without attaching it to a deal | `createAssigned` |
+| Deal follow-ups | Create work with deal context, source links and supported agent preparation | `create`, `createAssigned` |
+| Assignment | Discover eligible assignees, assign a task and transfer ownership with the service's concurrency checks | `creationOptions`, `assignmentOptions`, `reassign` |
+| Planning | Edit work, reschedule it or update its due date | `update`, `updateDueDate` |
+| Preparation | Start preparing eligible caller-owned work in Cedar chat | `start` |
+| CRM approvals | Apply the exact saved, supported CRM proposal at the user's direction | `applyApproval` |
+| Resolution | Complete work, cancel it or delete it using the intended lifecycle action | `complete`, `cancel`, `delete` |
+
+## Read your open work
+
+Pass this to `task` to request your open inventory, including recommendations:
+
+```json
+{
+  "action": "list",
+  "list": {
+    "scope": "#all",
+    "includeRecommended": true,
+    "pageSize": 50
+  }
+}
+```
+
+Follow `nextCursor` with the same filters to retrieve subsequent pages. The response includes inventory counts and revision information so a client can distinguish a full inventory from a filtered or partial page. See [visibility and inventory](/tasks/visibility).
+
+| Scope | Meaning |
+| --- | --- |
+| `#all` | Open work user-wide; ignores ambient deal/date context. Recommendations default on. |
+| `#today` | The previous seven days through today; can be restricted to a conversation. |
+| `#overdue` | Work due before today, without a lower date bound; can be restricted to a conversation. |
+| `#crm-approvals` | Open CRM approvals user-wide. |
+| Explicit `conversationId`, no scope | Inventory for a particular deal. Use `dealList` for the shared deal view and assignment context. |
+
+## Human work and agent work
+
+A task can record a commitment, hold a recommendation, carry a proposed CRM change, or organize an agent-assisted follow-up. A due date states when work is due. Agent execution configuration controls whether and when Cedar prepares work automatically. Personal reminders do not become automatic agent runs merely because they have a future due date; automatic drafting requires a real deal and supported execution settings.
+
+`start` prepares eligible work and can return a seed prompt for Cedar chat. It does not authorize an outbound message. Track preparation, approval, scheduling, delivery and completion as distinct states. For persisted behavior, combine tasks with [agents and triggers](/agent-platform/overview); for task-aware daily or deal views, use [lists and agendas](/documents/lists-and-agendas).
+
+## Access and organization
+
+The current external registration uses the baseline scope `crm:read`, including task mutations. Each action still enforces its ownership, assignment, target-user and approval rules. A scope name alone does not authorize arbitrary changes to another person's work. Your session's `tools/list` determines whether the family is available.
+
+Task groups organize work into lanes with routing criteria, ordering, agent visibility and overdue policies. Manage those through `workspace-write manage_task_group`; read existing configuration first. Agent visibility controls which work is surfaced to agents and is separate from human access permissions.
+
+[Lifecycle and assignment](/workspace/tasks) · [Visibility and inventory](/tasks/visibility) · [All capabilities](/capabilities/tasks) · [Parameters and responses](/reference/task)

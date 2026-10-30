@@ -1,0 +1,30 @@
+---
+title: "Lists, checklists and agendas"
+description: "Choose readable lists, structured rows or synchronized tasks for the work at hand."
+---
+
+Use lists to organize findings and decisions, tables to maintain repeated structured records, and tasks to assign work and track its completion. Cedar's agenda document types connect a readable document to the task system.
+
+## List capabilities
+
+| Format | Best use | How to create or update it |
+| --- | --- | --- |
+| Bulleted or ordered list | Findings, instructions, questions and ranked recommendations | `document-write` with type `document` and Markdown content |
+| Checklist | A lightweight review or preparation checklist | Markdown checklist content; use actual task records when ownership, due dates or lifecycle state matter |
+| Structured list | Contacts, accounts, evidence items or work with typed fields | `table` with stable row IDs and declared columns |
+| Personal agenda | A user's daily work and task-linked planning | Document type `agenda`, following the loaded account conventions |
+| Deal agenda | Next steps and task-linked planning for one conversation | Document type `conversation_agenda`, with the correct deal context |
+
+For ordinary text, `append` adds a section, `patch` changes a unique small fragment after reading it, and `upsert` writes the full replacement. For table rows and cells, use the dedicated `table` operations so other rows and their identities remain intact.
+
+## Task-aware agendas
+
+Agenda types support task synchronization. Load the `documents` and `tasks` guidance for the account's path, identity and formatting conventions before editing them. Ordinary Markdown checkboxes should not be presented as independent assigned task records. To create, assign, reschedule or complete owned work, use the [task family](/tasks/overview) and preserve returned IDs.
+
+Playbook and agenda paths require `playbook:write` in addition to the applicable document authorization. A task's due date, its agent-execution time and whether it is visible to an agent are separate settings.
+
+## Use lists in an agent workspace
+
+An agent can keep a research shortlist, a review queue or a recurring checklist in its authorized output folder. Reference that file in the agent's instructions when a later run should maintain it. For automatic row work, inspect the table's supported execution surface: external MCP `fill` returns delegated row briefs rather than launching Cedar's internal row agents.
+
+[User tasks](/tasks/overview) · [Table tools](/documents/tables) · [Document write modes](/documents/sharing) · [Files and memory](/agent-platform/files-memory)

@@ -1,0 +1,41 @@
+---
+title: "Specialized documents overview"
+sidebarTitle: "Overview"
+description: "Give agents durable lists, tables, flowcharts, reports and actionable workspaces."
+---
+
+Agents can produce working artifacts as well as chat responses. Cedar supports editable documents, task-aware agendas, typed tables, HTML reports and diagrams, and documents with explicit workflow buttons. These outputs belong to the agent platform's work cycle: collect evidence, organize it, produce an artifact, review it and keep it current.
+
+## Choose an output
+
+| Output | What it supports | MCP and product surface |
+| --- | --- | --- |
+| Lists and checklists | Research notes, decisions, next steps and ordered procedures | Markdown through `document-write`; use `task` for actual owned work |
+| Daily and deal agendas | A task-aware view of personal or conversation work | `document-write` types `agenda` and `conversation_agenda` with task synchronization |
+| Tables | Typed columns, stable row IDs, cells, filters/views, sections, bindings and supported enrichment/delegation | The external `table` family; see [complete table capabilities](/capabilities/tables) |
+| Reports and briefs | Narrative findings, charts, source references, samples and recommendations | Markdown or self-contained HTML through `document-write` |
+| Flowcharts and diagrams | Process steps, decisions and relationships in a shareable visual output | Self-contained HTML/SVG as an HTML document; use the product graph surface for structured relationship maps |
+| Workflow documents | User-clicked actions attached to explanatory content | External document authoring; eligible operation discovery/execution is a Cedar-app workflow surface |
+| Boards and relationship maps | Lanes, records, nodes, edges and views for ongoing work | Product resources; the `board` tool is app-only and there is no external `graph` family |
+| Attachments | File-backed artifacts and supported imports | Document attachment metadata and the supported file-request flow |
+
+“List,” “report” and “flowchart” describe the artifact's purpose. They are not extra `document-write` type values. Its exact supported types are `document`, `workflow`, `html`, `agenda`, `conversation_agenda`, `attachment` and `table`.
+
+## Build an artifact workflow
+
+1. Read the evidence and choose a format that fits how the result will be used.
+2. Select an authorized destination and inspect an existing artifact before editing it.
+3. Write the output with source references, dates and the scope of any analytical claims.
+4. Read the result back; verify the actual write or proposal state.
+5. Share with the intended audience or reference the file in the consuming agent's instructions.
+
+Artifact access, agent resource grants and publication are separate controls. Persisted reports can serve as handoffs between agents; a note in a chat does not configure a future run to read that file.
+
+<CardGroup cols={2}>
+<Card title="Lists and agendas" icon="list-check" href="/documents/lists-and-agendas">Checklists, personal work, deal agendas and task synchronization.</Card>
+<Card title="Structured tables" icon="table" href="/agent-platform/table-workspaces">Schemas, row identity, views, bindings and row work in an agent workspace.</Card>
+<Card title="Reports" icon="file-lines" href="/documents/reports">Narrative and HTML reports with visible evidence and statistical context.</Card>
+<Card title="Flowcharts and maps" icon="diagram-project" href="/documents/flowcharts">Visual process diagrams and the boundary with structured graph resources.</Card>
+</CardGroup>
+
+[Workflow buttons](/agent-platform/workflows) · [Files and memory](/agent-platform/files-memory) · [Document sharing](/documents/sharing)

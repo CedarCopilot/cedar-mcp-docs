@@ -1,0 +1,59 @@
+---
+title: "Visibility and statistical backing"
+description: "Inspect samples, denominators, reductions, source evidence and the limits of an analytical claim."
+---
+
+Cedar's analytics return measurements with inspectable backing. The metric catalog defines the calculation and unit; metric rows carry sample counts and source IDs; verified live CRM amounts add provider, time-window and deal-inventory information. Reports can expose these alongside their conclusions so readers can check what was measured.
+
+## What backs a metric
+
+| Field or definition | What it tells you |
+| --- | --- |
+| Metric and reducer | The supported calculation: count, mean, median, rate or sum. Read `describe-metrics` for each metric's definition. |
+| Unit | Seconds, days, count, percent, currency or score, as declared by the metric. |
+| `group` | The returned grouping bucket. Some metrics have fixed grouping behavior. |
+| `value` | The server-computed result for that row. |
+| `n` | The number of measurements in the row's sample. The unit of observation depends on the metric: events, deals or taxonomy atoms. |
+| `sampleIds` | IDs for drilling back to the observations behind ordinary Cedar rows. The list is capped at 50, even when `n` is larger. |
+| Filters and outcome mapping | The selected population, reporting window and the caller-supplied won/lost status definitions. Preserve these with the report. |
+| Source and freshness | Which system supplied the data and when it was verified, where the result provides that metadata. |
+
+`sampleIds.length` is not a replacement for `n` and is not an exhaustive export of a large sample. Live CRM rows can have no Cedar sample IDs; use their returned provider deal inventory instead. Evidence examples should come from the actual measured sample rather than unrelated persuasive anecdotes.
+
+## Keep the denominator honest
+
+Choose the cohort before comparing results. Distinguish all accounts from observed accounts, all deals from closed deals, and repeated observations from distinct deals. `win_rate` uses terminal deals and an explicit won/lost mapping. Unknown statuses are not automatically losses. Missing values follow each metric's definition; there is no universal rule that converts them to zero.
+
+For the supported taxonomy-atom measurement path, `perDeal: latest` or `perDeal: max` can collapse repeated field observations to one value per deal and field before aggregation. These choices answer different questions: current versus best observed value. They do not change event/deal-level metrics. State the choice when it changes the interpretation.
+
+The generic aggregation path returns rates rounded to whole percentage points, means and sums to two decimal places, and medians rounded to integers. Metric-specific and live-provider paths may have their own formatting. Do not imply more precision than the result carries. Multi-valued classifications can contribute an observation to more than one group, so group totals need not represent disjoint populations.
+
+## Verified live CRM amounts
+
+`crm_won_amount` and `crm_open_due_amount` require one rep, explicit date bounds and an IANA reporting timezone. Their returned provenance can include:
+
+| Field | Evidence provided |
+| --- | --- |
+| `source: crm_live`, `crmProvider` | The external CRM used for the read. |
+| `verifiedAt` | When the provider data was verified. |
+| `crmOwnerId`, `amountField` | Provider owner and mapped value field. |
+| `reportingWindow` | The requested start, end and timezone. |
+| `visibility: connected_crm_permissions` | The report follows the connected account's CRM access. |
+| `currency`, `crmDeals` | Currency and the verified provider deal inventory behind the amount. |
+| `missingAmountCount`, `knownAmountSubtotal` | Missing values remain visible alongside the known subtotal. |
+
+These two explicit live metrics do not silently substitute Cedar's stored amounts when provider verification fails. Keep currencies separate. A verified empty window can yield zero; a window with missing amounts must retain that incompleteness.
+
+## Descriptive evidence and statistical confidence
+
+The standard metric row does not automatically include p-values, confidence intervals, causal estimates or a significance test. Sample counts and source IDs make a descriptive result auditable; they do not establish that a difference is statistically reliable or caused by the observed behavior.
+
+Cedar's analysis skills guide cohort design, drill-down and calibrated conclusions. For a comparative report, state sample sizes and coverage for each group, inspect representative evidence, consider timing and confounding, and distinguish exploratory findings from validated patterns. If a statistical test is performed, document the method, assumptions and population. Testing many candidate patterns requires corresponding care about false discoveries.
+
+Use plain confidence language such as “directional” or “insufficient evidence” when warranted, with the actual sample and limitations. A classifier's accuracy is not a deal win rate; correlations in observed deals are not automatically prescriptions for causing wins.
+
+## A useful report contract
+
+For each headline, retain the question, metric, filters, period, outcome definition, value/unit, `n`, evidence references and known gaps. Link the result to the saved report and, when automated, its run. Readers can then inspect both **what the agent concluded** and **what supports it**.
+
+[All 22 metrics](/crm/metrics) · [Deal analysis](/intelligence/deal-analysis) · [Data visibility](/brain/visibility) · [Reports](/documents/reports) · [Execution visibility](/agent-platform/observability)
