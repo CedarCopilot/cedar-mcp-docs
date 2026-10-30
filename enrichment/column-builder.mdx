@@ -1,0 +1,46 @@
+---
+title: "Enrichment columns and web research"
+description: "Compose reusable person and company data workflows in Cedar's visual builder."
+---
+
+The web enrichment builder models each output as a named column with a value type, person/company scope, optional required flag and source. The same column definition determines what the output means and how Cedar fills it. Person and company fields are grouped separately in the editor and summary.
+
+## All seven column sources
+
+| Source | Capability | Configuration |
+| --- | --- | --- |
+| Input | Reuse a value from the incoming record | Optional input field name |
+| Enrichment | Retrieve a normalized person/company attribute from a provider operation | Field, optional pinned provider and cache age |
+| Search | Run a templated web/news search through Exa | Query template using row values |
+| AI | Classify, score or transform information from other columns | Input columns, instructions, model, output type and optional rubric |
+| Lookup | Read existing organization-scoped record data | Contact, account or engagement source plus attribute |
+| Derived | Apply a deterministic transformation to other columns | Operation and argument columns |
+| Constant | Fill a fixed value | Literal value |
+
+Column value types include string, number, boolean, enum, URL, email and array. AI outputs support string, number, boolean and enum. The standard derived-operation picker offers `domainOfEmail`, `lower`, `coalesce` and `concat`. Stored runtime configurations additionally support `companyIcpScore`, `isFounderTitle` and `isYcCompany`; those specialized operations are not all selectable in the standard picker.
+
+Provider selection can be pinned per enrichment column. Select **Fiber** for manual person/company enrichment. The editor's `default` choice delegates to configured policy; do not interpret it as an unconditional cheapest-provider promise.
+
+## Person and company scope
+
+Person columns resolve against each input identity. Company columns can resolve once for a shared company within a run and then apply to the associated people. Dependent fields use earlier column results. Required fields and configured qualification gates determine whether a row qualifies for output.
+
+Record lookups use three distinct sources: `records_contact`, `records_account` and `records_engagement`. Contact/account lookups read supported custom attributes; engagement lookups read supported ledger attributes. Missing identity, record or attribute returns no value rather than inventing a match.
+
+## Cost preview and actual execution
+
+The editor recalculates a source/cost preview as columns change. It can show per-row estimates, operation/provider badges, required inputs, provider credits and unknown pricing. A saved qualifier also supports an estimated total for a requested row count. Estimates are not settled charges or proof of spending permission.
+
+**Cost preview** inspects the plan without filling rows. **Row preview** runs resolution and qualification, returns filled values and provenance, and records run/items while suppressing delivery to output destinations. Row preview can still perform paid provider or AI work; it is not the same as a free schema or cost inspection.
+
+## Runs, outputs and provenance
+
+The web service supports creating, listing, reading and updating qualifiers; running or previewing rows; inspecting runs and individual items; and reading cost estimates. Runs retain row status, resolved values and provenance. Configured outputs can target supported records, lead lists, CSV or API destinations. Output delivery happens only on the appropriate qualifying execution path.
+
+A per-row plan budget can skip optional costly columns, while the shared enrichment policy and billing admission remain separate controls. Use actual operation receipts for settled usage. Follow provider-specific access and approval requirements when running or retrying work.
+
+## External MCP workflow
+
+External clients use `research` to discover, choose and execute supported enrichment, and `table` to organize results and row work. External table `fill` returns delegated briefs for the calling client; it does not launch the web qualifier builder. The shared research schema's `web-search` and `web-fetch` actions remain app-only, so external clients supply their own web research tools.
+
+[All enrichment fields](/enrichment/fields) · [Research tool contract](/reference/research) · [Table capabilities](/capabilities/tables)

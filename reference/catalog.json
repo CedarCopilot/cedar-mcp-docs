@@ -30971,6 +30971,818 @@
         "\"deals_dropped\"/\"quiet_gap\"/\"gave_up_count\" share one `target` convention: an optional positive number of days (the quiet-gap threshold), defaulting to 10 when omitted. \"hygiene\"'s `target` is unrelated — an optional comma-separated subset of its field keys (company, contact, deal_value, next_step), defaulting to all four."
       ]
     },
+    "enrichmentWorkspace": {
+      "note": "Static web-app field vocabulary and operation mappings. A field-picker entry does not guarantee provider coverage or a populated value. These are not additional external MCP tools.",
+      "fields": {
+        "person.fullName": {
+          "type": "string",
+          "scope": "person",
+          "desc": "Full name"
+        },
+        "person.firstName": {
+          "type": "string",
+          "scope": "person",
+          "desc": "First name"
+        },
+        "person.lastName": {
+          "type": "string",
+          "scope": "person",
+          "desc": "Last name"
+        },
+        "person.headline": {
+          "type": "string",
+          "scope": "person",
+          "desc": "LinkedIn headline"
+        },
+        "person.summary": {
+          "type": "string",
+          "scope": "person",
+          "desc": "Profile summary / about"
+        },
+        "person.photoUrl": {
+          "type": "string",
+          "scope": "person",
+          "desc": "Profile photo URL"
+        },
+        "person.linkedinUrl": {
+          "type": "string",
+          "scope": "person",
+          "desc": "Canonical LinkedIn profile URL"
+        },
+        "person.linkedinMemberUrn": {
+          "type": "string",
+          "scope": "person",
+          "desc": "LinkedIn member URN (ACoAA… obfuscated id); de-obfuscation input only"
+        },
+        "person.githubHandle": {
+          "type": "string",
+          "scope": "person",
+          "desc": "GitHub username"
+        },
+        "person.twitterHandle": {
+          "type": "string",
+          "scope": "person",
+          "desc": "Twitter/X handle"
+        },
+        "person.websites": {
+          "type": "string[]",
+          "scope": "person",
+          "desc": "Personal/other websites"
+        },
+        "person.industry": {
+          "type": "string",
+          "scope": "person",
+          "desc": "Person's industry"
+        },
+        "person.location": {
+          "type": "string",
+          "scope": "person",
+          "desc": "Free-text location"
+        },
+        "person.city": {
+          "type": "string",
+          "scope": "person",
+          "desc": "City"
+        },
+        "person.state": {
+          "type": "string",
+          "scope": "person",
+          "desc": "State/region"
+        },
+        "person.country": {
+          "type": "string",
+          "scope": "person",
+          "desc": "Country"
+        },
+        "person.title": {
+          "type": "string",
+          "scope": "person",
+          "desc": "Current job title"
+        },
+        "person.normalizedTitle": {
+          "type": "string",
+          "scope": "person",
+          "desc": "Normalized/standardized title"
+        },
+        "person.seniority": {
+          "type": "string",
+          "scope": "person",
+          "desc": "Seniority level"
+        },
+        "person.department": {
+          "type": "string",
+          "scope": "person",
+          "desc": "Department"
+        },
+        "person.jobFunction": {
+          "type": "string",
+          "scope": "person",
+          "desc": "Job function"
+        },
+        "person.currentCompanyName": {
+          "type": "string",
+          "scope": "person",
+          "desc": "Current employer name"
+        },
+        "person.currentCompanyDomain": {
+          "type": "string",
+          "scope": "person",
+          "desc": "Current employer domain"
+        },
+        "person.currentCompanyLinkedinUrl": {
+          "type": "string",
+          "scope": "person",
+          "desc": "Current employer LinkedIn URL"
+        },
+        "person.currentStartDate": {
+          "type": "date",
+          "scope": "person",
+          "desc": "Start date at current role"
+        },
+        "person.currentTenureMonths": {
+          "type": "number",
+          "scope": "person",
+          "desc": "Months at current company"
+        },
+        "person.employmentHistory": {
+          "type": "object[]",
+          "scope": "person",
+          "desc": "Roles newest-first {company,title,start,end,isCurrent,seniority}"
+        },
+        "person.pastCompanies": {
+          "type": "string[]",
+          "scope": "person",
+          "desc": "Prior employer names"
+        },
+        "person.careerStartedAt": {
+          "type": "date",
+          "scope": "person",
+          "desc": "First-ever role start date"
+        },
+        "person.totalYearsExperience": {
+          "type": "number",
+          "scope": "person",
+          "desc": "Total years of experience"
+        },
+        "person.education": {
+          "type": "object[]",
+          "scope": "person",
+          "desc": "Education {school,degree,field,years}"
+        },
+        "person.schools": {
+          "type": "string[]",
+          "scope": "person",
+          "desc": "School names"
+        },
+        "person.highestDegree": {
+          "type": "string",
+          "scope": "person",
+          "desc": "Highest degree"
+        },
+        "person.skills": {
+          "type": "string[]",
+          "scope": "person",
+          "desc": "Skills"
+        },
+        "person.certifications": {
+          "type": "string[]",
+          "scope": "person",
+          "desc": "Certifications"
+        },
+        "person.languages": {
+          "type": "string[]",
+          "scope": "person",
+          "desc": "Languages"
+        },
+        "person.interests": {
+          "type": "string[]",
+          "scope": "person",
+          "desc": "Interests"
+        },
+        "person.connectionCount": {
+          "type": "number",
+          "scope": "person",
+          "desc": "LinkedIn connections"
+        },
+        "person.followerCount": {
+          "type": "number",
+          "scope": "person",
+          "desc": "LinkedIn followers"
+        },
+        "person.recentPosts": {
+          "type": "object[]",
+          "scope": "person",
+          "desc": "Recent posts/activity"
+        },
+        "person.recentNewsMentions": {
+          "type": "object[]",
+          "scope": "person",
+          "desc": "Recent web/news mentions (Exa search)"
+        },
+        "person.isOpenToWork": {
+          "type": "boolean",
+          "scope": "person",
+          "desc": "Open-to-work flag"
+        },
+        "person.isHiring": {
+          "type": "boolean",
+          "scope": "person",
+          "desc": "Hiring flag"
+        },
+        "person.isInfluencer": {
+          "type": "boolean",
+          "scope": "person",
+          "desc": "LinkedIn influencer flag"
+        },
+        "person.isPremium": {
+          "type": "boolean",
+          "scope": "person",
+          "desc": "LinkedIn premium flag"
+        },
+        "person.workEmail": {
+          "type": "string",
+          "scope": "person",
+          "desc": "Verified work email"
+        },
+        "person.personalEmail": {
+          "type": "string",
+          "scope": "person",
+          "desc": "Personal email"
+        },
+        "person.phone": {
+          "type": "string",
+          "scope": "person",
+          "desc": "Direct phone"
+        },
+        "company.name": {
+          "type": "string",
+          "scope": "company",
+          "desc": "Company name"
+        },
+        "company.domain": {
+          "type": "string",
+          "scope": "company",
+          "desc": "Primary domain"
+        },
+        "company.allDomains": {
+          "type": "string[]",
+          "scope": "company",
+          "desc": "All known domains"
+        },
+        "company.website": {
+          "type": "string",
+          "scope": "company",
+          "desc": "Website URL"
+        },
+        "company.description": {
+          "type": "string",
+          "scope": "company",
+          "desc": "Description"
+        },
+        "company.logoUrl": {
+          "type": "string",
+          "scope": "company",
+          "desc": "Logo URL"
+        },
+        "company.linkedinUrl": {
+          "type": "string",
+          "scope": "company",
+          "desc": "LinkedIn company URL"
+        },
+        "company.linkedinId": {
+          "type": "string",
+          "scope": "company",
+          "desc": "LinkedIn organization id (chains person→company without a domain)"
+        },
+        "company.twitterHandle": {
+          "type": "string",
+          "scope": "company",
+          "desc": "Twitter/X handle"
+        },
+        "company.facebookUrl": {
+          "type": "string",
+          "scope": "company",
+          "desc": "Facebook URL"
+        },
+        "company.instagramHandle": {
+          "type": "string",
+          "scope": "company",
+          "desc": "Instagram handle"
+        },
+        "company.githubUsername": {
+          "type": "string",
+          "scope": "company",
+          "desc": "GitHub org username"
+        },
+        "company.youtubeUrl": {
+          "type": "string",
+          "scope": "company",
+          "desc": "YouTube URL"
+        },
+        "company.blogUrls": {
+          "type": "string[]",
+          "scope": "company",
+          "desc": "Blog URLs"
+        },
+        "company.crunchbaseSlug": {
+          "type": "string",
+          "scope": "company",
+          "desc": "Crunchbase slug"
+        },
+        "company.foundedYear": {
+          "type": "number",
+          "scope": "company",
+          "desc": "Year founded"
+        },
+        "company.companyType": {
+          "type": "string",
+          "scope": "company",
+          "desc": "public | private | subsidiary"
+        },
+        "company.status": {
+          "type": "string",
+          "scope": "company",
+          "desc": "Operating status (active/closed)"
+        },
+        "company.industry": {
+          "type": "string",
+          "scope": "company",
+          "desc": "Primary industry"
+        },
+        "company.industries": {
+          "type": "string[]",
+          "scope": "company",
+          "desc": "All industries"
+        },
+        "company.specialties": {
+          "type": "string[]",
+          "scope": "company",
+          "desc": "Specialties"
+        },
+        "company.categories": {
+          "type": "string[]",
+          "scope": "company",
+          "desc": "Categories/tags"
+        },
+        "company.naicsCodes": {
+          "type": "string[]",
+          "scope": "company",
+          "desc": "NAICS codes"
+        },
+        "company.sicCodes": {
+          "type": "string[]",
+          "scope": "company",
+          "desc": "SIC codes"
+        },
+        "company.hqCity": {
+          "type": "string",
+          "scope": "company",
+          "desc": "HQ city"
+        },
+        "company.hqState": {
+          "type": "string",
+          "scope": "company",
+          "desc": "HQ state/region"
+        },
+        "company.hqCountry": {
+          "type": "string",
+          "scope": "company",
+          "desc": "HQ country"
+        },
+        "company.hqFull": {
+          "type": "string",
+          "scope": "company",
+          "desc": "HQ formatted address"
+        },
+        "company.employeeCount": {
+          "type": "number",
+          "scope": "company",
+          "desc": "Employee count"
+        },
+        "company.employeeCountRange": {
+          "type": "string",
+          "scope": "company",
+          "desc": "Employee count range"
+        },
+        "company.headcountGrowth": {
+          "type": "object",
+          "scope": "company",
+          "desc": "Headcount growth by period {1m,3m,6m,12m}"
+        },
+        "company.headcountByRole": {
+          "type": "object",
+          "scope": "company",
+          "desc": "Headcount by role (absolute counts per role bucket)"
+        },
+        "company.salesHeadcount": {
+          "type": "number",
+          "scope": "company",
+          "desc": "Number of people in sales roles (summed from headcountByRole sales buckets)"
+        },
+        "company.headcountByRegion": {
+          "type": "object",
+          "scope": "company",
+          "desc": "Headcount by region"
+        },
+        "company.historicalHeadcount": {
+          "type": "object[]",
+          "scope": "company",
+          "desc": "Historical headcount series"
+        },
+        "company.followerCount": {
+          "type": "number",
+          "scope": "company",
+          "desc": "LinkedIn followers"
+        },
+        "company.followerGrowth": {
+          "type": "object",
+          "scope": "company",
+          "desc": "Follower growth by period"
+        },
+        "company.totalFundingUsd": {
+          "type": "number",
+          "scope": "company",
+          "desc": "Total raised, USD"
+        },
+        "company.lastFundingStage": {
+          "type": "string",
+          "scope": "company",
+          "desc": "Last round type/stage"
+        },
+        "company.lastFundingAmountUsd": {
+          "type": "number",
+          "scope": "company",
+          "desc": "Last round amount, USD"
+        },
+        "company.lastFundingDate": {
+          "type": "date",
+          "scope": "company",
+          "desc": "Last fundraise date"
+        },
+        "company.fundingRounds": {
+          "type": "object[]",
+          "scope": "company",
+          "desc": "Funding rounds"
+        },
+        "company.investors": {
+          "type": "string[]",
+          "scope": "company",
+          "desc": "Investor names"
+        },
+        "company.numFundingRounds": {
+          "type": "number",
+          "scope": "company",
+          "desc": "Number of funding rounds"
+        },
+        "company.acquisitions": {
+          "type": "object[]",
+          "scope": "company",
+          "desc": "Acquisitions made"
+        },
+        "company.numExits": {
+          "type": "number",
+          "scope": "company",
+          "desc": "Number of exits"
+        },
+        "company.revenueEstimateUsd": {
+          "type": "number",
+          "scope": "company",
+          "desc": "Estimated revenue, USD"
+        },
+        "company.marketCapUsd": {
+          "type": "number",
+          "scope": "company",
+          "desc": "Market cap, USD"
+        },
+        "company.isPublic": {
+          "type": "boolean",
+          "scope": "company",
+          "desc": "Publicly traded"
+        },
+        "company.stockTicker": {
+          "type": "string",
+          "scope": "company",
+          "desc": "Stock ticker"
+        },
+        "company.technologies": {
+          "type": "string[]",
+          "scope": "company",
+          "desc": "Technologies used"
+        },
+        "company.technologySpendUsd": {
+          "type": "number",
+          "scope": "company",
+          "desc": "Estimated tech spend, USD"
+        },
+        "company.webTrafficMonthlyVisitors": {
+          "type": "number",
+          "scope": "company",
+          "desc": "Monthly web visitors"
+        },
+        "company.competitors": {
+          "type": "string[]",
+          "scope": "company",
+          "desc": "Competitor domains"
+        },
+        "company.similarCompanies": {
+          "type": "string[]",
+          "scope": "company",
+          "desc": "Similar companies"
+        },
+        "company.jobOpeningsCount": {
+          "type": "number",
+          "scope": "company",
+          "desc": "Open job count"
+        },
+        "company.recentJobOpenings": {
+          "type": "object[]",
+          "scope": "company",
+          "desc": "Recent job openings"
+        },
+        "company.hiringGrowthPercent": {
+          "type": "number",
+          "scope": "company",
+          "desc": "Hiring growth %"
+        },
+        "company.decisionMakers": {
+          "type": "object[]",
+          "scope": "company",
+          "desc": "Decision makers"
+        },
+        "company.founders": {
+          "type": "object[]",
+          "scope": "company",
+          "desc": "Founders"
+        },
+        "company.employeeReviewRating": {
+          "type": "number",
+          "scope": "company",
+          "desc": "Employee review rating"
+        },
+        "company.news": {
+          "type": "object[]",
+          "scope": "company",
+          "desc": "Recent news articles"
+        },
+        "company.emails": {
+          "type": "string[]",
+          "scope": "company",
+          "desc": "Company emails"
+        },
+        "company.phoneNumbers": {
+          "type": "string[]",
+          "scope": "company",
+          "desc": "Company phone numbers"
+        }
+      },
+      "operations": [
+        {
+          "id": "fiber.kitchenSinkPerson",
+          "provider": "fiber",
+          "requiresAnyOf": [
+            [
+              "person.workEmail"
+            ],
+            [
+              "person.linkedinUrl"
+            ]
+          ],
+          "fields": [
+            "person.workEmail",
+            "person.fullName",
+            "person.title",
+            "person.headline",
+            "person.linkedinUrl",
+            "person.photoUrl",
+            "person.currentCompanyDomain",
+            "company.linkedinId"
+          ],
+          "cacheTtlDays": 30
+        },
+        {
+          "id": "fiber.profilePosts",
+          "provider": "fiber",
+          "requiresAnyOf": [
+            [
+              "person.linkedinUrl"
+            ]
+          ],
+          "fields": [
+            "person.recentPosts"
+          ],
+          "cacheTtlDays": 7
+        },
+        {
+          "id": "fiber.kitchenSinkCompany",
+          "provider": "fiber",
+          "requiresAnyOf": [
+            [
+              "company.domain"
+            ],
+            [
+              "company.linkedinId"
+            ]
+          ],
+          "fields": [
+            "company.domain",
+            "company.name",
+            "company.linkedinUrl",
+            "company.logoUrl",
+            "company.description",
+            "company.industry",
+            "company.website",
+            "company.foundedYear",
+            "company.hqCity",
+            "company.hqCountry",
+            "company.hqFull",
+            "company.employeeCount"
+          ],
+          "cacheTtlDays": 30
+        },
+        {
+          "id": "moltsets.businessProfile",
+          "provider": "moltsets",
+          "requiresAnyOf": [
+            [
+              "person.workEmail"
+            ],
+            [
+              "person.linkedinUrl"
+            ]
+          ],
+          "fields": [
+            "person.workEmail",
+            "person.fullName",
+            "person.title",
+            "person.headline",
+            "person.linkedinUrl",
+            "person.currentCompanyDomain"
+          ],
+          "cacheTtlDays": 30
+        },
+        {
+          "id": "moltsets.companyByDomain",
+          "provider": "moltsets",
+          "requiresAnyOf": [
+            [
+              "company.domain"
+            ]
+          ],
+          "fields": [
+            "company.domain",
+            "company.name",
+            "company.linkedinUrl",
+            "company.logoUrl",
+            "company.description",
+            "company.industry",
+            "company.hqCity",
+            "company.hqCountry",
+            "company.employeeCount"
+          ],
+          "cacheTtlDays": 30
+        },
+        {
+          "id": "apollo.personEnrich",
+          "provider": "apollo",
+          "requiresAnyOf": [
+            [
+              "person.workEmail"
+            ]
+          ],
+          "fields": [
+            "person.workEmail",
+            "person.fullName",
+            "person.title",
+            "person.headline",
+            "person.linkedinUrl",
+            "person.photoUrl",
+            "person.twitterHandle",
+            "person.githubHandle",
+            "person.currentCompanyDomain"
+          ],
+          "cacheTtlDays": 30
+        },
+        {
+          "id": "apollo.companyEnrich",
+          "provider": "apollo",
+          "requiresAnyOf": [
+            [
+              "company.domain"
+            ]
+          ],
+          "fields": [
+            "company.domain",
+            "company.name",
+            "company.website",
+            "company.description",
+            "company.industry",
+            "company.employeeCount",
+            "company.logoUrl",
+            "company.linkedinUrl",
+            "company.hqCity",
+            "company.foundedYear"
+          ],
+          "cacheTtlDays": 30
+        },
+        {
+          "id": "crustdata.personEnrich",
+          "provider": "crustdata",
+          "requiresAnyOf": [
+            [
+              "person.workEmail"
+            ],
+            [
+              "person.linkedinUrl"
+            ]
+          ],
+          "fields": [
+            "person.fullName",
+            "person.title",
+            "person.headline",
+            "person.summary",
+            "person.location",
+            "person.linkedinUrl",
+            "person.twitterHandle",
+            "person.languages",
+            "person.currentCompanyDomain",
+            "company.linkedinId",
+            "person.schools",
+            "person.education",
+            "person.pastCompanies"
+          ],
+          "cacheTtlDays": 30
+        },
+        {
+          "id": "crustdata.companyEnrich",
+          "provider": "crustdata",
+          "requiresAnyOf": [
+            [
+              "company.domain"
+            ],
+            [
+              "company.linkedinId"
+            ]
+          ],
+          "fields": [
+            "company.domain",
+            "company.name",
+            "company.website",
+            "company.industry",
+            "company.foundedYear",
+            "company.twitterHandle",
+            "company.employeeCount",
+            "company.description",
+            "company.linkedinUrl",
+            "company.linkedinId",
+            "company.logoUrl",
+            "company.hqCity",
+            "company.hqCountry",
+            "company.employeeCountRange",
+            "company.totalFundingUsd",
+            "company.lastFundingStage",
+            "company.lastFundingAmountUsd",
+            "company.lastFundingDate",
+            "company.headcountByRole",
+            "company.salesHeadcount",
+            "company.headcountGrowth",
+            "company.jobOpeningsCount",
+            "company.recentJobOpenings"
+          ],
+          "cacheTtlDays": 30
+        },
+        {
+          "id": "exa.search",
+          "provider": "exa",
+          "requiresAnyOf": [
+            [
+              "person.fullName",
+              "person.currentCompanyName"
+            ]
+          ],
+          "fields": [
+            "person.recentNewsMentions"
+          ],
+          "cacheTtlDays": 1
+        },
+        {
+          "id": "linkedin.deobfuscate",
+          "provider": "crustdata",
+          "requiresAnyOf": [
+            [
+              "person.linkedinMemberUrn"
+            ]
+          ],
+          "fields": [
+            "person.linkedinUrl",
+            "person.fullName",
+            "person.title",
+            "person.currentCompanyDomain",
+            "company.linkedinId"
+          ],
+          "cacheTtlDays": 30
+        }
+      ]
+    },
     "research": {
       "documentationReviewedAt": "2026-10-22",
       "defaultProvider": "crustdata",

@@ -5,20 +5,18 @@ description: "Connect your AI agent to the context and actions behind your GTM w
 
 Cedar's Model Context Protocol server connects your AI client to GTM evidence and actions: LinkedIn, Slack, email, CRM records, signals, meetings, calendars, tasks, knowledge, documents, tables, pipeline analytics, and configuration. Its skills also guide collateral creation, sales coaching, deal analysis, and persistent agent workflows.
 
+## Explore Cedar
+
 <CardGroup cols={2}>
-<Card title="Connect your client" icon="plug" href="/getting-started/quickstart">Authenticate, discover your tools, and make a first read.</Card>
-<Card title="LinkedIn" icon="linkedin" href="/linkedin/overview">Search, inspect engagement, screen prospects, draft, and send.</Card>
-<Card title="Signals and your website" icon="satellite-dish" href="/signals/website">Understand visitor events, profile changes, and web monitoring.</Card>
-<Card title="Watch Slack channels" icon="slack" href="/slack/watch-channels">Filter channel events and route useful alerts.</Card>
-<Card title="Queueing and sending limits" icon="clock" href="/automation/queueing">Schedule outreach, understand deferrals, and avoid bursts.</Card>
-<Card title="All modules and capabilities" icon="layer-group" href="/getting-started/modules">Browse every workflow module, tool, skill, and availability boundary.</Card>
-<Card title="Agent platform" icon="robot" href="/agent-platform/overview">Agents, triggers, memory, permissions, workflows, delegation and execution history.</Card>
-<Card title="Agent library" icon="layer-group" href="/agent-platform/library">All 46 templates with prerequisites, starting triggers and workspace outputs.</Card>
-<Card title="Knowledge and collateral" icon="book" href="/knowledge/collateral">Create decks, one-pagers, battle cards, business cases, and reusable templates.</Card>
-<Card title="Pipeline intelligence" icon="chart-line" href="/crm/metrics">Compute metrics, inspect historical evidence, and coach from real conversations.</Card>
-<Card title="Complete tool reference" icon="code" href="/reference/index">Every registered tool, action, nested change variant, parameter, and response schema.</Card>
-<Card title="Skills and resources" icon="book-open" href="/skills/index">20 registered workflow skills and 48 specialized resources.</Card>
+<Card title="Channels" icon="comments" href="/channels/overview">LinkedIn, email, Slack, messaging, meetings and calendars—with their channel tools, sending and limits.</Card>
+<Card title="Enrichment" icon="magnifying-glass" href="/enrichment/overview">Person and company profiles, the web enrichment builder, field catalogs and provider tools.</Card>
+<Card title="Pipeline intelligence" icon="chart-line" href="/intelligence/overview">Pipeline metrics, deal analysis, signals, coaching and evidence-backed outputs.</Card>
+<Card title="Brain · Data layer" icon="database" href="/brain/overview">Records, source evidence, fields, knowledge, documents, tables, boards and graphs.</Card>
+<Card title="Agent platform" icon="robot" href="/agent-platform/overview">The agent library, lifecycle, triggers, memory, permissions, skills and execution.</Card>
+<Card title="Connect and discover" icon="plug" href="/getting-started/quickstart">Authenticate your MCP client, discover available tools and make a first read.</Card>
 </CardGroup>
+
+Each product area contains its own modules, workflows and tool references. LinkedIn includes [sending and limits](/linkedin/limits); the agent platform includes the [agent library](/agent-platform/library). Browse the [full hierarchy](/getting-started/modules) for every family, or the [tool catalog](/reference/index) for exact registered names.
 
 ## What you can build
 
@@ -37,6 +35,6 @@ Cedar's Model Context Protocol server connects your AI client to GTM evidence an
 
 ## How to use these docs
 
-Choose a channel or family in **Modules**. Each section contains its complete capability map, practical guides and tool reference. The **Agent platform** tab covers persistent agents and the Cedar runtime; **Skills** lists all loadable instruction modules. The tool reference preserves the complete schema for each family; consult it for exact field names, enums, limits, and response branches. JSON snippets in guides are **tool arguments** unless explicitly labeled JSON-RPC or HTTP. Replace example identifiers with values returned by your account.
+Choose **Channels**, **Enrichment**, **Pipeline intelligence**, **Brain** or **Agent platform**. Each area groups its tools and guides hierarchically. Shared channel tools live under Channels; data-layer tools live under Brain; agent templates and skills live inside Agent platform. **Overview** contains connection guides, the full reference, workspace tools and administration. The tool reference preserves the complete schema for each family; consult it for exact field names, enums, limits, and response branches. JSON snippets in guides are **tool arguments** unless explicitly labeled JSON-RPC or HTTP. Replace example identifiers with values returned by your account.
 
 This documentation was audited against repository source on **October 29, 2026**. A deployed server may differ; its `tools/list` response, `load-skill` instructions, and runtime capability discovery take precedence. [Capability boundaries](/getting-started/capability-boundaries) identify app-only, gated, and separate-API features.

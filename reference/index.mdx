@@ -7,166 +7,178 @@ This inventory covers **44 external registrations** (including staff and feature
 
 Every action and nested configuration variant is indexed in the [capability coverage index](/reference/coverage). Every skill and resource is listed in the [skill catalog](/skills/index). [Download the complete catalog](/reference/catalog.json).
 
-## LinkedIn
+## Overview
 
-- [`linkedin-read`](/reference/linkedin-read)
-- [`linkedin-write`](/reference/linkedin-write)
-
-## Signals
-
-- [`signals-read`](/reference/signals-read)
-- [`signals-write`](/reference/signals-write)
-
-## Slack
-
-- [`slack-read`](/reference/slack-read)
-- [`slack-write`](/reference/slack-write)
-
-## Email
-
-- [`mail`](/reference/mail)
-- [`send-email`](/reference/send-email)
-
-## Email tracking
-
-- [`email-tracking`](/reference/email-tracking)
-
-## Drafting
-
-- [`draft-comms`](/reference/draft-comms)
-
-## Message scheduling
-
-- [`schedule-send`](/reference/schedule-send)
-
-## Notifications
-
-- [`notify`](/reference/notify)
-
-## CRM conversations
-
-- [`conversation-read`](/reference/conversation-read)
-- [`conversation-write`](/reference/conversation-write)
-
-## CRM analytics
-
-- [`conversation-analytics`](/reference/conversation-analytics)
-
-## Field intelligence
-
-- [`taxonomy-fields`](/reference/taxonomy-fields)
-
-## SQL reporting
-
-- [`run-sql`](/reference/run-sql)
-
-## Meetings
-
-- [`meetings`](/reference/meetings)
-
-## Calendar
-
-- [`calendar`](/reference/calendar)
-
-## Tasks
+### Tasks
 
 - [`task`](/reference/task)
 
-## Documents
-
-- [`document-read`](/reference/document-read)
-- [`document-write`](/reference/document-write)
-
-## Tables
-
-- [`table`](/reference/table)
-
-## Research and enrichment
-
-- [`research`](/reference/research)
-
-## Saved views
+### Saved views
 
 - [`ui-config`](/reference/ui-config)
 
-## Workspace preferences
+### Workspace preferences
 
 - [`workspace-write`](/reference/workspace-write)
 
-## Connections
-
-- [`connection-write`](/reference/connection-write)
-
-## Data services
-
-- [`data-settings`](/reference/data-settings)
-
-## Billing
+### Billing
 
 - [`billing-read`](/reference/billing-read)
 - [`billing-write`](/reference/billing-write)
 
-## Usage and delivery recovery
+### Usage and delivery recovery
 
 - [`usage-observations-read`](/reference/usage-observations-read)
 - [`usage-observations-retry`](/reference/usage-observations-retry)
 
-## Customer support
+### Customer support
 
 - [`send-user-feedback`](/reference/send-user-feedback)
 
-## Playbooks and triggers
+### Staff administration
+
+- [`analytics`](/reference/analytics)
+- [`billing-admin`](/reference/billing-admin)
+- [`cedar-staff-debug`](/reference/cedar-staff-debug)
+
+## Channels
+
+### LinkedIn
+
+- [`linkedin-read`](/reference/linkedin-read)
+- [`linkedin-write`](/reference/linkedin-write)
+
+### Email
+
+- [`mail`](/reference/mail)
+- [`send-email`](/reference/send-email)
+
+### Email tracking
+
+- [`email-tracking`](/reference/email-tracking)
+
+### Slack
+
+- [`slack-read`](/reference/slack-read)
+- [`slack-write`](/reference/slack-write)
+
+### Meetings
+
+- [`meetings`](/reference/meetings)
+
+### Calendar
+
+- [`calendar`](/reference/calendar)
+
+### Drafting
+
+- [`draft-comms`](/reference/draft-comms)
+
+### Message scheduling
+
+- [`schedule-send`](/reference/schedule-send)
+
+### Notifications
+
+- [`notify`](/reference/notify)
+
+## Enrichment
+
+### Enrichment and research tools
+
+- [`research`](/reference/research)
+
+### Data services
+
+- [`data-settings`](/reference/data-settings)
+
+## Pipeline intelligence
+
+### CRM analytics
+
+- [`conversation-analytics`](/reference/conversation-analytics)
+
+### Signals
+
+- [`signals-read`](/reference/signals-read)
+- [`signals-write`](/reference/signals-write)
+
+## Brain
+
+### CRM conversations
+
+- [`conversation-read`](/reference/conversation-read)
+- [`conversation-write`](/reference/conversation-write)
+
+### Field intelligence
+
+- [`taxonomy-fields`](/reference/taxonomy-fields)
+
+### SQL reporting
+
+- [`run-sql`](/reference/run-sql)
+
+### Documents
+
+- [`document-read`](/reference/document-read)
+- [`document-write`](/reference/document-write)
+
+### Tables
+
+- [`table`](/reference/table)
+
+### Boards
+
+- [`board`](/reference/board)
+
+### Connections
+
+- [`connection-write`](/reference/connection-write)
+
+## Agent platform
+
+### Playbooks and triggers
 
 - [`aop-write`](/reference/aop-write)
 
-## Configuration
-
-- [`config-read`](/reference/config-read)
-- [`config-write`](/reference/config-write)
-
-## Organization administration
-
-- [`config-propagate`](/reference/config-propagate)
-
-## Connected systems
+### Connected systems
 
 - [`systems-write`](/reference/systems-write)
 - [`external-mcp`](/reference/external-mcp)
 
-## Boards
-
-- [`board`](/reference/board)
-
-## Workflow buttons
+### Workflow buttons
 
 - [`workflow`](/reference/workflow)
 
-## Delegation and code execution
+### Delegation and code execution
 
 - [`delegate`](/reference/delegate)
 
-## Chat context and history
+### Chat context and history
 
 - [`chat-context`](/reference/chat-context)
 - [`search-chat-history`](/reference/search-chat-history)
 - [`load-chat-history`](/reference/load-chat-history)
 - [`switch-chat-thread`](/reference/switch-chat-thread)
 
-## Skill loading
+### Configuration
+
+- [`config-read`](/reference/config-read)
+- [`config-write`](/reference/config-write)
+
+### Organization administration
+
+- [`config-propagate`](/reference/config-propagate)
+
+### Skill loading
 
 - [`load-skill`](/reference/load-skill)
 - [`load-brain-skills`](/reference/load-brain-skills)
 
-## Diagnostics
+### Diagnostics
 
 - [`debug`](/reference/debug)
 
-## Staff administration
-
-- [`analytics`](/reference/analytics)
-- [`billing-admin`](/reference/billing-admin)
-- [`cedar-staff-debug`](/reference/cedar-staff-debug)
-
 ## Surface boundaries
 
-App-only operations are documented in their own group with explicit availability warnings. Graphs, outbound flow creation and third-party campaign management do not become external MCP operations merely because related Cedar features exist. See [capability boundaries](/getting-started/capability-boundaries).
+App-only operations are labeled inside their parent area with explicit availability warnings. Graphs, outbound flow creation and third-party campaign management do not become external MCP operations merely because related Cedar features exist. See [capability boundaries](/getting-started/capability-boundaries).

@@ -1,0 +1,38 @@
+---
+title: "Enrichment"
+description: "Person and company intelligence across Cedar's web app, data workflows and MCP."
+---
+
+Cedar's enrichment module turns known identities and input records into structured company, person and account context. It includes profile views and refreshes in the web app, a visual enrichment column builder, provider discovery and selection, and MCP tools for supported lookups.
+
+<CardGroup cols={2}>
+<Card title="Web enrichment module" icon="browser" href="/enrichment/web-app">Company and person profiles, identity selection, refreshes, batch results and provenance.</Card>
+<Card title="Column builder" icon="table" href="/enrichment/column-builder">Compose input, enrichment, web search, AI, record lookup, derived and constant columns.</Card>
+<Card title="Enrichment and research tools" icon="code" href="/capabilities/research">Discover supported schemas and fields, choose an enrichment and call person/company tools.</Card>
+<Card title="Field vocabulary" icon="database" href="/enrichment/fields">All web field-picker entries with their types, meanings and registered provider-operation coverage.</Card>
+<Card title="Provider defaults" icon="sliders" href="/channels/data-services">Configure supported person/company provider policies, freshness and future watch defaults.</Card>
+<Card title="Ongoing signals" icon="satellite-dish" href="/signals/overview">Use separate watchers and trackers to monitor changes after a point-in-time enrichment.</Card>
+</CardGroup>
+
+## Capabilities by surface
+
+| Capability | Web app | External MCP |
+| --- | --- | --- |
+| Read company/person context | Company and contact profiles in the deal workspace | Authorized CRM reads and enrichment results |
+| Discover supported enrichment | Shared capability catalog and column field picker | `research capabilities` |
+| Select a schema for a question | Shared question-driven selection service | `research choose-enrichment` |
+| Enrich a known identity | Profile refresh controls and supported batch route | `research enrich-person` / `enrich-company` |
+| Build reusable enrichment columns | Visual outbound qualifier editor | No external qualifier-editor family; use supported research and table workflows |
+| Search the web for a column | Exa-backed templated search source in the builder | External clients use their own web tools; Cedar's shared `web-search` / `web-fetch` actions are app-only |
+| Configure provider defaults | Supported account/organization configuration | `config-read` plus `data-settings` |
+| Inspect cost and run evidence | Estimates, run/item history and operation/receipt metadata | Returned tool operation and receipt evidence; authorized billing reads |
+
+## Identity, providers and freshness
+
+Use a verified person email or LinkedIn URL, and a company website domain or resolvable saved identity. Reading a candidate match does not itself enrich it. For manual person/company enrichment, explicitly select **Fiber**. Product defaults or account policy can differ; a missing result does not authorize silently switching providers.
+
+Field coverage depends on the operation, provider record and freshness policy. A field in the web picker is part of the vocabulary; it is not proof that a configured provider can fill it. The [field catalog](/enrichment/fields) makes that distinction explicit.
+
+## Enrichment feeds the rest of Cedar
+
+Enrichment adds profile attributes to the [Brain data layer](/brain/overview). [Pipeline intelligence](/intelligence/overview) combines those attributes with original buyer evidence. [Signals](/signals/overview) monitor subsequent changes, while [agents](/agent-platform/overview) can use enrichment as an authorized step in a larger workflow.

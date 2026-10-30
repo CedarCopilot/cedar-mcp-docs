@@ -1,0 +1,36 @@
+---
+title: "Brain: Cedar's data layer"
+description: "Records, evidence, fields and reusable knowledge for every Cedar workflow."
+---
+
+Brain is the data layer behind Cedar's channels, enrichment, pipeline intelligence and agents. It brings together account and person records, conversation evidence, extracted fields, reusable knowledge and persistent structured resources. Tools query and update these resources within the connected user's access.
+
+## What lives in the data layer
+
+| Layer | Capabilities | Tools and guides |
+| --- | --- | --- |
+| Account and deal records | Find conversations, associate people and companies, maintain ownership and read connected activity | [CRM records](/capabilities/crm) |
+| Source evidence | Read messages, meeting content and other events; reconstruct timelines and trace a conclusion back to its source | [Evidence and records](/brain/evidence-and-records) |
+| Fields and history | Discover field definitions, inspect current values, follow changes and reconstruct a value at a past event or date | [Field intelligence](/crm/field-history) |
+| Knowledge | Maintain company background, reference material and reusable context | [Knowledge base](/knowledge/overview) |
+| Documents | Create, edit, search, import, share and recover persistent artifacts | [Documents](/capabilities/documents) |
+| Tables | Store typed rows, bind CRM columns, filter views, import/export data and organize row work | [Tables](/capabilities/tables) |
+| Boards and graphs | Organize structured cards and relationships through the supported app and document surfaces | [Boards](/agent-platform/boards) · [Graphs](/agent-platform/graphs) |
+| Reporting access | Query supported data through guarded read-only SQL | [SQL reporting](/channels/sql) |
+| Connected data | Configure source synchronization, mappings and supported write controls | [Connections](/configuration/crm-connections) |
+
+## How the layers work together
+
+[Channels](/channels/overview) bring in communication evidence. [Enrichment](/enrichment/overview) adds supported person and company attributes. Brain keeps records, source context and durable artifacts available to tools. [Pipeline intelligence](/intelligence/overview) computes metrics and explains patterns using that evidence. The [agent platform](/agent-platform/overview) runs configured workflows and writes results back to authorized resources.
+
+A profile attribute, a source quotation, an extracted judgment and an analytical conclusion have different provenance. Keep their source and timestamps intact rather than treating them as interchangeable facts.
+
+## Brain in the web app
+
+The Brain workspace combines chat with the artifact or record currently open. Its Knowledge explorer organizes personal, organization and shared resources, with search, files, tables, boards, graphs and supported imports. Agent instructions, memory and outputs use the same document infrastructure but have their own [workspace conventions and permissions](/agent-platform/files-memory).
+
+## Access and MCP scope
+
+Brain is the organizing concept for the data layer; it is not a single MCP tool or a universal access grant. Ordinary record and document operations retain their own scopes and ownership checks. The `brain:read` scope and Brain feature specifically gate taxonomy discovery and the Brain skill loader. A customer does not need that feature merely to use every ordinary CRM or document capability described here.
+
+[All data and tool families](/getting-started/modules) · [Data provenance](/brain/evidence-and-records) · [Scopes and permissions](/getting-started/permissions)

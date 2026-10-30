@@ -1,0 +1,33 @@
+---
+title: "Records, evidence and provenance"
+description: "Choose the right data surface and preserve the source behind every conclusion."
+---
+
+Cedar's data layer separates reusable identities, organization context, conversations, source events, extracted fields and working artifacts. This lets a channel tool, enrichment workflow and pipeline report work with the same account context without treating every stored value as the same kind of evidence.
+
+## Data surfaces
+
+| Surface | What it represents | How to use it |
+| --- | --- | --- |
+| Person and company profiles | Identity and supported enrichment attributes, with provider/freshness metadata where available | Read the related CRM profile; use the [Enrichment module](/enrichment/overview) for an authorized refresh |
+| Organization records | Account/contact context, custom attributes and supported engagement records | Read authorized records and respect organization ownership |
+| Conversations and deals | The deal or account workspace linking people, companies, source activity and current fields | `conversation-read` and authorized `conversation-write` actions |
+| Original source events | Email, Slack, meeting and other ingested evidence | Read events or `raw-content`; retain event IDs and timestamps |
+| Extracted fields and taxonomy | Structured facts and judgments tied to evidence | Discover definitions, then use `describe-field`, `search`, `timeline` or field-history operations |
+| Knowledge and artifacts | Authored context, agent outputs, reports, documents and tables | Document and table tools with their resource permissions |
+
+## Current values versus historical evidence
+
+Use current fields to understand the account now. Use `field-evolution` to see changes and `value-as-of` to reconstruct a value at an event, date or stage. Use `timeline` and original content to inspect why a value was assigned. A strong current score does not establish that the same evidence existed earlier in a deal.
+
+For large results, supported document buffers let the client retain evidence without placing the full result in one response. Keep the returned buffer identity and source references so later analysis can return to original material.
+
+## Working with structured resources
+
+Tables provide stable row IDs and schemas; CRM-bound cells follow their binding rules. Documents and folders can be personal, organization-scoped or shared. Boards and graph resources add app-specific structure and permission checks. Moving a resource, sharing it, and granting an agent access are separate operations.
+
+## From evidence to intelligence
+
+[Pipeline intelligence](/intelligence/overview) uses this layer to define cohorts, calculate metrics, inspect objections and evaluate commercial signals. Preserve scope, missing values, units, currencies, time windows and source IDs in the resulting report. A generated summary helps navigation; original evidence supports the conclusion.
+
+[CRM tools](/capabilities/crm) · [Field history](/crm/field-history) · [Read-only SQL](/channels/sql) · [Enrichment field catalog](/enrichment/fields)

@@ -1,0 +1,42 @@
+---
+title: "Enrichment in the web app"
+description: "Profiles, identity selection, refreshes and batch enrichment in Cedar's workspace."
+---
+
+The web enrichment experience is part of company, person and deal workspaces, with reusable enrichment pipelines available in the visual column builder. It uses the shared provider policy, cache, spending admission and operation receipts behind Cedar's enrichment services.
+
+## Company profiles
+
+The company profile can display identity, description, logo, industry/category, founding year, headquarters, website and social links. When present in the stored record, it also shows:
+
+- Employee count/range, growth over several periods, and headcount by role.
+- Total investment, latest funding round and funding milestones.
+- Job-opening counts and links to recent jobs.
+- Competitors and company news.
+- Enrichment status and last-refresh information.
+
+These panels render available data; a refresh does not guarantee every section will be populated. Rich stored profiles can reflect different providers or earlier enrichment. The [current operation catalog](/capabilities/research) describes what each exposed research operation maps today.
+
+## Person profiles and contacts
+
+Person views show available identity, photo, current role/employer, headline, location, summary, languages and social links. Contact cards can also show available education. Refresh actions use the person's known email and LinkedIn URL, then refresh the deal's displayed context.
+
+The web routes distinguish complete, partial, cached, not-found and failed results. A partial result can be useful even when employer context is missing. Provider and operation/receipt metadata make the lookup traceable; an empty field is not proof that a person lacks that attribute.
+
+## Select or change the company identity
+
+The company-selection flow accepts a domain, company name or LinkedIn company URL, displays matching saved candidates and asks the user to choose the right identity. It searches stored Cedar identities first. A valid website domain can provide a candidate when no saved record matches; an unresolved name or LinkedIn URL requires a website domain rather than an invented match.
+
+Selecting identity is separate from the subsequent enrichment and conversation-link change. When another conversation already owns the company link, the UI surfaces that conflict and the existing conversation; merging is a distinct consequential action.
+
+## Batch enrichment
+
+The authenticated web batch route accepts **1–100 email identities** and returns counts for complete, partial, cached, not-found and failed outcomes, plus per-record operation or error information. A single failed row does not hide the other results. Stable batch/per-record idempotency keys and an optional maximum-credit allowance support controlled retries and spending.
+
+Manual enrichment uses the approved provider policy. If Crustdata is explicitly selected for more than 50 people, the whole-task count must be confirmed before work begins. A batch is not permission to bypass provider or billing controls.
+
+## Build reusable enrichment work
+
+The [column builder](/enrichment/column-builder) creates a reusable set of inputs, enrichments, searches, AI classifications and transformations. It shows cost/source estimates and exposes run and row-level evidence. These are web-app capabilities; they are not additional `research` action names on external MCP.
+
+[Field vocabulary](/enrichment/fields) · [MCP lookup workflow](/modules/research) · [Provider defaults](/channels/data-services)

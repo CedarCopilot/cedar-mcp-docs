@@ -7,9 +7,213 @@ This index is generated from the same schemas as the reference, including nested
 
 Staff, feature-gated, and app-only entries are labeled. An action requiring `in-app` remains unavailable externally even when its parent family is listed. Additional path, role, and provider checks still apply.
 
-## LinkedIn
+## Overview
 
-### linkedin-read
+### Tasks
+
+#### task
+
+[Full parameters and responses](/reference/task) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `list` | crm:read |
+| `action` | `applyApproval` | crm:read |
+| `action` | `create` | crm:read |
+| `action` | `update` | crm:read |
+| `action` | `cancel` | crm:read |
+| `action` | `assignmentOptions` | crm:read |
+| `action` | `reassign` | crm:read |
+| `action` | `dealList` | crm:read |
+| `action` | `creationOptions` | crm:read |
+| `action` | `createAssigned` | crm:read |
+| `action` | `complete` | crm:read |
+| `action` | `delete` | crm:read |
+| `action` | `start` | crm:read |
+| `action` | `updateDueDate` | crm:read |
+
+### Saved views
+
+#### ui-config
+
+[Full parameters and responses](/reference/ui-config) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `list-canvases` | crm:read |
+| `action` | `configure-overview` | playbook:write |
+| `action` | `create-canvas` | crm:read |
+| `action` | `update-canvas` | crm:read |
+| `action` | `delete-canvas` | crm:read |
+| `configureOverview.ops[].op` | `add` | configureOverview.ops&#91;&#93;.op=add |
+| `configureOverview.ops[].op` | `remove` | configureOverview.ops&#91;&#93;.op=remove |
+| `configureOverview.ops[].op` | `setVisibleWhen` | configureOverview.ops&#91;&#93;.op=setVisibleWhen |
+| `configureOverview.ops[].op` | `setRender` | configureOverview.ops&#91;&#93;.op=setRender |
+| `configureOverview.ops[].op` | `setOwner` | configureOverview.ops&#91;&#93;.op=setOwner |
+| `configureOverview.ops[].op` | `reorder` | configureOverview.ops&#91;&#93;.op=reorder |
+| `createCanvas.type` | `conversationCanvas` | See tool and target permissions |
+| `createCanvas.type` | `kanbanConversation` | See tool and target permissions |
+| `createCanvas.type` | `cardList` | See tool and target permissions |
+| `createCanvas.type` | `table` | See tool and target permissions |
+| `createCanvas.type` | `report` | See tool and target permissions |
+| `createCanvas.type` | `statistics` | See tool and target permissions |
+| `createCanvas.type` | `tasks` | See tool and target permissions |
+| `createCanvas.type` | `agenda` | See tool and target permissions |
+| `createCanvas.type` | `calendar` | See tool and target permissions |
+| `updateCanvas.type` | `conversationCanvas` | See tool and target permissions |
+| `updateCanvas.type` | `kanbanConversation` | See tool and target permissions |
+| `updateCanvas.type` | `cardList` | See tool and target permissions |
+| `updateCanvas.type` | `table` | See tool and target permissions |
+| `updateCanvas.type` | `report` | See tool and target permissions |
+| `updateCanvas.type` | `statistics` | See tool and target permissions |
+| `updateCanvas.type` | `tasks` | See tool and target permissions |
+| `updateCanvas.type` | `agenda` | See tool and target permissions |
+| `updateCanvas.type` | `calendar` | See tool and target permissions |
+
+### Workspace preferences
+
+#### workspace-write
+
+[Full parameters and responses](/reference/workspace-write) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `change.type` | `update_user_settings` | change.type=update_user_settings |
+| `change.type` | `update_inbox_settings` | change.type=update_inbox_settings |
+| `change.type` | `manage_inbox` | change.type=manage_inbox |
+| `change.op` | `create` | change.type=manage_inbox |
+| `change.op` | `update` | change.type=manage_inbox |
+| `change.op` | `delete` | change.type=manage_inbox |
+| `change.op` | `reorder` | change.type=manage_inbox |
+| `change.type` | `manage_task_group` | change.type=manage_task_group |
+| `change.op` | `create` | change.type=manage_task_group |
+| `change.op` | `update` | change.type=manage_task_group |
+| `change.op` | `delete` | change.type=manage_task_group |
+| `change.op` | `reorder` | change.type=manage_task_group |
+| `change.overduePolicy.mode` | `nag` | change.type=manage_task_group |
+| `change.overduePolicy.mode` | `auto-complete` | change.type=manage_task_group |
+| `change.overduePolicy.mode` | `ignore` | change.type=manage_task_group |
+| `change.type` | `update_webhook_export_config` | change.type=update_webhook_export_config |
+
+### Billing
+
+#### billing-read
+
+[Full parameters and responses](/reference/billing-read) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `workflow-approvals` | billing:read |
+| `action` | `accounts` | billing:read |
+| `action` | `catalog` | billing:read |
+| `action` | `wallet` | billing:read |
+| `action` | `usage` | billing:read |
+| `action` | `activity` | billing:read |
+| `action` | `limits` | billing:read |
+| `action` | `alerts` | billing:read |
+| `action` | `grants` | billing:read |
+| `action` | `deliveries` | billing:read |
+| `action` | `commercial` | billing:read |
+| `action` | `postpaid` | billing:read |
+| `action` | `members` | billing:read |
+| `action` | `preference` | billing:read |
+
+#### billing-write
+
+[Full parameters and responses](/reference/billing-write) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `ensure-account` | billing:write |
+| `action` | `save-limit` | billing:write |
+| `action` | `read-alert` | billing:write |
+| `action` | `reconcile` | billing:write |
+| `action` | `retry-delivery` | billing:write |
+| `action` | `checkout` | billing:write |
+| `action` | `portal` | billing:write |
+| `action` | `finance-link` | billing:write |
+| `action` | `write-grant` | billing:write |
+| `action` | `revoke-grant` | billing:write |
+| `action` | `request-import` | billing:write |
+| `action` | `configure-postpaid` | billing:write |
+| `action` | `reconcile-postpaid` | billing:write |
+
+### Usage and delivery recovery
+
+#### usage-observations-read
+
+[Full parameters and responses](/reference/usage-observations-read) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `producers` | billing:read |
+| `action` | `list` | billing:read |
+
+#### usage-observations-retry
+
+[Full parameters and responses](/reference/usage-observations-retry) · Availability: **external**.
+
+Single call, baseline scope: `billing:write`.
+
+### Customer support
+
+#### send-user-feedback
+
+[Full parameters and responses](/reference/send-user-feedback) · Availability: **external**.
+
+Single call, baseline scope: `crm:read`.
+
+### Staff administration
+
+#### analytics
+
+[Full parameters and responses](/reference/analytics) · Availability: **staff-only**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `attribution-rate` | internal |
+| `action` | `attribution-by-category` | internal |
+| `action` | `similarity-distribution` | internal |
+| `action` | `user-tiers` | internal |
+| `action` | `overview` | internal |
+| `action` | `monthly-growth` | internal |
+
+#### billing-admin
+
+[Full parameters and responses](/reference/billing-admin) · Availability: **staff-only**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `inventory` | billing:read |
+| `action` | `preview-import` | billing:read |
+| `action` | `verify-import` | billing:write |
+| `action` | `reconcile-subscription` | billing:write |
+| `action` | `save-offer` | billing:write |
+| `action` | `save-catalog` | billing:write |
+| `action` | `save-allowance` | billing:write |
+| `action` | `payment-events` | billing:read |
+| `action` | `retry-payment` | billing:write |
+| `action` | `process-postpaid` | billing:write |
+| `action` | `postpaid` | billing:read |
+| `action` | `configure-postpaid` | billing:write |
+| `action` | `correct-usage` | billing:write |
+| `action` | `organization-monthly-limits` | billing:write |
+| `action` | `organization-accounts` | billing:read |
+| `action` | `provision-organization-accounts` | billing:write |
+| `offer.type` | `topup` | See tool and target permissions |
+| `offer.type` | `subscription` | See tool and target permissions |
+
+#### cedar-staff-debug
+
+[Full parameters and responses](/reference/cedar-staff-debug) · Availability: **staff-only**.
+
+Single call, baseline scope: `internal`.
+
+## Channels
+
+### LinkedIn
+
+#### linkedin-read
 
 [Full parameters and responses](/reference/linkedin-read) · Availability: **external**.
 
@@ -36,7 +240,7 @@ Staff, feature-gated, and app-only entries are labeled. An action requiring `in-
 | `action` | `screen-prospects` | linkedin:read |
 | `action` | `outreach-status` | linkedin:read |
 
-### linkedin-write
+#### linkedin-write
 
 [Full parameters and responses](/reference/linkedin-write) · Availability: **external**.
 
@@ -47,9 +251,172 @@ Staff, feature-gated, and app-only entries are labeled. An action requiring `in-
 | `action` | `send-inmail` | linkedin:write |
 | `action` | `sync-chat` | linkedin:read |
 
-## Signals
+### Email
 
-### signals-read
+#### mail
+
+[Full parameters and responses](/reference/mail) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `fetch-attachments` | email:read |
+| `action` | `list-sent` | email:read |
+| `action` | `find` | email:read |
+| `action` | `search-live` | email:read |
+| `action` | `read-thread` | email:read |
+
+#### send-email
+
+[Full parameters and responses](/reference/send-email) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `prepare` | email:send |
+| `action` | `send` | email:send |
+| `action` | `status` | email:send |
+
+### Email tracking
+
+#### email-tracking
+
+[Full parameters and responses](/reference/email-tracking) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `list` | email:read |
+| `action` | `get` | email:read |
+
+### Slack
+
+#### slack-read
+
+[Full parameters and responses](/reference/slack-read) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `search-live` | slack:read |
+| `action` | `read-thread` | slack:read |
+| `action` | `read-file` | slack:read |
+
+#### slack-write
+
+[Full parameters and responses](/reference/slack-write) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `sync-thread` | slack:read |
+
+### Meetings
+
+#### meetings
+
+[Full parameters and responses](/reference/meetings) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `find` | crm:read |
+| `action` | `sync` | crm:read |
+| `action` | `capabilities` | crm:read |
+
+### Calendar
+
+#### calendar
+
+[Full parameters and responses](/reference/calendar) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `list-events` | crm:read |
+| `action` | `get-availability` | crm:read |
+| `action` | `modify-event` | crm:read |
+| `modifyEvent.operation` | `create` | See tool and target permissions |
+| `modifyEvent.operation` | `update` | See tool and target permissions |
+| `modifyEvent.operation` | `delete` | See tool and target permissions |
+
+### Drafting
+
+#### draft-comms
+
+[Full parameters and responses](/reference/draft-comms) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `draft-email` | email:draft |
+| `action` | `draft-slack-message` | crm:read |
+| `action` | `draft-linkedin-message` | linkedin:read |
+| `action` | `show-draft` | email:read |
+
+### Message scheduling
+
+#### schedule-send
+
+[Full parameters and responses](/reference/schedule-send) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `channel` | `email` | email:send |
+| `channel` | `linkedin` | linkedin:write |
+| `channel` | `slack` | crm:read |
+
+### Notifications
+
+#### notify
+
+[Full parameters and responses](/reference/notify) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `send` | crm:read |
+| `action` | `list-slack-channels` | crm:read |
+| `send.channel` | `email` | See tool and target permissions |
+| `send.channel` | `slack` | See tool and target permissions |
+| `send.channel` | `imessage` | See tool and target permissions |
+| `send.channel` | `whatsapp` | See tool and target permissions |
+
+## Enrichment
+
+### Enrichment and research tools
+
+#### research
+
+[Full parameters and responses](/reference/research) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `capabilities` | crm:read |
+| `action` | `choose-enrichment` | enrichment:write |
+| `action` | `enrich-company` | enrichment:write |
+| `action` | `enrich-person` | enrichment:write |
+| `action` | `web-search` | in-app |
+| `action` | `web-fetch` | in-app |
+
+### Data services
+
+#### data-settings
+
+[Full parameters and responses](/reference/data-settings) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `update` | playbook:write |
+
+## Pipeline intelligence
+
+### CRM analytics
+
+#### conversation-analytics
+
+[Full parameters and responses](/reference/conversation-analytics) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `compute-metric` | crm:read |
+| `action` | `compute-metric-batch` | crm:read |
+| `action` | `describe-metrics` | crm:read |
+
+### Signals
+
+#### signals-read
 
 [Full parameters and responses](/reference/signals-read) · Availability: **external**.
 
@@ -61,7 +428,7 @@ Staff, feature-gated, and app-only entries are labeled. An action requiring `in-
 | `action` | `get-internal` | signals:read |
 | `action` | `list-internal` | signals:read |
 
-### signals-write
+#### signals-write
 
 [Full parameters and responses](/reference/signals-write) · Availability: **external**.
 
@@ -178,104 +545,11 @@ Staff, feature-gated, and app-only entries are labeled. An action requiring `in-
 | `update.fiberTrackers[].rules[].type` | `job_posting_with_keyword` | update.fiberTrackers&#91;&#93;.rules&#91;&#93;.entityType=company |
 | `update.fiberTrackers[].rules[].type` | `headcount_growth_percent` | update.fiberTrackers&#91;&#93;.rules&#91;&#93;.entityType=company |
 
-## Slack
+## Brain
 
-### slack-read
+### CRM conversations
 
-[Full parameters and responses](/reference/slack-read) · Availability: **external**.
-
-| Selector | Value | Variant / scope |
-| --- | --- | --- |
-| `action` | `search-live` | slack:read |
-| `action` | `read-thread` | slack:read |
-| `action` | `read-file` | slack:read |
-
-### slack-write
-
-[Full parameters and responses](/reference/slack-write) · Availability: **external**.
-
-| Selector | Value | Variant / scope |
-| --- | --- | --- |
-| `action` | `sync-thread` | slack:read |
-
-## Email
-
-### mail
-
-[Full parameters and responses](/reference/mail) · Availability: **external**.
-
-| Selector | Value | Variant / scope |
-| --- | --- | --- |
-| `action` | `fetch-attachments` | email:read |
-| `action` | `list-sent` | email:read |
-| `action` | `find` | email:read |
-| `action` | `search-live` | email:read |
-| `action` | `read-thread` | email:read |
-
-### send-email
-
-[Full parameters and responses](/reference/send-email) · Availability: **external**.
-
-| Selector | Value | Variant / scope |
-| --- | --- | --- |
-| `action` | `prepare` | email:send |
-| `action` | `send` | email:send |
-| `action` | `status` | email:send |
-
-## Email tracking
-
-### email-tracking
-
-[Full parameters and responses](/reference/email-tracking) · Availability: **external**.
-
-| Selector | Value | Variant / scope |
-| --- | --- | --- |
-| `action` | `list` | email:read |
-| `action` | `get` | email:read |
-
-## Drafting
-
-### draft-comms
-
-[Full parameters and responses](/reference/draft-comms) · Availability: **external**.
-
-| Selector | Value | Variant / scope |
-| --- | --- | --- |
-| `action` | `draft-email` | email:draft |
-| `action` | `draft-slack-message` | crm:read |
-| `action` | `draft-linkedin-message` | linkedin:read |
-| `action` | `show-draft` | email:read |
-
-## Message scheduling
-
-### schedule-send
-
-[Full parameters and responses](/reference/schedule-send) · Availability: **external**.
-
-| Selector | Value | Variant / scope |
-| --- | --- | --- |
-| `channel` | `email` | email:send |
-| `channel` | `linkedin` | linkedin:write |
-| `channel` | `slack` | crm:read |
-
-## Notifications
-
-### notify
-
-[Full parameters and responses](/reference/notify) · Availability: **external**.
-
-| Selector | Value | Variant / scope |
-| --- | --- | --- |
-| `action` | `send` | crm:read |
-| `action` | `list-slack-channels` | crm:read |
-| `send.channel` | `email` | See tool and target permissions |
-| `send.channel` | `slack` | See tool and target permissions |
-| `send.channel` | `imessage` | See tool and target permissions |
-| `send.channel` | `whatsapp` | See tool and target permissions |
-
-## CRM conversations
-
-### conversation-read
+#### conversation-read
 
 [Full parameters and responses](/reference/conversation-read) · Availability: **external**.
 
@@ -292,7 +566,7 @@ Staff, feature-gated, and app-only entries are labeled. An action requiring `in-
 | `action` | `raw-content` | crm:read |
 | `action` | `search` | crm:read |
 
-### conversation-write
+#### conversation-write
 
 [Full parameters and responses](/reference/conversation-write) · Availability: **external**.
 
@@ -321,21 +595,9 @@ Staff, feature-gated, and app-only entries are labeled. An action requiring `in-
 | `mutate.mutation.operation` | `assign_aop_by_selection` | mutate.mutation.operation=assign_aop_by_selection |
 | `mutate.mutation.operation` | `rename_conversation` | mutate.mutation.operation=rename_conversation |
 
-## CRM analytics
+### Field intelligence
 
-### conversation-analytics
-
-[Full parameters and responses](/reference/conversation-analytics) · Availability: **external**.
-
-| Selector | Value | Variant / scope |
-| --- | --- | --- |
-| `action` | `compute-metric` | crm:read |
-| `action` | `compute-metric-batch` | crm:read |
-| `action` | `describe-metrics` | crm:read |
-
-## Field intelligence
-
-### taxonomy-fields
+#### taxonomy-fields
 
 [Full parameters and responses](/reference/taxonomy-fields) · Availability: **feature-gated**.
 
@@ -344,67 +606,17 @@ Staff, feature-gated, and app-only entries are labeled. An action requiring `in-
 | `action` | `list` | brain:read |
 | `action` | `get` | brain:read |
 
-## SQL reporting
+### SQL reporting
 
-### run-sql
+#### run-sql
 
 [Full parameters and responses](/reference/run-sql) · Availability: **external**.
 
 Single call, baseline scope: `crm:read`.
 
-## Meetings
+### Documents
 
-### meetings
-
-[Full parameters and responses](/reference/meetings) · Availability: **external**.
-
-| Selector | Value | Variant / scope |
-| --- | --- | --- |
-| `action` | `find` | crm:read |
-| `action` | `sync` | crm:read |
-| `action` | `capabilities` | crm:read |
-
-## Calendar
-
-### calendar
-
-[Full parameters and responses](/reference/calendar) · Availability: **external**.
-
-| Selector | Value | Variant / scope |
-| --- | --- | --- |
-| `action` | `list-events` | crm:read |
-| `action` | `get-availability` | crm:read |
-| `action` | `modify-event` | crm:read |
-| `modifyEvent.operation` | `create` | See tool and target permissions |
-| `modifyEvent.operation` | `update` | See tool and target permissions |
-| `modifyEvent.operation` | `delete` | See tool and target permissions |
-
-## Tasks
-
-### task
-
-[Full parameters and responses](/reference/task) · Availability: **external**.
-
-| Selector | Value | Variant / scope |
-| --- | --- | --- |
-| `action` | `list` | crm:read |
-| `action` | `applyApproval` | crm:read |
-| `action` | `create` | crm:read |
-| `action` | `update` | crm:read |
-| `action` | `cancel` | crm:read |
-| `action` | `assignmentOptions` | crm:read |
-| `action` | `reassign` | crm:read |
-| `action` | `dealList` | crm:read |
-| `action` | `creationOptions` | crm:read |
-| `action` | `createAssigned` | crm:read |
-| `action` | `complete` | crm:read |
-| `action` | `delete` | crm:read |
-| `action` | `start` | crm:read |
-| `action` | `updateDueDate` | crm:read |
-
-## Documents
-
-### document-read
+#### document-read
 
 [Full parameters and responses](/reference/document-read) · Availability: **external**.
 
@@ -414,7 +626,7 @@ Single call, baseline scope: `crm:read`.
 | `action` | `list` | docs:read |
 | `action` | `search` | docs:read |
 
-### document-write
+#### document-write
 
 [Full parameters and responses](/reference/document-write) · Availability: **external**.
 
@@ -437,9 +649,9 @@ Single call, baseline scope: `crm:read`.
 | `write.mode` | `append` | See tool and target permissions |
 | `write.mode` | `patch` | See tool and target permissions |
 
-## Tables
+### Tables
 
-### table
+#### table
 
 [Full parameters and responses](/reference/table) · Availability: **external**.
 
@@ -517,87 +729,34 @@ Single call, baseline scope: `crm:read`.
 | `update_columns.columns[].patch.type` | `person` | See tool and target permissions |
 | `update_columns.columns[].patch.type` | `company` | See tool and target permissions |
 
-## Research and enrichment
+### Boards
 
-### research
+#### board
 
-[Full parameters and responses](/reference/research) · Availability: **external**.
-
-| Selector | Value | Variant / scope |
-| --- | --- | --- |
-| `action` | `capabilities` | crm:read |
-| `action` | `choose-enrichment` | enrichment:write |
-| `action` | `enrich-company` | enrichment:write |
-| `action` | `enrich-person` | enrichment:write |
-| `action` | `web-search` | in-app |
-| `action` | `web-fetch` | in-app |
-
-## Saved views
-
-### ui-config
-
-[Full parameters and responses](/reference/ui-config) · Availability: **external**.
+[Full parameters and responses](/reference/board) · Availability: **in-app-only**.
 
 | Selector | Value | Variant / scope |
 | --- | --- | --- |
-| `action` | `list-canvases` | crm:read |
-| `action` | `configure-overview` | playbook:write |
-| `action` | `create-canvas` | crm:read |
-| `action` | `update-canvas` | crm:read |
-| `action` | `delete-canvas` | crm:read |
-| `configureOverview.ops[].op` | `add` | configureOverview.ops&#91;&#93;.op=add |
-| `configureOverview.ops[].op` | `remove` | configureOverview.ops&#91;&#93;.op=remove |
-| `configureOverview.ops[].op` | `setVisibleWhen` | configureOverview.ops&#91;&#93;.op=setVisibleWhen |
-| `configureOverview.ops[].op` | `setRender` | configureOverview.ops&#91;&#93;.op=setRender |
-| `configureOverview.ops[].op` | `setOwner` | configureOverview.ops&#91;&#93;.op=setOwner |
-| `configureOverview.ops[].op` | `reorder` | configureOverview.ops&#91;&#93;.op=reorder |
-| `createCanvas.type` | `conversationCanvas` | See tool and target permissions |
-| `createCanvas.type` | `kanbanConversation` | See tool and target permissions |
-| `createCanvas.type` | `cardList` | See tool and target permissions |
-| `createCanvas.type` | `table` | See tool and target permissions |
-| `createCanvas.type` | `report` | See tool and target permissions |
-| `createCanvas.type` | `statistics` | See tool and target permissions |
-| `createCanvas.type` | `tasks` | See tool and target permissions |
-| `createCanvas.type` | `agenda` | See tool and target permissions |
-| `createCanvas.type` | `calendar` | See tool and target permissions |
-| `updateCanvas.type` | `conversationCanvas` | See tool and target permissions |
-| `updateCanvas.type` | `kanbanConversation` | See tool and target permissions |
-| `updateCanvas.type` | `cardList` | See tool and target permissions |
-| `updateCanvas.type` | `table` | See tool and target permissions |
-| `updateCanvas.type` | `report` | See tool and target permissions |
-| `updateCanvas.type` | `statistics` | See tool and target permissions |
-| `updateCanvas.type` | `tasks` | See tool and target permissions |
-| `updateCanvas.type` | `agenda` | See tool and target permissions |
-| `updateCanvas.type` | `calendar` | See tool and target permissions |
+| `action` | `list_boards` | in-app |
+| `action` | `list_templates` | in-app |
+| `action` | `read` | in-app |
+| `action` | `create_board` | in-app |
+| `action` | `get_schema` | in-app |
+| `action` | `set_schema` | in-app |
+| `action` | `add_fields` | in-app |
+| `action` | `set_view` | in-app |
+| `action` | `set_board_meta` | in-app |
+| `action` | `add_card` | in-app |
+| `action` | `set` | in-app |
+| `action` | `move` | in-app |
+| `action` | `comment` | in-app |
+| `action` | `cards` | in-app |
+| `action` | `archive` | in-app |
+| `action` | `list_triggers` | in-app |
 
-## Workspace preferences
+### Connections
 
-### workspace-write
-
-[Full parameters and responses](/reference/workspace-write) · Availability: **external**.
-
-| Selector | Value | Variant / scope |
-| --- | --- | --- |
-| `change.type` | `update_user_settings` | change.type=update_user_settings |
-| `change.type` | `update_inbox_settings` | change.type=update_inbox_settings |
-| `change.type` | `manage_inbox` | change.type=manage_inbox |
-| `change.op` | `create` | change.type=manage_inbox |
-| `change.op` | `update` | change.type=manage_inbox |
-| `change.op` | `delete` | change.type=manage_inbox |
-| `change.op` | `reorder` | change.type=manage_inbox |
-| `change.type` | `manage_task_group` | change.type=manage_task_group |
-| `change.op` | `create` | change.type=manage_task_group |
-| `change.op` | `update` | change.type=manage_task_group |
-| `change.op` | `delete` | change.type=manage_task_group |
-| `change.op` | `reorder` | change.type=manage_task_group |
-| `change.overduePolicy.mode` | `nag` | change.type=manage_task_group |
-| `change.overduePolicy.mode` | `auto-complete` | change.type=manage_task_group |
-| `change.overduePolicy.mode` | `ignore` | change.type=manage_task_group |
-| `change.type` | `update_webhook_export_config` | change.type=update_webhook_export_config |
-
-## Connections
-
-### connection-write
+#### connection-write
 
 [Full parameters and responses](/reference/connection-write) · Availability: **external**.
 
@@ -629,87 +788,11 @@ Single call, baseline scope: `crm:read`.
 | `change.channel` | `linkedin` | change.type=resolve_channel_link_proposal |
 | `change.channel` | `whatsapp` | change.type=resolve_channel_link_proposal |
 
-## Data services
+## Agent platform
 
-### data-settings
+### Playbooks and triggers
 
-[Full parameters and responses](/reference/data-settings) · Availability: **external**.
-
-| Selector | Value | Variant / scope |
-| --- | --- | --- |
-| `action` | `update` | playbook:write |
-
-## Billing
-
-### billing-read
-
-[Full parameters and responses](/reference/billing-read) · Availability: **external**.
-
-| Selector | Value | Variant / scope |
-| --- | --- | --- |
-| `action` | `workflow-approvals` | billing:read |
-| `action` | `accounts` | billing:read |
-| `action` | `catalog` | billing:read |
-| `action` | `wallet` | billing:read |
-| `action` | `usage` | billing:read |
-| `action` | `activity` | billing:read |
-| `action` | `limits` | billing:read |
-| `action` | `alerts` | billing:read |
-| `action` | `grants` | billing:read |
-| `action` | `deliveries` | billing:read |
-| `action` | `commercial` | billing:read |
-| `action` | `postpaid` | billing:read |
-| `action` | `members` | billing:read |
-| `action` | `preference` | billing:read |
-
-### billing-write
-
-[Full parameters and responses](/reference/billing-write) · Availability: **external**.
-
-| Selector | Value | Variant / scope |
-| --- | --- | --- |
-| `action` | `ensure-account` | billing:write |
-| `action` | `save-limit` | billing:write |
-| `action` | `read-alert` | billing:write |
-| `action` | `reconcile` | billing:write |
-| `action` | `retry-delivery` | billing:write |
-| `action` | `checkout` | billing:write |
-| `action` | `portal` | billing:write |
-| `action` | `finance-link` | billing:write |
-| `action` | `write-grant` | billing:write |
-| `action` | `revoke-grant` | billing:write |
-| `action` | `request-import` | billing:write |
-| `action` | `configure-postpaid` | billing:write |
-| `action` | `reconcile-postpaid` | billing:write |
-
-## Usage and delivery recovery
-
-### usage-observations-read
-
-[Full parameters and responses](/reference/usage-observations-read) · Availability: **external**.
-
-| Selector | Value | Variant / scope |
-| --- | --- | --- |
-| `action` | `producers` | billing:read |
-| `action` | `list` | billing:read |
-
-### usage-observations-retry
-
-[Full parameters and responses](/reference/usage-observations-retry) · Availability: **external**.
-
-Single call, baseline scope: `billing:write`.
-
-## Customer support
-
-### send-user-feedback
-
-[Full parameters and responses](/reference/send-user-feedback) · Availability: **external**.
-
-Single call, baseline scope: `crm:read`.
-
-## Playbooks and triggers
-
-### aop-write
+#### aop-write
 
 [Full parameters and responses](/reference/aop-write) · Availability: **external**.
 
@@ -719,9 +802,83 @@ Single call, baseline scope: `crm:read`.
 | `action` | `update-selection-procedure` | playbook:write |
 | `action` | `update-custom-assignment-instruction` | playbook:write |
 
-## Configuration
+### Connected systems
 
-### config-read
+#### systems-write
+
+[Full parameters and responses](/reference/systems-write) · Availability: **external**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `change.type` | `manage_mcp_connection` | change.type=manage_mcp_connection |
+| `change.op` | `create` | change.type=manage_mcp_connection |
+| `change.op` | `delete` | change.type=manage_mcp_connection |
+| `change.type` | `update_mcp_connection_settings` | change.type=update_mcp_connection_settings |
+
+#### external-mcp
+
+[Full parameters and responses](/reference/external-mcp) · Availability: **in-app-only**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `call` | in-app |
+
+### Workflow buttons
+
+#### workflow
+
+[Full parameters and responses](/reference/workflow) · Availability: **in-app-only**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `list_operations` | in-app |
+| `action` | `inspect_capacity` | in-app |
+
+### Delegation and code execution
+
+#### delegate
+
+[Full parameters and responses](/reference/delegate) · Availability: **in-app-only**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `subagent` | in-app |
+| `action` | `code` | in-app |
+| `subagent.type` | `orchestrator` | See tool and target permissions |
+| `subagent.type` | `analyzer` | See tool and target permissions |
+
+### Chat context and history
+
+#### chat-context
+
+[Full parameters and responses](/reference/chat-context) · Availability: **in-app-only**.
+
+| Selector | Value | Variant / scope |
+| --- | --- | --- |
+| `action` | `manage` | in-app |
+| `action` | `resolve` | in-app |
+
+#### search-chat-history
+
+[Full parameters and responses](/reference/search-chat-history) · Availability: **in-app-only**.
+
+Single call, baseline scope: `in-app`.
+
+#### load-chat-history
+
+[Full parameters and responses](/reference/load-chat-history) · Availability: **in-app-only**.
+
+Single call, baseline scope: `in-app`.
+
+#### switch-chat-thread
+
+[Full parameters and responses](/reference/switch-chat-thread) · Availability: **in-app-only**.
+
+Single call, baseline scope: `in-app`.
+
+### Configuration
+
+#### config-read
 
 [Full parameters and responses](/reference/config-read) · Availability: **external**.
 
@@ -736,7 +893,7 @@ Single call, baseline scope: `crm:read`.
 | `readPlaybook.mode` | `load_full` | See tool and target permissions |
 | `readPlaybook.mode` | `load_sections` | See tool and target permissions |
 
-### config-write
+#### config-write
 
 [Full parameters and responses](/reference/config-write) · Availability: **external**.
 
@@ -772,9 +929,9 @@ Single call, baseline scope: `crm:read`.
 | `removeFieldOption.resolution.action` | `remap-to` | removeFieldOption.resolution.action=remap-to |
 | `removeFieldOption.resolution.action` | `keep-legacy` | removeFieldOption.resolution.action=keep-legacy |
 
-## Organization administration
+### Organization administration
 
-### config-propagate
+#### config-propagate
 
 [Full parameters and responses](/reference/config-propagate) · Availability: **external**.
 
@@ -783,122 +940,23 @@ Single call, baseline scope: `crm:read`.
 | `action` | `propagate-field` | playbook:write |
 | `action` | `propagate-mapping` | playbook:write |
 
-## Connected systems
+### Skill loading
 
-### systems-write
-
-[Full parameters and responses](/reference/systems-write) · Availability: **external**.
-
-| Selector | Value | Variant / scope |
-| --- | --- | --- |
-| `change.type` | `manage_mcp_connection` | change.type=manage_mcp_connection |
-| `change.op` | `create` | change.type=manage_mcp_connection |
-| `change.op` | `delete` | change.type=manage_mcp_connection |
-| `change.type` | `update_mcp_connection_settings` | change.type=update_mcp_connection_settings |
-
-### external-mcp
-
-[Full parameters and responses](/reference/external-mcp) · Availability: **in-app-only**.
-
-| Selector | Value | Variant / scope |
-| --- | --- | --- |
-| `action` | `call` | in-app |
-
-## Boards
-
-### board
-
-[Full parameters and responses](/reference/board) · Availability: **in-app-only**.
-
-| Selector | Value | Variant / scope |
-| --- | --- | --- |
-| `action` | `list_boards` | in-app |
-| `action` | `list_templates` | in-app |
-| `action` | `read` | in-app |
-| `action` | `create_board` | in-app |
-| `action` | `get_schema` | in-app |
-| `action` | `set_schema` | in-app |
-| `action` | `add_fields` | in-app |
-| `action` | `set_view` | in-app |
-| `action` | `set_board_meta` | in-app |
-| `action` | `add_card` | in-app |
-| `action` | `set` | in-app |
-| `action` | `move` | in-app |
-| `action` | `comment` | in-app |
-| `action` | `cards` | in-app |
-| `action` | `archive` | in-app |
-| `action` | `list_triggers` | in-app |
-
-## Workflow buttons
-
-### workflow
-
-[Full parameters and responses](/reference/workflow) · Availability: **in-app-only**.
-
-| Selector | Value | Variant / scope |
-| --- | --- | --- |
-| `action` | `list_operations` | in-app |
-| `action` | `inspect_capacity` | in-app |
-
-## Delegation and code execution
-
-### delegate
-
-[Full parameters and responses](/reference/delegate) · Availability: **in-app-only**.
-
-| Selector | Value | Variant / scope |
-| --- | --- | --- |
-| `action` | `subagent` | in-app |
-| `action` | `code` | in-app |
-| `subagent.type` | `orchestrator` | See tool and target permissions |
-| `subagent.type` | `analyzer` | See tool and target permissions |
-
-## Chat context and history
-
-### chat-context
-
-[Full parameters and responses](/reference/chat-context) · Availability: **in-app-only**.
-
-| Selector | Value | Variant / scope |
-| --- | --- | --- |
-| `action` | `manage` | in-app |
-| `action` | `resolve` | in-app |
-
-### search-chat-history
-
-[Full parameters and responses](/reference/search-chat-history) · Availability: **in-app-only**.
-
-Single call, baseline scope: `in-app`.
-
-### load-chat-history
-
-[Full parameters and responses](/reference/load-chat-history) · Availability: **in-app-only**.
-
-Single call, baseline scope: `in-app`.
-
-### switch-chat-thread
-
-[Full parameters and responses](/reference/switch-chat-thread) · Availability: **in-app-only**.
-
-Single call, baseline scope: `in-app`.
-
-## Skill loading
-
-### load-skill
+#### load-skill
 
 [Full parameters and responses](/reference/load-skill) · Availability: **external**.
 
 Single call, baseline scope: `authenticated`.
 
-### load-brain-skills
+#### load-brain-skills
 
 [Full parameters and responses](/reference/load-brain-skills) · Availability: **feature-gated**.
 
 Single call, baseline scope: `brain:read`.
 
-## Diagnostics
+### Diagnostics
 
-### debug
+#### debug
 
 [Full parameters and responses](/reference/debug) · Availability: **external**.
 
@@ -911,50 +969,4 @@ Single call, baseline scope: `brain:read`.
 | `action` | `health-report` | crm:read |
 | `action` | `create-monitor` | internal |
 | `action` | `test-run` | crm:read |
-
-## Staff administration
-
-### analytics
-
-[Full parameters and responses](/reference/analytics) · Availability: **staff-only**.
-
-| Selector | Value | Variant / scope |
-| --- | --- | --- |
-| `action` | `attribution-rate` | internal |
-| `action` | `attribution-by-category` | internal |
-| `action` | `similarity-distribution` | internal |
-| `action` | `user-tiers` | internal |
-| `action` | `overview` | internal |
-| `action` | `monthly-growth` | internal |
-
-### billing-admin
-
-[Full parameters and responses](/reference/billing-admin) · Availability: **staff-only**.
-
-| Selector | Value | Variant / scope |
-| --- | --- | --- |
-| `action` | `inventory` | billing:read |
-| `action` | `preview-import` | billing:read |
-| `action` | `verify-import` | billing:write |
-| `action` | `reconcile-subscription` | billing:write |
-| `action` | `save-offer` | billing:write |
-| `action` | `save-catalog` | billing:write |
-| `action` | `save-allowance` | billing:write |
-| `action` | `payment-events` | billing:read |
-| `action` | `retry-payment` | billing:write |
-| `action` | `process-postpaid` | billing:write |
-| `action` | `postpaid` | billing:read |
-| `action` | `configure-postpaid` | billing:write |
-| `action` | `correct-usage` | billing:write |
-| `action` | `organization-monthly-limits` | billing:write |
-| `action` | `organization-accounts` | billing:read |
-| `action` | `provision-organization-accounts` | billing:write |
-| `offer.type` | `topup` | See tool and target permissions |
-| `offer.type` | `subscription` | See tool and target permissions |
-
-### cedar-staff-debug
-
-[Full parameters and responses](/reference/cedar-staff-debug) · Availability: **staff-only**.
-
-Single call, baseline scope: `internal`.
 

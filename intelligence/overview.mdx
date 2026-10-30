@@ -1,0 +1,39 @@
+---
+title: "Pipeline intelligence"
+description: "Understand pipeline health, deal progress and commercial opportunities from connected evidence."
+---
+
+Pipeline intelligence is Cedar's analytical layer for revenue work. It combines server-computed metrics, historical deal evidence, configurable commercial signals and guided analysis. Brain supplies the underlying data; the agent platform can turn an analysis into a recurring workflow.
+
+## Capability areas
+
+<CardGroup cols={2}>
+<Card title="Pipeline metrics" icon="chart-line" href="/crm/metrics">22 supported metrics for cadence, conversion, pipeline value, hygiene and live CRM amounts.</Card>
+<Card title="Deal and cross-deal analysis" icon="magnifying-glass" href="/intelligence/deal-analysis">Investigate objections, competitors, buyer behavior, stalled stages and patterns across defined cohorts.</Card>
+<Card title="Signals" icon="satellite-dish" href="/signals/overview">Watch external changes, website inputs and email engagement; review internal commercial findings.</Card>
+<Card title="Sales coaching" icon="comments" href="/intelligence/coaching">Apply configured qualification frameworks and coaching rubrics to actual conversation evidence.</Card>
+<Card title="Evidence-backed outputs" icon="file-lines" href="/knowledge/collateral">Turn account evidence into business cases, briefs, action plans and other supported collateral.</Card>
+<Card title="Historical evidence" icon="clock-rotate-left" href="/crm/field-history">Trace field changes, inspect original events and reconstruct what was known at a point in time.</Card>
+</CardGroup>
+
+## Questions you can answer
+
+| Question | Capability |
+| --- | --- |
+| Which open deals are quiet or aging? | `quiet_gap`, `deals_dropped`, `open_deal_age`, `hygiene`, and current deal evidence |
+| How quickly do reps respond and follow up? | `response_time`, `followup_time`, `post_meeting_time`, `reply_rate` |
+| Where do deals progress or stall? | `time_between_stages`, `stage_funnel`, `win_rate`, `aop_conversion` |
+| What is the pipeline value or revenue at risk? | Stored pipeline metrics, stalled-deal revenue, and separately verified live CRM amounts |
+| Which objections or competitors recur? | Field discovery, extracted-evidence search, original source reads and cohort analysis |
+| Which accounts deserve a commercial review? | Revival, upsell, expansion, churn and follow-up findings, with current-state verification |
+| What changed in a buyer or account? | Entity-change rules, Fiber trackers, saved discovery searches and native engagement evidence |
+
+## Work from a defined sample
+
+Choose the deals, reps, reporting period and outcome definition first. Use `conversation-analytics describe-metrics` to discover valid metric/grouping combinations. Use the Brain evidence tools for drill-down and guarded SQL when a supported metric does not answer the question. Preserve missing values and currency boundaries instead of manufacturing a total.
+
+The gated `analysis-decomposition` and `deal-intelligence-analysis` skills guide multi-step analytical work. Coaching and collateral skills provide additional operating instructions; they do not create new data access or sending permissions.
+
+## Run analysis as an agent workflow
+
+The [agent library](/agent-platform/library) includes templates for account and pipeline work. Configure the desired outcome, data/resource grants, instructions and trigger in the [agent platform](/agent-platform/overview). A saved report, a review candidate and an approved outreach action remain distinct results.

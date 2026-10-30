@@ -1,0 +1,132 @@
+---
+title: "Enrichment field vocabulary"
+description: "Every web field-picker entry, with type, meaning and registered provider coverage."
+---
+
+The web enrichment builder uses **112 normalized field names**. The catalog below is generated from that exact vocabulary and the registered enrichment operations. A selectable field without a registered operation is not currently fillable by a provider lookup through that catalog; it may still be supplied by input, lookup, AI or other supported column sources. Mapped coverage also does not guarantee a provider record contains a value.
+
+The external research discovery catalog is narrower and is documented in [Enrichment and research tools](/capabilities/research). This page records the web builder's field vocabulary and coverage; it does not add external MCP actions.
+
+## Person fields
+
+| Field | Type / meaning | Registered operation coverage |
+| --- | --- | --- |
+| `person.fullName` | **string** — Full name | `fiber.kitchenSinkPerson` (fiber), `moltsets.businessProfile` (moltsets), `apollo.personEnrich` (apollo), `crustdata.personEnrich` (crustdata), `linkedin.deobfuscate` (crustdata) |
+| `person.firstName` | **string** — First name | No registered operation in this catalog |
+| `person.lastName` | **string** — Last name | No registered operation in this catalog |
+| `person.headline` | **string** — LinkedIn headline | `fiber.kitchenSinkPerson` (fiber), `moltsets.businessProfile` (moltsets), `apollo.personEnrich` (apollo), `crustdata.personEnrich` (crustdata) |
+| `person.summary` | **string** — Profile summary / about | `crustdata.personEnrich` (crustdata) |
+| `person.photoUrl` | **string** — Profile photo URL | `fiber.kitchenSinkPerson` (fiber), `apollo.personEnrich` (apollo) |
+| `person.linkedinUrl` | **string** — Canonical LinkedIn profile URL | `fiber.kitchenSinkPerson` (fiber), `moltsets.businessProfile` (moltsets), `apollo.personEnrich` (apollo), `crustdata.personEnrich` (crustdata), `linkedin.deobfuscate` (crustdata) |
+| `person.linkedinMemberUrn` | **string** — LinkedIn member URN (ACoAA… obfuscated id); de-obfuscation input only | No registered operation in this catalog |
+| `person.githubHandle` | **string** — GitHub username | `apollo.personEnrich` (apollo) |
+| `person.twitterHandle` | **string** — Twitter/X handle | `apollo.personEnrich` (apollo), `crustdata.personEnrich` (crustdata) |
+| `person.websites` | **string&#91;&#93;** — Personal/other websites | No registered operation in this catalog |
+| `person.industry` | **string** — Person's industry | No registered operation in this catalog |
+| `person.location` | **string** — Free-text location | `crustdata.personEnrich` (crustdata) |
+| `person.city` | **string** — City | No registered operation in this catalog |
+| `person.state` | **string** — State/region | No registered operation in this catalog |
+| `person.country` | **string** — Country | No registered operation in this catalog |
+| `person.title` | **string** — Current job title | `fiber.kitchenSinkPerson` (fiber), `moltsets.businessProfile` (moltsets), `apollo.personEnrich` (apollo), `crustdata.personEnrich` (crustdata), `linkedin.deobfuscate` (crustdata) |
+| `person.normalizedTitle` | **string** — Normalized/standardized title | No registered operation in this catalog |
+| `person.seniority` | **string** — Seniority level | No registered operation in this catalog |
+| `person.department` | **string** — Department | No registered operation in this catalog |
+| `person.jobFunction` | **string** — Job function | No registered operation in this catalog |
+| `person.currentCompanyName` | **string** — Current employer name | No registered operation in this catalog |
+| `person.currentCompanyDomain` | **string** — Current employer domain | `fiber.kitchenSinkPerson` (fiber), `moltsets.businessProfile` (moltsets), `apollo.personEnrich` (apollo), `crustdata.personEnrich` (crustdata), `linkedin.deobfuscate` (crustdata) |
+| `person.currentCompanyLinkedinUrl` | **string** — Current employer LinkedIn URL | No registered operation in this catalog |
+| `person.currentStartDate` | **date** — Start date at current role | No registered operation in this catalog |
+| `person.currentTenureMonths` | **number** — Months at current company | No registered operation in this catalog |
+| `person.employmentHistory` | **object&#91;&#93;** — Roles newest-first &#123;company,title,start,end,isCurrent,seniority&#125; | No registered operation in this catalog |
+| `person.pastCompanies` | **string&#91;&#93;** — Prior employer names | `crustdata.personEnrich` (crustdata) |
+| `person.careerStartedAt` | **date** — First-ever role start date | No registered operation in this catalog |
+| `person.totalYearsExperience` | **number** — Total years of experience | No registered operation in this catalog |
+| `person.education` | **object&#91;&#93;** — Education &#123;school,degree,field,years&#125; | `crustdata.personEnrich` (crustdata) |
+| `person.schools` | **string&#91;&#93;** — School names | `crustdata.personEnrich` (crustdata) |
+| `person.highestDegree` | **string** — Highest degree | No registered operation in this catalog |
+| `person.skills` | **string&#91;&#93;** — Skills | No registered operation in this catalog |
+| `person.certifications` | **string&#91;&#93;** — Certifications | No registered operation in this catalog |
+| `person.languages` | **string&#91;&#93;** — Languages | `crustdata.personEnrich` (crustdata) |
+| `person.interests` | **string&#91;&#93;** — Interests | No registered operation in this catalog |
+| `person.connectionCount` | **number** — LinkedIn connections | No registered operation in this catalog |
+| `person.followerCount` | **number** — LinkedIn followers | No registered operation in this catalog |
+| `person.recentPosts` | **object&#91;&#93;** — Recent posts/activity | `fiber.profilePosts` (fiber) |
+| `person.recentNewsMentions` | **object&#91;&#93;** — Recent web/news mentions (Exa search) | `exa.search` (exa) |
+| `person.isOpenToWork` | **boolean** — Open-to-work flag | No registered operation in this catalog |
+| `person.isHiring` | **boolean** — Hiring flag | No registered operation in this catalog |
+| `person.isInfluencer` | **boolean** — LinkedIn influencer flag | No registered operation in this catalog |
+| `person.isPremium` | **boolean** — LinkedIn premium flag | No registered operation in this catalog |
+| `person.workEmail` | **string** — Verified work email | `fiber.kitchenSinkPerson` (fiber), `moltsets.businessProfile` (moltsets), `apollo.personEnrich` (apollo) |
+| `person.personalEmail` | **string** — Personal email | No registered operation in this catalog |
+| `person.phone` | **string** — Direct phone | No registered operation in this catalog |
+
+## Company fields
+
+| Field | Type / meaning | Registered operation coverage |
+| --- | --- | --- |
+| `company.name` | **string** — Company name | `fiber.kitchenSinkCompany` (fiber), `moltsets.companyByDomain` (moltsets), `apollo.companyEnrich` (apollo), `crustdata.companyEnrich` (crustdata) |
+| `company.domain` | **string** — Primary domain | `fiber.kitchenSinkCompany` (fiber), `moltsets.companyByDomain` (moltsets), `apollo.companyEnrich` (apollo), `crustdata.companyEnrich` (crustdata) |
+| `company.allDomains` | **string&#91;&#93;** — All known domains | No registered operation in this catalog |
+| `company.website` | **string** — Website URL | `fiber.kitchenSinkCompany` (fiber), `apollo.companyEnrich` (apollo), `crustdata.companyEnrich` (crustdata) |
+| `company.description` | **string** — Description | `fiber.kitchenSinkCompany` (fiber), `moltsets.companyByDomain` (moltsets), `apollo.companyEnrich` (apollo), `crustdata.companyEnrich` (crustdata) |
+| `company.logoUrl` | **string** — Logo URL | `fiber.kitchenSinkCompany` (fiber), `moltsets.companyByDomain` (moltsets), `apollo.companyEnrich` (apollo), `crustdata.companyEnrich` (crustdata) |
+| `company.linkedinUrl` | **string** — LinkedIn company URL | `fiber.kitchenSinkCompany` (fiber), `moltsets.companyByDomain` (moltsets), `apollo.companyEnrich` (apollo), `crustdata.companyEnrich` (crustdata) |
+| `company.linkedinId` | **string** — LinkedIn organization id (chains person→company without a domain) | `fiber.kitchenSinkPerson` (fiber), `crustdata.personEnrich` (crustdata), `crustdata.companyEnrich` (crustdata), `linkedin.deobfuscate` (crustdata) |
+| `company.twitterHandle` | **string** — Twitter/X handle | `crustdata.companyEnrich` (crustdata) |
+| `company.facebookUrl` | **string** — Facebook URL | No registered operation in this catalog |
+| `company.instagramHandle` | **string** — Instagram handle | No registered operation in this catalog |
+| `company.githubUsername` | **string** — GitHub org username | No registered operation in this catalog |
+| `company.youtubeUrl` | **string** — YouTube URL | No registered operation in this catalog |
+| `company.blogUrls` | **string&#91;&#93;** — Blog URLs | No registered operation in this catalog |
+| `company.crunchbaseSlug` | **string** — Crunchbase slug | No registered operation in this catalog |
+| `company.foundedYear` | **number** — Year founded | `fiber.kitchenSinkCompany` (fiber), `apollo.companyEnrich` (apollo), `crustdata.companyEnrich` (crustdata) |
+| `company.companyType` | **string** — public &#124; private &#124; subsidiary | No registered operation in this catalog |
+| `company.status` | **string** — Operating status (active/closed) | No registered operation in this catalog |
+| `company.industry` | **string** — Primary industry | `fiber.kitchenSinkCompany` (fiber), `moltsets.companyByDomain` (moltsets), `apollo.companyEnrich` (apollo), `crustdata.companyEnrich` (crustdata) |
+| `company.industries` | **string&#91;&#93;** — All industries | No registered operation in this catalog |
+| `company.specialties` | **string&#91;&#93;** — Specialties | No registered operation in this catalog |
+| `company.categories` | **string&#91;&#93;** — Categories/tags | No registered operation in this catalog |
+| `company.naicsCodes` | **string&#91;&#93;** — NAICS codes | No registered operation in this catalog |
+| `company.sicCodes` | **string&#91;&#93;** — SIC codes | No registered operation in this catalog |
+| `company.hqCity` | **string** — HQ city | `fiber.kitchenSinkCompany` (fiber), `moltsets.companyByDomain` (moltsets), `apollo.companyEnrich` (apollo), `crustdata.companyEnrich` (crustdata) |
+| `company.hqState` | **string** — HQ state/region | No registered operation in this catalog |
+| `company.hqCountry` | **string** — HQ country | `fiber.kitchenSinkCompany` (fiber), `moltsets.companyByDomain` (moltsets), `crustdata.companyEnrich` (crustdata) |
+| `company.hqFull` | **string** — HQ formatted address | `fiber.kitchenSinkCompany` (fiber) |
+| `company.employeeCount` | **number** — Employee count | `fiber.kitchenSinkCompany` (fiber), `moltsets.companyByDomain` (moltsets), `apollo.companyEnrich` (apollo), `crustdata.companyEnrich` (crustdata) |
+| `company.employeeCountRange` | **string** — Employee count range | `crustdata.companyEnrich` (crustdata) |
+| `company.headcountGrowth` | **object** — Headcount growth by period &#123;1m,3m,6m,12m&#125; | `crustdata.companyEnrich` (crustdata) |
+| `company.headcountByRole` | **object** — Headcount by role (absolute counts per role bucket) | `crustdata.companyEnrich` (crustdata) |
+| `company.salesHeadcount` | **number** — Number of people in sales roles (summed from headcountByRole sales buckets) | `crustdata.companyEnrich` (crustdata) |
+| `company.headcountByRegion` | **object** — Headcount by region | No registered operation in this catalog |
+| `company.historicalHeadcount` | **object&#91;&#93;** — Historical headcount series | No registered operation in this catalog |
+| `company.followerCount` | **number** — LinkedIn followers | No registered operation in this catalog |
+| `company.followerGrowth` | **object** — Follower growth by period | No registered operation in this catalog |
+| `company.totalFundingUsd` | **number** — Total raised, USD | `crustdata.companyEnrich` (crustdata) |
+| `company.lastFundingStage` | **string** — Last round type/stage | `crustdata.companyEnrich` (crustdata) |
+| `company.lastFundingAmountUsd` | **number** — Last round amount, USD | `crustdata.companyEnrich` (crustdata) |
+| `company.lastFundingDate` | **date** — Last fundraise date | `crustdata.companyEnrich` (crustdata) |
+| `company.fundingRounds` | **object&#91;&#93;** — Funding rounds | No registered operation in this catalog |
+| `company.investors` | **string&#91;&#93;** — Investor names | No registered operation in this catalog |
+| `company.numFundingRounds` | **number** — Number of funding rounds | No registered operation in this catalog |
+| `company.acquisitions` | **object&#91;&#93;** — Acquisitions made | No registered operation in this catalog |
+| `company.numExits` | **number** — Number of exits | No registered operation in this catalog |
+| `company.revenueEstimateUsd` | **number** — Estimated revenue, USD | No registered operation in this catalog |
+| `company.marketCapUsd` | **number** — Market cap, USD | No registered operation in this catalog |
+| `company.isPublic` | **boolean** — Publicly traded | No registered operation in this catalog |
+| `company.stockTicker` | **string** — Stock ticker | No registered operation in this catalog |
+| `company.technologies` | **string&#91;&#93;** — Technologies used | No registered operation in this catalog |
+| `company.technologySpendUsd` | **number** — Estimated tech spend, USD | No registered operation in this catalog |
+| `company.webTrafficMonthlyVisitors` | **number** — Monthly web visitors | No registered operation in this catalog |
+| `company.competitors` | **string&#91;&#93;** — Competitor domains | No registered operation in this catalog |
+| `company.similarCompanies` | **string&#91;&#93;** — Similar companies | No registered operation in this catalog |
+| `company.jobOpeningsCount` | **number** — Open job count | `crustdata.companyEnrich` (crustdata) |
+| `company.recentJobOpenings` | **object&#91;&#93;** — Recent job openings | `crustdata.companyEnrich` (crustdata) |
+| `company.hiringGrowthPercent` | **number** — Hiring growth % | No registered operation in this catalog |
+| `company.decisionMakers` | **object&#91;&#93;** — Decision makers | No registered operation in this catalog |
+| `company.founders` | **object&#91;&#93;** — Founders | No registered operation in this catalog |
+| `company.employeeReviewRating` | **number** — Employee review rating | No registered operation in this catalog |
+| `company.news` | **object&#91;&#93;** — Recent news articles | No registered operation in this catalog |
+| `company.emails` | **string&#91;&#93;** — Company emails | No registered operation in this catalog |
+| `company.phoneNumbers` | **string&#91;&#93;** — Company phone numbers | No registered operation in this catalog |
+
+[Column builder](/enrichment/column-builder) · [Web profiles](/enrichment/web-app) · [Download source catalog](/reference/catalog.json).
