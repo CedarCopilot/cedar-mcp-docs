@@ -7,6 +7,8 @@ The complete inventory includes Cedar's app-only tool families. They explain cap
 
 | App-only tool | Capability |
 | --- | --- |
+| [`website`](/reference/website) | Read or refresh bounded public page text; no saved document or change subscription |
+| [`research-job`](/reference/research-job) | Durable, explicitly approved Autumn research and status recovery |
 | `board` | Board-specific records, schema and lane operations |
 | `workflow` | Discover supported workflow-button operations and inspect execution-history capacity |
 | `chat-context` | Manage/attach the working context of a Cedar chat |
@@ -27,3 +29,5 @@ A workflow document can be authored through `document-write`. The internal `work
 Cedar also has product-specific graph/outbound interfaces and a separate HTTP input path for visitor providers such as RB2B. Their existence does not establish a generic graph, outbound-campaign or visitor-provisioning tool on external MCP. See [website signals](/signals/website) for the supported integration path.
 
 The [coverage index](/reference/coverage) includes every action and nested variant of registered tools, with staff/feature/app availability labels. That inventory is the way to check whether a capability is directly callable, requires configuration, or belongs to a different surface.
+
+The shared `document-read` family also has an app-only `scroll` action for the currently open document. The external schema removes it; use the external read/list/search operations for document content.

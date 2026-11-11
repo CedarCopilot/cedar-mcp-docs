@@ -20,7 +20,7 @@ An agent is backed by a subagent document. Its document ID is used by playbook r
 6. Test the actual agent through supported diagnostics.
 7. Add the reference inside the intended trigger, then read it back.
 
-There is no external `agentLibrary.provision` or generic `spawn-subagent` registration. Library installation and workspace management are Cedar app capabilities; the MCP authoring path uses the [configuration](/capabilities/configuration), [documents](/capabilities/documents) and [playbook](/capabilities/playbooks) families.
+External MCP now exposes [`agent initialize`](/reference/agent) for supported built-in templates. It prepares instructions and a workspace without adding a playbook trigger, and reuses an existing installation without resetting personalization or activation. Generic `agentLibrary.provision` and `spawn-subagent` are not external registrations. Custom authoring and personalization use the [configuration](/capabilities/configuration), [documents](/capabilities/documents) and [playbook](/capabilities/playbooks) families.
 
 ## Edit without losing existing behavior
 

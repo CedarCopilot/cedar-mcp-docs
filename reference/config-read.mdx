@@ -3,7 +3,7 @@ title: "config-read"
 description: "Parameters, scopes, and response schema for config-read."
 ---
 
-Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+Schema snapshot with source-reviewed identity updates on November 11, 2026; retained branches have not been regenerated. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
 ## Capabilities
 
@@ -23,6 +23,7 @@ For "why didn't X happen"/system-behavior questions, load-skill('cedar-configura
 | `read-settings` | Read selected account settings and connected-system configuration. | `crm:read` |
 | `list-fields` | Inspect field definitions, mappings and options, with supported organization rollups. | `crm:read` |
 | `list-org-members` | Find IDs and directory details for members of the caller's organization. | `crm:read` |
+| `get-user-identity` | Read trusted caller identity, organization and administrator/read-only/acting-as status; no parameter object required. | `crm:read` |
 | `find-bot-slack-channels` | Find channels Cedar's bot can actually post to, subject to membership and administrator visibility. | `crm:read` |
 
 Path, account role, feature gates, target ownership, and billing permissions can impose additional requirements.
@@ -37,11 +38,15 @@ Every finite input choice is listed here, including array values and nested vari
 | `readSettings.sections[]` | `connections`, `user_settings`, `inboxes`, `task_groups`, `credentials`, `data_services` |  |
 | `listFields.targetUserIds` | `org` |  |
 
+## Caller identity
+
+Call `config-read` with `{ "action": "get-user-identity" }` before selecting a personal or team setup target. The optional response branch `userIdentity` contains `userId`, nullable `organizationId`, `name`, `email`, nullable `image`, `isOrganizationAdmin`, `isReadOnly`, `actingAs` and `authenticatedActorUserId`. Identity comes from the session; this operation does not accept a target-user override. Raw credential retrieval remains app-only and is excluded from the external input schema.
+
 ## Parameters
 
 | Parameter | Type | Required | Details |
 | --- | --- | --- | --- |
-| `action` | "read-playbook" · "read-settings" · "list-fields" · "list-org-members" · "find-bot-slack-channels" | Yes |   |
+| `action` | "read-playbook" · "read-settings" · "list-fields" · "list-org-members" · "find-bot-slack-channels" · "get-user-identity" | Yes |   |
 | `readPlaybook` | object | No |   |
 | `readSettings` | object | No |   |
 | `listFields` | object | No |   |
@@ -106,7 +111,8 @@ Every finite input choice is listed here, including array values and nested vari
         "read-settings",
         "list-fields",
         "list-org-members",
-        "find-bot-slack-channels"
+        "find-bot-slack-channels",
+        "get-user-identity"
       ]
     },
     "readPlaybook": {
@@ -267,6 +273,7 @@ Inspect `isError` on the MCP result and `success` / `errorMessage` in the action
 | `listOrgMembers` | object | No |   |
 | `getCredentials` | object | No |   |
 | `findBotSlackChannels` | object | No |   |
+| `userIdentity` | object | No | Trusted caller identity and role flags. |
 | `credentialSources` | object&#91;&#93; | No |   |
 
 <Accordion title="Output JSON Schema">
@@ -2044,6 +2051,56 @@ Inspect `isError` on the MCP result and `success` / `errorMessage` in the action
         ],
         "additionalProperties": false
       }
+    },
+    "userIdentity": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string"
+        },
+        "organizationId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "image": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "authenticatedActorUserId": {
+          "type": "string"
+        },
+        "isOrganizationAdmin": {
+          "type": "boolean"
+        },
+        "isReadOnly": {
+          "type": "boolean"
+        },
+        "actingAs": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "userId",
+        "organizationId",
+        "name",
+        "email",
+        "image",
+        "isOrganizationAdmin",
+        "isReadOnly",
+        "actingAs",
+        "authenticatedActorUserId"
+      ]
     }
   },
   "required": [

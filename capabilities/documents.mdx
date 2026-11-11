@@ -82,3 +82,7 @@ Every finite input choice is listed here, including array values and nested vari
 ## Access and results
 
 Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).
+
+## In-app document navigation
+
+Cedar's app can use `document-read scroll` to dispatch navigation to an exact HTML marker or visible text in the already-open document. It takes a document ID and at least one marker or text target. Dispatch does not prove the browser found the target. This action is explicitly removed from the external MCP input schema and cannot be called by an external client.

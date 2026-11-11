@@ -4,9 +4,12 @@
     "action": {
       "type": "string",
       "enum": [
-        "sync-thread"
+        "sync-thread",
+        "create-channel",
+        "invite-members",
+        "invite-external"
       ],
-      "description": "Which Slack write operation to perform — currently only \"sync-thread\" (pairs with syncThread: {...})."
+      "description": "Which Slack write operation to perform. Pass only its matching params object."
     },
     "syncThread": {
       "type": "object",
@@ -40,6 +43,73 @@
     "is_new_request": {
       "type": "boolean",
       "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    },
+    "createChannel": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80,
+          "pattern": "^[a-z0-9_-]+$"
+        },
+        "isPrivate": {
+          "type": "boolean",
+          "default": true
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false,
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "inviteMembers": {
+      "type": "object",
+      "properties": {
+        "channelId": {
+          "type": "string",
+          "pattern": "^[CG][A-Z0-9]+$"
+        },
+        "userIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[UW][A-Z0-9]+$"
+          },
+          "minItems": 1,
+          "maxItems": 100
+        }
+      },
+      "required": [
+        "channelId",
+        "userIds"
+      ],
+      "additionalProperties": false,
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "inviteExternal": {
+      "type": "object",
+      "properties": {
+        "channelId": {
+          "type": "string",
+          "pattern": "^[CG][A-Z0-9]+$"
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "externalLimited": {
+          "type": "boolean",
+          "default": true
+        }
+      },
+      "required": [
+        "channelId",
+        "email"
+      ],
+      "additionalProperties": false,
+      "$schema": "http://json-schema.org/draft-07/schema#"
     }
   },
   "required": [

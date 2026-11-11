@@ -1,0 +1,253 @@
+{
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "initialize": {
+      "type": "object",
+      "properties": {
+        "templateId": {
+          "type": "string"
+        },
+        "agentId": {
+          "type": "string"
+        },
+        "documentId": {
+          "type": "string"
+        },
+        "documentPath": {
+          "type": "string"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "ownerUserId": {
+          "type": "string"
+        },
+        "created": {
+          "type": "boolean"
+        },
+        "triggerWired": {
+          "type": "boolean"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "templateId",
+        "agentId",
+        "documentId",
+        "documentPath",
+        "slug",
+        "ownerUserId",
+        "created",
+        "triggerWired",
+        "enabled",
+        "warnings"
+      ],
+      "additionalProperties": false
+    },
+    "pipelineKpis": {
+      "type": "object",
+      "properties": {
+        "contactedBuyers": {
+          "type": "number"
+        },
+        "positiveResponseBuyers": {
+          "type": "number"
+        },
+        "positiveResponseRate": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "buyersWithMeeting": {
+          "type": "number"
+        },
+        "meetingBookingRate": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "meetingsBooked": {
+          "type": "number"
+        },
+        "unassessedResponseBuyers": {
+          "type": "number"
+        },
+        "unassessedMeetingBuyers": {
+          "type": "number"
+        },
+        "byTaskView": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "contactedBuyers": {
+                "type": "number"
+              },
+              "positiveResponseBuyers": {
+                "type": "number"
+              },
+              "positiveResponseRate": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "buyersWithMeeting": {
+                "type": "number"
+              },
+              "meetingBookingRate": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "meetingsBooked": {
+                "type": "number"
+              },
+              "unassessedResponseBuyers": {
+                "type": "number"
+              },
+              "unassessedMeetingBuyers": {
+                "type": "number"
+              },
+              "taskViewId": {
+                "type": "string"
+              },
+              "family": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "contactedBuyers",
+              "positiveResponseBuyers",
+              "positiveResponseRate",
+              "buyersWithMeeting",
+              "meetingBookingRate",
+              "meetingsBooked",
+              "unassessedResponseBuyers",
+              "unassessedMeetingBuyers",
+              "taskViewId",
+              "family"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "coverage": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "contactedBuyers",
+        "positiveResponseBuyers",
+        "positiveResponseRate",
+        "buyersWithMeeting",
+        "meetingBookingRate",
+        "meetingsBooked",
+        "unassessedResponseBuyers",
+        "unassessedMeetingBuyers",
+        "byTaskView",
+        "coverage"
+      ],
+      "additionalProperties": false
+    },
+    "kpis": {
+      "type": "object",
+      "properties": {
+        "agentId": {
+          "type": "string"
+        },
+        "available": {
+          "type": "boolean"
+        },
+        "primaryMetricId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "followThroughDays": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "warning": {
+          "type": "string"
+        },
+        "metrics": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "observed": {
+                "type": "number"
+              },
+              "notObserved": {
+                "type": "number"
+              },
+              "unknown": {
+                "type": "number"
+              },
+              "confirmedAttribution": {
+                "type": "number"
+              },
+              "inferredAttribution": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "id",
+              "label",
+              "description",
+              "observed",
+              "notObserved",
+              "unknown",
+              "confirmedAttribution",
+              "inferredAttribution"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "agentId",
+        "available",
+        "primaryMetricId",
+        "followThroughDays",
+        "warning",
+        "metrics"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

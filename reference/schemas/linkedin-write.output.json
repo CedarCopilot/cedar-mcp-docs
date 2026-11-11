@@ -54,6 +54,24 @@
         }
       },
       "additionalProperties": true
+    },
+    "viewProfile": {
+      "type": "object",
+      "properties": {
+        "providerId": {
+          "type": "string"
+        },
+        "publicIdentifier": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "headline": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
     }
   },
   "required": [

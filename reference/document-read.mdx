@@ -518,3 +518,7 @@ Inspect `isError` on the MCP result and `success` / `errorMessage` in the action
 </Accordion>
 
 [Download the output schema](/reference/schemas/document-read.output.json).
+
+## In-app document navigation
+
+Cedar's app can use `document-read scroll` to dispatch navigation to an exact HTML marker or visible text in the already-open document. It takes a document ID and at least one marker or text target. Dispatch does not prove the browser found the target. This action is explicitly removed from the external MCP input schema and cannot be called by an external client.

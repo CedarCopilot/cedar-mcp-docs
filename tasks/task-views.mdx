@@ -1,0 +1,43 @@
+---
+title: "Task Views"
+description: "Give reps an organized place to review, act on and track agent-generated work."
+---
+
+Task Views turn an agent's work into a workspace a rep can use. A view brings together relevant tasks, task outputs and supporting context with saved fields, sections, order and actions. The same workflow can also produce [Cedar output files](/agent-platform/specialized-documents), such as account tables, briefs and deal rooms.
+
+Task Views belong primarily to the **rep execution layer** of an automation. The context layer supplies evidence; your strategy defines what matters; the agent researches or drafts; the Task View makes the next step visible and actionable. See [the four-layer map](/agent-platform/automation-layers).
+
+<Note>Available actions depend on the saved view configuration and the rep's access.</Note>
+
+## What belongs in a Task View
+
+| Need | Task View behavior |
+| --- | --- |
+| See the next work to do | Saved sections, priorities, typed fields and ordering |
+| Review the agent's output | Open the task's linked draft, evidence or supported output |
+| Take the next step | Use the saved actions configured for that view and item |
+| Track follow-through | Preserve task identity, ownership and completion/cancellation state |
+| Keep useful context nearby | Include agent-authored context rows alongside task-backed work |
+| Work from Slack | Deliver configured task cards with supported review and lifecycle controls |
+
+## One task, multiple places to work
+
+A Task View organizes work; it does not replace the canonical task record. A task can be associated with views while retaining its own owner, due date and lifecycle. Association alone is not proof that the task has been placed as a visible row. Context rows can also appear without creating a task.
+
+Use ordinary tables for structured research and data. Use Task Views when a rep needs task-aware actions and progress. A Markdown checkbox or table cell is not automatically an assigned task.
+
+## Review, act and track
+
+1. The agent creates or updates the task and saves its output.
+2. The configured view organizes the work for the rep.
+3. The rep reviews the current output in Cedar or through an eligible Slack task card.
+4. The rep takes an explicit supported action: prepare/revise work, approve and send a draft, complete or cancel the task, or snooze eligible work.
+5. Cedar records the result and reconciles the task's representations. A requested send, a confirmed delivery and a completed task are distinct outcomes.
+
+Completing a task does not itself send its draft. Cancelling work does not mean it was delivered. Failed actions and unconfirmed delivery must remain visible rather than being described as complete.
+
+## Set up a first workflow
+
+Choose one outcome, its task owner and the output the rep should review. Configure the view's fields, saved rules and supported actions. If using Slack delivery, select an authorized internal destination and verify the rep can access both the task and its evidence. Test one complete journey before enabling broader automatic work.
+
+[Slack task management](/slack/task-views) · [Task lifecycle](/tasks/overview) · [MCP Task View tools](/reference/task-views)

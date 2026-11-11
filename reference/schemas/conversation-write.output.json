@@ -653,6 +653,47 @@
         }
       },
       "additionalProperties": false
+    },
+    "convertHubspotLead": {
+      "type": "object",
+      "properties": {
+        "proposed": {
+          "type": "boolean"
+        },
+        "leadId": {
+          "type": "string"
+        },
+        "dealId": {
+          "type": "string"
+        },
+        "dealConversationId": {
+          "type": "string"
+        },
+        "dealName": {
+          "type": "string"
+        },
+        "dealStageId": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "handoffCrmRecord": {
+      "type": "object",
+      "properties": {
+        "proposed": {
+          "type": "boolean"
+        },
+        "sourceConversationId": {
+          "type": "string"
+        },
+        "targetConversationId": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "$schema": "http://json-schema.org/draft-07/schema#"
     }
   },
   "required": [

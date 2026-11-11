@@ -4,7 +4,9 @@ sidebarTitle: "Overview"
 description: "Turn recommendations into owned work, prepare actions, and track follow-through through MCP."
 ---
 
-**Yes, the external MCP has access to user tasks.** The `task` family exposes 14 actions for personal work, deal follow-ups, recommendations, assignments, approvals and completion. Tasks connect evidence to an owner and a next step, so an agent's output can become visible, actionable work.
+**Yes, the external MCP has access to user tasks.** The `task` family exposes 16 actions for personal work, deal follow-ups, recommendations, assignments, approvals and completion. Tasks connect evidence to an owner and a next step, so an agent's output can become visible, actionable work. The [Task View tools](/reference/task-views) organize that work separately from task creation.
+
+For customer setup, start with [Task Views](/tasks/task-views) and [managing the work from Slack](/slack/task-views).
 
 ## Capabilities at a glance
 
@@ -14,8 +16,8 @@ description: "Turn recommendations into owned work, prepare actions, and track f
 | Personal reminders | Create a dated reminder without attaching it to a deal | `createAssigned` |
 | Deal follow-ups | Create work with deal context, source links and supported agent preparation | `create`, `createAssigned` |
 | Assignment | Discover eligible assignees, assign a task and transfer ownership with the service's concurrency checks | `creationOptions`, `assignmentOptions`, `reassign` |
-| Planning | Edit work, reschedule it or update its due date | `update`, `updateDueDate` |
-| Preparation | Start preparing eligible caller-owned work in Cedar chat | `start` |
+| Planning | Edit work, reschedule it, snooze a human-task deadline or email-response reminder; unsnooze eligible email responses | `update`, `updateDueDate`, `snooze`, `unsnooze` |
+| Preparation | Read preparation instructions and saved context through MCP, or prepare eligible work in Cedar chat | `start` |
 | CRM approvals | Apply the exact saved, supported CRM proposal at the user's direction | `applyApproval` |
 | Resolution | Complete work, cancel it or delete it using the intended lifecycle action | `complete`, `cancel`, `delete` |
 
@@ -48,11 +50,19 @@ Follow `nextCursor` with the same filters to retrieve subsequent pages. The resp
 
 A task can record a commitment, hold a recommendation, carry a proposed CRM change, or organize an agent-assisted follow-up. A due date states when work is due. Agent execution configuration controls whether and when Cedar prepares work automatically. Personal reminders do not become automatic agent runs merely because they have a future due date; automatic drafting requires a real deal and supported execution settings.
 
-`start` prepares eligible work and can return a seed prompt for Cedar chat. It does not authorize an outbound message. Track preparation, approval, scheduling, delivery and completion as distinct states. For persisted behavior, combine tasks with [agents and triggers](/agent-platform/overview); for task-aware daily or deal views, use [lists and agendas](/documents/lists-and-agendas).
+For external MCP clients, `start` returns a read-only `deal.handoff` containing instructions, saved context and output guidance with `executed: false`. It does not run an agent, send a message or apply a CRM change. In Cedar chat, preparation can return a seed prompt. A saved Task View action needs its `launchingTaskViewId`, `actionId` and current `expectedRevision`. Track preparation, approval, scheduling, delivery and completion as distinct states. For persisted behavior, combine tasks with [agents and triggers](/agent-platform/overview); for task-aware daily or deal views, use [lists and agendas](/documents/lists-and-agendas).
+
+## Confirm creation, reminders and completion
+
+`createAssigned` supports human-requested tasks and reminders with an explicit due date. Date-only values mean 9 AM in the actual task owner’s timezone; explicit ISO times are preserved. Read the returned `deal.data` JSON and report its `confirmation.text` for verified placement and reminder timing. Do not invent a destination or claim reminder setup from a successful outer call alone.
+
+`create` supports an eligible `assigneeUserId` and optional Task View destinations. A task without a conversation must supply Task View destinations; automatic drafting still requires a real deal. Read per-destination association outcomes; `placement: "pending"` is not confirmed placement. A persisted task and scheduler acceptance are separate receipts, and acceptance does not guarantee execution. Never recreate a confirmed task merely to retry a later effect.
+
+For `update`, claim completion only when the receipt has `outcome: "updated"`, `changed: true` and `taskStatus: "done"`. `blocked` and `unchanged` do not establish completion. Fulfillment evidence, when supplied, must refer to the linked task draft and actual sent-source evidence.
 
 ## Access and organization
 
-The current external registration uses the baseline scope `crm:read`, including task mutations. Each action still enforces its ownership, assignment, target-user and approval rules. A scope name alone does not authorize arbitrary changes to another person's work. Your session's `tools/list` determines whether the family is available.
+Most task actions use `crm:read`; `snooze` and `unsnooze` require `email:read`. Each action still enforces its ownership, assignment, target-user and approval rules. A scope name alone does not authorize arbitrary changes to another person's work. Your session's `tools/list` determines whether the family is available.
 
 Task groups organize work into lanes with routing criteria, ordering, agent visibility and overdue policies. Manage those through `workspace-write manage_task_group`; read existing configuration first. Agent visibility controls which work is surfaced to agents and is separate from human access permissions.
 

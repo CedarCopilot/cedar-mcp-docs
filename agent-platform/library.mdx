@@ -1,13 +1,13 @@
 ---
 title: "Agent library"
-description: "Every shipped agent template, its capabilities, prerequisites and workspace."
+description: "Agent template snapshots, initialization, prerequisites and activation boundaries."
 ---
 
-The code registers **46 agent-library templates**. This catalog includes each template's purpose, starting trigger, required connections, configuration files and output type. Installing a template is a Cedar app operation; these are not additional MCP tool names. External clients author supported agent/playbook documents through the configuration and document families.
+The template snapshot below records purpose, starting trigger, required connections, configuration files and output type. Check the current Cedar library for available template identifiers. External MCP clients can use [`agent initialize`](/reference/agent) for supported built-in templates, then personalize through the configuration and document families. Template names are not additional MCP tool names.
 
 ## What installation creates
 
-Provisioning creates the agent definition, files it in the appropriate personal/team/background area, seeds configuration and sample outputs, starts its introductory chat, then wires its trigger. Existing definitions are skipped rather than overwritten. A partially provisioned agent can exist with a failed trigger or workspace step: inspect the returned failures and `triggerWired` status. Sample outputs are examples, not completed work on your records.
+Cedar app provisioning can create the agent definition, configuration and workspace and wire its starting trigger. External `agent initialize` prepares a template without adding a playbook trigger; initialization and activation are separate. The trigger snapshots below are not proof that initialization activates a schedule or event source. Existing definitions are skipped rather than overwritten. A partially provisioned agent can exist with a failed trigger or workspace step: inspect the returned failures and `triggerWired` status. Sample outputs are examples, not completed work on your records.
 
 Read [agent lifecycle](/agent-platform/lifecycle), [files and memory](/agent-platform/files-memory), and [permissions](/agent-platform/permissions) before enabling live work. Template trigger objects below use the product's provisioning format; the canonical playbook XML names are listed in [triggers](/agent-platform/triggers).
 

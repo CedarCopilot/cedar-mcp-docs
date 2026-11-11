@@ -1770,6 +1770,56 @@
         ],
         "additionalProperties": false
       }
+    },
+    "userIdentity": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string"
+        },
+        "organizationId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "image": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "authenticatedActorUserId": {
+          "type": "string"
+        },
+        "isOrganizationAdmin": {
+          "type": "boolean"
+        },
+        "isReadOnly": {
+          "type": "boolean"
+        },
+        "actingAs": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "userId",
+        "organizationId",
+        "name",
+        "email",
+        "image",
+        "isOrganizationAdmin",
+        "isReadOnly",
+        "actingAs",
+        "authenticatedActorUserId"
+      ]
     }
   },
   "required": [

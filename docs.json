@@ -147,6 +147,7 @@
             "group": "Agent platform",
             "pages": [
               "agent-platform/overview",
+              "agent-platform/automation-layers",
               "operations/app-only"
             ]
           },
@@ -157,13 +158,16 @@
                 "group": "User tasks",
                 "pages": [
                   "tasks/overview",
+                  "tasks/task-views",
+                  "slack/task-views",
                   "capabilities/tasks",
                   "workspace/tasks",
                   "tasks/visibility",
                   {
                     "group": "Tool reference",
                     "pages": [
-                      "reference/task"
+                      "reference/task",
+                      "reference/task-views"
                     ]
                   }
                 ]
@@ -175,6 +179,7 @@
                   "documents/lists-and-agendas",
                   "agent-platform/table-workspaces",
                   "documents/reports",
+                  "documents/deal-rooms",
                   "documents/flowcharts"
                 ]
               }
@@ -187,6 +192,7 @@
                 "group": "Agents",
                 "pages": [
                   "agent-platform/lifecycle",
+                  "reference/agent",
                   "agent-platform/library",
                   "agent-platform/system-agents",
                   "automation/agent-authoring"
@@ -601,7 +607,9 @@
                   {
                     "group": "Tool reference",
                     "pages": [
-                      "reference/research"
+                      "reference/research",
+                      "reference/website",
+                      "reference/research-job"
                     ]
                   }
                 ]

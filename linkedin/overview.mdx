@@ -12,7 +12,8 @@ Cedar automatically checks account health and action limits, queues scheduled me
 
 | Area | Actions | Typical use |
 | --- | --- | --- |
-| Seats and profile | `list-seats`, `view-profile` | Verify connection health, inspect a person or your own profile |
+| Seats | `linkedin-read list-seats` | Verify connection health |
+| Profile visit | `linkedin-write view-profile` | Make a real, potentially notified visit; requires `linkedin:write` |
 | Search | `search`, `search-parameters` | Classic, Sales Navigator, or Recruiter searches and reference IDs |
 | Batches | `profiles`, `companies` | Bounded profile/company reads and cache-aware lookups |
 | Network | `list-connections`, `list-connections-page`, `connections-page` | Bounded or resumable network traversal |

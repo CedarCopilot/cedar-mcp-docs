@@ -12,7 +12,7 @@
       "properties": {
         "data": {
           "type": "string",
-          "description": "JSON task/people data, including owner, assignedBy and assignmentNote."
+          "description": "JSON task/people data, including owner, assignedBy, assignmentNote and creation confirmation. Use confirmation.text for verified placement and reminder timing; never guess a destination."
         },
         "taskId": {
           "type": "string"
@@ -26,6 +26,65 @@
         "prepared": {
           "type": "boolean",
           "description": "Prepared context only; no agent run or send has happened."
+        },
+        "handoff": {
+          "type": "object",
+          "properties": {
+            "outcome": {
+              "type": "string",
+              "const": "handoff"
+            },
+            "executed": {
+              "type": "boolean",
+              "const": false
+            },
+            "intent": {
+              "type": "string",
+              "enum": [
+                "prepare",
+                "research",
+                "revise"
+              ]
+            },
+            "taskId": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "taskRevision": {
+              "type": "string"
+            },
+            "launchingTaskViewId": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "uuid"
+            },
+            "instructions": {
+              "type": "string"
+            },
+            "context": {
+              "type": "object",
+              "additionalProperties": true,
+              "description": "Task, Task Views, producer/source evidence, preferences and output instructions. Nested context schemas are not fully expanded in this reviewed snapshot."
+            },
+            "selectedAction": {
+              "type": "object",
+              "additionalProperties": true,
+              "description": "Saved Task View action when selected; consult live schema for nested fields."
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "outcome",
+            "executed",
+            "intent",
+            "taskId",
+            "taskRevision",
+            "launchingTaskViewId",
+            "instructions",
+            "context"
+          ]
         }
       },
       "additionalProperties": false
@@ -140,12 +199,15 @@
           "description": "ID of the created task"
         },
         "conversationId": {
-          "type": "string",
-          "description": "ID of the conversation"
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Conversation ID"
         },
         "scheduledFor": {
           "type": "string",
-          "description": "Confirmed scheduler registration time; does not guarantee execution"
+          "description": "Confirmed scheduler registration time; does not guarantee execution."
         },
         "outcome": {
           "type": "object",
@@ -183,15 +245,14 @@
               }
             }
           },
+          "additionalProperties": false,
           "required": [
             "persistence",
             "scheduling",
             "dueDate",
             "partial",
             "warnings"
-          ],
-          "additionalProperties": false,
-          "description": "Persisted task and scheduling outcomes. Never recreate a confirmed task to retry a later effect."
+          ]
         },
         "agentExecutionEnabled": {
           "type": "boolean",
@@ -280,6 +341,52 @@
         "userMessage": {
           "type": "string",
           "description": "UI instructions for the user"
+        },
+        "assigneeUserId": {
+          "type": "string"
+        },
+        "taskViews": {
+          "type": "object",
+          "properties": {
+            "associations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "taskViewId": {
+                    "type": "string"
+                  },
+                  "outcome": {
+                    "type": "string",
+                    "enum": [
+                      "associated",
+                      "unavailable"
+                    ]
+                  },
+                  "version": {
+                    "type": "number"
+                  },
+                  "reason": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false,
+                "required": [
+                  "taskViewId",
+                  "outcome"
+                ]
+              }
+            },
+            "placement": {
+              "type": "string",
+              "const": "pending"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "associations",
+            "placement"
+          ]
         }
       },
       "additionalProperties": false
@@ -306,6 +413,120 @@
         "userMessage": {
           "type": "string",
           "description": "UI instructions for the user"
+        },
+        "taskViews": {
+          "type": "object",
+          "properties": {
+            "associations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "taskViewId": {
+                    "type": "string"
+                  },
+                  "outcome": {
+                    "type": "string",
+                    "enum": [
+                      "associated",
+                      "unavailable"
+                    ]
+                  },
+                  "version": {
+                    "type": "number"
+                  },
+                  "reason": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false,
+                "required": [
+                  "taskViewId",
+                  "outcome"
+                ]
+              }
+            },
+            "placement": {
+              "type": "string",
+              "const": "pending"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "associations",
+            "placement"
+          ]
+        },
+        "isRecoverable": {
+          "type": "boolean"
+        },
+        "taskEffectOutcome": {
+          "type": "object",
+          "properties": {
+            "persistence": {
+              "type": "string",
+              "enum": [
+                "created",
+                "existing",
+                "unconfirmed"
+              ]
+            },
+            "scheduling": {
+              "type": "string",
+              "enum": [
+                "not_requested",
+                "not_attempted",
+                "accepted",
+                "unconfirmed"
+              ]
+            },
+            "dueDate": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "partial": {
+              "type": "boolean"
+            },
+            "warnings": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "persistence",
+            "scheduling",
+            "dueDate",
+            "partial",
+            "warnings"
+          ]
+        },
+        "blocked": {
+          "type": "boolean"
+        },
+        "noAction": {
+          "type": "boolean"
+        },
+        "skipped": {
+          "type": "boolean"
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "updated",
+            "unchanged",
+            "blocked",
+            "error"
+          ],
+          "description": "Actual persistence outcome; blocked/unchanged do not mean done."
+        },
+        "taskStatus": {
+          "type": "string",
+          "description": "Persisted task status after the update attempt."
         }
       },
       "additionalProperties": false

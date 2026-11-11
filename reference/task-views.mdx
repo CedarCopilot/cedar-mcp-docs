@@ -1,0 +1,56 @@
+---
+title: "Task View tools"
+description: "Read and organize saved Task Views through the MCP families."
+---
+
+`task-views-read` and `task-views-write` are external MCP families for saved Task Views. Check `tools/list`; read operations require `crm:read`, and write operations require `playbook:write`, plus ownership and file-access checks. Checked against production-branch source on November 11, 2026.
+
+## Read operations
+
+Use an `action` and its **same-named** parameter object, including hyphens:
+
+```json
+{
+  "action": "history-read",
+  "history-read": { "taskViewId": "YOUR_TASK_VIEW_ID", "limit": 20 }
+}
+```
+
+| Action | Parameters |
+| --- | --- |
+| `list`, `list-archived` | Optional `afterId`, `limit` |
+| `read`, `resources`, `open` | `taskViewId` |
+| `history-read` | `taskViewId`; optional `afterSeq`, `limit` |
+| `producers` | `taskViewId`; optional `afterTaskId`, `limit` |
+| `items` | `taskViewId`; optional `afterItemId`, `sectionId`, `query`, `limit` |
+| `candidates` | `taskViewId`; optional `cursor`, `limit` |
+| `unmatched` | Optional `afterTaskId`, `query`, `limit` |
+| `memberships` | `taskId`; optional `afterId` |
+
+Page limits are 1–100. Follow returned `nextCursor` using the corresponding operation's cursor field until it is null. Item cursors are opaque and bound to a document revision. `list` returns active destinations; use `list-archived` to discover restorable ones. History reads return safe session metadata. Candidate associations and visible items are distinct: association alone does not admit a visible row.
+
+## Write operations
+
+Read the current config, schema revision, task versions and saved action identifiers before editing. Obtain the full nested input schema from the connected client's `tools/list`; the following is an operation guide, not a replacement for that schema.
+
+| Action | Behavior and key inputs |
+| --- | --- |
+| `create` | Top-level `config` plus `create.requestId`; queues background initialization |
+| `initialize` | `initialize.taskViewId`; explicitly retry pending initialization of an owned view |
+| `configure` | Top-level complete `config` plus `configure.taskViewId` and `expectedRevision` |
+| `saved-policy` | View ID/revision plus optional instructions, priority instructions and sections |
+| `archive`, `restore` | View ID and expected revision |
+| `restore-history` | View ID, expected revision and historical `seq`; restores configuration/rows, not task lifecycle |
+| `invoke-action` | View ID/revision and existing `actionId`; optional `itemId`; may execute or hand off the saved action |
+| `associate` | View ID/schema revision plus 1–100 candidates with task IDs, expected versions and typed values |
+| `patch-values` | View ID/schema revision, task ID/version and typed values |
+| `upsert-context` | Stable agent-authored context rows; preserves existing section placement and order |
+| `manual` | Exact requested row operations, expected view revision and candidate versions |
+| `organize` | View ID and `mode`: `preview` or `apply`; rejudges existing candidates |
+| `place` | View ID, 1–20 known task IDs and `mode`: `preview` or `apply`; admits to a custom view |
+
+These branches use same-named objects, such as `"saved-policy": { ... }`. Inspect mutation receipts and failures; do not assume a successful association means visible placement. Task creation, preparation, research, revision and completion belong to the canonical [task tool](/reference/task).
+
+[User tasks](/tasks/overview) · [Agent KPIs](/reference/agent)
+
+[Read input schema](/reference/schemas/task-views-read.input.json). The write operation guide above does not replace its full connected schema.

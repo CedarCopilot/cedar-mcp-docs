@@ -1,0 +1,224 @@
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "producers",
+        "history-read",
+        "list",
+        "list-archived",
+        "read",
+        "items",
+        "candidates",
+        "unmatched",
+        "resources",
+        "memberships",
+        "open"
+      ]
+    },
+    "list": {
+      "type": "object",
+      "properties": {
+        "afterId": {
+          "type": "string",
+          "maxLength": 512
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "additionalProperties": false
+    },
+    "list-archived": {
+      "type": "object",
+      "properties": {
+        "afterId": {
+          "type": "string",
+          "maxLength": 512
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "additionalProperties": false
+    },
+    "read": {
+      "type": "object",
+      "properties": {
+        "taskViewId": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "required": [
+        "taskViewId"
+      ],
+      "additionalProperties": false
+    },
+    "history-read": {
+      "type": "object",
+      "properties": {
+        "taskViewId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "afterSeq": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "required": [
+        "taskViewId"
+      ],
+      "additionalProperties": false
+    },
+    "producers": {
+      "type": "object",
+      "properties": {
+        "taskViewId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "afterTaskId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "required": [
+        "taskViewId"
+      ],
+      "additionalProperties": false
+    },
+    "items": {
+      "type": "object",
+      "properties": {
+        "taskViewId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "afterItemId": {
+          "type": "string",
+          "description": "Opaque nextCursor from the previous page, bound to the document revision."
+        },
+        "sectionId": {
+          "type": "string"
+        },
+        "query": {
+          "type": "string"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "required": [
+        "taskViewId"
+      ],
+      "additionalProperties": false
+    },
+    "candidates": {
+      "type": "object",
+      "properties": {
+        "taskViewId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "cursor": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "required": [
+        "taskViewId"
+      ],
+      "additionalProperties": false
+    },
+    "unmatched": {
+      "type": "object",
+      "properties": {
+        "afterTaskId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "query": {
+          "type": "string"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "additionalProperties": false
+    },
+    "resources": {
+      "type": "object",
+      "properties": {
+        "taskViewId": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "required": [
+        "taskViewId"
+      ],
+      "additionalProperties": false
+    },
+    "memberships": {
+      "type": "object",
+      "properties": {
+        "taskId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "afterId": {
+          "type": "string",
+          "maxLength": 512
+        }
+      },
+      "required": [
+        "taskId"
+      ],
+      "additionalProperties": false
+    },
+    "open": {
+      "type": "object",
+      "properties": {
+        "taskViewId": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "required": [
+        "taskViewId"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "action"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
