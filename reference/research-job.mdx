@@ -1,0 +1,30 @@
+---
+title: "research-job (Cedar app only)"
+description: "Manage durable Autumn research with explicit scope and credit-cost approval."
+---
+
+**App-only:** `research-job` requires the ungrantable external `in-app` scope and authenticated chat context for job operations. It is not an external MCP research endpoint. Checked against production-branch source on November 11, 2026.
+
+| Action | Parameter object | Purpose |
+| --- | --- | --- |
+| `guidance` | `guidance` | Read effective personal research guidance |
+| `ensure-guidance` | — | Create personal guidance when missing |
+| `compile-brief` | `compileBrief` | Compile a public-only brief for a verified public target |
+| `start` | `start` | Save and dispatch a new authorized research job |
+| `read` | `read` | Read a saved job by `jobId` |
+| `list` | `list` | List this chat's jobs; optional `limit` from 1–100 |
+| `continue` | `continue` | Extend the same provider task with a follow-up prompt |
+| `stop` | `stop` | Request cancellation of a saved job |
+| `advance` | `advance` | Perform one bounded recovery step on an authorized saved job |
+
+`start` requires `commandId`, `prompt`, `title`, `targetDocumentId` and `scope`. Optional inputs include `inputRows`, `outputSchema`, `promptVersion`, `model` (`ranger`, the default, or `scout`) and `targetCount`. `read`/`advance` take `jobId`; `continue` adds `commandId` and `prompt`; `stop` adds `commandId`. Reuse a stable command ID for a retry of the same operation.
+
+## Paid work and public evidence
+
+Fiber remains the default for ordinary enrichment. Starting or continuing paid Autumn work requires the human to explicitly ask to use Autumn in the current chat and approve the credit cost for the intended scope. Cost may be unknown and potentially high; no hard provider spending cap is guaranteed. A generic deep-research request or bare yes is insufficient. Automatic, event and scheduled runs cannot start or continue paid work.
+
+For `account_plan`, `org_chart` or `stack_wedge`, use `compile-brief` on a verified public target. Never send private CRM transcripts or private guidance to the provider. Read/list are free status reads. Background work survives a closed chat; continue the existing job rather than creating a duplicate. An awaiting-input job needs the human answer. A cancellation request is not proof of cancellation: claim stopped only when the observed state is `stopped`.
+
+Results report `success`, optional `job`/`jobs`, `guidance` or `brief`, and optional `errorCode`/`errorMessage`. Use the connected app's schema for the complete nested guidance and research controls.
+
+[Research tools](/modules/research) · [MCP boundaries](/operations/app-only)

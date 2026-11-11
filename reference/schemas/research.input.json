@@ -5,7 +5,9 @@
       "type": "string",
       "enum": [
         "capabilities",
+        "chat-usage",
         "choose-enrichment",
+        "identify-company",
         "enrich-company",
         "enrich-person",
         "web-search",
@@ -176,6 +178,26 @@
     "is_new_request": {
       "type": "boolean",
       "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    },
+    "identifyCompany": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 253
+        },
+        "idempotencyKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "additionalProperties": false,
+      "$schema": "http://json-schema.org/draft-07/schema#"
     }
   },
   "required": [

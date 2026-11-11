@@ -106,6 +106,12 @@ Fields are supported mappings, not a promise that every record has a value. Prof
 
 Discovery is read-only. Automatic conversation base-company enrichment is subscription-included through the trusted conversation setup service. Enrichment requested by an agent to fulfill a task and explicitly activated watches remain credit-metered; background task execution is not an exemption. Provider-native credits and catalog estimates are not Cedar retail prices. Paid execution requires current organization policy, credentials and spending admission; use actual receipts and provider charge evidence.
 
+## New basic identity and usage actions
+
+`identify-company` is available externally with `enrichment:write`: pass `identifyCompany` with a domain and optional idempotency key for zero-credit ranked basic Crustdata matches. Use rich enrichment separately when needed.
+
+`chat-usage` is **Cedar app only**, requires no nested parameters, and reads free usage counts, cache hits, pending results and charges for the current chat and delegates. It does not dispatch new enrichment. See [parameters and results](/reference/research).
+
 ## research
 
 Availability: **external**. [Parameters and responses](/reference/research).
@@ -123,6 +129,8 @@ Use choose-enrichment with chooseEnrichment:&#123;description,question,knownFiel
 | Operation | Capability | Baseline scope |
 | --- | --- | --- |
 | `capabilities` | Discover available research/enrichment providers and their supported operations. | `crm:read` |
+| `identify-company` | Read zero-credit basic Crustdata matches by domain. | `enrichment:write` |
+| `chat-usage` | Read chat and delegate usage without new dispatch. | `in-app` — unavailable externally |
 | `choose-enrichment` | Select supported enrichment behavior for the requested research task. | `enrichment:write` |
 | `enrich-company` | Enrich a company through the explicitly selected supported provider; use Fiber for manual enrichment. | `enrichment:write` |
 | `enrich-person` | Enrich a person through the explicitly selected supported provider; use Fiber for manual enrichment. | `enrichment:write` |

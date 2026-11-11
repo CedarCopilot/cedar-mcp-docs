@@ -413,6 +413,324 @@
     "webFetch": {
       "type": "object",
       "additionalProperties": {}
+    },
+    "identifyCompany": {
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "company_id": {
+                "type": "number"
+              },
+              "company_name": {
+                "type": "string"
+              },
+              "company_website_domain": {
+                "type": "string"
+              },
+              "linkedin_profile_url": {
+                "type": "string"
+              },
+              "linkedin_logo_url": {
+                "type": "string"
+              },
+              "linkedin_industries": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "company_type": {
+                "type": "string"
+              },
+              "year_founded": {
+                "type": "number"
+              },
+              "score": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "company_id",
+              "company_name",
+              "score"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "operationId": {
+          "type": "string"
+        },
+        "receiptId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "chatUsage": {
+      "type": "object",
+      "properties": {
+        "threadId": {
+          "type": "string"
+        },
+        "asOf": {
+          "type": "string"
+        },
+        "totals": {
+          "type": "object",
+          "properties": {
+            "requests": {
+              "type": "number"
+            },
+            "providerDispatches": {
+              "type": "number"
+            },
+            "providerRequests": {
+              "type": "number"
+            },
+            "successfulRecords": {
+              "type": "number"
+            },
+            "cachedRequests": {
+              "type": "number"
+            },
+            "failedRequests": {
+              "type": "number"
+            },
+            "deniedRequests": {
+              "type": "number"
+            },
+            "pendingRequests": {
+              "type": "number"
+            },
+            "chargedOperations": {
+              "type": "number"
+            },
+            "chargedMicrocredits": {
+              "type": "string"
+            },
+            "refundedMicrocredits": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "requests",
+            "providerDispatches",
+            "providerRequests",
+            "successfulRecords",
+            "cachedRequests",
+            "failedRequests",
+            "deniedRequests",
+            "pendingRequests",
+            "chargedOperations",
+            "chargedMicrocredits",
+            "refundedMicrocredits"
+          ],
+          "additionalProperties": false
+        },
+        "byProvider": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "provider": {
+                "type": "string"
+              },
+              "requests": {
+                "type": "number"
+              },
+              "providerDispatches": {
+                "type": "number"
+              },
+              "providerRequests": {
+                "type": "number"
+              },
+              "successfulRecords": {
+                "type": "number"
+              },
+              "cachedRequests": {
+                "type": "number"
+              },
+              "failedRequests": {
+                "type": "number"
+              },
+              "deniedRequests": {
+                "type": "number"
+              },
+              "pendingRequests": {
+                "type": "number"
+              },
+              "chargedOperations": {
+                "type": "number"
+              },
+              "chargedMicrocredits": {
+                "type": "string"
+              },
+              "refundedMicrocredits": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "provider",
+              "requests",
+              "providerDispatches",
+              "providerRequests",
+              "successfulRecords",
+              "cachedRequests",
+              "failedRequests",
+              "deniedRequests",
+              "pendingRequests",
+              "chargedOperations",
+              "chargedMicrocredits",
+              "refundedMicrocredits"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "bySubject": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "subject": {
+                "type": "string",
+                "enum": [
+                  "person",
+                  "company"
+                ]
+              },
+              "requests": {
+                "type": "number"
+              },
+              "providerDispatches": {
+                "type": "number"
+              },
+              "providerRequests": {
+                "type": "number"
+              },
+              "successfulRecords": {
+                "type": "number"
+              },
+              "cachedRequests": {
+                "type": "number"
+              },
+              "failedRequests": {
+                "type": "number"
+              },
+              "deniedRequests": {
+                "type": "number"
+              },
+              "pendingRequests": {
+                "type": "number"
+              },
+              "chargedOperations": {
+                "type": "number"
+              },
+              "chargedMicrocredits": {
+                "type": "string"
+              },
+              "refundedMicrocredits": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "subject",
+              "requests",
+              "providerDispatches",
+              "providerRequests",
+              "successfulRecords",
+              "cachedRequests",
+              "failedRequests",
+              "deniedRequests",
+              "pendingRequests",
+              "chargedOperations",
+              "chargedMicrocredits",
+              "refundedMicrocredits"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "research": {
+          "type": "object",
+          "properties": {
+            "available": {
+              "type": "boolean"
+            },
+            "jobs": {
+              "type": "number"
+            },
+            "turns": {
+              "type": "number"
+            },
+            "dispatchedTurns": {
+              "type": "number"
+            },
+            "inputRecords": {
+              "type": "number"
+            },
+            "outputRows": {
+              "type": "number"
+            },
+            "vendorCredits": {
+              "type": "number"
+            },
+            "cedarCreditEquivalent": {
+              "type": "number"
+            },
+            "jobsAwaitingCreditReport": {
+              "type": "number"
+            },
+            "reconciliationRequired": {
+              "type": "boolean"
+            },
+            "truncated": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "available",
+            "jobs",
+            "turns",
+            "dispatchedTurns",
+            "inputRecords",
+            "outputRows",
+            "vendorCredits",
+            "cedarCreditEquivalent",
+            "jobsAwaitingCreditReport",
+            "reconciliationRequired",
+            "truncated"
+          ],
+          "additionalProperties": false
+        },
+        "truncated": {
+          "type": "boolean"
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "threadId",
+        "asOf",
+        "totals",
+        "byProvider",
+        "bySubject",
+        "research",
+        "truncated",
+        "notes"
+      ],
+      "additionalProperties": false,
+      "$schema": "http://json-schema.org/draft-07/schema#"
     }
   },
   "required": [

@@ -131,3 +131,7 @@ Every finite input choice is listed here, including array values and nested vari
 ## Access and results
 
 Use your authenticated connection's `tools/list` to discover what is available. Role, feature, target, and resource checks apply in addition to the baseline scopes. Inspect the returned operation result before reporting success; a queued or proposed action is not a completed external action. See [permissions](/getting-started/permissions) and [calling tools](/getting-started/calling-tools).
+
+## Approved CRM transitions
+
+`conversation-write` also exposes `convert-hubspot-lead` and `handoff-crm-record` with `crm:read`. Both require saved in-app approval; conversion additionally needs enabled writes and configured pipeline/stage identifiers. A proposed result is not a completed provider action. See [parameters and constraints](/reference/conversation-write#crm-conversion-and-handoff).

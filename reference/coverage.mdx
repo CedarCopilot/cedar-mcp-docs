@@ -1,11 +1,25 @@
 ---
-title: "Complete capability coverage"
-description: "Every action, operation, change type, mode, and channel in the registered schemas."
+title: "Capability coverage"
+description: "Source-reviewed additions and historical schema coverage, with availability boundaries."
 ---
 
-This index is generated from the same schemas as the reference, including nested change unions. It contains **524 selector choices** across **52 tools**. Choices include operation modes and document types; they are not a count of independent APIs. Tools without a selector appear as single-call capabilities.
+The generated tables below are a historical schema snapshot, including nested change unions; they are not a current count of independent APIs. The November 11, 2026 source review adds [`agent`](/reference/agent), [pilot Task View tools](/reference/task-views), and the app-only [`website`](/reference/website) and [`research-job`](/reference/research-job). See the refreshed [task reference](/reference/task) for lifecycle changes. Consult the current connection's `tools/list` for exact schemas; the historical tables do not establish exhaustive current coverage. Tools without a selector appear as single-call capabilities.
 
 Staff, feature-gated, and app-only entries are labeled. An action requiring `in-app` remains unavailable externally even when its parent family is listed. Additional path, role, and provider checks still apply.
+
+## Reviewed additions
+
+| Family | Current operations | Availability |
+| --- | --- | --- |
+| [`agent`](/reference/agent) | `initialize`, `get-kpis`, `get-pipeline-kpis` | External, action scopes apply |
+| [Task View read](/reference/task-views) | `producers`, `history-read`, `list`, `list-archived`, `read`, `items`, `candidates`, `unmatched`, `resources`, `memberships`, `open` | Pilot; `crm:read` |
+| [Task View write](/reference/task-views) | `create`, `initialize`, `invoke-action`, `restore-history`, `configure`, `saved-policy`, `archive`, `restore`, `associate`, `patch-values`, `upsert-context`, `manual`, `organize`, `place` | Pilot; `playbook:write` |
+| [`website`](/reference/website) | `read`, `refresh` | Cedar app only |
+| [`research-job`](/reference/research-job) | `start`, `read`, `list`, `continue`, `stop`, `advance`, `guidance`, `ensure-guidance`, `compile-brief` | Cedar app only |
+| [`task`](/reference/task) | Adds `snooze`, `unsnooze`; preparation and completion receipts refreshed | External; snooze/unsnooze use `email:read`, other task actions use `crm:read` |
+| [`config-read`](/reference/config-read) | Adds `get-user-identity` | External; `crm:read` |
+
+## Historical schema tables
 
 ## Overview
 
@@ -210,6 +224,8 @@ Single call, baseline scope: `internal`.
 | `action` | `delete` | crm:read |
 | `action` | `start` | crm:read |
 | `action` | `updateDueDate` | crm:read |
+| `action` | `snooze` | email:read |
+| `action` | `unsnooze` | email:read |
 
 ### Playbooks and triggers
 
@@ -310,6 +326,7 @@ Single call, baseline scope: `in-app`.
 | `action` | `list-fields` | crm:read |
 | `action` | `list-org-members` | crm:read |
 | `action` | `find-bot-slack-channels` | crm:read |
+| `action` | `get-user-identity` | crm:read |
 | `readPlaybook.mode` | `list` | See tool and target permissions |
 | `readPlaybook.mode` | `load_full` | See tool and target permissions |
 | `readPlaybook.mode` | `load_sections` | See tool and target permissions |
@@ -402,7 +419,6 @@ Single call, baseline scope: `brain:read`.
 | Selector | Value | Variant / scope |
 | --- | --- | --- |
 | `action` | `list-seats` | linkedin:read |
-| `action` | `view-profile` | linkedin:read |
 | `action` | `list-connections` | linkedin:read |
 | `action` | `list-connections-page` | linkedin:read |
 | `action` | `list-own-posts` | linkedin:read |
@@ -428,6 +444,7 @@ Single call, baseline scope: `brain:read`.
 
 | Selector | Value | Variant / scope |
 | --- | --- | --- |
+| `action` | `view-profile` | linkedin:write |
 | `action` | `send-message` | linkedin:write |
 | `action` | `send-invitation` | linkedin:write |
 | `action` | `send-inmail` | linkedin:write |
@@ -487,6 +504,9 @@ Single call, baseline scope: `brain:read`.
 | Selector | Value | Variant / scope |
 | --- | --- | --- |
 | `action` | `sync-thread` | slack:read |
+| `action` | `create-channel` | slack:write |
+| `action` | `invite-members` | slack:write |
+| `action` | `invite-external` | slack:write |
 
 ### Meetings
 
@@ -566,7 +586,9 @@ Single call, baseline scope: `brain:read`.
 | Selector | Value | Variant / scope |
 | --- | --- | --- |
 | `action` | `capabilities` | crm:read |
+| `action` | `chat-usage` | in-app |
 | `action` | `choose-enrichment` | enrichment:write |
+| `action` | `identify-company` | enrichment:write |
 | `action` | `enrich-company` | enrichment:write |
 | `action` | `enrich-person` | enrichment:write |
 | `action` | `web-search` | in-app |
@@ -761,6 +783,8 @@ Single call, baseline scope: `brain:read`.
 | `action` | `reassign-ownership` | crm:read |
 | `action` | `link-external-crm-deal` | crm:read |
 | `action` | `sync-gmail-thread` | email:read |
+| `action` | `convert-hubspot-lead` | crm:read |
+| `action` | `handoff-crm-record` | crm:read |
 | `updateFields.fields[].mode` | `replace` | See tool and target permissions |
 | `updateFields.fields[].mode` | `patch` | See tool and target permissions |
 | `updateFields.fields[].mode` | `upsert` | See tool and target permissions |

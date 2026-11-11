@@ -1,0 +1,41 @@
+---
+title: "agent"
+description: "Initialize a built-in agent and read stored agent or pipeline KPI observations."
+---
+
+Available externally, subject to session scopes and target-user authorization. Checked against production-branch source on November 11, 2026. Your connection's `tools/list` determines availability.
+
+| Action | Parameter object | Required fields | Scope |
+| --- | --- | --- | --- |
+| `initialize` | `initialize` | `templateId` | `playbook:write` |
+| `get-kpis` | `getKpis` | `agentId`, `from`, `to` | `docs:read` |
+| `get-pipeline-kpis` | `getPipelineKpis` | `from`, `to` | `docs:read` |
+
+All three parameter objects accept optional `targetUserId`. Initialization also accepts optional `timezone`. Date ranges use full ISO timestamps with `Z` or a timezone offset. Use a real template identifier from Cedar's agent library; do not guess identifiers from display names. Call [`config-read get-user-identity`](/reference/config-read#caller-identity) first. Admins must establish whose account setup is for; target selection does not bypass authorization.
+
+```json
+{
+  "action": "get-kpis",
+  "getKpis": {
+    "agentId": "YOUR_AGENT_ID",
+    "from": "2026-11-01T00:00:00Z",
+    "to": "2026-11-11T00:00:00Z"
+  }
+}
+```
+
+## Initialization is separate from activation
+
+`initialize` prepares default instructions and a workspace without wiring a new playbook trigger. Reusing an existing installation preserves personalization and activation. Read the returned `created`, `triggerWired`, `enabled` and `warnings`; success does not mean a new recurring agent is running. The org-chart agent and org-map template are manual chat agents.
+
+Personalize through existing document and configuration tools. Deliberate activation uses the supported playbook sources. This tool does not run Cedar AI on behalf of an externally scheduled agent; an external agent executes the saved instructions with its own orchestration and Cedar tools.
+
+## Interpret KPI results
+
+`get-kpis` returns registered metrics and stored observations under `kpis`, including observed, not-observed and unknown counts, confirmed/inferred attribution, availability and a warning. It neither refreshes observations nor establishes causality.
+
+`get-pipeline-kpis` returns a buyer-deduplicated specialized Task View funnel under `pipelineKpis`, with per-view counts and explicit coverage. It does not assess or refresh the underlying evidence. Preserve nullable rates and unassessed counts rather than treating them as zero.
+
+[Agents overview](/agent-platform/lifecycle) · [Library](/agent-platform/library) · [Permissions](/getting-started/permissions)
+
+[Input schema](/reference/schemas/agent.input.json) · [Output schema](/reference/schemas/agent.output.json)

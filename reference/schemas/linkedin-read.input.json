@@ -5,7 +5,6 @@
       "type": "string",
       "enum": [
         "list-seats",
-        "view-profile",
         "list-connections",
         "list-connections-page",
         "list-own-posts",
@@ -25,39 +24,13 @@
         "screen-prospects",
         "outreach-status"
       ],
-      "description": "Which read operation to perform — pass its matching params object (e.g. action: \"view-profile\" pairs with viewProfile: {...})."
+      "description": "Read LinkedIn; pass the matching camelCase parameter object. Profile visits use linkedin-write."
     },
     "listSeats": {
       "type": "object",
       "properties": {},
       "additionalProperties": true,
       "description": "No parameters — lists your connected LinkedIn seats."
-    },
-    "viewProfile": {
-      "type": "object",
-      "properties": {
-        "identifier": {
-          "type": "string",
-          "description": "LinkedIn public identifier (the /in/<slug>) or member URN to view."
-        },
-        "url": {
-          "type": "string",
-          "description": "Full LinkedIn profile URL of the target (e.g. https://www.linkedin.com/in/jane)."
-        },
-        "personId": {
-          "type": "string",
-          "description": "Cedar crm_person id of the target (resolved to a LinkedIn identifier server-side)."
-        },
-        "self": {
-          "type": "boolean",
-          "description": "View the connected seat owner's own profile (smoke test) instead of a target."
-        },
-        "unipileAccountId": {
-          "type": "string",
-          "description": "Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one."
-        }
-      },
-      "additionalProperties": false
     },
     "listConnections": {
       "type": "object",
@@ -69,7 +42,8 @@
           "description": "Max relation pages (50 rows each) to walk. Default 200 — enough for a 10k network. Lower it only to sample."
         },
         "unipileAccountId": {
-          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+          "type": "string",
+          "description": "Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one."
         }
       },
       "additionalProperties": false
@@ -83,22 +57,38 @@
           "description": "Opaque nextCursor from the previous page of this same action and seat. Omit for the first page."
         },
         "unipileAccountId": {
-          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+          "type": "string",
+          "description": "Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one."
         }
       },
       "additionalProperties": false
     },
     "listOwnPosts": {
-      "$ref": "#/properties/listConnectionsPage"
+      "type": "object",
+      "properties": {
+        "cursor": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Opaque nextCursor from the previous page of this same action and seat. Omit for the first page."
+        },
+        "unipileAccountId": {
+          "type": "string",
+          "description": "Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one."
+        }
+      },
+      "additionalProperties": false
     },
     "listPostReactions": {
       "type": "object",
       "properties": {
         "cursor": {
-          "$ref": "#/properties/listConnectionsPage/properties/cursor"
+          "type": "string",
+          "minLength": 1,
+          "description": "Opaque nextCursor from the previous page of this same action and seat. Omit for the first page."
         },
         "unipileAccountId": {
-          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+          "type": "string",
+          "description": "Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one."
         },
         "postId": {
           "type": "string",
@@ -115,7 +105,8 @@
       "type": "object",
       "properties": {
         "unipileAccountId": {
-          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+          "type": "string",
+          "description": "Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one."
         }
       },
       "additionalProperties": false
@@ -142,7 +133,8 @@
           "description": "Cap on reactors collected across all posts (default 500)."
         },
         "unipileAccountId": {
-          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+          "type": "string",
+          "description": "Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one."
         }
       },
       "additionalProperties": false
@@ -157,7 +149,8 @@
           "description": "Look back this many days (default 30). This is an ad-hoc read and never advances the background poll's high-water mark."
         },
         "unipileAccountId": {
-          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+          "type": "string",
+          "description": "Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one."
         }
       },
       "additionalProperties": false
@@ -180,7 +173,8 @@
           "description": "Include quarantined InMail chats (excluded by default)."
         },
         "unipileAccountId": {
-          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+          "type": "string",
+          "description": "Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one."
         }
       },
       "additionalProperties": false
@@ -220,13 +214,16 @@
           "description": "Unipile provider id / member URN of the target (most direct)."
         },
         "url": {
-          "$ref": "#/properties/viewProfile/properties/url"
+          "type": "string",
+          "description": "Full LinkedIn profile URL of the target (e.g. https://www.linkedin.com/in/jane)."
         },
         "personId": {
-          "$ref": "#/properties/viewProfile/properties/personId"
+          "type": "string",
+          "description": "Cedar crm_person id of the target (resolved to a LinkedIn identifier server-side)."
         },
         "unipileAccountId": {
-          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+          "type": "string",
+          "description": "Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one."
         }
       },
       "additionalProperties": false
@@ -244,7 +241,8 @@
           "maximum": 100
         },
         "unipileAccountId": {
-          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+          "type": "string",
+          "description": "Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one."
         },
         "url": {
           "type": "string",
@@ -303,7 +301,8 @@
           "maximum": 100
         },
         "unipileAccountId": {
-          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+          "type": "string",
+          "description": "Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one."
         }
       },
       "required": [
@@ -315,13 +314,17 @@
       "type": "object",
       "properties": {
         "cursor": {
-          "$ref": "#/properties/search/properties/cursor"
+          "type": "string",
+          "minLength": 1
         },
         "limit": {
-          "$ref": "#/properties/search/properties/limit"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
         },
         "unipileAccountId": {
-          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+          "type": "string",
+          "description": "Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one."
         }
       },
       "additionalProperties": false
@@ -330,13 +333,17 @@
       "type": "object",
       "properties": {
         "cursor": {
-          "$ref": "#/properties/search/properties/cursor"
+          "type": "string",
+          "minLength": 1
         },
         "limit": {
-          "$ref": "#/properties/search/properties/limit"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
         },
         "unipileAccountId": {
-          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+          "type": "string",
+          "description": "Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one."
         },
         "kind": {
           "type": "string",
@@ -378,7 +385,8 @@
                 "format": "uri"
               },
               "providerId": {
-                "$ref": "#/properties/findChat/properties/providerId"
+                "type": "string",
+                "description": "Unipile provider id / member URN of the target (most direct)."
               }
             },
             "required": [
@@ -398,7 +406,8 @@
           "maximum": 365
         },
         "unipileAccountId": {
-          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+          "type": "string",
+          "description": "Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one."
         }
       },
       "required": [
@@ -419,7 +428,8 @@
           "maxItems": 20
         },
         "unipileAccountId": {
-          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+          "type": "string",
+          "description": "Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one."
         }
       },
       "required": [
@@ -433,7 +443,24 @@
         "people": {
           "type": "array",
           "items": {
-            "$ref": "#/properties/profiles/properties/people/items"
+            "type": "object",
+            "properties": {
+              "rowId": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "providerId": {
+                "type": "string",
+                "description": "Unipile provider id / member URN of the target (most direct)."
+              }
+            },
+            "required": [
+              "url"
+            ],
+            "additionalProperties": false
           },
           "minItems": 1,
           "maxItems": 50
@@ -461,7 +488,8 @@
           "maximum": 400
         },
         "unipileAccountId": {
-          "$ref": "#/properties/viewProfile/properties/unipileAccountId"
+          "type": "string",
+          "description": "Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one."
         }
       },
       "required": [
@@ -470,7 +498,64 @@
       "additionalProperties": false
     },
     "outreachStatus": {
-      "$ref": "#/properties/screenProspects"
+      "type": "object",
+      "properties": {
+        "people": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "rowId": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "providerId": {
+                "type": "string",
+                "description": "Unipile provider id / member URN of the target (most direct)."
+              }
+            },
+            "required": [
+              "url"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1,
+          "maxItems": 50
+        },
+        "includeCrm": {
+          "type": "boolean",
+          "description": "Also check org person-keyed contacts and caller-owned legacy contacts. Requires crm:read."
+        },
+        "excludedUrls": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          },
+          "maxItems": 2500,
+          "description": "URLs already in prior outreach tables, read through the authorized table tool."
+        },
+        "checkConnections": {
+          "type": "boolean",
+          "description": "Match first-degree relations and obtain provider IDs without profile views (default true)."
+        },
+        "connectionsMaxPages": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 400
+        },
+        "unipileAccountId": {
+          "type": "string",
+          "description": "Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one."
+        }
+      },
+      "required": [
+        "people"
+      ],
+      "additionalProperties": false
     },
     "user_request_summary": {
       "type": "string",

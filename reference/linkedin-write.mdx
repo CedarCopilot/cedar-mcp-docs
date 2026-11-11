@@ -3,7 +3,7 @@ title: "linkedin-write"
 description: "Parameters, scopes, and response schema for linkedin-write."
 ---
 
-Generated from Cedar's actual registration and Zod schemas. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
+Schema snapshot with changed action branches source-reviewed on November 11, 2026 against production-branch revision `881368f4`. Retained branches have not been regenerated. Your connection's `tools/list` is authoritative for availability. See [calling tools](/getting-started/calling-tools) and [permissions](/getting-started/permissions).
 
 ## Capabilities
 
@@ -15,10 +15,13 @@ OUTBOUND SEND RULE — REAL, EXTERNALLY VISIBLE ACTION: NEVER send or schedule a
 
 </Accordion>
 
+`view-profile` takes `viewProfile` with an identifier, URL, person ID or `self: true`; optional `unipileAccountId` selects an owned seat. This is a visible visit, not passive profile retrieval. Never visit merely to resolve an invitation target.
+
 ## Operations and scopes
 
 | Action | Capability | Baseline scope |
 | --- | --- | --- |
+| `view-profile` | Make a real, potentially notified profile visit; 64/day cap. | `linkedin:write` |
 | `send-message` | Send an authorized DM to an existing chat or resolved recipient within per-seat DM budgets. | `linkedin:write` |
 | `send-invitation` | Send an authorized connection request; a note requires an explicit note request and its flag. | `linkedin:write` |
 | `send-inmail` | Send an authorized InMail to a non-connection within the seat's InMail budget. | `linkedin:write` |
@@ -38,13 +41,23 @@ Every finite input choice is listed here, including array values and nested vari
 
 | Parameter | Type | Required | Details |
 | --- | --- | --- | --- |
-| `action` | "send-message" · "send-invitation" · "send-inmail" · "sync-chat" | Yes | Which write operation to perform — pass its matching params object (e.g. action: "send-message" pairs with sendMessage: &#123;...&#125;). send-* act on the user's LinkedIn account (linkedin:write); sync-chat only INGESTS a chat into a deal and needs linkedin:read.  |
+| `action` | "view-profile" · "send-message" · "send-invitation" · "send-inmail" · "sync-chat" | Yes | Which write operation to perform — pass its matching params object (e.g. action: "send-message" pairs with sendMessage: &#123;...&#125;). send-* act on the user's LinkedIn account (linkedin:write); sync-chat only INGESTS a chat into a deal and needs linkedin:read.  |
 | `sendMessage` | object | No |   |
 | `sendInvitation` | object | No |   |
 | `sendInmail` | object | No |   |
 | `syncChat` | object | No |   |
 | `user_request_summary` | string | Yes | One sentence, in your own words: what the user actually asked you to do in this turn. Used only for Cedar's observability — it does not change what this tool does.  |
 | `is_new_request` | boolean | Yes | true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread.  |
+
+### viewProfile
+
+| Parameter | Type | Required | Details |
+| --- | --- | --- | --- |
+| `identifier` | string | No | LinkedIn public identifier (the /in/&lt;slug&gt;) or member URN to view.  |
+| `url` | string | No | Full LinkedIn profile URL of the target (e.g. https://www.linkedin.com/in/jane).  |
+| `personId` | string | No | Cedar crm_person id of the target (resolved to a LinkedIn identifier server-side).  |
+| `self` | boolean | No | View the connected seat owner's own profile (smoke test) instead of a target.  |
+| `unipileAccountId` | string | No | Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one.  |
 
 ### sendMessage
 
@@ -100,12 +113,13 @@ Every finite input choice is listed here, including array values and nested vari
     "action": {
       "type": "string",
       "enum": [
+        "view-profile",
         "send-message",
         "send-invitation",
         "send-inmail",
         "sync-chat"
       ],
-      "description": "Which write operation to perform — pass its matching params object (e.g. action: \"send-message\" pairs with sendMessage: {...}). send-* act on the user's LinkedIn account (linkedin:write); sync-chat only INGESTS a chat into a deal and needs linkedin:read."
+      "description": "Use the matching action object. view-profile leaves a visible visit and needs linkedin:write; sync-chat only ingests and needs linkedin:read."
     },
     "sendMessage": {
       "type": "object",
@@ -145,13 +159,16 @@ Every finite input choice is listed here, including array values and nested vari
       "type": "object",
       "properties": {
         "providerId": {
-          "$ref": "#/properties/sendMessage/properties/providerId"
+          "type": "string",
+          "description": "Unipile provider id / member URN of the target (most direct)."
         },
         "url": {
-          "$ref": "#/properties/sendMessage/properties/url"
+          "type": "string",
+          "description": "Full LinkedIn profile URL of the target (e.g. https://www.linkedin.com/in/jane)."
         },
         "personId": {
-          "$ref": "#/properties/sendMessage/properties/personId"
+          "type": "string",
+          "description": "Cedar crm_person id of the target (resolved to a LinkedIn identifier server-side)."
         },
         "note": {
           "type": "string",
@@ -164,7 +181,8 @@ Every finite input choice is listed here, including array values and nested vari
           "description": "The user explicitly asked for a note on this connection request. Required whenever `note` is set; never set it to justify a note the user did not ask for."
         },
         "unipileAccountId": {
-          "$ref": "#/properties/sendMessage/properties/unipileAccountId"
+          "type": "string",
+          "description": "Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one."
         }
       },
       "additionalProperties": false
@@ -186,16 +204,20 @@ Every finite input choice is listed here, including array values and nested vari
           "description": "Send into this existing chat instead of addressing a new recipient."
         },
         "providerId": {
-          "$ref": "#/properties/sendMessage/properties/providerId"
+          "type": "string",
+          "description": "Unipile provider id / member URN of the target (most direct)."
         },
         "url": {
-          "$ref": "#/properties/sendMessage/properties/url"
+          "type": "string",
+          "description": "Full LinkedIn profile URL of the target (e.g. https://www.linkedin.com/in/jane)."
         },
         "personId": {
-          "$ref": "#/properties/sendMessage/properties/personId"
+          "type": "string",
+          "description": "Cedar crm_person id of the target (resolved to a LinkedIn identifier server-side)."
         },
         "unipileAccountId": {
-          "$ref": "#/properties/sendMessage/properties/unipileAccountId"
+          "type": "string",
+          "description": "Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one."
         }
       },
       "required": [
@@ -228,6 +250,32 @@ Every finite input choice is listed here, including array values and nested vari
     "is_new_request": {
       "type": "boolean",
       "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    },
+    "viewProfile": {
+      "type": "object",
+      "properties": {
+        "identifier": {
+          "type": "string",
+          "description": "LinkedIn public identifier (the /in/<slug>) or member URN to view."
+        },
+        "url": {
+          "type": "string",
+          "description": "Full LinkedIn profile URL of the target (e.g. https://www.linkedin.com/in/jane)."
+        },
+        "personId": {
+          "type": "string",
+          "description": "Cedar crm_person id of the target (resolved to a LinkedIn identifier server-side)."
+        },
+        "self": {
+          "type": "boolean",
+          "description": "View the connected seat owner's own profile (smoke test) instead of a target."
+        },
+        "unipileAccountId": {
+          "type": "string",
+          "description": "Unipile account id of the connected LinkedIn seat to act through. Omit to auto-use your single connected seat; if you have several, call list-seats and pass one."
+        }
+      },
+      "additionalProperties": false
     }
   },
   "required": [
@@ -310,6 +358,24 @@ Inspect `isError` on the MCP result and `success` / `errorMessage` in the action
           "type": "number"
         },
         "chatId": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "viewProfile": {
+      "type": "object",
+      "properties": {
+        "providerId": {
+          "type": "string"
+        },
+        "publicIdentifier": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "headline": {
           "type": "string"
         }
       },

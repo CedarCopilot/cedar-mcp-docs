@@ -163,7 +163,8 @@
                   {
                     "group": "Tool reference",
                     "pages": [
-                      "reference/task"
+                      "reference/task",
+                      "reference/task-views"
                     ]
                   }
                 ]
@@ -187,6 +188,7 @@
                 "group": "Agents",
                 "pages": [
                   "agent-platform/lifecycle",
+                  "reference/agent",
                   "agent-platform/library",
                   "agent-platform/system-agents",
                   "automation/agent-authoring"
@@ -601,7 +603,9 @@
                   {
                     "group": "Tool reference",
                     "pages": [
-                      "reference/research"
+                      "reference/research",
+                      "reference/website",
+                      "reference/research-job"
                     ]
                   }
                 ]

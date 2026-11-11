@@ -8,7 +8,8 @@
         "read-settings",
         "list-fields",
         "list-org-members",
-        "find-bot-slack-channels"
+        "find-bot-slack-channels",
+        "get-user-identity"
       ]
     },
     "readPlaybook": {

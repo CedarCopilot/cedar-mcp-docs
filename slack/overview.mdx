@@ -12,10 +12,15 @@ Cedar separates live Slack access, CRM ingestion, trigger registration, and noti
 | Read a thread or recent channel messages | `slack-read read-thread` |
 | Inspect images attached to a message | `slack-read read-file` |
 | Attach a thread to an existing deal | `slack-write sync-thread` |
+| Create a channel on explicit request | `slack-write create-channel` |
+| Invite existing workspace members | `slack-write invite-members` |
+| Send one Slack Connect email invitation | `slack-write invite-external` |
 | Select channels for ongoing CRM sync | `connection-write update_slack_sync_config` |
 | Run an agent when a specific channel gets a matching message | `connection-write manage_playbook_webhook` with `sourceType: "slack_channel"` |
 | Discover notification destinations | `notify list-slack-channels` |
 | Deliver an alert | `notify send` |
+
+Channel creation and invitations require `slack:write` plus the connected Slack app's provider grants. External invitations remain pending acceptance/admin approval; see [Slack write parameters](/reference/slack-write).
 
 ## Live search
 

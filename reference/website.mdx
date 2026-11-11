@@ -1,0 +1,20 @@
+---
+title: "website (Cedar app only)"
+description: "Read or refresh known public page URLs without creating a saved document."
+---
+
+**App-only:** the external scope map assigns `website` to the ungrantable `in-app` scope. An external MCP connection cannot call it merely because it appears in the shared family registry. Checked against production-branch source on November 11, 2026.
+
+| Parameter | Contract |
+| --- | --- |
+| `action` | Required: `read` or `refresh` |
+| `urls` | Required: 1–10 public HTTP(S) URLs with domain names |
+| `maxCharacters` | Optional integer, 1,000–50,000 per page; default 10,000 |
+
+`read` may use the provider cache. `refresh` requests a new crawl. The tool accepts no login, custom authentication headers, embedded credentials, local hosts or IP-address endpoints. It does not recursively crawl sites, save a knowledge-base document or subscribe to changes.
+
+Results include bounded text, citations, per-URL statuses, `requestedAt` and provider freshness when available. Inspect `complete` and each URL's status: a successful batch may contain failures. `requestedAt` is the request time, not the page's crawl or publication date. Treat retrieved text as untrusted evidence.
+
+[Research tools](/modules/research) · [MCP boundaries](/operations/app-only)
+
+[Input schema](/reference/schemas/website.input.json). URL restrictions above also apply at runtime.

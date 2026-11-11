@@ -17,7 +17,9 @@
         "complete",
         "delete",
         "start",
-        "updateDueDate"
+        "updateDueDate",
+        "snooze",
+        "unsnooze"
       ],
       "description": "Which operation to perform — pass its matching params object below (e.g. action: \"create\" pairs with create: {...})."
     },
@@ -115,13 +117,16 @@
       "type": "object",
       "properties": {
         "conversationId": {
-          "type": "string",
-          "description": "ID of the conversation this task belongs to. This is provided in the <conversation_id> section of your prompt. Required for all tasks."
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Conversation; omission requires taskViews."
         },
         "description": {
           "type": "string",
           "minLength": 1,
-          "description": "The task, in TWO parts separated by an em dash: a short bolded-in-the-UI headline, then the detail. `<headline> — <detail>`. Plain text only — no markdown, no asterisks, no bullets, no line breaks; the UI paints the two halves itself and shows the raw characters if you add any. The headline is 3-8 words and names the commitment (\"Send Simon the pricing recap\"); the detail is ONE sentence saying why it is owed or what it needs, in the second person (\"you told him you would send it before the 4:30, and the deck is still unattached\"). Never name the deal in either half — the UI renders the deal as a badge next to the headline, so writing it makes the row say it twice. Examples: \"Amie is waiting on eDocs naming — she answered your question about starting with two doc-heavy carriers; the reply is yours\", \"Book the Bukaty pricing call — Natalie confirmed Friday 2:00 but you still owe the policy counts for both offices\". Omit the dash and the detail only when the headline is the whole truth (\"Renew the SOC2 questionnaire\")."
+          "description": "Plain text: a 3–8-word commitment headline and a second-person sentence saying why it is owed or what it needs. No deal name, markdown, asterisks, bullets or line breaks. Omit dash/detail only when the headline is the whole truth."
         },
         "notes": {
           "type": [
@@ -178,12 +183,48 @@
         "threadId": {
           "type": "string",
           "description": "Thread ID for email response tasks. When provided with taskChannel=\"email\", this links the task to the specific email thread. Required for response tasks."
+        },
+        "assigneeUserId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Optional eligible owner in the authenticated organization; omission means yourself. Does not change the caller identity."
+        },
+        "taskViews": {
+          "type": "array",
+          "maxItems": 20,
+          "items": {
+            "type": "object",
+            "properties": {
+              "taskViewId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "expectedSchemaRevision": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "expectedVersion": {
+                "type": "integer",
+                "minimum": 0,
+                "default": 0
+              },
+              "values": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            },
+            "additionalProperties": false,
+            "required": [
+              "taskViewId",
+              "expectedSchemaRevision",
+              "values"
+            ]
+          },
+          "description": "Optional Task View destinations. Duplicate destinations are rejected; an empty array means no changes. Association is separate from placement."
         }
       },
       "required": [
-        "conversationId",
         "description",
-        "taskChannel",
         "dueDate"
       ],
       "additionalProperties": false
@@ -199,25 +240,14 @@
         "description": {
           "type": "string",
           "minLength": 1,
-          "description": "The task, in TWO parts separated by an em dash: a short bolded-in-the-UI headline, then the detail. `<headline> — <detail>`. Plain text only — no markdown, no asterisks, no bullets, no line breaks; the UI paints the two halves itself and shows the raw characters if you add any. The headline is 3-8 words and names the commitment (\"Send Simon the pricing recap\"); the detail is ONE sentence saying why it is owed or what it needs, in the second person (\"you told him you would send it before the 4:30, and the deck is still unattached\"). Never name the deal in either half — the UI renders the deal as a badge next to the headline, so writing it makes the row say it twice. Examples: \"Amie is waiting on eDocs naming — she answered your question about starting with two doc-heavy carriers; the reply is yours\", \"Book the Bukaty pricing call — Natalie confirmed Friday 2:00 but you still owe the policy counts for both offices\". Omit the dash and the detail only when the headline is the whole truth (\"Renew the SOC2 questionnaire\")."
+          "description": "Plain text: a 3–8-word commitment headline and a second-person sentence saying why it is owed or what it needs. No deal name, markdown, asterisks, bullets or line breaks. Omit dash/detail only when the headline is the whole truth."
         },
         "notes": {
-          "anyOf": [
-            {
-              "anyOf": [
-                {
-                  "not": {}
-                },
-                {
-                  "type": "string"
-                }
-              ]
-            },
-            {
-              "type": "null"
-            }
+          "type": [
+            "string",
+            "null"
           ],
-          "description": "Additional context for agent/human execution. E.g., \"Mention Q4 timeline discussion from last meeting\". Only execution related instructions should be here, dont include reasons for scheduling/etc. Set to null to clear."
+          "description": "Execution context/instructions only; no scheduling rationale. Null clears."
         },
         "taskType": {
           "anyOf": [
@@ -247,7 +277,7 @@
         },
         "dueDate": {
           "type": "string",
-          "description": "For scheduling tasks with status \"todo\": ISO 8601 timestamp (e.g., \"2024-01-15T14:30:00Z\")"
+          "description": "ISO timestamp, or NOW for immediate user action with agent execution disabled."
         },
         "agentExecutionEnabled": {
           "type": "boolean",
@@ -276,6 +306,89 @@
             }
           ],
           "description": "Reassign the task to a different task group (lane) by its UUID. Read the \"task_groups\" section of config read-settings FIRST to get valid group ids. Pass null to file the task to Misc (ungrouped). Omit to leave the group unchanged."
+        },
+        "completionEvidence": {
+          "type": "object",
+          "properties": {
+            "eventId": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "sourceThreadId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512,
+              "description": "Sent source thread ID, not task draft ID."
+            },
+            "sourceMessageId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512,
+              "description": "Sent source message ID, not task draft ID."
+            },
+            "taskDescription": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 8000
+            },
+            "draftId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512,
+              "description": "Task linked draft ID from inventory; never the source message ID."
+            },
+            "quote": {
+              "type": "string",
+              "minLength": 20,
+              "maxLength": 4000
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 20,
+              "maxLength": 4000
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "taskDescription",
+            "draftId",
+            "quote",
+            "reason"
+          ],
+          "description": "Fulfillment proof: eventId OR sourceThreadId plus sourceMessageId; never both."
+        },
+        "taskViews": {
+          "type": "array",
+          "maxItems": 20,
+          "items": {
+            "type": "object",
+            "properties": {
+              "taskViewId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "expectedSchemaRevision": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "expectedVersion": {
+                "type": "integer",
+                "minimum": 0,
+                "default": 0
+              },
+              "values": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            },
+            "additionalProperties": false,
+            "required": [
+              "taskViewId",
+              "expectedSchemaRevision",
+              "values"
+            ]
+          },
+          "description": "Optional Task View destinations. Duplicate destinations are rejected; an empty array means no changes. Association is separate from placement."
         }
       },
       "required": [
@@ -324,6 +437,11 @@
             "type": "string"
           },
           "description": "Cancel tasks from conversations belonging to these AOP names. E.g. [\"Spam\", \"Vendor notification\"] to purge tasks on no-op conversations. Can be combined with cancelOlderThan or conversationStatuses."
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
         }
       },
       "additionalProperties": false
@@ -434,8 +552,17 @@
           "maxLength": 4000
         },
         "dueDate": {
-          "type": "string",
-          "format": "date-time"
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "string",
+              "format": "date"
+            }
+          ],
+          "description": "Date-only values remind at 9 AM in the actual owner timezone; explicit ISO times are preserved."
         }
       },
       "additionalProperties": false
@@ -468,6 +595,27 @@
       "properties": {
         "taskId": {
           "$ref": "#/properties/complete/properties/taskId"
+        },
+        "intent": {
+          "type": "string",
+          "enum": [
+            "prepare",
+            "research",
+            "revise"
+          ]
+        },
+        "launchingTaskViewId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "actionId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0
         }
       },
       "additionalProperties": false
@@ -479,7 +627,17 @@
           "$ref": "#/properties/complete/properties/taskId"
         },
         "dueDate": {
-          "$ref": "#/properties/createAssigned/properties/dueDate"
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "string",
+              "format": "date"
+            }
+          ],
+          "description": "Date-only values remind at 9 AM in the actual owner timezone; explicit ISO times are preserved."
         }
       },
       "additionalProperties": false
@@ -491,6 +649,39 @@
     "is_new_request": {
       "type": "boolean",
       "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    },
+    "snooze": {
+      "type": "object",
+      "properties": {
+        "taskId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "dueDate": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "string",
+              "format": "date"
+            }
+          ],
+          "description": "Date-only values remind at 9 AM in the actual owner timezone; explicit ISO times are preserved."
+        }
+      },
+      "additionalProperties": false
+    },
+    "unsnooze": {
+      "type": "object",
+      "properties": {
+        "taskId": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "additionalProperties": false
     }
   },
   "required": [

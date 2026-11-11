@@ -10,7 +10,9 @@
         "mutate",
         "reassign-ownership",
         "link-external-crm-deal",
-        "sync-gmail-thread"
+        "sync-gmail-thread",
+        "convert-hubspot-lead",
+        "handoff-crm-record"
       ],
       "description": "Which write operation to perform — pass its matching params object below (e.g. action: \"update-fields\" pairs with updateFields: {...})."
     },
@@ -896,6 +898,78 @@
     "is_new_request": {
       "type": "boolean",
       "description": "true on the FIRST Cedar tool call of a NEW user request; false when this call continues the same request you are already working on. Groups related calls into one activity thread."
+    },
+    "convertHubspotLead": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Source Lead conversation UUID; native ID is server-resolved."
+        },
+        "targetDealAopId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Source owner's active Deals playbook UUID."
+        },
+        "dealName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "dealPipelineId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Configured Deal pipeline ID; never choose a default."
+        },
+        "dealStageId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Configured open Deal stage ID."
+        },
+        "qualifiedStageId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Qualified stage ID in the source Lead pipeline."
+        }
+      },
+      "required": [
+        "conversationId",
+        "targetDealAopId",
+        "dealName",
+        "dealPipelineId",
+        "dealStageId",
+        "qualifiedStageId"
+      ],
+      "additionalProperties": false,
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "handoffCrmRecord": {
+      "type": "object",
+      "properties": {
+        "conversationId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Source CRM-bound conversation UUID."
+        },
+        "targetAopId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Source owner's active destination playbook UUID."
+        },
+        "targetRecordId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Existing target record ID; source resolves provider/account, target playbook resolves object."
+        }
+      },
+      "required": [
+        "conversationId",
+        "targetAopId",
+        "targetRecordId"
+      ],
+      "additionalProperties": false,
+      "$schema": "http://json-schema.org/draft-07/schema#"
     }
   },
   "required": [

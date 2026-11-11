@@ -4,7 +4,15 @@ sidebarTitle: "Overview"
 description: "Discover supported data before dispatching a paid lookup."
 ---
 
+Cedar also provides [`website`](/reference/website) for public page retrieval and [`research-job`](/reference/research-job) for durable Autumn research. Both are **Cedar app only**; they are not externally grantable MCP tools.
+
 `research` exposes a schema catalog, question-driven enrichment selection, and company/person enrichment. Manual examples here explicitly select **Fiber**. The code's default provider and an account's configured policy may differ, so do not omit the provider and assume the same behavior.
+
+## Basic company identity and usage
+
+For a requested basic Crustdata lookup, call `research` with `action: "identify-company"` and `identifyCompany` containing the domain and optional idempotency key. It returns zero-credit ranked matches with available basic company metadata. Rich profiles still use paid enrichment.
+
+Inside Cedar, `research chat-usage` reads usage counts, cache hits, pending outcomes and charges for the chat and its delegates for free. This action is app-only; an external MCP client cannot call it.
 
 ## Discover before spending
 

@@ -21,31 +21,15 @@
       },
       "additionalProperties": true
     },
-    "viewProfile": {
-      "type": "object",
-      "properties": {
-        "providerId": {
-          "type": "string"
-        },
-        "publicIdentifier": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "headline": {
-          "type": "string"
-        }
-      },
-      "additionalProperties": true
-    },
     "listConnections": {
       "type": "object",
       "properties": {
         "items": {
           "type": "array",
           "items": {
-            "$ref": "#/properties/listSeats/properties/seats/items"
+            "type": "object",
+            "properties": {},
+            "additionalProperties": true
           }
         },
         "complete": {
@@ -128,10 +112,12 @@
       "type": "object",
       "properties": {
         "nextCursor": {
-          "$ref": "#/properties/listConnectionsPage/properties/nextCursor"
+          "type": "string",
+          "description": "Continue with this cursor even if the page has no items. Absent when exhausted."
         },
         "complete": {
-          "$ref": "#/properties/listConnectionsPage/properties/complete"
+          "type": "boolean",
+          "description": "True only when there is no next page. This page alone is not the complete network or audience."
         },
         "owner": {
           "type": "object",
@@ -188,7 +174,19 @@
                 "additionalProperties": true
               },
               "reposted_by": {
-                "$ref": "#/properties/listOwnPosts/properties/items/items/properties/author"
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "public_identifier": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": true
               },
               "is_repost": {
                 "type": "boolean"
@@ -225,10 +223,12 @@
       "type": "object",
       "properties": {
         "nextCursor": {
-          "$ref": "#/properties/listConnectionsPage/properties/nextCursor"
+          "type": "string",
+          "description": "Continue with this cursor even if the page has no items. Absent when exhausted."
         },
         "complete": {
-          "$ref": "#/properties/listConnectionsPage/properties/complete"
+          "type": "boolean",
+          "description": "True only when there is no next page. This page alone is not the complete network or audience."
         },
         "items": {
           "type": "array",
@@ -239,13 +239,13 @@
                 "type": "object",
                 "properties": {
                   "id": {
-                    "$ref": "#/properties/listOwnPosts/properties/items/items/properties/author/properties/id"
+                    "type": "string"
                   },
                   "name": {
-                    "$ref": "#/properties/listOwnPosts/properties/items/items/properties/author/properties/name"
+                    "type": "string"
                   },
                   "public_identifier": {
-                    "$ref": "#/properties/listOwnPosts/properties/items/items/properties/author/properties/public_identifier"
+                    "type": "string"
                   },
                   "profile_url": {
                     "type": "string"
@@ -280,7 +280,9 @@
         "items": {
           "type": "array",
           "items": {
-            "$ref": "#/properties/listSeats/properties/seats/items"
+            "type": "object",
+            "properties": {},
+            "additionalProperties": true
           }
         }
       },
@@ -292,7 +294,9 @@
         "items": {
           "type": "array",
           "items": {
-            "$ref": "#/properties/listSeats/properties/seats/items"
+            "type": "object",
+            "properties": {},
+            "additionalProperties": true
           }
         },
         "total": {
@@ -307,7 +311,9 @@
         "items": {
           "type": "array",
           "items": {
-            "$ref": "#/properties/listSeats/properties/seats/items"
+            "type": "object",
+            "properties": {},
+            "additionalProperties": true
           }
         },
         "total": {
@@ -434,7 +440,30 @@
         "draft": {
           "anyOf": [
             {
-              "$ref": "#/properties/listChats/properties/items/items/properties/draft/anyOf/0"
+              "type": "object",
+              "properties": {
+                "body": {
+                  "type": "string",
+                  "description": "Saved unsent text. Use as send-message.text only when the user asks to send it."
+                },
+                "source": {
+                  "type": "string",
+                  "enum": [
+                    "user",
+                    "agent"
+                  ]
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "description": "Saved draft version timestamp."
+                }
+              },
+              "required": [
+                "body",
+                "source",
+                "updatedAt"
+              ],
+              "additionalProperties": false
             },
             {
               "type": "null"
@@ -562,7 +591,29 @@
         "candidates": {
           "type": "array",
           "items": {
-            "$ref": "#/properties/findChat/properties/counterpart"
+            "type": "object",
+            "properties": {
+              "providerId": {
+                "type": "string",
+                "description": "Pass back as providerId to pick this person."
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "headline": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "providerId"
+            ],
+            "additionalProperties": true
           }
         }
       },
@@ -577,7 +628,9 @@
         "items": {
           "type": "array",
           "items": {
-            "$ref": "#/properties/listSeats/properties/seats/items"
+            "type": "object",
+            "properties": {},
+            "additionalProperties": true
           }
         },
         "nextCursor": {
@@ -587,7 +640,9 @@
           "type": "boolean"
         },
         "paging": {
-          "$ref": "#/properties/listSeats/properties/seats/items"
+          "type": "object",
+          "properties": {},
+          "additionalProperties": true
         }
       },
       "required": [
@@ -597,13 +652,91 @@
       "additionalProperties": true
     },
     "searchParameters": {
-      "$ref": "#/properties/search"
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": true
+          }
+        },
+        "nextCursor": {
+          "type": "string"
+        },
+        "complete": {
+          "type": "boolean"
+        },
+        "paging": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "items",
+        "complete"
+      ],
+      "additionalProperties": true
     },
     "connectionsPage": {
-      "$ref": "#/properties/search"
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": true
+          }
+        },
+        "nextCursor": {
+          "type": "string"
+        },
+        "complete": {
+          "type": "boolean"
+        },
+        "paging": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "items",
+        "complete"
+      ],
+      "additionalProperties": true
     },
     "postPage": {
-      "$ref": "#/properties/search"
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": true
+          }
+        },
+        "nextCursor": {
+          "type": "string"
+        },
+        "complete": {
+          "type": "boolean"
+        },
+        "paging": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "items",
+        "complete"
+      ],
+      "additionalProperties": true
     },
     "profiles": {
       "type": "object",
@@ -629,7 +762,9 @@
                 "type": "string"
               },
               "value": {
-                "$ref": "#/properties/listSeats/properties/seats/items"
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
               },
               "eligibility": {
                 "type": "string",
@@ -668,13 +803,196 @@
       "additionalProperties": true
     },
     "companies": {
-      "$ref": "#/properties/profiles"
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string"
+              },
+              "rowId": {
+                "type": "string"
+              },
+              "identifier": {
+                "type": "string"
+              },
+              "success": {
+                "type": "boolean"
+              },
+              "error": {
+                "type": "string"
+              },
+              "value": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              },
+              "eligibility": {
+                "type": "string",
+                "enum": [
+                  "exclude",
+                  "unknown",
+                  "eligible_for_research"
+                ]
+              },
+              "crmStatus": {
+                "type": "string",
+                "enum": [
+                  "existing_contact",
+                  "no_match",
+                  "not_checked"
+                ]
+              },
+              "priorListMatch": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "success"
+            ],
+            "additionalProperties": true
+          }
+        },
+        "complete": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "results",
+        "complete"
+      ],
+      "additionalProperties": true
     },
     "screenProspects": {
-      "$ref": "#/properties/profiles"
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string"
+              },
+              "rowId": {
+                "type": "string"
+              },
+              "identifier": {
+                "type": "string"
+              },
+              "success": {
+                "type": "boolean"
+              },
+              "error": {
+                "type": "string"
+              },
+              "value": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              },
+              "eligibility": {
+                "type": "string",
+                "enum": [
+                  "exclude",
+                  "unknown",
+                  "eligible_for_research"
+                ]
+              },
+              "crmStatus": {
+                "type": "string",
+                "enum": [
+                  "existing_contact",
+                  "no_match",
+                  "not_checked"
+                ]
+              },
+              "priorListMatch": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "success"
+            ],
+            "additionalProperties": true
+          }
+        },
+        "complete": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "results",
+        "complete"
+      ],
+      "additionalProperties": true
     },
     "outreachStatus": {
-      "$ref": "#/properties/profiles"
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string"
+              },
+              "rowId": {
+                "type": "string"
+              },
+              "identifier": {
+                "type": "string"
+              },
+              "success": {
+                "type": "boolean"
+              },
+              "error": {
+                "type": "string"
+              },
+              "value": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              },
+              "eligibility": {
+                "type": "string",
+                "enum": [
+                  "exclude",
+                  "unknown",
+                  "eligible_for_research"
+                ]
+              },
+              "crmStatus": {
+                "type": "string",
+                "enum": [
+                  "existing_contact",
+                  "no_match",
+                  "not_checked"
+                ]
+              },
+              "priorListMatch": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "success"
+            ],
+            "additionalProperties": true
+          }
+        },
+        "complete": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "results",
+        "complete"
+      ],
+      "additionalProperties": true
     }
   },
   "required": [

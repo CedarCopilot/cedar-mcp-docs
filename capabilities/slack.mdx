@@ -38,7 +38,7 @@ Availability: **external**. [Parameters and responses](/reference/slack-write).
 
 <Accordion title="Full tool behavior and constraints">
 
-Pull a specific Slack thread from the connected user's LIVE Slack into an existing Cedar deal. ACTION: (1) sync-thread — given an explicit channelId + threadTs (from slack-read's search-live) and a conversationId, fetch the thread and attach it to that deal's timeline, where it's stored. Ingests + attaches only — it does not search. Params go under syncThread: &#123;...&#125;.
+Manage Slack channels and sync live threads. Create/invite only on explicit user request. create-channel takes createChannel:&#123;name,isPrivate?&#125;; private by default, adds the caller. invite-members takes inviteMembers:&#123;channelId,userIds&#125;; workspace members only. invite-external takes inviteExternal:&#123;channelId,email,externalLimited?&#125;; sends one Slack Connect email invitation, pending acceptance/admin approval; post-only by default; caller and bot must already belong. Channel/invite actions require slack:write and provider grants. sync-thread ingests and attaches to a deal under syncThread.
 
 </Accordion>
 
@@ -47,6 +47,9 @@ Pull a specific Slack thread from the connected user's LIVE Slack into an existi
 | Operation | Capability | Baseline scope |
 | --- | --- | --- |
 | `sync-thread` | Ingest a Slack thread into the supported Cedar conversation context. | `slack:read` |
+| `create-channel` | Create a private-by-default channel and add the caller. | `slack:write` |
+| `invite-members` | Invite existing workspace members. | `slack:write` |
+| `invite-external` | Send a Slack Connect email invitation; pending acceptance/admin approval. | `slack:write` |
 
 ## Access and results
 
