@@ -1,0 +1,26 @@
+---
+title: "Shareable HTML and deal rooms"
+description: "Package an account brief, proposal or deal room as a durable HTML output with deliberate sharing."
+---
+
+A Cedar agent can produce a self-contained HTML document for a designed report, account brief, proposal or deal room. This is an output file that can be opened in Cedar and shared through the supported document-sharing flow.
+
+A deal room is a use of an HTML document, not an additional `document-write` type or an automatic outbound message.
+
+## What to put in the file
+
+Combine the information the audience needs: the account's goals, a proposed plan, relevant case studies, product information, evidence and next steps. Keep customer-facing content appropriate for the intended audience. Cite sources and dates where they matter, and preserve uncertainty in research claims.
+
+Use a Markdown document when editable prose is enough, a Cedar table for maintained rows and fields, or a Task View for owned work. An HTML deal room can link a readable narrative and visual material; it does not automatically synchronize arbitrary embedded checklists with Cedar tasks.
+
+## Create and share
+
+1. Read the relevant evidence and an existing output before changing it.
+2. Write the authorized output through `document-write` with type `html` and complete, self-contained HTML content.
+3. Inspect the rendered result and read back the saved state.
+4. Use the supported `share` operation for the intended audience and verify the returned link and access state.
+5. Put the file reference in the consuming task, view or agent's resources so it can be found and maintained.
+
+Creating a file, sharing it and sending its link are separate actions. A public share link changes access; use it deliberately and apply the supported revocation controls when needed. Do not assume every graph, file type or external asset has the same sharing behavior.
+
+[All Cedar output files](/agent-platform/specialized-documents) · [Document sharing](/documents/sharing) · [HTML reports](/documents/reports)

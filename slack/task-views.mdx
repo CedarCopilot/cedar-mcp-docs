@@ -1,0 +1,39 @@
+---
+title: "Manage Task View work from Slack"
+description: "Review supported drafts, send deliberately, and keep task state in sync from Slack."
+---
+
+Configured Task Views can deliver task cards to Slack so reps can manage work where they already collaborate. These cards represent Cedar tasks, rather than a separate checklist that must be updated by hand.
+
+<Note>This requires Task View pilot access, configured Slack delivery, an authorized destination and the rep's access to the underlying work. It does not make every Cedar task available in every Slack channel.</Note>
+
+## What reps can do
+
+| Action | What happens |
+| --- | --- |
+| Review a ready draft | Open a private review of the supported current email, LinkedIn or Slack draft |
+| Send after review | Confirm the reviewed supported draft; Cedar uses the corresponding send path and reports the observed result |
+| Complete a task | Mark the underlying task done and update its card to Completed when confirmed |
+| Cancel or ignore a task | Cancel the underlying work and update the card to Cancelled when confirmed |
+| Snooze eligible work | Choose when to revisit it through the supported task controls |
+| Open or prepare work | Use the configured action or follow the Cedar link when a workflow requires Cedar chat |
+
+The visible actions depend on the view, task state, output type and access. Some preparation and revision actions hand off to Cedar rather than running entirely inside Slack.
+
+## Task state is managed automatically
+
+Cedar reconciles the Slack card with the saved task and output state. A completed task is shown as **Completed**; deleted or cancelled work is shown as **Cancelled**. Reps do not need to maintain a duplicate Slack status manually. Updates can require reconciliation or recovery; a failure is not proof the task changed.
+
+Completing or cancelling work can require confirmation to clean up its saved draft and pending preparation schedule. Read the confirmation before proceeding. Clicking Done does not send a message.
+
+## Review and send from Slack
+
+For eligible email, LinkedIn and Slack drafts, the card can open a private review flow. Sending requires an explicit confirmation of the current draft; the provider action uses the appropriate channel and permissions. A changed draft can require a fresh review.
+
+A successful send is established by its delivery receipt, not by opening a review, saving an edit or clicking a task-completion button. If delivery is unknown, inspect the conversation before trying again. Supported send flows reconcile the task and Task View after the result; recovery can be needed if a later update fails.
+
+## Choose the destination
+
+Task View Slack delivery validates the audience and current Cedar access. Externally shared channels and unknown audiences are restricted. Use a suitable internal channel, and check which information appears on the shared card versus in the private review.
+
+[Task Views](/tasks/task-views) · [Slack connection and tools](/slack/overview) · [Outbound permissions](/getting-started/permissions#outbound-authorization)

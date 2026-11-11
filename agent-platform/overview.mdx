@@ -7,11 +7,13 @@ description: "Build, configure and operate persistent Cedar agents alongside ext
 Cedar's agent platform combines persistent instructions, connected data, user tasks, specialized documents, triggers, permissions and execution history. Agents can turn evidence into owned work and durable outputs: lists, tables, flowcharts, reports and task-aware agendas. MCP exposes the supported tools for reading evidence, managing tasks, creating artifacts and configuring automation. Cedar's app adds the agent library, workspace controls, interactive delegation and workflow buttons.
 
 <CardGroup cols={2}>
-<Card title="User tasks" icon="list-check" href="/tasks/overview">Read open work, assign owners, prepare follow-ups, apply saved approvals and track completion through 14 MCP actions.</Card>
+<Card title="User tasks" icon="list-check" href="/tasks/overview">Read open work, assign owners, prepare follow-ups, apply saved approvals and track completion through the task MCP family.</Card>
 <Card title="Specialized documents" icon="file-lines" href="/agent-platform/specialized-documents">Give agents lists, agendas, tables, reports, flowcharts and actionable documents.</Card>
 <Card title="Agent library" icon="robot" href="/agent-platform/library">Browse every template and inspect its prerequisites, workspace and trigger setup.</Card>
 <Card title="Execution visibility" icon="eye" href="/agent-platform/observability">Inspect runs, traces, saved artifacts and the actual result of a configured workflow.</Card>
 </CardGroup>
+
+Start with [the four-layer automation map](/agent-platform/automation-layers), then choose [Task Views](/tasks/task-views) for owned rep work and [Cedar output files](/agent-platform/specialized-documents) for readable or shareable results. Reps can also manage eligible work [from Slack](/slack/task-views).
 
 ## Platform capabilities
 
@@ -33,7 +35,7 @@ Cedar's agent platform combines persistent instructions, connected data, user ta
 
 ## Choose the right surface
 
-An external MCP client can call its advertised tools, edit authorized documents and configuration, and let Cedar execute persisted rules. It cannot call Cedar-only `delegate`, `board`, `workflow`, `chat-context`, history or connected-MCP dispatch tools. The app's agent management routes are product controls, not an additional external `agent` family.
+An external MCP client can call its advertised tools, edit authorized documents and configuration, and let Cedar execute persisted rules. It cannot call Cedar-only `delegate`, `board`, `workflow`, `chat-context`, history or connected-MCP dispatch tools. The external `agent` family initializes supported templates and reads stored KPIs; it does not run arbitrary agents or automatically activate triggers.
 
 Interactive chat can propose mutations or hand work to child executors. Background agents run with their own instructions and grants; availability in chat does not establish availability in a background worker. Customer outbound sends and schedules require the explicit user-directed path described in [message scheduling](/channels/scheduling).
 

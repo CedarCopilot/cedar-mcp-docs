@@ -147,6 +147,7 @@
             "group": "Agent platform",
             "pages": [
               "agent-platform/overview",
+              "agent-platform/automation-layers",
               "operations/app-only"
             ]
           },
@@ -157,6 +158,8 @@
                 "group": "User tasks",
                 "pages": [
                   "tasks/overview",
+                  "tasks/task-views",
+                  "slack/task-views",
                   "capabilities/tasks",
                   "workspace/tasks",
                   "tasks/visibility",
@@ -176,6 +179,7 @@
                   "documents/lists-and-agendas",
                   "agent-platform/table-workspaces",
                   "documents/reports",
+                  "documents/deal-rooms",
                   "documents/flowcharts"
                 ]
               }
