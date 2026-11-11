@@ -3,7 +3,7 @@ title: "Capability coverage"
 description: "Source-reviewed additions and historical schema coverage, with availability boundaries."
 ---
 
-The generated tables below are a historical schema snapshot, including nested change unions; they are not a current count of independent APIs. The November 11, 2026 source review adds [`agent`](/reference/agent), [pilot Task View tools](/reference/task-views), and the app-only [`website`](/reference/website) and [`research-job`](/reference/research-job). See the refreshed [task reference](/reference/task) for lifecycle changes. Consult the current connection's `tools/list` for exact schemas; the historical tables do not establish exhaustive current coverage. Tools without a selector appear as single-call capabilities.
+The generated tables below are a historical schema snapshot, including nested change unions; they are not a current count of independent APIs. The November 11, 2026 source review adds [`agent`](/reference/agent), [Task View tools](/reference/task-views), and the app-only [`website`](/reference/website) and [`research-job`](/reference/research-job). See the refreshed [task reference](/reference/task) for lifecycle changes. Consult the current connection's `tools/list` for exact schemas; the historical tables do not establish exhaustive current coverage. Tools without a selector appear as single-call capabilities.
 
 Staff, feature-gated, and app-only entries are labeled. An action requiring `in-app` remains unavailable externally even when its parent family is listed. Additional path, role, and provider checks still apply.
 
@@ -12,8 +12,8 @@ Staff, feature-gated, and app-only entries are labeled. An action requiring `in-
 | Family | Current operations | Availability |
 | --- | --- | --- |
 | [`agent`](/reference/agent) | `initialize`, `get-kpis`, `get-pipeline-kpis` | External, action scopes apply |
-| [Task View read](/reference/task-views) | `producers`, `history-read`, `list`, `list-archived`, `read`, `items`, `candidates`, `unmatched`, `resources`, `memberships`, `open` | Pilot; `crm:read` |
-| [Task View write](/reference/task-views) | `create`, `initialize`, `invoke-action`, `restore-history`, `configure`, `saved-policy`, `archive`, `restore`, `associate`, `patch-values`, `upsert-context`, `manual`, `organize`, `place` | Pilot; `playbook:write` |
+| [Task View read](/reference/task-views) | `producers`, `history-read`, `list`, `list-archived`, `read`, `items`, `candidates`, `unmatched`, `resources`, `memberships`, `open` | `crm:read` |
+| [Task View write](/reference/task-views) | `create`, `initialize`, `invoke-action`, `restore-history`, `configure`, `saved-policy`, `archive`, `restore`, `associate`, `patch-values`, `upsert-context`, `manual`, `organize`, `place` | `playbook:write` |
 | [`website`](/reference/website) | `read`, `refresh` | Cedar app only |
 | [`research-job`](/reference/research-job) | `start`, `read`, `list`, `continue`, `stop`, `advance`, `guidance`, `ensure-guidance`, `compile-brief` | Cedar app only |
 | [`task`](/reference/task) | Adds `snooze`, `unsnooze`; preparation and completion receipts refreshed | External; snooze/unsnooze use `email:read`, other task actions use `crm:read` |

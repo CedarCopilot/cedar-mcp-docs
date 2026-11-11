@@ -32468,7 +32468,7 @@
         "$schema": "http://json-schema.org/draft-07/schema#"
       },
       "baselineScope": "crm:read",
-      "availabilityNote": "Task View pilot required; ownership and file grants still apply."
+      "availabilityNote": "Ownership and file grants apply."
     },
     {
       "name": "task-views-write",
@@ -32481,7 +32481,7 @@
         "status": "source-reviewed operation guide; consult tools/list for current complete contract"
       },
       "baselineScope": "playbook:write",
-      "availabilityNote": "Task View pilot required; ownership and file grants still apply."
+      "availabilityNote": "Ownership and file grants apply."
     },
     {
       "name": "website",

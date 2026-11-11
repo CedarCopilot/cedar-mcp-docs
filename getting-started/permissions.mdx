@@ -16,7 +16,7 @@ Cedar checks OAuth grants and the requested action at execution time. It also en
 | `slack:write` | Channel creation, workspace-member invitations and Slack Connect invitations |
 | `crm:read` | Conversations, tasks, calendar, notifications, metrics, guarded SQL; also several CRM writes |
 | `docs:read` | Document/table reads and ordinary document/table writes, subject to role checks; stored agent/pipeline KPI reads |
-| `playbook:write` | Configuration, integration behavior, playbook/agenda writes, field definitions; built-in agent initialization and pilot Task View writes |
+| `playbook:write` | Configuration, integration behavior, playbook/agenda writes, field definitions; built-in agent initialization and Task View writes |
 | `enrichment:write` | Paid enrichment dispatch |
 | `signals:read` | Watcher capabilities, configurations, signal history |
 | `signals:write` | Watcher settings/state, internal signal curation, read acknowledgements |
@@ -35,7 +35,7 @@ Configuration changes, document operations, and calendar changes may apply immed
 
 `in-app` is never externally grantable. `internal` is Cedar-staff-only. `billing-admin` and `signals-read admin-inventory` have additional staff checks. `debug create-monitor` uses the internal scope. `brain:read` requires the Cedar Brain feature flag as well as the grant.
 
-The Task View families require the account pilot in addition to scopes. `website`, `research-job` and `document-read scroll` are app-only.
+`website`, `research-job` and `document-read scroll` are app-only.
 
 Credential retrieval and secret-bearing credential storage are excluded from the external surface. Adding a connected MCP server with a static Authorization header must happen through the supported Cedar app flow.
 
